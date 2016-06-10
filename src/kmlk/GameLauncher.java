@@ -194,41 +194,40 @@ public class GameLauncher {
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         String versionArgs = ver.getArguments();
-        versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());
-        versionArgs = versionArgs.replace("${version_name}", ver.getID());
-        versionArgs = versionArgs.replace("${game_directory}", workingDir.getAbsolutePath());
-        versionArgs = versionArgs.replace("${assets_root}", assetsDir.getAbsolutePath());
-        versionArgs = versionArgs.replace("${game_assets}", assetsDir.getAbsolutePath());
-        versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
-        versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString());
-        versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
-        versionArgs = versionArgs.replace("${version_type}", ver.getType().name());
-        if (u.hasProperties())
+        String[] argsSplit = versionArgs.split(" ");
+        for (int i = 0; i < argsSplit.length; i++)
         {
-            Map<String, String> properties = u.getProperties();
-            Set set = properties.keySet();
-            Iterator it = set.iterator();
-            JSONObject props = new JSONObject();
-            while (it.hasNext())
+            String arg = argsSplit[i];
+            arg = arg.replace("${auth_player_name}", u.getDisplayName());
+            arg = arg.replace("${version_name}", ver.getID());
+            arg = arg.replace("${game_directory}", workingDir.getAbsolutePath());
+            arg = arg.replace("${assets_root}", assetsDir.getAbsolutePath());
+            arg = arg.replace("${game_assets}", assetsDir.getAbsolutePath());
+            arg = arg.replace("${assets_index_name}", assetsID);
+            arg = arg.replace("${auth_uuid}", u.getProfileID().toString());
+            arg = arg.replace("${auth_access_token}", u.getAccessToken());
+            arg = arg.replace("${version_type}", ver.getType().name());
+            if (u.hasProperties())
             {
-                String name = it.next().toString();
-                String value = properties.get(name);
-                props.put(name, value);
+                Map<String, String> properties = u.getProperties();
+                Set set = properties.keySet();
+                Iterator it = set.iterator();
+                JSONObject props = new JSONObject();
+                while (it.hasNext())
+                {
+                    String name = it.next().toString();
+                    String value = properties.get(name);
+                    props.put(name, value);
+                }
+                arg = arg.replace("${user_properties}", props.toString());
             }
-            versionArgs = versionArgs.replace("${user_properties}", props.toString());
-        }
-        else
-        {
-            versionArgs = versionArgs.replace("${user_properties}", "{}");
-        }
-        versionArgs = versionArgs.replace("${user_type}", "mojang");
-	versionArgs = versionArgs.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID());
-        String[] vArgs = versionArgs.split("--");
-        for (int i = 1; i < vArgs.length; i++)
-        {
-            String[] split = vArgs[i].split(" ");
-            gameArgs.add("--" + split[0]);
-            gameArgs.add(split[1]);
+            else
+            {
+                arg = arg.replace("${user_properties}", "{}");
+            }
+            arg = arg.replace("${user_type}", "mojang");
+            arg = arg.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID());
+            gameArgs.add(arg);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         try

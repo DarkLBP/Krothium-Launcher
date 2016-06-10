@@ -22,7 +22,6 @@ public class Test {
         k.loadProfiles();
         k.loadUsers();
         Profile p = k.getProfiles().getSelected();
-        p.setVersion(k.getVersions().getLatestBeta(), k);
         Downloader d = k.getDownloader();
         d.downloadAssets(p.getVersion());
         d.downloadVersion(p.getVersion());
