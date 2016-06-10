@@ -226,7 +226,7 @@ public class GameLauncher {
                 arg = arg.replace("${user_properties}", "{}");
             }
             arg = arg.replace("${user_type}", "mojang");
-            arg = arg.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID());
+            arg = arg.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
             gameArgs.add(arg);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
