@@ -1,0 +1,40 @@
+[22:43:53] [Client thread/INFO]: Setting user: DarkLBP
+[22:43:53] [Client thread/WARN]: Skipping bad option: lastServer:
+[22:43:53] [Client thread/INFO]: LWJGL Version: 2.9.4
+[22:43:54] [Client thread/INFO]: Reloading ResourceManager: Default
+[22:43:54] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[22:43:54] [Thread-5/INFO]: Initializing LWJGL OpenAL
+[22:43:54] [Thread-5/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[22:43:54] [Thread-5/INFO]: OpenAL initialized.
+[22:43:54] [Sound Library Loader/INFO]: Sound engine started
+[22:43:54] [Client thread/INFO]: Created: 1024x512 textures-atlas
+[22:43:56] [Realms Notification Availability checker #1/INFO]: Could not authorize you against Realms server: Invalid session id
+[22:44:04] [Server thread/INFO]: Starting integrated minecraft server version 1.10
+[22:44:04] [Server thread/INFO]: Generating keypair
+[22:44:04] [Server thread/INFO]: Preparing start region for level 0
+[22:44:05] [Server thread/INFO]: Changing view distance to 12, from 10
+[22:44:05] [Server thread/INFO]: DarkLBP[local:E:c6395ca9] logged in with entity id 611 at (151.64372530444626, 70.0, -19.43592537902461)
+[22:44:05] [Server thread/INFO]: DarkLBP joined the game
+[22:44:08] [Server thread/WARN]: Can't keep up! Did the system time change, or is the server overloaded? Running 2972ms behind, skipping 59 tick(s)
+[22:44:16] [Server thread/INFO]: <DarkLBP> test
+[22:44:16] [Client thread/INFO]: [CHAT] <DarkLBP> test
+[22:44:24] [Server thread/INFO]: DarkLBP has just earned the achievement [Taking Inventory]
+[22:44:24] [Client thread/INFO]: [CHAT] DarkLBP has just earned the achievement [Taking Inventory]
+[22:44:25] [Server thread/INFO]: Saving and pausing game...
+[22:44:25] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[22:44:25] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[22:44:25] [Server thread/INFO]: Saving chunks for level 'New World'/The End
+[22:44:26] [Server thread/INFO]: Stopping server
+[22:44:26] [Server thread/INFO]: Saving players
+[22:44:26] [Server thread/INFO]: Saving worlds
+[22:44:26] [Server thread/INFO]: Saving chunks for level 'New World'/Overworld
+[22:44:26] [Server thread/INFO]: Saving chunks for level 'New World'/Nether
+[22:44:26] [Server thread/INFO]: Saving chunks for level 'New World'/The End
+[22:44:37] [Client thread/INFO]: Connecting to mc.hypixel.net., 25565
+[22:44:38] [Client thread/INFO]: [CHAT]                          
+[22:44:38] [Client thread/INFO]: [CHAT]                          
+[22:44:39] [Client thread/WARN]: Received unknown passenger for bno['5s39l3y52l'/128, l='MpServer', x=-2530.50, y=52.00, z=720.50]
+[22:44:40] [Client thread/WARN]: Received unknown passenger for bno['gub9cv80v1'/132, l='MpServer', x=-2530.50, y=52.00, z=768.50]
+[22:44:46] [Client thread/INFO]: Stopping!
+[22:44:46] [Client thread/INFO]: SoundSystem shutting down...
+[22:44:46] [Client thread/WARN]: Author: Paul Lamb, www.paulscode.com
