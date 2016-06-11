@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONObject;
@@ -17,7 +19,8 @@ import org.json.JSONObject;
 public class Downloader {
     private final Kernel kernel;
     private final Console console;
-    private int progress = 0;
+    private int progressDownload = 0;
+    private int progressValid = 0;
     public Downloader(Kernel k)
     {
         this.kernel = k;
@@ -36,8 +39,10 @@ public class Downloader {
             JSONObject verMeta = ver.getMeta();
             String assetID = ver.getAssetID();
             long length = verMeta.getJSONObject("assetIndex").getLong("totalSize");
+            System.err.println(length);
             long assetFileLength = verMeta.getJSONObject("assetIndex").getLong("size");
             long downloaded = 0;
+            long validated = 0;
             boolean localIndex = false;
             File indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
             URL assetsURL = null;
@@ -65,10 +70,11 @@ public class Downloader {
             JSONObject objects = root.getJSONObject("objects");
             Set keys = objects.keySet();
             Iterator it2 = keys.iterator();
+            List<String> processedHashes = new ArrayList();
             while (it2.hasNext())
             {
                 String object = it2.next().toString();
-                console.printInfo("Downloading " + object + " (" + this.progress + "%)");
+                console.printInfo("Downloading " + object + " (Downloaded: " + this.progressDownload + "% | Validated: " + this.progressValid + "%)");
                 JSONObject o = objects.getJSONObject(object);
                 String hash = o.getString("hash");
                 long size = o.getLong("size");
@@ -93,13 +99,22 @@ public class Downloader {
                     {
                         console.printError("Failed to download asset file: " + object);
                     }
+                    else
+                    {
+                        downloaded += size;
+                    }
                 }
                 else
                 {
                     console.printInfo("Asset file " + object + " found locally and it is valid.");
+                    if (!processedHashes.contains(hash))
+                    {
+                        processedHashes.add(hash);
+                        validated += size;
+                    }
                 }
-                downloaded += size;
-                this.progress = (int)(downloaded * 100 / length);
+                this.progressDownload = (int)(downloaded * 100 / length);
+                this.progressValid = (int)(validated * 100 / length);
             }
         }
         catch (Exception ex)
