@@ -226,7 +226,7 @@ public class GameLauncher {
         String[] argsSplit = versionArgs.split(" ");
         for (int i = 0; i < argsSplit.length; i++)
         {
-            gameArgs.add(versionArgs);
+            gameArgs.add(argsSplit[i]);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         try

@@ -39,7 +39,6 @@ public class Downloader {
             JSONObject verMeta = ver.getMeta();
             String assetID = ver.getAssetID();
             long length = verMeta.getJSONObject("assetIndex").getLong("totalSize");
-            System.err.println(length);
             long assetFileLength = verMeta.getJSONObject("assetIndex").getLong("size");
             long downloaded = 0;
             long validated = 0;
