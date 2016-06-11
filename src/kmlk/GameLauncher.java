@@ -228,6 +228,13 @@ public class GameLauncher {
         {
             gameArgs.add(argsSplit[i]);
         }
+        if (p.hasResolution())
+        {
+            gameArgs.add("--width");
+            gameArgs.add(String.valueOf(p.getResolutionWidth()));
+            gameArgs.add("--height");
+            gameArgs.add(String.valueOf(p.getResolutionHeight()));
+        }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         try
         {
