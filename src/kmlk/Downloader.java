@@ -73,7 +73,7 @@ public class Downloader {
             while (it2.hasNext())
             {
                 String object = it2.next().toString();
-                console.printInfo("Downloading " + object + " (Downloaded: " + this.progressDownload + "% | Validated: " + this.progressValid + "%)");
+                console.printInfo("Downloading " + object);
                 JSONObject o = objects.getJSONObject(object);
                 String hash = o.getString("hash");
                 long size = o.getLong("size");
@@ -114,6 +114,7 @@ public class Downloader {
                 }
                 this.progressDownload = (int)(downloaded * 100 / length);
                 this.progressValid = (int)(validated * 100 / length);
+                console.printInfo("Downloaded: " + this.progressDownload + "% | Validated " + this.progressValid + "% | Total: " + (this.progressDownload + this.progressValid) + "%");
             }
         }
         catch (Exception ex)
