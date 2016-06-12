@@ -129,17 +129,16 @@ public class Utils {
             return false;
         }
     }
-    public static boolean writeJSONtoFile(JSONObject j, File f)
+    public static boolean writeToFile(String o, File f)
     {
         try {
-            FileOutputStream out = new FileOutputStream(f);
-            String json = j.toString();
-            out.write(json.getBytes());
-            out.close();
-            return true;
+         FileOutputStream out = new FileOutputStream(f);
+         out.write(o.getBytes());
+         out.close();
+         return true;
         } catch (Exception ex) {
             return false;
-        }
+        }     
     }
     public static OSArch getOSArch()
     {

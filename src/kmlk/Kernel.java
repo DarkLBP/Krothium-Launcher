@@ -65,7 +65,7 @@ public final class Kernel {
             String name = ait.next().toString();
             output.put(name, authdata.get(name));
         }
-        return Utils.writeJSONtoFile(output, this.getConfigFile());
+        return Utils.writeToFile(output.toString(), this.getConfigFile());
     }
     public void loadProfiles()
     {
