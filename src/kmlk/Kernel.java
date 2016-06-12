@@ -1,6 +1,9 @@
 package kmlk;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.Set;
+import org.json.JSONObject;
 
 
 /**
@@ -42,6 +45,27 @@ public final class Kernel {
     public File getWorkingDir()
     {
         return this.workingDir;
+    }
+    public boolean saveProfiles()
+    {
+        JSONObject output = new JSONObject();
+        JSONObject profiles = this.profiles.toJSON();
+        JSONObject authdata = this.authentication.toJSON();
+        Set pset = profiles.keySet();
+        Iterator pit = pset.iterator();
+        while (pit.hasNext())
+        {
+            String name = pit.next().toString();
+            output.put(name, profiles.get(name));
+        }
+        Set aset = authdata.keySet();
+        Iterator ait = aset.iterator();
+        while (ait.hasNext())
+        {
+            String name = ait.next().toString();
+            output.put(name, authdata.get(name));
+        }
+        return Utils.writeJSONtoFile(output, this.getConfigFile());
     }
     public void loadProfiles()
     {

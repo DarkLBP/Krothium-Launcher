@@ -3,6 +3,7 @@ package kmlk;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,7 +15,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.JSONObject;
 
 /**
  * @website http://krotium.com
@@ -122,6 +126,18 @@ public class Utils {
         }
         catch (Exception ex)
         {
+            return false;
+        }
+    }
+    public static boolean writeJSONtoFile(JSONObject j, File f)
+    {
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            String json = j.toString();
+            out.write(json.getBytes());
+            out.close();
+            return true;
+        } catch (Exception ex) {
             return false;
         }
     }
