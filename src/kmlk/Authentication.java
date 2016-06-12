@@ -205,7 +205,7 @@ public class Authentication {
         {
             try
             {
-                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
+                JSONObject root = new JSONObject(Utils.readFromFile(launcherProfiles));
                 if (root.has("clientToken"))
                 {
                     this.clientToken = root.getString("clientToken");

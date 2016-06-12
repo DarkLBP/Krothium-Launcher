@@ -49,16 +49,7 @@ public class Versions {
     {
         console.printInfo("Fetching remote version list.");
         try {
-            StringBuilder content = new StringBuilder();
-            URLConnection con = Constants.versionsJSON.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null)
-            {
-              content.append(line).append("\n");
-            }
-            bufferedReader.close();
-            JSONObject root = new JSONObject(content.toString());
+            JSONObject root = new JSONObject(Utils.readFromURL(Constants.versionsJSON));
             JSONObject latest = root.getJSONObject("latest");
             this.latestSnap = latest.getString("snapshot");
             this.latestRel = latest.getString("release");
@@ -109,7 +100,7 @@ public class Versions {
                                 }
                                 else
                                 {
-                                    JSONObject json = new JSONObject(Utils.readURL(jsonFile.toURI().toURL()));
+                                    JSONObject json = new JSONObject(Utils.readFromURL(jsonFile.toURI().toURL()));
                                     Version ver;
                                     if (this.versions.containsKey(file.getName()))
                                     {
@@ -138,6 +129,7 @@ public class Versions {
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
             console.printError("Failed to fetch local version list.");
         }
     }

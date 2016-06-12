@@ -116,7 +116,7 @@ public final class Version {
     {
         try
         {
-            this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
+            this.versionMeta = new JSONObject(Utils.readFromURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
             return true;
         }
         catch (Exception ex)

@@ -48,7 +48,7 @@ public class Profiles {
         {
             try
             {
-                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
+                JSONObject root = new JSONObject(Utils.readFromFile(launcherProfiles));
                 JSONObject ples = root.getJSONObject("profiles");
                 Set keys = ples.keySet();
                 Iterator it = keys.iterator();
