@@ -1,19 +1,24 @@
 package kmlk;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.JSONObject;
 
 /**
  * @website http://krotium.com
@@ -69,16 +74,9 @@ public class Utils {
             {
                 parent.mkdirs();
             }
-            URLConnection con = url.openConnection();
-            InputStream in = con.getInputStream();
-            FileOutputStream out = new FileOutputStream(output);
-            byte[] buffer = new byte[4096];
-            int read;
-            while((read = in.read(buffer)) != -1) {
-                out.write(buffer);
-            }
-            in.close();
-            out.close();
+            ReadableByteChannel rb = Channels.newChannel(url.openStream());
+            FileOutputStream fo = new FileOutputStream(output);
+            fo.getChannel().transferFrom(rb, 0, Long.MAX_VALUE);
             return true;
         }
         catch (Exception ex)
@@ -86,19 +84,20 @@ public class Utils {
             return false;
         }
     }
-    public static String readFromURL(URL url)
+    public static String readURL(URL url)
     {
         try
         {
+            StringBuilder content = new StringBuilder();
             URLConnection con = url.openConnection();
-            InputStream in = con.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int read;
-            while((read = in.read(buffer)) != -1) {
-                out.write(buffer);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {
+              content.append(line + "\n");
             }
-            return new String(out.toByteArray());
+            bufferedReader.close();
+            return content.toString();
         }
         catch (Exception ex)
         {
@@ -127,22 +126,6 @@ public class Utils {
         catch (Exception ex)
         {
             return false;
-        }
-    }
-    public static String readFromFile(File f)
-    {
-        try{
-            FileInputStream in = new FileInputStream(f);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int read;
-            while((read = in.read(buffer)) != -1) {
-                out.write(buffer);
-            }
-            return new String(out.toByteArray());
-        }
-        catch (Exception ex){
-            return null;
         }
     }
     public static boolean writeToFile(String o, File f)
