@@ -110,13 +110,12 @@ public class Utils {
         {
             MessageDigest sha1 = MessageDigest.getInstance("SHA1");
             FileInputStream fis = new FileInputStream(file);
-            byte[] data = new byte[1024];
+            byte[] data = new byte[4096];
             int read; 
             while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);
             }
             byte[] hashBytes = sha1.digest();
-
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < hashBytes.length; i++) {
               sb.append(Integer.toString((hashBytes[i] & 0xff) + 0x100, 16).substring(1));
