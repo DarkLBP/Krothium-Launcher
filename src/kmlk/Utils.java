@@ -3,7 +3,6 @@ package kmlk;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,10 +14,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
-import org.json.JSONObject;
 
 /**
  * @website http://krotium.com
@@ -94,7 +90,8 @@ public class Utils {
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {
-              content.append(line + "\n");
+              content.append(line);
+              content.append(System.lineSeparator());
             }
             bufferedReader.close();
             return content.toString();
