@@ -46,6 +46,22 @@ public final class Kernel {
     {
         return this.workingDir;
     }
+    public User getSelectedUser()
+    {
+        return this.authentication.getSelectedUser();
+    }
+    public Profile getSelectedProfile()
+    {
+        return this.profiles.getSelected();
+    }
+    public boolean updateProfile(Profile p)
+    {
+        return this.profiles.updateProfile(p);
+    }
+    public boolean addProfile(Profile p)
+    {
+        return this.profiles.addProfile(p);
+    }
     public boolean saveProfiles()
     {
         JSONObject output = new JSONObject();

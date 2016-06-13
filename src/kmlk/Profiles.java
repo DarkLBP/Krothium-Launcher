@@ -26,18 +26,48 @@ public class Profiles {
         this.console = instance.getConsole();
         this.kernel = instance;
     }
-    public void add(String name, Profile p)
+    public boolean addProfile(Profile p)
     {
-        if (!profiles.containsKey(name))
+        if (!this.existsProfile(p))
         {
-            profiles.put(name, p);
-            console.printInfo("Profile " + name + " loaded.");
+            profiles.put(p.getName(), p);
+            console.printInfo("Profile " + p.getName() + " added");
+            return true;
         }
-        else
+        console.printError("Profile " + p.getName() + " already exists!");
+        return false;
+    }
+    public boolean updateProfile(Profile p)
+    {
+        if (this.existsProfile(p))
         {
-            console.printError("Profile " + name + " duplicated! Trying with undercore.");
-            this.add(name + "_", p);
+            profiles.put(p.getName(), p);
+            console.printInfo("Profile " + p.getName() + " updated.");
+            return true;
         }
+        console.printError("Profile " + p.getName() + " doesn't exist.");
+        return false;
+    }
+    public boolean duplicateProfile(Profile p)
+    {
+        if (this.existsProfile(p))
+        {
+            String modifiedName = p.getName() + "_";
+            p.setName(modifiedName);
+            while (this.existsProfile(p))
+            {
+                modifiedName += "_";
+                p.setName(modifiedName);
+            }
+            this.addProfile(p);
+            console.printError("Profile " + p.getName() + " duplicated with this name " + modifiedName);
+        }
+        console.printError("Profile " + p.getName() + " doesn't exist.");
+        return false;
+    }
+    public boolean existsProfile(Profile p)
+    {
+        return this.profiles.containsKey(p.getName());
     }
     public void fetchProfiles()
     { 
@@ -153,7 +183,14 @@ public class Profiles {
                         {
                             first = p;
                         }
-                        this.add(name, p);
+                        if (!this.existsProfile(p))
+                        {
+                            this.addProfile(p);
+                        }
+                        else
+                        {
+                            this.duplicateProfile(p);
+                        }
                     }
                     else
                     {
@@ -195,7 +232,7 @@ public class Profiles {
     }
     private void createDefaultProfile()
     {
-        this.add("(Default)", new Profile(kernel, "(Default)", null, null, null, null, null, null));   
+        this.addProfile(new Profile(kernel, "(Default)", null, null, null, null, null, null));   
     }
     public Profile getProfileByName(String pName)
     {
