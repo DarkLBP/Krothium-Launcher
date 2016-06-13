@@ -17,14 +17,12 @@ import org.json.JSONObject;
 public class Profiles {
     private final Map<String, Profile> profiles = new HashMap();
     private final Console console;
-    private final Kernel kernel;
     private Versions versions;
     private Profile selected;
     
-    public Profiles(Kernel instance)
+    public Profiles()
     {
-        this.console = instance.getConsole();
-        this.kernel = instance;
+        this.console = Kernel.getKernel().getConsole();
     }
     public boolean addProfile(Profile p)
     {
@@ -72,8 +70,8 @@ public class Profiles {
     public void fetchProfiles()
     { 
         console.printInfo("Fetching profiles.");
-        this.versions = kernel.getVersions();
-        File launcherProfiles = this.kernel.getConfigFile();
+        this.versions = Kernel.getKernel().getVersions();
+        File launcherProfiles = Kernel.getKernel().getConfigFile();
         if (launcherProfiles.exists())
         {
             try
@@ -178,7 +176,7 @@ public class Profiles {
                     }
                     if (name != null)
                     {
-                        Profile p = new Profile(kernel, name, ver, gameDir, javaDir, javaArgs, resolution, visibility);
+                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility);
                         if (first == null)
                         {
                             first = p;
@@ -231,7 +229,7 @@ public class Profiles {
     }
     private boolean createDefaultProfile()
     {
-        Profile p = new Profile(kernel, "(Default)");
+        Profile p = new Profile("(Default)");
         if (this.existsProfile(p))
         {
             console.printError("Default profile already exists.");

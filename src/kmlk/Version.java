@@ -22,7 +22,6 @@ public final class Version {
     private final File path;
     private JSONObject versionMeta;
     private Version inheritedVersion;
-    private final Kernel kernel;
     private final Map<String, Library> libraries = new HashMap();
     private final Map<String, Native> natives = new HashMap();
     private final Console console;
@@ -32,14 +31,13 @@ public final class Version {
     public String minecraftArguments = null;
     public String mainClass = null;
     
-    public Version(Kernel k, String id, VersionType type, VersionOrigin or, URL url)
+    public Version(String id, VersionType type, VersionOrigin or, URL url)
     {
         this.id = id;
         this.type = type;
         this.url.put(or, url);
         this.origin = or;
-        this.kernel = k;
-        this.console = k.getConsole();
+        this.console = Kernel.getKernel().getConsole();
         if (or != VersionOrigin.REMOTE)
         {
             this.prepare();
@@ -163,7 +161,7 @@ public final class Version {
             JSONObject meta = this.getMeta();
             if (meta.has("inheritsFrom"))
             {
-                this.inheritedVersion = kernel.getVersions().getVersionByName(meta.getString("inheritsFrom"));
+                this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(meta.getString("inheritsFrom"));
             }
             else
             {
@@ -329,7 +327,7 @@ public final class Version {
                         }
                     }
                 }
-                Library l = new Library(this.kernel, name, url, sha1, size, ruls);
+                Library l = new Library(name, url, sha1, size, ruls);
                 if (!libraries.containsKey(name))
                 {
                     libraries.put(name, l);

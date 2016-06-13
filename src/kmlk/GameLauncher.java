@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -13,8 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.json.JSONObject;
@@ -26,17 +23,16 @@ import org.json.JSONObject;
 
 public class GameLauncher {
     
-    private final Kernel kernel;
     private final Console console;
-    public GameLauncher(Kernel k)
+    
+    public GameLauncher()
     {
-        this.kernel = k;
-        this.console = k.getConsole();
+        this.console = Kernel.getKernel().getConsole();
     }
     public void launch(Profile p)
     {
         Version ver = p.getVersion();
-        File workingDir = this.kernel.getWorkingDir();
+        File workingDir = Kernel.getKernel().getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory())
         {
@@ -62,7 +58,7 @@ public class GameLauncher {
                 {
                     String nat_name = it.next().toString();
                     Native nat = nats.get(nat_name);
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + nat.getPath());
+                    File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + nat.getPath());
                     try {
                         ZipFile zip = new ZipFile(completePath);
                         final Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -124,7 +120,7 @@ public class GameLauncher {
                 {
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getPath());
+                    File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
                     libraries += completePath.getAbsolutePath() + ";";
                 }
             }
@@ -137,7 +133,7 @@ public class GameLauncher {
                 v2 = null;
             }
         }
-        File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getPath());
+        File verPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + ver.getPath());
         libraries += verPath.getAbsolutePath();
         String assetsID = ver.getAssetID();
         File assetsDir;
@@ -191,7 +187,7 @@ public class GameLauncher {
         }
         gameArgs.add(libraries);
         gameArgs.add(ver.getMainClass());
-        Authentication a = kernel.getAuthentication();
+        Authentication a = Kernel.getKernel().getAuthentication();
         User u = a.getSelectedUser();
         String versionArgs = ver.getArguments();
         versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());

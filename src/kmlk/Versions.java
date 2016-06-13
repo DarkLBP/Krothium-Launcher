@@ -20,17 +20,15 @@ import org.json.JSONObject;
 
 public class Versions {
     private final Map<String, Version> versions = new HashMap();
-    private final Kernel kernel;
     private final Console console;
     private String latestSnap;
     private String latestRel;
     private String latestBeta;
     private String latestAlpha;
     private List<VersionType> allowedTypes = new ArrayList();
-    public Versions(Kernel instance)
+    public Versions()
     {
-        this.kernel = instance;
-        this.console = instance.getConsole();
+        this.console = Kernel.getKernel().getConsole();
     }
     public void add(String name, Version v)
     {
@@ -68,7 +66,7 @@ public class Versions {
             for (int i = 0; i < vers.length(); i++)
             {
                 JSONObject ver = vers.getJSONObject(i);
-                Version v = new Version(this.kernel, ver.getString("id"), VersionType.valueOf(ver.getString("type").toUpperCase()), VersionOrigin.REMOTE, Utils.stringToURL(ver.getString("url")));
+                Version v = new Version(ver.getString("id"), VersionType.valueOf(ver.getString("type").toUpperCase()), VersionOrigin.REMOTE, Utils.stringToURL(ver.getString("url")));
                 if (!last_beta && v.getType() == VersionType.OLD_BETA)
                 {
                     this.latestBeta = v.getID();
@@ -88,7 +86,7 @@ public class Versions {
         console.printInfo("Fetching local version list and inherited versions.");
         try
         {
-            File versionsDir = new File(kernel.getWorkingDir() + File.separator + "versions");
+            File versionsDir = new File(Kernel.getKernel().getWorkingDir() + File.separator + "versions");
             if (versionsDir.exists())
             {
                 if (versionsDir.isDirectory())
@@ -113,11 +111,11 @@ public class Versions {
                                     Version ver;
                                     if (this.versions.containsKey(file.getName()))
                                     {
-                                        ver = new Version(this.kernel, file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.BOTH, jsonFile.toURI().toURL());
+                                        ver = new Version(file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.BOTH, jsonFile.toURI().toURL());
                                     }
                                     else
                                     {
-                                        ver = new Version(this.kernel, file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.LOCAL, jsonFile.toURI().toURL());
+                                        ver = new Version(file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.LOCAL, jsonFile.toURI().toURL());
                                     }
                                     this.add(file.getName(), ver);
                                 }

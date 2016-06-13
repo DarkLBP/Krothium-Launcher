@@ -17,14 +17,12 @@ import org.json.JSONObject;
  */
 
 public class Downloader {
-    private final Kernel kernel;
     private final Console console;
     private int progressDownload = 0;
     private int progressValid = 0;
-    public Downloader(Kernel k)
+    public Downloader()
     {
-        this.kernel = k;
-        this.console = k.getConsole();
+        this.console = Kernel.getKernel().getConsole();
     }
     public void downloadAssets(Version v)
     {
@@ -43,7 +41,7 @@ public class Downloader {
             long downloaded = 0;
             long validated = 0;
             boolean localIndex = false;
-            File indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
+            File indexJSON = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
             URL assetsURL = null;
             if (indexJSON.exists() && indexJSON.isFile())
             {
@@ -78,7 +76,7 @@ public class Downloader {
                 String hash = o.getString("hash");
                 long size = o.getLong("size");
                 URL downloadURL = Utils.stringToURL(Constants.resourcesRoot + hash.substring(0,2) + "/" + hash);
-                File destPath = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
+                File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
                 boolean localValid = false;
                 if (destPath.exists() && destPath.isFile())
                 {
@@ -135,7 +133,7 @@ public class Downloader {
         URL jarURL = Utils.stringToURL(client.getString("url"));
         String jarSHA1 = client.getString("sha1");
         long jarSize = client.getLong("size");
-        File destPath = new File(kernel.getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".jar");
+        File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".jar");
         boolean localValid = false;
         if (destPath.exists() && destPath.isFile())
         {
@@ -161,7 +159,7 @@ public class Downloader {
             console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
         }
         console.printInfo("Creating version " + ver.getID() + " JSON file.");
-        File jsonFile = new File(kernel.getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".json");
+        File jsonFile = new File(Kernel.getKernel().getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".json");
         boolean JSONValid = false;
         if (jsonFile.exists() && jsonFile.isFile())
         {
@@ -221,7 +219,7 @@ public class Downloader {
                     if (lib.isDownloadable() && lib.getRuleByOS(Utils.getPlatform()) == LibraryRule.ALLOW)
                     {
                         String sha1 = lib.getSHA1();
-                        File libPath = new File(kernel.getWorkingDir() + File.separator + lib.getPath());
+                        File libPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
                         boolean localValid = false;
                         if (libPath.exists() && libPath.isFile())
                         {
@@ -290,7 +288,7 @@ public class Downloader {
                     if (nat.isDownloadable())
                     {
                         String sha1 = nat.getSHA1();
-                        File natPath = new File(kernel.getWorkingDir() + File.separator + nat.getPath());
+                        File natPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + nat.getPath());
                         boolean localValid = false;
                         if (natPath.exists() && natPath.isFile())
                         {

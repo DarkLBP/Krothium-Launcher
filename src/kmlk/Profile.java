@@ -16,11 +16,10 @@ public class Profile {
     private File javaDir;
     private String javaArgs;
     private Map<String, Integer> resolution = new HashMap();
-    private final Kernel kernel; 
     private final Versions versions;
     private LauncherVisibility visibility;
     
-    public Profile(Kernel kernel, String name)
+    public Profile(String name)
     {
         this.name = name;
         this.version = null;
@@ -28,11 +27,10 @@ public class Profile {
         this.javaDir = null;
         this.javaArgs = null;
         this.resolution = null;
-        this.kernel = kernel;
-        this.versions = kernel.getVersions();
+        this.versions = Kernel.getKernel().getVersions();
         this.visibility = null;
     }
-    public Profile(Kernel kernel, String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v)
+    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v)
     {
         this.name = name;
         this.version = lastVersionId;
@@ -40,8 +38,7 @@ public class Profile {
         this.javaDir = javaDir;
         this.javaArgs = javaArgs;
         this.resolution = resolution;
-        this.kernel = kernel;
-        this.versions = kernel.getVersions();
+        this.versions = Kernel.getKernel().getVersions();
         this.visibility = v;
     }
     public void setName(String newName)

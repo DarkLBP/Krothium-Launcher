@@ -18,13 +18,11 @@ public final class Library {
     private final Map<OS, String> natives = new HashMap();
     private final File path;
     private final Map<OS, LibraryRule> rules;
-    private final Kernel kernel;
     private final Console console;
     
-    public Library(Kernel k, String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules)
+    public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules)
     {
-        this.kernel = k;
-        this.console = k.getConsole();
+        this.console = Kernel.getKernel().getConsole();
         this.name = name;
         this.url = url;
         this.sha1 = sha1;

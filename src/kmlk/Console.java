@@ -14,11 +14,7 @@ public class Console {
     private boolean timestamps = false;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private Date date = new Date();
-    private final Kernel kernel;
-    public Console (Kernel k)
-    {
-        this.kernel = k;
-    }
+    
     public void setEnabled(boolean value)
     {
         this.enabled = value;

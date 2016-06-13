@@ -16,18 +16,16 @@ import org.json.JSONObject;
 
 public class Authentication {
     private boolean authenticated = false;
-    private final Kernel kernel;
     private final Console console;
     protected String username;
     protected String password;
     protected String clientToken;
     protected Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
-    
-    public Authentication(Kernel k)
+
+    public Authentication()
     {
-        this.kernel = k;
-        this.console = k.getConsole();
+        this.console = Kernel.getKernel().getConsole();
     }
     public void setCredentials(String user, String pass)
     {
@@ -200,7 +198,7 @@ public class Authentication {
     public void fetchUsers()
     {
         console.printInfo("Loading user data.");
-        File launcherProfiles = this.kernel.getConfigFile();
+        File launcherProfiles = Kernel.getKernel().getConfigFile();
         if (launcherProfiles.exists())
         {
             try

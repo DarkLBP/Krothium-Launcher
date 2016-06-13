@@ -19,15 +19,17 @@ public final class Kernel {
     public final Downloader downloader;
     public final Authentication authentication;
     public final GameLauncher gameLauncher;
+    public static Kernel kernel;
     public Kernel()
     {
+        this.kernel = this;
         this.workingDir = Utils.getWorkingDirectory();
-        this.console = new Console(this);
-        this.profiles = new Profiles(this);
-        this.versions = new Versions(this);
-        this.downloader = new Downloader(this);
-        this.authentication = new Authentication(this);
-        this.gameLauncher = new GameLauncher(this);
+        this.console = new Console();
+        this.profiles = new Profiles();
+        this.versions = new Versions();
+        this.downloader = new Downloader();
+        this.authentication = new Authentication();
+        this.gameLauncher = new GameLauncher();
         System.out.println("KMLK r" + String.valueOf(Constants.kernelRevision) + " by DarkLBP (http://krotium.com)");
     }
     public Console getConsole()
@@ -118,5 +120,9 @@ public final class Kernel {
     public GameLauncher getGameLauncher()
     {
         return this.gameLauncher;
+    }
+    public static Kernel getKernel()
+    {
+        return kernel;
     }
 }
