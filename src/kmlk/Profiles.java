@@ -220,7 +220,6 @@ public class Profiles {
             }
             catch (Exception ex)
             {
-                ex.printStackTrace();
                 console.printError("Failed to fetch profiles.");
             }
         }
@@ -230,9 +229,15 @@ public class Profiles {
             this.createDefaultProfile();
         }
     }
-    private void createDefaultProfile()
+    private boolean createDefaultProfile()
     {
-        this.addProfile(new Profile(kernel, "(Default)", null, null, null, null, null, null));   
+        Profile p = new Profile(kernel, "(Default)");
+        if (this.existsProfile(p))
+        {
+            console.printError("Default profile already exists.");
+            return false;
+        }
+        return this.addProfile(p);   
     }
     public Profile getProfileByName(String pName)
     {
