@@ -88,7 +88,6 @@ public class Authentication {
             JSONObject response = new JSONObject(Utils.sendJSONPost(Constants.authAuthenticate, request.toString()));
             if (!response.has("error"))
             {
-                System.out.println(response);
                 this.clientToken = response.getString("clientToken");
                 String accessToken = (response.has("accessToken")) ? response.getString(("accessToken")) : null;
                 String profileID = (response.has("selectedProfile")) ? response.getJSONObject("selectedProfile").getString("id") : null;

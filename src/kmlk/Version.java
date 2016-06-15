@@ -26,7 +26,8 @@ public final class Version {
     private final Map<String, Native> natives = new HashMap();
     private final Console console;
     private boolean prepared = false;
-    private String assetID;
+    private AssetIndex assetIndex;
+    private String assets;
     private Version rootVer;
     public String minecraftArguments = null;
     public String mainClass = null;
@@ -38,21 +39,264 @@ public final class Version {
         this.url.put(or, url);
         this.origin = or;
         this.console = Kernel.getKernel().getConsole();
-        if (or != VersionOrigin.REMOTE)
-        {
-            this.prepare();
-        }
         this.path = new File("versions" + File.separator + id + File.separator + id + ".jar");
     }
-    public void prepare()
+    public boolean prepare()
     {
-        this.fetchVersionMeta();
-        this.fetchInheritedVersion();
-        this.fetchLibraries();
-        this.fetchAssetID();
-        this.fetchRoot();
-        this.fetchArguments();
-        this.prepared = true;
+        try
+        {
+            this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
+            if (this.getOrigin() == VersionOrigin.LOCAL)
+            {
+                if (this.versionMeta.has("inheritsFrom"))
+                {
+                    this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
+                    if (this.inheritedVersion != null)
+                    {
+                        if (!this.inheritedVersion.isPrepared())
+                        {
+                            this.inheritedVersion.prepare();
+                        }
+                        console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
+                    }
+                }
+                else
+                {
+                    this.inheritedVersion = null;
+                }
+            }
+            else
+            {
+                this.inheritedVersion = null;
+            }
+            console.printInfo("Fetching required versions libraries.");
+            JSONArray array = this.versionMeta.getJSONArray("libraries");
+            for (int i = 0; i < array.length(); i++)
+            {
+                OS currentOS = Utils.getPlatform();
+                JSONObject lib = array.getJSONObject(i);
+                String name = lib.getString("name");
+                URL url = null;
+                String sha1 = null;
+                long size = -1;
+                JSONArray rules = null;
+                Map<OS, LibraryRule> ruls = new HashMap();
+                boolean skip = false;
+                String native_class = null;
+                List<String> exclude = new ArrayList();
+                if (lib.has("rules"))
+                {
+                    rules = lib.getJSONArray("rules");
+                    List<LibraryRule> used = new ArrayList();
+                    OS[] oses = OS.values();
+                    for (int j = 0; j < rules.length(); j++)
+                    {
+                        JSONObject rule = rules.getJSONObject(j);
+                        LibraryRule lr = LibraryRule.valueOf(rule.getString("action").toUpperCase());
+                        if (rule.has("os"))
+                        {
+                            JSONObject os = rule.getJSONObject("os");
+                            OS o = OS.valueOf(os.getString("name").toUpperCase());
+                            console.printInfo((ruls.containsKey(o) ? "Updated" : "Added") + " " + o.name() + " rule (" + lr.name() + ") in library " + name);
+                            ruls.put(o, lr);
+                        }
+                        else
+                        {
+                            for (OS o : oses)
+                            {
+                                if (!ruls.containsKey(o))
+                                {
+                                    console.printInfo("Added " + o.name() + " rule (" + lr.name() + ") in library " + name);
+                                    ruls.put(o, lr);
+                                }
+                            }
+                        }
+                        if (!used.contains(lr))
+                        {
+                            used.add(lr);
+                        }
+                    }
+                    if (used.contains(LibraryRule.ALLOW) && !used.contains(LibraryRule.DISALLOW))
+                    {
+                        for (OS o : oses)
+                        {
+                            if (!ruls.containsKey(o))
+                            {
+                                ruls.put(o, LibraryRule.DISALLOW);
+                                console.printInfo("Added " + o.name() + " rule (" + LibraryRule.DISALLOW.name() + ") in library " + name);
+                            }
+                        }
+                    }
+                    else if (!used.contains(LibraryRule.ALLOW) && used.contains(LibraryRule.DISALLOW))
+                    {
+                        for (OS o : oses)
+                        {
+                            if (!ruls.containsKey(o))
+                            {
+                                ruls.put(o, LibraryRule.ALLOW);
+                                console.printInfo("Added " + o.name() + " rule (" + LibraryRule.ALLOW.name() + ") in library " + name);
+                            }
+                        }
+                    }
+                    if (currentOS != OS.UNKNOWN)
+                    {
+                        if (ruls.get(currentOS) != LibraryRule.ALLOW)
+                        {
+                            skip = true;
+                        }
+                    }
+                }
+                if (!skip)
+                {
+                    if (lib.has("natives"))
+                    {
+                        JSONObject natives = lib.getJSONObject("natives");
+                        String osArch = (Utils.getOSArch().equals(OSArch.NEW) ? "64" : "32");
+                        native_class = (natives.has(currentOS.name().toLowerCase()) ? natives.getString(currentOS.name().toLowerCase()).replace("${arch}", osArch) : null);
+                    }
+                    if (lib.has("extract"))
+                    {
+                        JSONObject extract = lib.getJSONObject("extract");
+                        if (extract.has("exclude"))
+                        {
+                            JSONArray exc = extract.getJSONArray("exclude");
+                            for (int k = 0; k < exc.length(); k++)
+                            {
+                                String value = exc.getString(k);
+                                if (!exclude.contains(value))
+                                {
+                                    exclude.add(value);
+                                    console.printInfo("Exclusion added for path " + value + " in " + name);
+                                }
+                            }
+                        }
+                    }
+                    boolean legacy = false;
+                    if (lib.has("downloads"))
+                    {
+                        JSONObject downloads = lib.getJSONObject("downloads");
+                        if (downloads.has("artifact"))
+                        {
+                            JSONObject artifact = downloads.getJSONObject("artifact");
+                            if (artifact.has("url"))
+                            {
+                                url = Utils.stringToURL(artifact.getString("url"));
+                            }
+                            if (artifact.has("sha1"))
+                            {
+                                sha1 = artifact.getString("sha1");
+                            }
+                            if (artifact.has("size"))
+                            {
+                                size = artifact.getLong("size");
+                            }
+                        }
+                        if (native_class != null)
+                        {
+                            if (downloads.has("classifiers"))
+                            {
+                                JSONObject classifiers = downloads.getJSONObject("classifiers");
+                                if (classifiers.has(native_class))
+                                {
+                                    JSONObject clas = classifiers.getJSONObject(native_class);
+                                    long nSize = (clas.has("size") ? clas.getLong("size") : -1);
+                                    String nSha = (clas.has("sha1") ? clas.getString("sha1") : null);
+                                    URL nURL = (clas.has("url") ? Utils.stringToURL(clas.getString("url")) : null);
+                                    Native n = new Native(name, nURL, nSha, nSize, exclude, native_class);
+                                    console.printInfo("Native " + name + (this.natives.containsKey(name) ? " updated" : " added"));
+                                    this.natives.put(name, n);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (lib.has("url"))
+                        {
+                            url = Utils.stringToURL(lib.getString("url") + Utils.getArtifactPath(name, "jar"));
+                        }
+                        else
+                        {
+                            url = Utils.stringToURL("https://libraries.minecraft.net/" + Utils.getArtifactPath(name, "jar"));
+                        }
+                        legacy = true;
+                    }
+                    Library l;
+                    if (!legacy)
+                    {
+                        l = new Library(name, url, sha1, size, ruls);
+                    }
+                    else
+                    {
+                        l = new Library(name, url, ruls);
+                    }
+                    if (!libraries.containsKey(name))
+                    {
+                        libraries.put(name, l);
+                        console.printInfo("Library " + name + " loaded.");
+                    }
+                    else
+                    {
+                        libraries.put(name, l);
+                        console.printInfo("Library " + name + " updated!.");
+                    }
+                }
+                else
+                {
+                    console.printInfo("Library " + name + " skipped because does not support the current OS (" + Utils.getPlatform().name() + ").");
+                }
+            }
+            if (this.versionMeta.has("assets"))
+            {
+                this.assets = this.versionMeta.getString("assets");
+                console.printInfo("Found assets dependency from version " + this.assets);
+            }
+            if (this.versionMeta.has("assetIndex"))
+            {
+                JSONObject index = this.versionMeta.getJSONObject("assetIndex");
+                AssetIndex aInd = new AssetIndex(index.getString("id"), index.getLong("size"), index.getLong("totalSize"), Utils.stringToURL(index.getString("url")), index.getString("sha1"));
+                this.assetIndex = aInd;
+                console.printInfo("Found assets download for version " + this.assetIndex);
+            }
+            else
+            {
+                this.assetIndex = null;
+            }
+            Version tmp = this;
+            while (tmp != null)
+            {
+                if (tmp.hasInheritedVersion())
+                {
+                    tmp = tmp.getInheritedVersion();
+                }
+                else
+                {
+                    if (tmp != this)
+                    {
+                        this.rootVer = tmp;
+                        console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
+                    }
+                    tmp = null;
+                }
+            }
+            JSONObject meta = this.getMeta();
+            if (meta.has("minecraftArguments"))
+            {
+                this.minecraftArguments = meta.getString("minecraftArguments");
+            }
+            if (meta.has("mainClass"))
+            {
+                this.mainClass = meta.getString("mainClass");
+            }
+            this.prepared = true;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            console.printError("Failed to prepare version " + this.getID());
+            this.prepared = false;
+            return false;
+        }
     }
     public boolean isPrepared()
     {
@@ -61,26 +305,6 @@ public final class Version {
     public File getPath()
     {
         return this.path;
-    }
-    public void fetchRoot()
-    {
-        Version tmp = this;
-        while (tmp != null)
-        {
-            if (tmp.hasInheritedVersion())
-            {
-                tmp = tmp.getInheritedVersion();
-            }
-            else
-            {
-                if (tmp != this)
-                {
-                    this.rootVer = null;
-                    console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
-                }
-                tmp = null;
-            }
-        }
     }
     public Version getRoot()
     {
@@ -113,35 +337,11 @@ public final class Version {
             return null;
         }
     }
-    public boolean fetchVersionMeta()
-    {
-        try
-        {
-            this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
     public JSONObject getMeta()
     {
         return this.versionMeta;
     }
-    public void fetchArguments()
-    {
-        JSONObject meta = this.getMeta();
-        if (meta.has("minecraftArguments"))
-        {
-            this.minecraftArguments = meta.getString("minecraftArguments");
-        }
-        if (meta.has("mainClass"))
-        {
-            this.mainClass = meta.getString("mainClass");
-        }
-    }
-    public boolean hasArguments()
+    public boolean hasMinecraftArguments()
     {
         return (this.minecraftArguments != null);
     }
@@ -149,35 +349,13 @@ public final class Version {
     {
         return (this.mainClass != null);
     }
-    public String getArguments()
+    public String getMinecraftArguments()
     {
         return this.minecraftArguments;
     }
     public String getMainClass()
     {
         return this.mainClass;
-    }
-    public void fetchInheritedVersion()
-    {
-        if (this.getOrigin() == VersionOrigin.LOCAL)
-        {
-            if (this.versionMeta.has("inheritsFrom"))
-            {
-                this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
-                if (this.inheritedVersion != null)
-                {
-                    console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
-                }
-            }
-            else
-            {
-                this.inheritedVersion = null;
-            }
-        }
-        else
-        {
-            this.inheritedVersion = null;
-        }
     }
     public Version getInheritedVersion()
     {
@@ -186,165 +364,6 @@ public final class Version {
     public boolean hasInheritedVersion()
     {
         return (this.inheritedVersion != null);
-    }
-    public void fetchLibraries()
-    {
-        console.printInfo("Fetching required versions libraries.");
-        JSONArray array = this.versionMeta.getJSONArray("libraries");
-        for (int i = 0; i < array.length(); i++)
-        {
-            OS currentOS = Utils.getPlatform();
-            JSONObject lib = array.getJSONObject(i);
-            String name = lib.getString("name");
-            URL url = null;
-            String sha1 = null;
-            long size = -1;
-            JSONArray rules = null;
-            Map<OS, LibraryRule> ruls = new HashMap();
-            boolean skip = false;
-            String native_class = null;
-            List<String> exclude = new ArrayList();
-            if (lib.has("rules"))
-            {
-                rules = lib.getJSONArray("rules");
-                List<LibraryRule> used = new ArrayList();
-                OS[] oses = OS.values();
-                for (int j = 0; j < rules.length(); j++)
-                {
-                    JSONObject rule = rules.getJSONObject(j);
-                    LibraryRule lr = LibraryRule.valueOf(rule.getString("action").toUpperCase());
-                    if (rule.has("os"))
-                    {
-                        JSONObject os = rule.getJSONObject("os");
-                        OS o = OS.valueOf(os.getString("name").toUpperCase());
-                        console.printInfo((ruls.containsKey(o) ? "Updated" : "Added") + " " + o.name() + " rule (" + lr.name() + ") in library " + name);
-                        ruls.put(o, lr);
-                    }
-                    else
-                    {
-                        for (OS o : oses)
-                        {
-                            if (!ruls.containsKey(o))
-                            {
-                                console.printInfo("Added " + o.name() + " rule (" + lr.name() + ") in library " + name);
-                                ruls.put(o, lr);
-                            }
-                        }
-                    }
-                    if (!used.contains(lr))
-                    {
-                        used.add(lr);
-                    }
-                }
-                if (used.contains(LibraryRule.ALLOW) && !used.contains(LibraryRule.DISALLOW))
-                {
-                    for (OS o : oses)
-                    {
-                        if (!ruls.containsKey(o))
-                        {
-                            ruls.put(o, LibraryRule.DISALLOW);
-                            console.printInfo("Added " + o.name() + " rule (" + LibraryRule.DISALLOW.name() + ") in library " + name);
-                        }
-                    }
-                }
-                else if (!used.contains(LibraryRule.ALLOW) && used.contains(LibraryRule.DISALLOW))
-                {
-                    for (OS o : oses)
-                    {
-                        if (!ruls.containsKey(o))
-                        {
-                            ruls.put(o, LibraryRule.ALLOW);
-                            console.printInfo("Added " + o.name() + " rule (" + LibraryRule.ALLOW.name() + ") in library " + name);
-                        }
-                    }
-                }
-                if (currentOS != OS.UNKNOWN)
-                {
-                    if (ruls.get(currentOS) != LibraryRule.ALLOW)
-                    {
-                        skip = true;
-                    }
-                }
-            }
-            if (!skip)
-            {
-                if (lib.has("natives"))
-                {
-                    JSONObject natives = lib.getJSONObject("natives");
-                    String osArch = (Utils.getOSArch().equals(OSArch.NEW) ? "64" : "32");
-                    native_class = (natives.has(currentOS.name().toLowerCase()) ? natives.getString(currentOS.name().toLowerCase()).replace("${arch}", osArch) : null);
-                }
-                if (lib.has("extract"))
-                {
-                    JSONObject extract = lib.getJSONObject("extract");
-                    if (extract.has("exclude"))
-                    {
-                        JSONArray exc = extract.getJSONArray("exclude");
-                        for (int k = 0; k < exc.length(); k++)
-                        {
-                            String value = exc.getString(k);
-                            if (!exclude.contains(value))
-                            {
-                                exclude.add(value);
-                                console.printInfo("Exclusion added for path " + value + " in " + name);
-                            }
-                        }
-                    }
-                }
-                if (lib.has("downloads"))
-                {
-                    JSONObject downloads = lib.getJSONObject("downloads");
-                    if (downloads.has("artifact"))
-                    {
-                        JSONObject artifact = downloads.getJSONObject("artifact");
-                        if (artifact.has("url"))
-                        {
-                            url = Utils.stringToURL(artifact.getString("url"));
-                        }
-                        if (artifact.has("sha1"))
-                        {
-                            sha1 = artifact.getString("sha1");
-                        }
-                        if (artifact.has("size"))
-                        {
-                            size = artifact.getLong("size");
-                        }
-                    }
-                    if (native_class != null)
-                    {
-                        if (downloads.has("classifiers"))
-                        {
-                            JSONObject classifiers = downloads.getJSONObject("classifiers");
-                            if (classifiers.has(native_class))
-                            {
-                                JSONObject clas = classifiers.getJSONObject(native_class);
-                                long nSize = (clas.has("size") ? clas.getLong("size") : -1);
-                                String nSha = (clas.has("sha1") ? clas.getString("sha1") : null);
-                                URL nURL = (clas.has("url") ? Utils.stringToURL(clas.getString("url")) : null);
-                                Native n = new Native(name, nURL, nSha, nSize, exclude, native_class);
-                                console.printInfo("Native " + name + (this.natives.containsKey(name) ? " updated" : " added"));
-                                this.natives.put(name, n);
-                            }
-                        }
-                    }
-                }
-                Library l = new Library(name, url, sha1, size, ruls);
-                if (!libraries.containsKey(name))
-                {
-                    libraries.put(name, l);
-                    console.printInfo("Library " + name + " loaded.");
-                }
-                else
-                {
-                    libraries.put(name, l);
-                    console.printInfo("Library " + name + " updated!.");
-                }
-            }
-            else
-            {
-                console.printInfo("Library " + name + " skipped because does not support the current OS (" + Utils.getPlatform().name() + ").");
-            }
-        }
     }
     public boolean hasLibraries()
     {
@@ -362,24 +381,20 @@ public final class Version {
     {
         return this.natives;
     }
+    public boolean hasAssetIndex()
+    {
+        return (this.assetIndex != null);
+    }
     public boolean hasAssets()
     {
-        return (this.assetID != null);
+        return (this.assets != null);
     }
-    public void fetchAssetID()
+    public String getAssets()
     {
-        if (this.versionMeta.has("assetIndex"))
-        {
-            this.assetID = this.versionMeta.getJSONObject("assetIndex").getString("id");
-            console.printInfo("Found asset dependency from version " + this.assetID);
-        }
-        else
-        {
-            this.assetID = null;
-        }
+        return this.assets;
     }
-    public String getAssetID()
+    public AssetIndex getAssetIndex()
     {
-        return this.assetID;
+        return this.assetIndex;
     }
 }

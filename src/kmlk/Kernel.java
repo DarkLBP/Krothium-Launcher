@@ -36,7 +36,7 @@ public final class Kernel {
     {
         return this.console;
     }
-    public void setWorkingDir(File dir, boolean autoCreate)
+    public void setWorkingDir(File dir)
     {
         if (!dir.exists() || !dir.isDirectory())
         {

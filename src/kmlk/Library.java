@@ -19,7 +19,19 @@ public final class Library {
     private final File path;
     private final Map<OS, LibraryRule> rules;
     private final Console console;
+    private final boolean legacy;
     
+    public Library(String name, URL url, Map<OS, LibraryRule> rules)
+    {
+        this.console = Kernel.getKernel().getConsole();
+        this.name = name;
+        this.url = url;
+        this.sha1 = null;
+        this.size = -1;
+        this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
+        this.rules = rules;
+        this.legacy = true;
+    }
     public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules)
     {
         this.console = Kernel.getKernel().getConsole();
@@ -27,8 +39,9 @@ public final class Library {
         this.url = url;
         this.sha1 = sha1;
         this.size = size;
-        this.path = new File("libraries" + File.separator + Utils.getArtifactFile(this.name, "jar"));
+        this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
         this.rules = rules;
+        this.legacy = false;
     }
     public File getPath()
     {
@@ -68,5 +81,9 @@ public final class Library {
     public boolean isDownloadable()
     {
         return (this.url != null);
+    }
+    public boolean isLegacy()
+    {
+        return this.legacy;
     }
 }

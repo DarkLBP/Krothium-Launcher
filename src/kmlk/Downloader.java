@@ -3,6 +3,7 @@ package kmlk;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,85 +31,93 @@ public class Downloader {
         console.printInfo("Downloading assets for version: " + ver.getID());
         try
         {
-            JSONObject verMeta = ver.getMeta();
-            String assetID = ver.getAssetID();
-            long length = verMeta.getJSONObject("assetIndex").getLong("totalSize");
-            long assetFileLength = verMeta.getJSONObject("assetIndex").getLong("size");
-            long downloaded = 0;
-            long validated = 0;
-            boolean localIndex = false;
-            File indexJSON = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
-            URL assetsURL = null;
-            if (indexJSON.exists() && indexJSON.isFile())
+            if (ver.hasAssetIndex())
             {
-                if (indexJSON.length() == assetFileLength)
+                JSONObject verMeta = ver.getMeta();
+                AssetIndex index = ver.getAssetIndex();
+                String assetID = index.getID();
+                long length = index.getTotalSize();
+                long assetFileLength = index.getSize();
+                long downloaded = 0;
+                long validated = 0;
+                boolean localIndex = false;
+                File indexJSON = new File(Kernel.getKernel().getWorkingDir() + File.separator + index.getJSONFile());
+                URL assetsURL = null;
+                if (indexJSON.exists() && indexJSON.isFile())
                 {
-                    assetsURL = indexJSON.toURI().toURL();
-                    localIndex = true;
-                } 
-            }
-            assetsURL = (assetsURL == null) ? Utils.stringToURL(ver.getMeta().getJSONObject("assetIndex").getString("url")) : assetsURL;
-            if (!localIndex)
-            {
-                if (Utils.downloadFile(assetsURL, indexJSON))
-                {
-                    console.printInfo("Asset index for version " + assetID + " created.");
-                }
-                else
-                {
-                    console.printError("Failed to create asset index for version " + assetID);
-                }
-            }
-            JSONObject root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-            JSONObject objects = root.getJSONObject("objects");
-            Set keys = objects.keySet();
-            Iterator it2 = keys.iterator();
-            List<String> processedHashes = new ArrayList();
-            while (it2.hasNext())
-            {
-                String object = it2.next().toString();
-                console.printInfo("Downloading " + object);
-                JSONObject o = objects.getJSONObject(object);
-                String hash = o.getString("hash");
-                long size = o.getLong("size");
-                URL downloadURL = Utils.stringToURL(Constants.resourcesRoot + hash.substring(0,2) + "/" + hash);
-                File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
-                boolean localValid = false;
-                if (destPath.exists() && destPath.isFile())
-                {
-                    if (destPath.length() == size)
+                    if (indexJSON.length() == assetFileLength)
                     {
-                        localValid = true;
-                    }
+                        assetsURL = indexJSON.toURI().toURL();
+                        localIndex = true;
+                    } 
                 }
-                if (!localValid)
+                assetsURL = (assetsURL == null) ? index.getURL() : assetsURL;
+                if (!localIndex)
                 {
-                    int tries = 0;
-                    while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.downloadTries))
+                    if (Utils.downloadFile(assetsURL, indexJSON))
                     {
-                        tries++;
-                    }
-                    if (tries == Constants.downloadTries)
-                    {
-                        console.printError("Failed to download asset file: " + object);
+                        console.printInfo("Asset index for version " + assetID + " created.");
                     }
                     else
                     {
-                        downloaded += size;
+                        console.printError("Failed to create asset index for version " + assetID);
                     }
                 }
-                else
+                JSONObject root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
+                JSONObject objects = root.getJSONObject("objects");
+                Set keys = objects.keySet();
+                Iterator it2 = keys.iterator();
+                List<String> processedHashes = new ArrayList();
+                while (it2.hasNext())
                 {
-                    console.printInfo("Asset file " + object + " found locally and it is valid.");
-                    if (!processedHashes.contains(hash))
+                    String object = it2.next().toString();
+                    console.printInfo("Downloading " + object);
+                    JSONObject o = objects.getJSONObject(object);
+                    String hash = o.getString("hash");
+                    long size = o.getLong("size");
+                    URL downloadURL = Utils.stringToURL(Constants.resourcesRoot + hash.substring(0,2) + "/" + hash);
+                    File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
+                    boolean localValid = false;
+                    if (destPath.exists() && destPath.isFile())
                     {
-                        processedHashes.add(hash);
-                        validated += size;
+                        if (destPath.length() == size)
+                        {
+                            localValid = true;
+                        }
                     }
+                    if (!localValid)
+                    {
+                        int tries = 0;
+                        while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.downloadTries))
+                        {
+                            tries++;
+                        }
+                        if (tries == Constants.downloadTries)
+                        {
+                            console.printError("Failed to download asset file: " + object);
+                        }
+                        else
+                        {
+                            downloaded += size;
+                        }
+                    }
+                    else
+                    {
+                        console.printInfo("Asset file " + object + " found locally and it is valid.");
+                        if (!processedHashes.contains(hash))
+                        {
+                            processedHashes.add(hash);
+                            validated += size;
+                        }
+                    }
+                    this.progressDownload = (int)(downloaded * 100 / length);
+                    this.progressValid = (int)(validated * 100 / length);
+                    console.printInfo("Downloaded: " + this.progressDownload + "% | Validated " + this.progressValid + "% | Total: " + (this.progressDownload + this.progressValid) + "%");
                 }
-                this.progressDownload = (int)(downloaded * 100 / length);
-                this.progressValid = (int)(validated * 100 / length);
-                console.printInfo("Downloaded: " + this.progressDownload + "% | Validated " + this.progressValid + "% | Total: " + (this.progressDownload + this.progressValid) + "%");
+            }
+            else
+            {
+                console.printError("Root version " + ver.getID() + " doesn't have AssetIndex.");
             }
         }
         catch (Exception ex)
@@ -211,9 +220,33 @@ public class Downloader {
                         boolean localValid = false;
                         if (libPath.exists() && libPath.isFile())
                         {
-                            if (libPath.length() == lib.getSize() && Utils.verifyChecksum(libPath, sha1))
+                            if (lib.isLegacy())
                             {
-                                localValid = true;
+                                try
+                                {
+                                    URLConnection con = lib.getURL().openConnection();
+                                    int conLength = con.getContentLength();
+                                    if (libPath.length() == conLength)
+                                    {
+                                        localValid = true;
+                                    }
+                                    else if (conLength < 0)
+                                    {
+                                        localValid = true;
+                                        console.printInfo("Library not found remotelly so let's say it's valid.");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    localValid = false;
+                                }
+                            }
+                            else
+                            {
+                                if (libPath.length() == lib.getSize() && Utils.verifyChecksum(libPath, sha1))
+                                {
+                                    localValid = true;
+                                }
                             }
                         }
                         if (!localValid)

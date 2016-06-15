@@ -43,6 +43,30 @@ public class GameLauncher {
         console.printInfo("Exctracting natives.");
         List<String> gameArgs = new ArrayList();
         gameArgs.add(Utils.getJavaDir());
+        if (!p.hasJavaArgs())
+        {
+            if (Utils.getOSArch().equals(OSArch.OLD))
+            {
+                gameArgs.add("-Xmx512M");
+            }
+            else
+            {
+                gameArgs.add("-Xmx1G");
+            }
+            gameArgs.add("-XX:+UseConcMarkSweepGC");
+            gameArgs.add("-XX:+CMSIncrementalMode");
+            gameArgs.add("-XX:-UseAdaptiveSizePolicy");
+            gameArgs.add("-Xmn128M");
+        }
+        else
+        {
+            String javaArgs = p.getJavaArgs();
+            String[] args = javaArgs.split(" ");
+            for (String arg : args)
+            {
+                gameArgs.add(arg);
+            }
+        }
         gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
         gameArgs.add("-cp");
         String libraries = "";
@@ -135,7 +159,7 @@ public class GameLauncher {
         }
         File verPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + ver.getPath());
         libraries += verPath.getAbsolutePath();
-        String assetsID = ver.getAssetID();
+        String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
         if (assetsID.equals("legacy"))
@@ -189,14 +213,14 @@ public class GameLauncher {
         gameArgs.add(ver.getMainClass());
         Authentication a = Kernel.getKernel().getAuthentication();
         User u = a.getSelectedUser();
-        String versionArgs = ver.getArguments();
+        String versionArgs = ver.getMinecraftArguments();
         versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());
         versionArgs = versionArgs.replace("${version_name}", ver.getID());
         versionArgs = versionArgs.replace("${game_directory}", workingDir.getAbsolutePath());
         versionArgs = versionArgs.replace("${assets_root}", assetsDir.getAbsolutePath());
         versionArgs = versionArgs.replace("${game_assets}", assetsDir.getAbsolutePath());
         versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
-        versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString());
+        versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
         versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
         versionArgs = versionArgs.replace("${version_type}", ver.getType().name());
         if (u.hasProperties())
@@ -220,9 +244,9 @@ public class GameLauncher {
         versionArgs = versionArgs.replace("${user_type}", "mojang");
         versionArgs = versionArgs.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
         String[] argsSplit = versionArgs.split(" ");
-        for (int i = 0; i < argsSplit.length; i++)
+        for (String arg : argsSplit)
         {
-            gameArgs.add(argsSplit[i]);
+            gameArgs.add(arg);
         }
         if (p.hasResolution())
         {
@@ -232,10 +256,10 @@ public class GameLauncher {
             gameArgs.add(String.valueOf(p.getResolutionHeight()));
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
+        pb.directory(workingDir);
         try
         {
             Process process = pb.start();
-            process.waitFor();
         }
         catch (Exception ex)
         {

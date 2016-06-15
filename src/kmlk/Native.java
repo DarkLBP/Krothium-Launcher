@@ -23,7 +23,7 @@ public class Native {
         this.sha1 = sha1;
         this.size = size;
         this.exclude = exclude;
-        String name_tmp = Utils.getArtifactFile(this.name, "jar").toString();
+        String name_tmp = Utils.getArtifactPath(this.name, "jar");
         this.path = new File("libraries" + File.separator + name_tmp.replace(".jar", "-" + classifier + ".jar"));
     }
     public String getName()

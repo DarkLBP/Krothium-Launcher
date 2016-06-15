@@ -143,10 +143,10 @@ public class Utils {
         String realArch = arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? "64" : "32";
         return (realArch.equals("32") ? OSArch.OLD : OSArch.NEW);
     }
-    public static File getArtifactFile(String artifact, String ext) {
+    public static String getArtifactPath(String artifact, String ext) {
 
         final String[] parts = artifact.split(":", 3);
-        return new File(String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]));
+        return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
     }
     public static UUID stringToUUID(String s)
     {
