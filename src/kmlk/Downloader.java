@@ -27,10 +27,6 @@ public class Downloader {
     public void downloadAssets(Version v)
     {
         Version ver = (v.getRoot() == null) ? v : v.getRoot();
-        if (!ver.isPrepared())
-        {
-            ver.prepare();
-        }
         console.printInfo("Downloading assets for version: " + ver.getID());
         try
         {
@@ -122,10 +118,6 @@ public class Downloader {
     }
     public void downloadVersion(Version ver)
     {
-        if (!ver.isPrepared())
-        {
-            ver.prepare();
-        }
         Version v = (ver.getRoot() == null) ? ver : ver.getRoot();
         console.printInfo("Downloading version file: " + ver.getID() + ".jar");
         JSONObject root = v.getMeta();
@@ -201,10 +193,6 @@ public class Downloader {
         Version v = ver;
         while (v != null)
         {
-            if (!v.isPrepared())
-            {
-                v.prepare();
-            }
             console.printInfo("Downloading required libraries for version " + v.getID());
             if (v.hasLibraries())
             {

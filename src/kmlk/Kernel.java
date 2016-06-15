@@ -54,7 +54,11 @@ public final class Kernel {
     }
     public Profile getSelectedProfile()
     {
-        return this.profiles.getSelected();
+        return this.profiles.getSelectedProfile();
+    }
+    public void setSelectedProfile(Profile p)
+    {
+        this.profiles.setSelectedProfile(p);
     }
     public boolean updateProfile(Profile p)
     {

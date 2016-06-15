@@ -45,8 +45,13 @@ public class Profile {
     {
         this.name = newName;
     }
-    public void setVersion(Version ver, Kernel k)
+    public void setVersion(Version ver)
     {
+        if (!ver.isPrepared())
+        {
+            ver.prepare();
+        }
+        ver.prepare();
         this.version = ver;
     }
     public String getName()

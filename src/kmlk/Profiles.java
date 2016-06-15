@@ -249,9 +249,13 @@ public class Profiles {
     {
         return profiles.size();
     }
-    public Profile getSelected()
+    public Profile getSelectedProfile()
     {
         return this.selected;
+    }
+    public void setSelectedProfile(Profile p)
+    {
+        this.selected = p;
     }
     public JSONObject toJSON()
     {

@@ -73,8 +73,11 @@ public final class Version {
             }
             else
             {
-                this.rootVer = tmp;
-                console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
+                if (tmp != this)
+                {
+                    this.rootVer = null;
+                    console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
+                }
                 tmp = null;
             }
         }
@@ -158,10 +161,13 @@ public final class Version {
     {
         if (this.getOrigin() == VersionOrigin.LOCAL)
         {
-            JSONObject meta = this.getMeta();
-            if (meta.has("inheritsFrom"))
+            if (this.versionMeta.has("inheritsFrom"))
             {
-                this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(meta.getString("inheritsFrom"));
+                this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
+                if (this.inheritedVersion != null)
+                {
+                    console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
+                }
             }
             else
             {
@@ -171,10 +177,6 @@ public final class Version {
         else
         {
             this.inheritedVersion = null;
-        }
-        if (this.inheritedVersion != null)
-        {
-            console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
         }
     }
     public Version getInheritedVersion()
@@ -188,8 +190,7 @@ public final class Version {
     public void fetchLibraries()
     {
         console.printInfo("Fetching required versions libraries.");
-        JSONObject root = this.getMeta();
-        JSONArray array = root.getJSONArray("libraries");
+        JSONArray array = this.versionMeta.getJSONArray("libraries");
         for (int i = 0; i < array.length(); i++)
         {
             OS currentOS = Utils.getPlatform();
@@ -367,10 +368,9 @@ public final class Version {
     }
     public void fetchAssetID()
     {
-        JSONObject verMeta = this.getMeta();
-        if (verMeta.has("assetIndex"))
+        if (this.versionMeta.has("assetIndex"))
         {
-            this.assetID = verMeta.getJSONObject("assetIndex").getString("id");
+            this.assetID = this.versionMeta.getJSONObject("assetIndex").getString("id");
             console.printInfo("Found asset dependency from version " + this.assetID);
         }
         else
