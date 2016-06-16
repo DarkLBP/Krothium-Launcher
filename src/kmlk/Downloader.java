@@ -227,49 +227,37 @@ public class Downloader {
                                 try
                                 {
                                     String urlRaw = lib.getURL().toString();
-                                    int response = -1;
+                                    int responseCode = -1;
+                                    int contentLength = -1;
                                     if (urlRaw.startsWith("https"))
                                     {
                                         HttpsURLConnection con = (HttpsURLConnection)lib.getURL().openConnection();
                                         con.connect();
-                                        response = con.getResponseCode();
-                                        if (response == 200)
-                                        {
-                                            int length = con.getContentLength();
-                                            if (libPath.length() == length)
-                                            {
-                                                localValid = true;
-                                            }
-                                        }
-                                        else if (response == 404)
-                                        {
-                                            localValid = true;
-                                            console.printInfo("Library not found remotelly so let's say it's valid.");
-                                        }
-                                        
+                                        responseCode = con.getResponseCode();
+                                        contentLength = con.getContentLength();
                                     }
                                     else if (urlRaw.startsWith("http"))
                                     {
                                         HttpURLConnection con = (HttpURLConnection)lib.getURL().openConnection();
                                         con.connect();
-                                        response = con.getResponseCode();
-                                        if (response == 200)
-                                        {
-                                            int length = con.getContentLength();
-                                            if (libPath.length() == length)
-                                            {
-                                                localValid = true;
-                                            }
-                                        }
-                                        else if (response == 404)
-                                        {
-                                            localValid = true;
-                                            console.printInfo("Library " + libPath.getName() + " not found remotelly so let's say it's valid.");
-                                        }
+                                        responseCode = con.getResponseCode();
+                                        contentLength = con.getContentLength();
                                     }
                                     else
                                     {
                                         console.printError("Unsupported protocol type in " + urlRaw);
+                                    }
+                                    if (responseCode == 200)
+                                    {
+                                        if (libPath.length() == contentLength)
+                                        {
+                                            localValid = true;
+                                        }
+                                    }
+                                    else if (responseCode == 404)
+                                    {
+                                        localValid = true;
+                                        console.printInfo("Library not found remotelly so let's say it's valid.");
                                     }
                                 }
                                 catch (Exception ex)
