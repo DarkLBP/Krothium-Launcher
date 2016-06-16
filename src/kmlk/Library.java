@@ -17,7 +17,6 @@ public final class Library {
     private final URL url;
     private final Map<OS, String> natives = new HashMap();
     private final File path;
-    private final Map<OS, LibraryRule> rules;
     private final Console console;
     private final boolean legacy;
     
@@ -29,7 +28,6 @@ public final class Library {
         this.sha1 = null;
         this.size = -1;
         this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
-        this.rules = rules;
         this.legacy = true;
     }
     public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules)
@@ -40,7 +38,6 @@ public final class Library {
         this.sha1 = sha1;
         this.size = size;
         this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
-        this.rules = rules;
         this.legacy = false;
     }
     public File getPath()
@@ -62,21 +59,6 @@ public final class Library {
     public long getSize()
     {
         return this.size;
-    }
-    public LibraryRule getRuleByOS(OS os)
-    {
-        if (this.rules.containsKey(os))
-        {
-            return this.rules.get(os);
-        }
-        else
-        {
-            return LibraryRule.ALLOW;
-        }
-    }
-    public boolean hasRules()
-    {
-        return (this.rules.size() > 0);
     }
     public boolean isDownloadable()
     {

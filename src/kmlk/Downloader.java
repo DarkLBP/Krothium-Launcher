@@ -2,6 +2,7 @@ package kmlk;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.net.ssl.HttpsURLConnection;
 import org.json.JSONObject;
 
 /**
@@ -213,7 +215,7 @@ public class Downloader {
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
                     console.printInfo("Downloading library " + lib_name);
-                    if (lib.isDownloadable() && lib.getRuleByOS(Utils.getPlatform()) == LibraryRule.ALLOW)
+                    if (lib.isDownloadable())
                     {
                         String sha1 = lib.getSHA1();
                         File libPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
@@ -224,16 +226,50 @@ public class Downloader {
                             {
                                 try
                                 {
-                                    URLConnection con = lib.getURL().openConnection();
-                                    int conLength = con.getContentLength();
-                                    if (libPath.length() == conLength)
+                                    String urlRaw = lib.getURL().toString();
+                                    int response = -1;
+                                    if (urlRaw.startsWith("https"))
                                     {
-                                        localValid = true;
+                                        HttpsURLConnection con = (HttpsURLConnection)lib.getURL().openConnection();
+                                        con.connect();
+                                        response = con.getResponseCode();
+                                        if (response == 200)
+                                        {
+                                            int length = con.getContentLength();
+                                            if (libPath.length() == length)
+                                            {
+                                                localValid = true;
+                                            }
+                                        }
+                                        else if (response == 404)
+                                        {
+                                            localValid = true;
+                                            console.printInfo("Library not found remotelly so let's say it's valid.");
+                                        }
+                                        
                                     }
-                                    else if (conLength < 0)
+                                    else if (urlRaw.startsWith("http"))
                                     {
-                                        localValid = true;
-                                        console.printInfo("Library not found remotelly so let's say it's valid.");
+                                        HttpURLConnection con = (HttpURLConnection)lib.getURL().openConnection();
+                                        con.connect();
+                                        response = con.getResponseCode();
+                                        if (response == 200)
+                                        {
+                                            int length = con.getContentLength();
+                                            if (libPath.length() == length)
+                                            {
+                                                localValid = true;
+                                            }
+                                        }
+                                        else if (response == 404)
+                                        {
+                                            localValid = true;
+                                            console.printInfo("Library " + libPath.getName() + " not found remotelly so let's say it's valid.");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        console.printError("Unsupported protocol type in " + urlRaw);
                                     }
                                 }
                                 catch (Exception ex)
