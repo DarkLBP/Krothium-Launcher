@@ -294,4 +294,8 @@ public class GameLauncher {
         }
         return false;
     }
+    public void forceQuit()
+    {
+        this.process.destroyForcibly();
+    }
 }
