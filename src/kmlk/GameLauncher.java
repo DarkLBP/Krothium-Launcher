@@ -5,6 +5,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 public class GameLauncher {
     
     private final Console console;
+    private Process process;
     
     public GameLauncher()
     {
@@ -259,11 +262,36 @@ public class GameLauncher {
         pb.directory(workingDir);
         try
         {
-            Process process = pb.start();
+            this.process = pb.start();
+            InputStreamReader isr = new InputStreamReader(this.process.getInputStream());
+            BufferedReader br = new BufferedReader(isr);
+            Thread t = new Thread(){
+                @Override
+                public void run()
+                {
+                    String lineRead;
+                    try {
+                        while ((lineRead = br.readLine()) != null) {
+                            System.out.println(lineRead);
+                        }
+                    } catch (IOException ex) {
+                        console.printError("Process stream closed unexpectedly.");
+                    }
+                }
+            };
+            t.start();
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
+            console.printError("Game returned an error code.");
         }
+    }
+    public boolean isStarted()
+    {
+        if (this.process != null)
+        {
+            return this.process.isAlive();
+        }
+        return false;
     }
 }
