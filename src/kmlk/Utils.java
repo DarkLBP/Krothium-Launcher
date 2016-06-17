@@ -128,10 +128,10 @@ public class Utils {
     public static boolean writeToFile(String o, File f)
     {
         try {
-         FileOutputStream out = new FileOutputStream(f);
-         out.write(o.getBytes());
-         out.close();
-         return true;
+            FileOutputStream out = new FileOutputStream(f);
+            out.write(o.getBytes());
+            out.close();
+            return true;
         } catch (Exception ex) {
             return false;
         }     
@@ -171,7 +171,6 @@ public class Utils {
         OutputStream out = con.getOutputStream();
         out.write(postAsBytes);
         out.close();
-        int responseCode = con.getResponseCode();
         InputStream i = null;
         StringBuilder response = new StringBuilder();
         try
