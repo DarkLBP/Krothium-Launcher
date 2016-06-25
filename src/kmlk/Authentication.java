@@ -70,7 +70,7 @@ public class Authentication {
     {
         return this.userDatabase.get(this.selectedProfile);
     }
-    public void authenticate()
+    public void authenticate() throws AuthenticationException
     {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
@@ -84,48 +84,64 @@ public class Authentication {
             request.put("clientToken", this.clientToken);
         }
         request.put("requestUser", true);
+        String response = null;
         try {
-            JSONObject response = new JSONObject(Utils.sendJSONPost(Constants.authAuthenticate, request.toString()));
-            if (!response.has("error"))
+            response = Utils.sendJSONPost(Constants.authAuthenticate, request.toString());
+        } catch (Exception ex) {
+            throw new AuthenticationException("Failed to send request to authentication server.");
+        }
+        if (response == null || response.isEmpty())
+        {
+            throw new AuthenticationException("Authentication server does not respond.");
+        }
+        JSONObject r = new JSONObject(response);
+        if (!r.has("error"))
+        {
+            this.clientToken = r.getString("clientToken");
+            String accessToken = (r.has("accessToken")) ? r.getString(("accessToken")) : null;
+            String profileID = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("id") : null;
+            String profileName = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("name") : null;
+            String userID = (r.has("user")) ? r.getJSONObject("user").getString("id") : null;
+            JSONObject user = r.getJSONObject("user");
+            Map<String, String> properties = new HashMap();
+            if (user.has("userProperties"))
             {
-                this.clientToken = response.getString("clientToken");
-                String accessToken = (response.has("accessToken")) ? response.getString(("accessToken")) : null;
-                String profileID = (response.has("selectedProfile")) ? response.getJSONObject("selectedProfile").getString("id") : null;
-                String profileName = (response.has("selectedProfile")) ? response.getJSONObject("selectedProfile").getString("name") : null;
-                String userID = (response.has("user")) ? response.getJSONObject("user").getString("id") : null;
-                JSONObject user = response.getJSONObject("user");
-                Map<String, String> properties = new HashMap();
-                if (user.has("userProperties"))
+                JSONArray props = user.getJSONArray("userProperties");
+                if (props.length() > 0)
                 {
-                    JSONArray props = user.getJSONArray("userProperties");
-                    if (props.length() > 0)
+                    for (int i = 0; i < props.length(); i++)
                     {
-                        for (int i = 0; i < props.length(); i++)
+                        JSONObject p = props.getJSONObject(i);
+                        if (p.has("name") && p.has("value"))
                         {
-                            JSONObject p = props.getJSONObject(i);
-                            if (p.has("name") && p.has("value"))
-                            {
-                                properties.put(p.getString("name"), p.getString("value"));
-                            }
+                            properties.put(p.getString("name"), p.getString("value"));
                         }
                     }
                 }
-                User u = new User(profileName, accessToken, userID, this.username, Utils.stringToUUID(profileID), properties);
-                this.addToDatabase(profileID, u);
-                this.selectedProfile = profileID;
-                this.authenticated = true;
+            }
+            User u = new User(profileName, accessToken, userID, this.username, Utils.stringToUUID(profileID), properties);
+            this.addToDatabase(profileID, u);
+            this.selectedProfile = profileID;
+            this.authenticated = true;
+        }
+        else
+        {
+            this.authenticated = false;
+            if (r.has("errorMessage"))
+            {
+                throw new AuthenticationException(r.getString("errorMessage"));
+            }
+            else if (r.has("cause"))
+            {
+                throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
             }
             else
             {
-                this.authenticated = false;
+                throw new AuthenticationException(r.getString("error"));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            console.printError("Failed to authenticate.");
-            this.authenticated = false;
         }
     }
-    public void refresh()
+    public void refresh() throws AuthenticationException
     {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
@@ -135,28 +151,44 @@ public class Authentication {
         request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
         request.put("requestUser", true);
+        String response = null;
         try {
-            JSONObject response = new JSONObject(Utils.sendJSONPost(Constants.authRefresh, request.toString()));
-            if (!response.has("error"))
+            response = Utils.sendJSONPost(Constants.authRefresh, request.toString());
+        } catch (Exception ex) {
+            throw new AuthenticationException("Failed to send request to authentication server.");
+        }
+        if (response == null || response.isEmpty())
+        {
+            throw new AuthenticationException("Authentication server does not respond.");
+        }
+        JSONObject r = new JSONObject(response);
+        if (!r.has("error"))
+        {
+            this.clientToken = (r.has("clientToken")) ? r.getString("clientToken") : this.clientToken;
+            if (r.has("accessToken"))
             {
-                this.clientToken = (response.has("clientToken")) ? response.getString("clientToken") : this.clientToken;
-                if (response.has("accessToken"))
-                {
-                    u.updateAccessToken(response.getString("accessToken"));
-                }
-                this.authenticated = true;
+                u.updateAccessToken(r.getString("accessToken"));
+            }
+            this.authenticated = true;
+        }
+        else
+        {
+            this.authenticated = false;
+            if (r.has("errorMessage"))
+            {
+                throw new AuthenticationException(r.getString("errorMessage"));
+            }
+            else if (r.has("cause"))
+            {
+                throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
             }
             else
             {
-                this.authenticated = false;
+                throw new AuthenticationException(r.getString("error"));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            console.printError("Failed to authenticate.");
-            this.authenticated = false;
         }
     }
-    public void validate()
+    public void validate() throws AuthenticationException
     {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
@@ -165,25 +197,39 @@ public class Authentication {
         agent.put("version", 1);
         request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
+        String response = null;
         try {
-            String response = Utils.sendJSONPost(Constants.authValidate, request.toString());
-            if (response.length() == 0)
+            response = Utils.sendJSONPost(Constants.authValidate, request.toString());
+        } catch (Exception ex) {
+            throw new AuthenticationException("Failed to send request to authentication server.");
+        }
+        if (response == null)
+        {
+            throw new AuthenticationException("Authentication server does not respond.");
+        }
+        if (response.isEmpty())
+        {
+            this.authenticated = true;
+        }
+        else
+        {
+            this.authenticated = false;
+            JSONObject o = new JSONObject(response);
+            if (o.has("error"))
             {
-                this.authenticated = true;
-            }
-            else
-            {
-                this.authenticated = false;
-                JSONObject o = new JSONObject(response);
-                if (o.has("error"))
+                if (o.has("errorMessage"))
                 {
-                    //Classify error
+                    throw new AuthenticationException(o.getString("errorMessage"));
+                }
+                else if (o.has("cause"))
+                {
+                    throw new AuthenticationException(o.getString("error") + " caused by " + o.getString("cause"));
+                }
+                else
+                {
+                    throw new AuthenticationException(o.getString("error"));
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            console.printError("Failed to authenticate.");
-            this.authenticated = false;
         }
     }
     public boolean isAuthenticated()
