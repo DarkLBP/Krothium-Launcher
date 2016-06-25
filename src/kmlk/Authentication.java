@@ -17,8 +17,6 @@ import org.json.JSONObject;
 public class Authentication {
     private boolean authenticated = false;
     private final Console console;
-    protected String username;
-    protected String password;
     protected String clientToken;
     protected Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
@@ -26,16 +24,6 @@ public class Authentication {
     public Authentication()
     {
         this.console = Kernel.getKernel().getConsole();
-    }
-    public void setCredentials(String user, String pass)
-    {
-        this.username = user;
-        this.password = pass;
-    }
-    public void clearCredentials()
-    {
-        this.username = null;
-        this.password = null;
     }
     public void addToDatabase(String profileID, User u)
     {
@@ -70,15 +58,15 @@ public class Authentication {
     {
         return this.userDatabase.get(this.selectedProfile);
     }
-    public void authenticate() throws AuthenticationException
+    public void authenticate(final String username, final String password) throws AuthenticationException
     {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("agent", agent);
-        request.put("username", this.username);
-        request.put("password", this.password);
+        request.put("username", username);
+        request.put("password", password);
         if (this.clientToken != null)
         {
             request.put("clientToken", this.clientToken);
@@ -119,7 +107,7 @@ public class Authentication {
                     }
                 }
             }
-            User u = new User(profileName, accessToken, userID, this.username, Utils.stringToUUID(profileID), properties);
+            User u = new User(profileName, accessToken, userID, username, Utils.stringToUUID(profileID), properties);
             this.addToDatabase(profileID, u);
             this.selectedProfile = profileID;
             this.authenticated = true;
