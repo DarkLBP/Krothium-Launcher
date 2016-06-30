@@ -221,14 +221,7 @@ public class GameLauncher {
         if (p.hasGameDir())
         {
             File gameDir = p.getGameDir();
-            if (gameDir.exists())
-            {
-                if (!gameDir.isDirectory())
-                {
-                    gameDir.mkdirs();
-                }
-            }
-            else
+            if (!gameDir.exists() || !gameDir.isDirectory())
             {
                 gameDir.mkdirs();
             }
