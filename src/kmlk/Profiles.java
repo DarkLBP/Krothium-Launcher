@@ -201,19 +201,17 @@ public class Profiles {
                     if (this.profiles.containsKey(selProfile))
                     {
                         console.printInfo("Profile " + selProfile + " marked as selected.");
-                        this.selected = this.profiles.get(selProfile);
+                        this.setSelectedProfile(this.profiles.get(selProfile));
                     }
                     else
                     {
                         console.printError("Invalid profile selected! Using first loaded (" + first.getName() + ")");
-                        this.selected = first;
+                        this.setSelectedProfile(first);
                     }
-                    this.selected.getVersion().prepare();
                 }
                 else
                 {
                     this.createDefaultProfile();
-                    this.selected = this.getProfileByName("(Default)");
                 }
             }
             catch (Exception ex)
@@ -225,7 +223,6 @@ public class Profiles {
         {
             console.printError("Launcher profiles file not found. Using defaults.");
             this.createDefaultProfile();
-            this.selected = this.getProfileByName("(Default)");
         }
     }
     private boolean createDefaultProfile()
@@ -236,7 +233,9 @@ public class Profiles {
             console.printError("Default profile already exists.");
             return false;
         }
-        return this.addProfile(p);   
+        this.addProfile(p);
+        this.setSelectedProfile(p);
+        return true;   
     }
     public Profile getProfileByName(String pName)
     {
@@ -256,6 +255,10 @@ public class Profiles {
     }
     public void setSelectedProfile(Profile p)
     {
+        if (!p.getVersion().isPrepared())
+        {
+            p.getVersion().prepare();
+        }
         this.selected = p;
     }
     public JSONObject toJSON()
