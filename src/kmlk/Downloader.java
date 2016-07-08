@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 import org.json.JSONObject;
 
@@ -23,12 +26,15 @@ public class Downloader {
     private final Console console;
     private int progressDownload = 0;
     private int progressValid = 0;
+    private long downloaded = 0;
+    private long validated = 0;
     public Downloader()
     {
         this.console = Kernel.getKernel().getConsole();
     }
     public void downloadAssets(Version v)
     {
+        ExecutorService pool = Executors.newFixedThreadPool(5);
         Version ver = (v.getRoot() == null) ? v : v.getRoot();
         console.printInfo("Downloading assets for version: " + ver.getID());
         try
@@ -40,8 +46,8 @@ public class Downloader {
                 String assetID = index.getID();
                 long length = index.getTotalSize();
                 long assetFileLength = index.getSize();
-                long downloaded = 0;
-                long validated = 0;
+                this.downloaded = 0;
+                this.validated = 0;
                 boolean localIndex = false;
                 File indexJSON = new File(Kernel.getKernel().getWorkingDir() + File.separator + index.getJSONFile());
                 URL assetsURL = null;
@@ -73,7 +79,6 @@ public class Downloader {
                 while (it2.hasNext())
                 {
                     String object = it2.next().toString();
-                    console.printInfo("Downloading " + object);
                     JSONObject o = objects.getJSONObject(object);
                     String hash = o.getString("hash");
                     long size = o.getLong("size");
@@ -89,19 +94,30 @@ public class Downloader {
                     }
                     if (!localValid)
                     {
-                        int tries = 0;
-                        while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.downloadTries))
-                        {
-                            tries++;
-                        }
-                        if (tries == Constants.downloadTries)
-                        {
-                            console.printError("Failed to download asset file: " + object);
-                        }
-                        else
-                        {
-                            downloaded += size;
-                        }
+                        Runnable t = new Runnable(){
+                        @Override
+                            public void run()
+                            {
+                                console.printInfo("Downloading " + object);
+                                int tries = 0;
+                                while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.downloadTries))
+                                {
+                                    tries++;
+                                }
+                                if (tries == Constants.downloadTries)
+                                {
+                                    console.printError("Failed to download asset file: " + object);
+                                }
+                                else
+                                {
+                                    downloaded += size;
+                                }
+                                progressDownload = (int)(downloaded * 100 / length);
+                                progressValid = (int)(validated * 100 / length);
+                                console.printInfo("Downloaded: " + progressDownload + "% | Validated " + progressValid + "% | Total: " + (progressDownload + progressValid) + "%");
+                            }
+                        };
+                        pool.execute(t);
                     }
                     else
                     {
@@ -111,10 +127,16 @@ public class Downloader {
                             processedHashes.add(hash);
                             validated += size;
                         }
+                        progressDownload = (int)(downloaded * 100 / length);
+                        progressValid = (int)(validated * 100 / length);
+                        console.printInfo("Downloaded: " + progressDownload + "% | Validated " + progressValid + "% | Total: " + (progressDownload + progressValid) + "%");
                     }
-                    this.progressDownload = (int)(downloaded * 100 / length);
-                    this.progressValid = (int)(validated * 100 / length);
-                    console.printInfo("Downloaded: " + this.progressDownload + "% | Validated " + this.progressValid + "% | Total: " + (this.progressDownload + this.progressValid) + "%");
+                }
+                pool.shutdown();
+                try {
+                    pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                } catch (InterruptedException e) {
+                    console.printError("Error has produced in dowload pool.");
                 }
             }
             else
@@ -124,6 +146,7 @@ public class Downloader {
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
             console.printError("Failed to download assets for version: " + ver.getID());
         }
     }
