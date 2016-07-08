@@ -146,7 +146,6 @@ public class Downloader {
         }
         catch (Exception ex)
         {
-            ex.printStackTrace();
             console.printError("Failed to download assets for version: " + ver.getID());
         }
     }
