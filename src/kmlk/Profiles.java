@@ -225,6 +225,7 @@ public class Profiles {
         {
             console.printError("Launcher profiles file not found. Using defaults.");
             this.createDefaultProfile();
+            this.selected = this.getProfileByName("(Default)");
         }
     }
     private boolean createDefaultProfile()

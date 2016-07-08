@@ -197,6 +197,10 @@ public class Versions {
     }
     public Version getLatestVer()
     {
+        if (this.allowedTypes.isEmpty())
+        {
+            return this.getLatestRelease();
+        }
         if ((this.isAllowed(VersionType.SNAPSHOT) && this.isAllowed(VersionType.RELEASE)) || (this.isAllowed(VersionType.SNAPSHOT) && !this.isAllowed(VersionType.RELEASE)))
         {
             return this.getLatestSnapshot();
