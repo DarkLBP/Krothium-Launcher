@@ -11,27 +11,19 @@ import java.util.Map;
 
 public class Profile {
     private String name;
-    private Version version;
-    private File gameDir;
-    private File javaDir;
-    private String javaArgs;
+    private Version version = null;
+    private File gameDir = null;
+    private File javaDir = null;
+    private String javaArgs = null;
     private Map<String, Integer> resolution = new HashMap();
     private final Versions versions;
-    private LauncherVisibility visibility;
+    private LauncherVisibility visibility = null;
     
-    public Profile(String name)
-    {
+    public Profile(String name){
         this.name = name;
-        this.version = null;
-        this.gameDir = null;
-        this.javaDir = null;
-        this.javaArgs = null;
-        this.resolution = null;
         this.versions = Kernel.getKernel().getVersions();
-        this.visibility = null;
     }
-    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v)
-    {
+    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v){
         this.name = name;
         this.version = lastVersionId;
         this.gameDir = gameDir;
@@ -41,116 +33,58 @@ public class Profile {
         this.versions = Kernel.getKernel().getVersions();
         this.visibility = v;
     }
-    public void setName(String newName)
-    {
-        this.name = newName;
-    }
-    public void setVersion(Version ver)
-    {
-        if (!ver.isPrepared())
-        {
+    public void setName(String newName){this.name = newName;}
+    public void setVersion(Version ver){
+        if (!ver.isPrepared()){
             ver.prepare();
         }
         ver.prepare();
         this.version = ver;
     }
-    public String getName()
-    {
+    public String getName(){
         return this.name;
     }
-    public Version getVersion()
-    {
-        if (!this.hasVersion())
-        {
+    public Version getVersion(){
+        if (!this.hasVersion()){
             return this.versions.getLatestVersion();
         }
         return this.version;
     }
-    public boolean hasVersion()
-    {
-        return (this.version != null);
-    }
-    public File getGameDir()
-    {
-        return this.gameDir;
-    }
-    public boolean hasGameDir()
-    {
-        return (this.gameDir != null);
-    }
-    public void setGameDir(File dir)
-    {
-        this.gameDir = dir;
-    }
-    public void setJavaDir(File dir)
-    {
-        this.javaDir = dir;
-    }
-    public void setJavaArgs(String args)
-    {
-        this.javaArgs = args;
-    }
-    public File getJavaDir()
-    {
-        return this.javaDir;
-    }
-    public boolean hasJavaDir()
-    {
-        return (this.javaDir != null);
-    }
-    public String getJavaArgs()
-    {
-        return this.javaArgs;
-    }
-    public boolean hasJavaArgs()
-    {
-        return (this.javaArgs != null);
-    }
-    public boolean hasResolution()
-    {
-        if (this.resolution != null)
-        {
+    public boolean hasVersion(){return (this.version != null);}
+    public File getGameDir(){return this.gameDir;}
+    public boolean hasGameDir(){return (this.gameDir != null);}
+    public void setGameDir(File dir){this.gameDir = dir;}
+    public void setJavaDir(File dir){this.javaDir = dir;}
+    public void setJavaArgs(String args){this.javaArgs = args;}
+    public File getJavaDir(){return this.javaDir;}
+    public boolean hasJavaDir(){return (this.javaDir != null);}
+    public String getJavaArgs(){return this.javaArgs;}
+    public boolean hasJavaArgs(){return (this.javaArgs != null);}
+    public boolean hasResolution(){
+        if (this.resolution != null){
             return (this.resolution.size() == 2);
         }
         return false;
     }
-    public int getResolutionHeight()
-    {
-        if (resolution.containsKey("height"))
-        {
+    public int getResolutionHeight(){
+        if (resolution.containsKey("height")){
             return resolution.get("height");
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
-    public int getResolutionWidth()
-    {
-        if (resolution.containsKey("width"))
-        {
+    public int getResolutionWidth(){
+        if (resolution.containsKey("width")){
             return resolution.get("width");
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
-    public void setResolution(int w, int h)
-    {
-        if (resolution == null)
-        {
+    public void setResolution(int w, int h){
+        if (resolution == null){
             resolution = new HashMap();
         }
         resolution.put("width", w);
         resolution.put("height", h);
     }
-    public boolean hasVisibility()
-    {
-        return (this.visibility != null);
-    }
-    public LauncherVisibility getVisibility()
-    {
-        return this.visibility;
-    }
+    public boolean hasVisibility(){return (this.visibility != null);}
+    public LauncherVisibility getVisibility(){return this.visibility;}
 }

@@ -27,17 +27,12 @@ public class GameLauncher {
     private final Console console;
     private Process process;
     
-    public GameLauncher()
-    {
-        this.console = Kernel.getKernel().getConsole();
-    }
-    public void launch(Profile p)
-    {
+    public GameLauncher(){this.console = Kernel.getKernel().getConsole();}
+    public void launch(Profile p){
         Version ver = p.getVersion();
         File workingDir = Kernel.getKernel().getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
-        if (!nativesDir.exists() || !nativesDir.isDirectory())
-        {
+        if (!nativesDir.exists() || !nativesDir.isDirectory()){
             nativesDir.mkdirs();
         }
         console.printInfo("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
@@ -45,27 +40,20 @@ public class GameLauncher {
         console.printInfo("Exctracting natives.");
         List<String> gameArgs = new ArrayList();
         gameArgs.add(Utils.getJavaDir());
-        if (!p.hasJavaArgs())
-        {
-            if (Utils.getOSArch().equals(OSArch.OLD))
-            {
+        if (!p.hasJavaArgs()){
+            if (Utils.getOSArch().equals(OSArch.OLD)){
                 gameArgs.add("-Xmx512M");
-            }
-            else
-            {
+            }else{
                 gameArgs.add("-Xmx1G");
             }
             gameArgs.add("-XX:+UseConcMarkSweepGC");
             gameArgs.add("-XX:+CMSIncrementalMode");
             gameArgs.add("-XX:-UseAdaptiveSizePolicy");
             gameArgs.add("-Xmn128M");
-        }
-        else
-        {
+        }else{
             String javaArgs = p.getJavaArgs();
             String[] args = javaArgs.split(" ");
-            for (String arg : args)
-            {
+            for (String arg : args){
                 gameArgs.add(arg);
             }
         }
@@ -73,15 +61,12 @@ public class GameLauncher {
         gameArgs.add("-cp");
         String libraries = "";
         Version v = ver;
-        while (v != null)
-        {
-            if (v.hasNatives())
-            {
+        while (v != null){
+            if (v.hasNatives()){
                 Map<String, Native> nats = v.getNatives();
                 Set set = nats.keySet();
                 Iterator it = set.iterator();
-                while (it.hasNext())
-                {
+                while (it.hasNext()){
                     String nat_name = it.next().toString();
                     Native nat = nats.get(nat_name);
                     File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + nat.getPath());
@@ -96,15 +81,12 @@ public class GameLauncher {
                             final File targetFile = new File(nativesDir, entry.getName());
                             List<String> exclude = nat.getExclusions();
                             boolean excluded = false;
-                            for (String e : exclude)
-                            {
-                                if (entry.getName().startsWith(e))
-                                {
+                            for (String e : exclude){
+                                if (entry.getName().startsWith(e)){
                                     excluded = true;
                                 }
                             }
-                            if (excluded)
-                            {
+                            if (excluded){
                                 continue;
                             }
                             final BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
@@ -124,38 +106,25 @@ public class GameLauncher {
                     }
                 }
             }
-            if (v.hasInheritedVersion())
-            {
-                v = v.getInheritedVersion();
-            }
-            else
-            {
-                v = null;
-            }
+            v = (v.hasInheritedVersion() ? v.getInheritedVersion() : null);
         }
         console.printInfo("Preparing game args.");
         Version v2 = ver;
-        while (v2 != null)
-        {
-            if (v2.hasLibraries())
-            {
+        while (v2 != null){
+            if (v2.hasLibraries()){
                 Map<String, Library> libs = v2.getLibraries();
                 Set set = libs.keySet();
                 Iterator it = set.iterator();
-                while (it.hasNext())
-                {
+                while (it.hasNext()){
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
                     File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
                     libraries += completePath.getAbsolutePath() + ";";
                 }
             }
-            if (v2.hasInheritedVersion())
-            {
+            if (v2.hasInheritedVersion()){
                 v2 = v2.getInheritedVersion();
-            }
-            else
-            {
+            }else{
                 v2 = null;
             }
         }
@@ -164,11 +133,9 @@ public class GameLauncher {
         String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
-        if (assetsID.equals("legacy"))
-        {
+        if (assetsID.equals("legacy")){
             assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
-            if (!assetsDir.exists() || !assetsDir.isDirectory())
-            {
+            if (!assetsDir.exists() || !assetsDir.isDirectory()){
                 assetsDir.mkdirs();
             }
             console.printInfo("Building virtual asset folder.");
@@ -178,26 +145,21 @@ public class GameLauncher {
                 JSONObject objects = o.getJSONObject("objects");
                 Set s = objects.keySet();
                 Iterator it = s.iterator();
-                while (it.hasNext())
-                {
+                while (it.hasNext()){
                     String name = it.next().toString();
                     File assetFile = new File(assetsDir + File.separator + name);
                     JSONObject asset = objects.getJSONObject(name);
                     long size = asset.getLong("size");
                     String sha = asset.getString("hash");
                     boolean valid = false;
-                    if (assetFile.exists())
-                    {
-                        if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha))
-                        {
+                    if (assetFile.exists()){
+                        if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)){
                             valid = true;
                         }
                     }
-                    if (!valid)
-                    {
+                    if (!valid){
                         File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0,2) + File.separator + sha);
-                        if (assetFile.getParentFile() != null)
-                        {
+                        if (assetFile.getParentFile() != null){
                             assetFile.getParentFile().mkdirs();
                         }
                         Files.copy(objectFile.toPath(), assetFile.toPath());
@@ -206,9 +168,7 @@ public class GameLauncher {
             } catch (Exception ex) {
                 console.printError("Failed to create virtual asset folder.");
             }
-        }
-        else
-        {
+        }else{
             assetsDir = assetsRoot;
         }
         gameArgs.add(libraries);
@@ -218,17 +178,13 @@ public class GameLauncher {
         String versionArgs = ver.getMinecraftArguments();
         versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());
         versionArgs = versionArgs.replace("${version_name}", ver.getID());
-        if (p.hasGameDir())
-        {
+        if (p.hasGameDir()){
             File gameDir = p.getGameDir();
-            if (!gameDir.exists() || !gameDir.isDirectory())
-            {
+            if (!gameDir.exists() || !gameDir.isDirectory()){
                 gameDir.mkdirs();
             }
             versionArgs = versionArgs.replace("${game_directory}", gameDir.getAbsolutePath());
-        }
-        else
-        {
+        }else{
             versionArgs = versionArgs.replace("${game_directory}", workingDir.getAbsolutePath());
         }
         versionArgs = versionArgs.replace("${assets_root}", assetsDir.getAbsolutePath());
@@ -237,33 +193,27 @@ public class GameLauncher {
         versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
         versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
         versionArgs = versionArgs.replace("${version_type}", ver.getType().name());
-        if (u.hasProperties())
-        {
+        if (u.hasProperties()){
             Map<String, String> properties = u.getProperties();
             Set set = properties.keySet();
             Iterator it = set.iterator();
             JSONObject props = new JSONObject();
-            while (it.hasNext())
-            {
+            while (it.hasNext()){
                 String name = it.next().toString();
                 String value = properties.get(name);
                 props.put(name, value);
             }
             versionArgs = versionArgs.replace("${user_properties}", props.toString());
-        }
-        else
-        {
+        }else{
             versionArgs = versionArgs.replace("${user_properties}", "{}");
         }
         versionArgs = versionArgs.replace("${user_type}", "mojang");
         versionArgs = versionArgs.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
         String[] argsSplit = versionArgs.split(" ");
-        for (String arg : argsSplit)
-        {
+        for (String arg : argsSplit){
             gameArgs.add(arg);
         }
-        if (p.hasResolution())
-        {
+        if (p.hasResolution()){
             gameArgs.add("--width");
             gameArgs.add(String.valueOf(p.getResolutionWidth()));
             gameArgs.add("--height");
@@ -271,29 +221,18 @@ public class GameLauncher {
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
-        try
-        {
+        try{
             this.process = pb.start();
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             console.printError("Game returned an error code.");
         }
     }
-    public boolean isStarted()
-    {
-        if (this.process != null)
-        {
+    public boolean isStarted(){
+        if (this.process != null){
             return this.process.isAlive();
         }
         return false;
     }
-    public InputStream getInputStream()
-    {
-        return this.process.getInputStream();
-    }
-    public void forceQuit()
-    {
-        this.process.destroyForcibly();
-    }
+    public InputStream getInputStream(){return this.process.getInputStream();}
+    public void forceQuit(){this.process.destroyForcibly();}
 }

@@ -21,45 +21,29 @@ public class Authentication {
     protected Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
 
-    public Authentication()
-    {
-        this.console = Kernel.getKernel().getConsole();
-    }
-    public void addToDatabase(String profileID, User u)
-    {
+    public Authentication(){this.console = Kernel.getKernel().getConsole();}
+    public void addToDatabase(String profileID, User u){
         console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(profileID)) ? " updated." : " loaded."));
         this.userDatabase.put(profileID, u);   
     }
-    public void removeFromDatabase(String profileID)
-    {
-        if (this.userDatabase.containsKey(profileID))
-        {
+    public void removeFromDatabase(String profileID){
+        if (this.userDatabase.containsKey(profileID)){
             console.printInfo("User " + this.userDatabase.get(profileID).getDisplayName() + " deleted.");
             this.userDatabase.remove(profileID);
-        }
-        else
-        {
+        }else{
             console.printError("Profile id " + profileID + " is not registered.");
         }
     }
-    public User getFromDatabase(String profileID)
-    {
-        if (this.userDatabase.containsKey(profileID))
-        {
+    public User getFromDatabase(String profileID) {
+        if (this.userDatabase.containsKey(profileID)){
             return this.userDatabase.get(profileID);
-        }
-        else
-        {
+        }else{
             console.printError("Profile id " + profileID + " is not registered.");
             return null;
         }
     }
-    public User getSelectedUser()
-    {
-        return this.userDatabase.get(this.selectedProfile);
-    }
-    public void authenticate(final String username, final String password) throws AuthenticationException
-    {
+    public User getSelectedUser(){return this.userDatabase.get(this.selectedProfile);}
+    public void authenticate(final String username, final String password) throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         agent.put("name", "Minecraft");
@@ -67,8 +51,7 @@ public class Authentication {
         request.put("agent", agent);
         request.put("username", username);
         request.put("password", password);
-        if (this.clientToken != null)
-        {
+        if (this.clientToken != null){
             request.put("clientToken", this.clientToken);
         }
         request.put("requestUser", true);
@@ -78,13 +61,11 @@ public class Authentication {
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
-        if (response == null || response.isEmpty())
-        {
+        if (response == null || response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
         }
         JSONObject r = new JSONObject(response);
-        if (!r.has("error"))
-        {
+        if (!r.has("error")){
             this.clientToken = r.getString("clientToken");
             String accessToken = (r.has("accessToken")) ? r.getString(("accessToken")) : null;
             String profileID = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("id") : null;
@@ -92,16 +73,12 @@ public class Authentication {
             String userID = (r.has("user")) ? r.getJSONObject("user").getString("id") : null;
             JSONObject user = r.getJSONObject("user");
             Map<String, String> properties = new HashMap();
-            if (user.has("userProperties"))
-            {
+            if (user.has("userProperties")){
                 JSONArray props = user.getJSONArray("userProperties");
-                if (props.length() > 0)
-                {
-                    for (int i = 0; i < props.length(); i++)
-                    {
+                if (props.length() > 0){
+                    for (int i = 0; i < props.length(); i++){
                         JSONObject p = props.getJSONObject(i);
-                        if (p.has("name") && p.has("value"))
-                        {
+                        if (p.has("name") && p.has("value")){
                             properties.put(p.getString("name"), p.getString("value"));
                         }
                     }
@@ -111,26 +88,18 @@ public class Authentication {
             this.addToDatabase(profileID, u);
             this.selectedProfile = profileID;
             this.authenticated = true;
-        }
-        else
-        {
+        }else{
             this.authenticated = false;
-            if (r.has("errorMessage"))
-            {
+            if (r.has("errorMessage")){
                 throw new AuthenticationException(r.getString("errorMessage"));
-            }
-            else if (r.has("cause"))
-            {
+            }else if (r.has("cause")){
                 throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
-            }
-            else
-            {
+            }else{
                 throw new AuthenticationException(r.getString("error"));
             }
         }
     }
-    public void refresh() throws AuthenticationException
-    {
+    public void refresh() throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         User u = this.getFromDatabase(this.selectedProfile);
@@ -145,33 +114,23 @@ public class Authentication {
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
-        if (response == null || response.isEmpty())
-        {
+        if (response == null || response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
         }
         JSONObject r = new JSONObject(response);
-        if (!r.has("error"))
-        {
+        if (!r.has("error")){
             this.clientToken = (r.has("clientToken")) ? r.getString("clientToken") : this.clientToken;
-            if (r.has("accessToken"))
-            {
+            if (r.has("accessToken")){
                 u.updateAccessToken(r.getString("accessToken"));
             }
             this.authenticated = true;
-        }
-        else
-        {
+        }else{
             this.authenticated = false;
-            if (r.has("errorMessage"))
-            {
+            if (r.has("errorMessage")){
                 throw new AuthenticationException(r.getString("errorMessage"));
-            }
-            else if (r.has("cause"))
-            {
+            }else if (r.has("cause")){
                 throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
-            }
-            else
-            {
+            }else{
                 throw new AuthenticationException(r.getString("error"));
             }
         }
@@ -191,85 +150,57 @@ public class Authentication {
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
-        if (response == null)
-        {
+        if (response == null){
             throw new AuthenticationException("Authentication server does not respond.");
         }
-        if (response.isEmpty())
-        {
+        if (response.isEmpty()){
             this.authenticated = true;
-        }
-        else
-        {
+        }else{
             this.authenticated = false;
             JSONObject o = new JSONObject(response);
-            if (o.has("error"))
-            {
-                if (o.has("errorMessage"))
-                {
+            if (o.has("error")){
+                if (o.has("errorMessage")){
                     throw new AuthenticationException(o.getString("errorMessage"));
-                }
-                else if (o.has("cause"))
-                {
+                }else if (o.has("cause")){
                     throw new AuthenticationException(o.getString("error") + " caused by " + o.getString("cause"));
-                }
-                else
-                {
+                }else{
                     throw new AuthenticationException(o.getString("error"));
                 }
             }
         }
     }
-    public boolean isAuthenticated()
-    {
-        return this.authenticated;
-    }
-    public String getClientToken()
-    {
-        return this.clientToken;
-    }
-    public void fetchUsers()
-    {
+    public boolean isAuthenticated() { return this.authenticated; }
+    public String getClientToken() { return this.clientToken; }
+    public void fetchUsers() {
         console.printInfo("Loading user data.");
         File launcherProfiles = Kernel.getKernel().getConfigFile();
-        if (launcherProfiles.exists())
-        {
-            try
-            {
+        if (launcherProfiles.exists()) {
+            try {
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
-                if (root.has("clientToken"))
-                {
+                if (root.has("clientToken")) {
                     this.clientToken = root.getString("clientToken");
                 }
-                if (root.has("authenticationDatabase"))
-                {
+                if (root.has("authenticationDatabase")) {
                     JSONObject users = root.getJSONObject("authenticationDatabase");
-                    if (users.length() > 0)
-                    {
+                    if (users.length() > 0) {
                         Set s = users.keySet();
                         Iterator it = s.iterator();
-                        while (it.hasNext())
-                        {
+                        while (it.hasNext()) {
                             String profile = it.next().toString();
                             JSONObject user = users.getJSONObject(profile); 
-                            if (user.has("displayName") && user.has("accessToken") && user.has("userid") && user.has("uuid") && user.has("username"))
-                            {
+                            if (user.has("displayName") && user.has("accessToken") && user.has("userid") && user.has("uuid") && user.has("username")) {
                                 String displayName = user.getString("displayName");
                                 String accessToken = user.getString("accessToken");
                                 String userID = user.getString("userid");
                                 UUID uuid = UUID.fromString(user.getString("uuid"));
                                 String username = user.getString("username");
                                 Map<String, String> properties = new HashMap();
-                                if (user.has("userProperties"))
-                                {
+                                if (user.has("userProperties")) {
                                     JSONArray props = user.getJSONArray("userProperties");
-                                    if (props.length() > 0)
-                                    {
-                                        for (int i = 0; i < props.length(); i++)
-                                        {
+                                    if (props.length() > 0) {
+                                        for (int i = 0; i < props.length(); i++) {
                                             JSONObject p = props.getJSONObject(i);
-                                            if (p.has("name") && p.has("value"))
-                                            {
+                                            if (p.has("name") && p.has("value")){
                                                 properties.put(p.getString("name"), p.getString("value"));
                                             }
                                         }
@@ -281,78 +212,56 @@ public class Authentication {
                         }
                     }
                 }
-                if (root.has("selectedUser"))
-                {
+                if (root.has("selectedUser")){
                     this.selectedProfile = null;
-                    if (this.userDatabase.size() > 0)
-                    {
-                        if (this.userDatabase.containsKey(root.getString("selectedUser")))
-                        {
+                    if (this.userDatabase.size() > 0){
+                        if (this.userDatabase.containsKey(root.getString("selectedUser"))){
                             this.selectedProfile = root.getString("selectedUser");
-                        }
-                        else
-                        {
+                        }else{
                             Set s = this.userDatabase.keySet();
                             Iterator i = s.iterator();
-                            while (this.selectedProfile == null)
-                            {
+                            while (this.selectedProfile == null){
                                 this.selectedProfile = i.next().toString();
                             }
                         }
                     }
-                }
-                else
-                {
+                }else{
                     this.selectedProfile = null;
-                    if (this.userDatabase.size() > 0)
-                    {
+                    if (this.userDatabase.size() > 0){
                         Set s = this.userDatabase.keySet();
                         Iterator i = s.iterator();
-                        while (this.selectedProfile == null)
-                        {
+                        while (this.selectedProfile == null){
                             this.selectedProfile = i.next().toString();
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch (Exception ex){
                 console.printError("Failed to load user list.");
             }
-        }
-        else
-        {
+        }else{
             console.printError("Launcher profiles file not found. Using defaults.");
             this.clientToken = UUID.randomUUID().toString();
         }
     }
-    public void setClientToken(String clientToken)
-    {
-        this.clientToken = clientToken;
-    }
-    public JSONObject toJSON()
-    {
+    public void setClientToken(String clientToken){this.clientToken = clientToken;}
+    public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         o.put("clientToken", this.clientToken);
-        if (this.userDatabase.size() > 0)
-        {
+        if (this.userDatabase.size() > 0){
             JSONObject db = new JSONObject();
             Set s = this.userDatabase.keySet();
             Iterator it = s.iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()){
                 String key = it.next().toString();
                 JSONObject user = new JSONObject();
                 User u = this.userDatabase.get(key);
                 user.put("displayName", u.getDisplayName());
-                if (u.hasProperties())
-                {
+                if (u.hasProperties()){
                     JSONArray props = new JSONArray();
                     Map<String, String> p = u.getProperties();
                     Set s1 = p.keySet();
                     Iterator it1 = s1.iterator();
-                    while(it1.hasNext())
-                    {
+                    while(it1.hasNext()){
                         String k = it1.next().toString();
                         JSONObject jo = new JSONObject();
                         jo.put("name", k);

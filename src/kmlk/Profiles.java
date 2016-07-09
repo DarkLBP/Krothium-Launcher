@@ -20,14 +20,9 @@ public class Profiles {
     private Versions versions;
     private Profile selected;
     
-    public Profiles()
-    {
-        this.console = Kernel.getKernel().getConsole();
-    }
-    public boolean addProfile(Profile p)
-    {
-        if (!this.existsProfile(p))
-        {
+    public Profiles(){this.console = Kernel.getKernel().getConsole();}
+    public boolean addProfile(Profile p){
+        if (!this.existsProfile(p)){
             profiles.put(p.getName(), p);
             console.printInfo("Profile " + p.getName() + " added");
             return true;
@@ -35,10 +30,8 @@ public class Profiles {
         console.printError("Profile " + p.getName() + " already exists!");
         return false;
     }
-    public boolean updateProfile(Profile p)
-    {
-        if (this.existsProfile(p))
-        {
+    public boolean updateProfile(Profile p){
+        if (this.existsProfile(p)){
             profiles.put(p.getName(), p);
             console.printInfo("Profile " + p.getName() + " updated.");
             return true;
@@ -48,12 +41,10 @@ public class Profiles {
     }
     public boolean duplicateProfile(Profile p)
     {
-        if (this.existsProfile(p))
-        {
+        if (this.existsProfile(p)){
             String modifiedName = p.getName() + "_";
             p.setName(modifiedName);
-            while (this.existsProfile(p))
-            {
+            while (this.existsProfile(p)){
                 modifiedName += "_";
                 p.setName(modifiedName);
             }
@@ -63,26 +54,19 @@ public class Profiles {
         console.printError("Profile " + p.getName() + " doesn't exist.");
         return false;
     }
-    public boolean existsProfile(Profile p)
-    {
-        return this.profiles.containsKey(p.getName());
-    }
-    public void fetchProfiles()
-    { 
+    public boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
+    public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
         this.versions = Kernel.getKernel().getVersions();
         File launcherProfiles = Kernel.getKernel().getConfigFile();
-        if (launcherProfiles.exists())
-        {
-            try
-            {
+        if (launcherProfiles.exists()){
+            try{
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
                 JSONObject ples = root.getJSONObject("profiles");
                 Set keys = ples.keySet();
                 Iterator it = keys.iterator();
                 Profile first = null;
-                while (it.hasNext())
-                {
+                while (it.hasNext()){
                     String key = it.next().toString();
                     JSONObject o = ples.getJSONObject(key);
                     String name = null;
@@ -92,135 +76,91 @@ public class Profiles {
                     String javaArgs = null;
                     Map<String, Integer> resolution = new HashMap();
                     LauncherVisibility visibility = null;
-                    if (o.has("name"))
-                    {
+                    if (o.has("name")){
                         name = o.getString("name");
                     }
-                    if (o.has("allowedReleaseTypes"))
-                    {
+                    if (o.has("allowedReleaseTypes")){
                         JSONArray a = o.getJSONArray("allowedReleaseTypes");
                         versions.clearAllowList();
-                        if (a.length() == 0)
-                        {
+                        if (a.length() == 0){
                             versions.allowType(VersionType.RELEASE);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < a.length(); i++)
-                            {
-                                try
-                                {
+                        }else{
+                            for (int i = 0; i < a.length(); i++){
+                                try{
                                     versions.allowType(VersionType.valueOf(a.getString(i).toUpperCase()));
-                                }
-                                catch (Exception ex)
-                                {
+                                }catch (Exception ex){
                                     console.printError(a.get(i) + " version type does not exist.");
                                 }
                             }
                         }    
-                    }
-                    else
-                    {
+                    }else{
                         versions.allowType(VersionType.RELEASE);
                     }
-                    if (o.has("lastVersionId"))
-                    {
+                    if (o.has("lastVersionId")){
                         ver = versions.getVersionByName(o.getString("lastVersionId"));
                     }
-                    if (o.has("gameDir"))
-                    {
+                    if (o.has("gameDir")){
                         gameDir = new File(o.getString("gameDir"));
                     }
-                    if (o.has("javaDir"))
-                    {
+                    if (o.has("javaDir")){
                         javaDir = new File(o.getString("javaDir"));
                     }
-                    if (o.has("javaArgs"))
-                    {
+                    if (o.has("javaArgs")){
                         javaArgs = o.getString("javaArgs");
                     }
-                    if (o.has("resolution"))
-                    {
+                    if (o.has("resolution")){
                         JSONObject res = o.getJSONObject("resolution");
-                        if (res.has("width") && res.has("height"))
-                        {
+                        if (res.has("width") && res.has("height")){
                             resolution.put("width", res.getInt("width"));
                             resolution.put("height", res.getInt("height"));
-                        }
-                        else
-                        {
+                        }else{
                             console.printError("Profile " + ((name != null) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    if (o.has("launcherVisibilityOnGameClose"))
-                    {
+                    if (o.has("launcherVisibilityOnGameClose")){
                         String vis = o.getString("launcherVisibilityOnGameClose");
-                        if (vis != null)
-                        {
-                            if (vis.length() >= 4)
-                            {
-                                if (vis.startsWith("close"))
-                                {
+                        if (vis != null){
+                            if (vis.length() >= 4){
+                                if (vis.startsWith("close")){
                                     visibility = LauncherVisibility.CLOSE;
-                                }
-                                else if (vis.startsWith("hide"))
-                                {
+                                }else if (vis.startsWith("hide")){
                                     visibility = LauncherVisibility.HIDE;
-                                }
-                                else if (vis.startsWith("keep"))
-                                {
+                                }else if (vis.startsWith("keep")){
                                     visibility = LauncherVisibility.KEEP;
                                 }
                             }
                         }
                     }
-                    if (name != null)
-                    {
+                    if (name != null){
                         Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility);
-                        if (first == null)
-                        {
+                        if (first == null){
                             first = p;
                         }
-                        if (!this.existsProfile(p))
-                        {
+                        if (!this.existsProfile(p)){
                             this.addProfile(p);
-                        }
-                        else
-                        {
+                        }else{
                             this.duplicateProfile(p);
                         }
-                    }
-                    else
-                    {
+                    }else{
                         console.printError("Invalid profile found: " + name);
                     }
                 }
-                if (this.count() > 0)
-                {
+                if (this.count() > 0){
                     String selProfile = root.getString("selectedProfile");
-                    if (this.profiles.containsKey(selProfile))
-                    {
+                    if (this.profiles.containsKey(selProfile)){
                         console.printInfo("Profile " + selProfile + " marked as selected.");
                         this.setSelectedProfile(this.profiles.get(selProfile));
-                    }
-                    else
-                    {
+                    }else{
                         console.printError("Invalid profile selected! Using first loaded (" + first.getName() + ")");
                         this.setSelectedProfile(first);
                     }
-                }
-                else
-                {
+                }else{
                     this.createDefaultProfile();
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch (Exception ex){
                 console.printError("Failed to fetch profiles.");
             }
-        }
-        else
-        {
+        }else{
             console.printError("Launcher profiles file not found. Using defaults.");
             this.createDefaultProfile();
         }
@@ -228,8 +168,7 @@ public class Profiles {
     private boolean createDefaultProfile()
     {
         Profile p = new Profile("(Default)");
-        if (this.existsProfile(p))
-        {
+        if (this.existsProfile(p)){
             console.printError("Default profile already exists.");
             return false;
         }
@@ -239,78 +178,58 @@ public class Profiles {
     }
     public Profile getProfileByName(String pName)
     {
-        if (profiles.containsKey(pName))
-        {
+        if (profiles.containsKey(pName)){
             return profiles.get(pName);
         }
         return null;
     }
-    public int count()
-    {
-        return profiles.size();
-    }
-    public Profile getSelectedProfile()
-    {
-        return this.selected;
-    }
-    public void setSelectedProfile(Profile p)
-    {
-        if (!p.getVersion().isPrepared())
-        {
+    public int count(){return profiles.size();}
+    public Profile getSelectedProfile(){return this.selected;}
+    public void setSelectedProfile(Profile p){
+        if (!p.getVersion().isPrepared()){
             p.getVersion().prepare();
         }
         this.selected = p;
     }
-    public JSONObject toJSON()
-    {
+    public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();
         Set s = this.profiles.keySet();
         Iterator it = s.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()){
             String key = it.next().toString();
             Profile p = this.profiles.get(key);
             JSONObject prof = new JSONObject();
             prof.put("name", p.getName());
-            if (p.hasGameDir())
-            {
+            if (p.hasGameDir()){
                 prof.put("gameDir", p.getGameDir().toString());
             }
-            if (p.hasVersion())
-            {
+            if (p.hasVersion()){
                 prof.put("lastVersionId", p.getVersion().getID());
             }
-            if (p.hasJavaDir())
-            {
+            if (p.hasJavaDir()){
                 prof.put("javaDir", p.getJavaDir().toString());
             }
-            if (p.hasJavaArgs())
-            {
+            if (p.hasJavaArgs()){
                 prof.put("javaArgs", p.getJavaArgs());
             }
-            if (p.hasResolution())
-            {
+            if (p.hasResolution()){
                 JSONObject res = new JSONObject();
                 res.put("width", p.getResolutionWidth());
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
             }
             List<VersionType> allowed = versions.getAllowedTypes();
-            if (allowed.size() > 0)
-            {
+            if (allowed.size() > 0){
                 JSONArray at = new JSONArray();
-                for (VersionType t : allowed)
-                {
+                for (VersionType t : allowed){
                     at.put(t.name().toLowerCase());
                 }
                 prof.put("allowedReleaseTypes", at);
             }
-            if (p.hasVisibility())
-            {
+            if (p.hasVisibility()){
                 String output = null;
-                switch (p.getVisibility())
-                {
+                switch (p.getVisibility()){
                     case CLOSE:
                        output = "close launcher when game starts";
                        break;
@@ -321,8 +240,7 @@ public class Profiles {
                         output = "keep the launcher open";
                         break;
                 }
-                if (output != null)
-                {
+                if (output != null){
                     prof.put("launcherVisibilityOnGameClose", output);
                 }
             }

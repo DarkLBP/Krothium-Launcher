@@ -20,8 +20,7 @@ public final class Library {
     private final Console console;
     private final boolean legacy;
     
-    public Library(String name, URL url, Map<OS, LibraryRule> rules)
-    {
+    public Library(String name, URL url, Map<OS, LibraryRule> rules){
         this.console = Kernel.getKernel().getConsole();
         this.name = name;
         this.url = url;
@@ -30,8 +29,7 @@ public final class Library {
         this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
         this.legacy = true;
     }
-    public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules)
-    {
+    public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules){
         this.console = Kernel.getKernel().getConsole();
         this.name = name;
         this.url = url;
@@ -40,32 +38,11 @@ public final class Library {
         this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
         this.legacy = false;
     }
-    public File getPath()
-    {
-        return this.path;
-    }
-    public String getName()
-    {
-        return this.name;
-    }
-    public URL getURL()
-    {
-        return this.url;
-    }
-    public String getSHA1()
-    {
-        return this.sha1;
-    }
-    public long getSize()
-    {
-        return this.size;
-    }
-    public boolean isDownloadable()
-    {
-        return (this.url != null);
-    }
-    public boolean isLegacy()
-    {
-        return this.legacy;
-    }
+    public File getPath(){return this.path;}
+    public String getName(){return this.name;}
+    public URL getURL(){return this.url;}
+    public String getSHA1(){return this.sha1;}
+    public long getSize(){return this.size;}
+    public boolean isDownloadable(){return (this.url != null);}
+    public boolean isLegacy(){return this.legacy;}
 }

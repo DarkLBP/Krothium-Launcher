@@ -32,8 +32,7 @@ public final class Version {
     public String minecraftArguments = null;
     public String mainClass = null;
     
-    public Version(String id, VersionType type, VersionOrigin or, URL url)
-    {
+    public Version(String id, VersionType type, VersionOrigin or, URL url){
         this.id = id;
         this.type = type;
         this.url.put(or, url);
@@ -41,38 +40,27 @@ public final class Version {
         this.console = Kernel.getKernel().getConsole();
         this.path = new File("versions" + File.separator + id + File.separator + id + ".jar");
     }
-    public boolean prepare()
-    {
-        try
-        {
+    public boolean prepare(){
+        try{
             this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
-            if (this.getOrigin() == VersionOrigin.LOCAL)
-            {
-                if (this.versionMeta.has("inheritsFrom"))
-                {
+            if (this.getOrigin() == VersionOrigin.LOCAL){
+                if (this.versionMeta.has("inheritsFrom")){
                     this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
-                    if (this.inheritedVersion != null)
-                    {
-                        if (!this.inheritedVersion.isPrepared())
-                        {
+                    if (this.inheritedVersion != null){
+                        if (!this.inheritedVersion.isPrepared()){
                             this.inheritedVersion.prepare();
                         }
                         console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
                     }
-                }
-                else
-                {
+                }else{
                     this.inheritedVersion = null;
                 }
-            }
-            else
-            {
+            }else{
                 this.inheritedVersion = null;
             }
             console.printInfo("Fetching required versions libraries.");
             JSONArray array = this.versionMeta.getJSONArray("libraries");
-            for (int i = 0; i < array.length(); i++)
-            {
+            for (int i = 0; i < array.length(); i++){
                 OS currentOS = Utils.getPlatform();
                 JSONObject lib = array.getJSONObject(i);
                 String name = lib.getString("name");
@@ -84,87 +72,64 @@ public final class Version {
                 boolean skip = false;
                 String native_class = null;
                 List<String> exclude = new ArrayList();
-                if (lib.has("rules"))
-                {
+                if (lib.has("rules")){
                     rules = lib.getJSONArray("rules");
                     List<LibraryRule> used = new ArrayList();
                     OS[] oses = OS.values();
-                    for (int j = 0; j < rules.length(); j++)
-                    {
+                    for (int j = 0; j < rules.length(); j++){
                         JSONObject rule = rules.getJSONObject(j);
                         LibraryRule lr = LibraryRule.valueOf(rule.getString("action").toUpperCase());
-                        if (rule.has("os"))
-                        {
+                        if (rule.has("os")){
                             JSONObject os = rule.getJSONObject("os");
                             OS o = OS.valueOf(os.getString("name").toUpperCase());
                             console.printInfo((ruls.containsKey(o) ? "Updated" : "Added") + " " + o.name() + " rule (" + lr.name() + ") in library " + name);
                             ruls.put(o, lr);
-                        }
-                        else
-                        {
-                            for (OS o : oses)
-                            {
-                                if (!ruls.containsKey(o))
-                                {
+                        }else{
+                            for (OS o : oses){
+                                if (!ruls.containsKey(o)){
                                     console.printInfo("Added " + o.name() + " rule (" + lr.name() + ") in library " + name);
                                     ruls.put(o, lr);
                                 }
                             }
                         }
-                        if (!used.contains(lr))
-                        {
+                        if (!used.contains(lr)){
                             used.add(lr);
                         }
                     }
-                    if (used.contains(LibraryRule.ALLOW) && !used.contains(LibraryRule.DISALLOW))
-                    {
-                        for (OS o : oses)
-                        {
-                            if (!ruls.containsKey(o))
-                            {
+                    if (used.contains(LibraryRule.ALLOW) && !used.contains(LibraryRule.DISALLOW)){
+                        for (OS o : oses){
+                            if (!ruls.containsKey(o)){
                                 ruls.put(o, LibraryRule.DISALLOW);
                                 console.printInfo("Added " + o.name() + " rule (" + LibraryRule.DISALLOW.name() + ") in library " + name);
                             }
                         }
-                    }
-                    else if (!used.contains(LibraryRule.ALLOW) && used.contains(LibraryRule.DISALLOW))
-                    {
-                        for (OS o : oses)
-                        {
-                            if (!ruls.containsKey(o))
-                            {
+                    }else if (!used.contains(LibraryRule.ALLOW) && used.contains(LibraryRule.DISALLOW)){
+                        for (OS o : oses){
+                            if (!ruls.containsKey(o)){
                                 ruls.put(o, LibraryRule.ALLOW);
                                 console.printInfo("Added " + o.name() + " rule (" + LibraryRule.ALLOW.name() + ") in library " + name);
                             }
                         }
                     }
-                    if (currentOS != OS.UNKNOWN)
-                    {
-                        if (ruls.get(currentOS) != LibraryRule.ALLOW)
-                        {
+                    if (currentOS != OS.UNKNOWN){
+                        if (ruls.get(currentOS) != LibraryRule.ALLOW){
                             skip = true;
                         }
                     }
                 }
-                if (!skip)
-                {
-                    if (lib.has("natives"))
-                    {
+                if (!skip){
+                    if (lib.has("natives")){
                         JSONObject natives = lib.getJSONObject("natives");
                         String osArch = (Utils.getOSArch().equals(OSArch.NEW) ? "64" : "32");
                         native_class = (natives.has(currentOS.name().toLowerCase()) ? natives.getString(currentOS.name().toLowerCase()).replace("${arch}", osArch) : null);
                     }
-                    if (lib.has("extract"))
-                    {
+                    if (lib.has("extract")){
                         JSONObject extract = lib.getJSONObject("extract");
-                        if (extract.has("exclude"))
-                        {
+                        if (extract.has("exclude")){
                             JSONArray exc = extract.getJSONArray("exclude");
-                            for (int k = 0; k < exc.length(); k++)
-                            {
+                            for (int k = 0; k < exc.length(); k++){
                                 String value = exc.getString(k);
-                                if (!exclude.contains(value))
-                                {
+                                if (!exclude.contains(value)){
                                     exclude.add(value);
                                     console.printInfo("Exclusion added for path " + value + " in " + name);
                                 }
@@ -172,32 +137,24 @@ public final class Version {
                         }
                     }
                     boolean legacy = false;
-                    if (lib.has("downloads"))
-                    {
+                    if (lib.has("downloads")){
                         JSONObject downloads = lib.getJSONObject("downloads");
-                        if (downloads.has("artifact"))
-                        {
+                        if (downloads.has("artifact")){
                             JSONObject artifact = downloads.getJSONObject("artifact");
-                            if (artifact.has("url"))
-                            {
+                            if (artifact.has("url")){
                                 url = Utils.stringToURL(artifact.getString("url"));
                             }
-                            if (artifact.has("sha1"))
-                            {
+                            if (artifact.has("sha1")){
                                 sha1 = artifact.getString("sha1");
                             }
-                            if (artifact.has("size"))
-                            {
+                            if (artifact.has("size")){
                                 size = artifact.getLong("size");
                             }
                         }
-                        if (native_class != null)
-                        {
-                            if (downloads.has("classifiers"))
-                            {
+                        if (native_class != null){
+                            if (downloads.has("classifiers")){
                                 JSONObject classifiers = downloads.getJSONObject("classifiers");
-                                if (classifiers.has(native_class))
-                                {
+                                if (classifiers.has(native_class)){
                                     JSONObject clas = classifiers.getJSONObject(native_class);
                                     long nSize = (clas.has("size") ? clas.getLong("size") : -1);
                                     String nSha = (clas.has("sha1") ? clas.getString("sha1") : null);
@@ -208,71 +165,49 @@ public final class Version {
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        if (lib.has("url"))
-                        {
+                    }else{
+                        if (lib.has("url")){
                             url = Utils.stringToURL(lib.getString("url") + Utils.getArtifactPath(name, "jar"));
-                        }
-                        else
-                        {
+                        }else{
                             url = Utils.stringToURL("https://libraries.minecraft.net/" + Utils.getArtifactPath(name, "jar"));
                         }
                         legacy = true;
                     }
                     Library l;
-                    if (!legacy)
-                    {
+                    if (!legacy){
                         l = new Library(name, url, sha1, size, ruls);
-                    }
-                    else
-                    {
+                    }else{
                         l = new Library(name, url, ruls);
                     }
-                    if (!libraries.containsKey(name))
-                    {
+                    if (!libraries.containsKey(name)){
                         libraries.put(name, l);
                         console.printInfo("Library " + name + " loaded.");
-                    }
-                    else
-                    {
+                    }else{
                         libraries.put(name, l);
                         console.printInfo("Library " + name + " updated!.");
                     }
-                }
-                else
-                {
+                }else{
                     console.printInfo("Library " + name + " skipped because does not support the current OS (" + Utils.getPlatform().name() + ").");
                 }
             }
-            if (this.versionMeta.has("assets"))
-            {
+            if (this.versionMeta.has("assets")){
                 this.assets = this.versionMeta.getString("assets");
                 console.printInfo("Found assets dependency from version " + this.assets);
             }
-            if (this.versionMeta.has("assetIndex"))
-            {
+            if (this.versionMeta.has("assetIndex")){
                 JSONObject index = this.versionMeta.getJSONObject("assetIndex");
                 AssetIndex aInd = new AssetIndex(index.getString("id"), index.getLong("size"), index.getLong("totalSize"), Utils.stringToURL(index.getString("url")), index.getString("sha1"));
                 this.assetIndex = aInd;
                 console.printInfo("Found assets download for version " + this.assetIndex);
-            }
-            else
-            {
+            }else{
                 this.assetIndex = null;
             }
             Version tmp = this;
-            while (tmp != null)
-            {
-                if (tmp.hasInheritedVersion())
-                {
+            while (tmp != null){
+                if (tmp.hasInheritedVersion()){
                     tmp = tmp.getInheritedVersion();
-                }
-                else
-                {
-                    if (tmp != this)
-                    {
+                }else{
+                    if (tmp != this){
                         this.rootVer = tmp;
                         console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
                     }
@@ -280,121 +215,47 @@ public final class Version {
                 }
             }
             JSONObject meta = this.getMeta();
-            if (meta.has("minecraftArguments"))
-            {
+            if (meta.has("minecraftArguments")){
                 this.minecraftArguments = meta.getString("minecraftArguments");
             }
-            if (meta.has("mainClass"))
-            {
+            if (meta.has("mainClass")){
                 this.mainClass = meta.getString("mainClass");
             }
             this.prepared = true;
             return true;
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             console.printError("Failed to prepare version " + this.getID());
             this.prepared = false;
             return false;
         }
     }
-    public boolean isPrepared()
-    {
-        return this.prepared;
-    }
-    public File getPath()
-    {
-        return this.path;
-    }
-    public Version getRoot()
-    {
-        return this.rootVer;
-    }
-    public void putURL(URL u, VersionOrigin o)
-    {
-        this.url.put(o, u);
-    }
-    public String getID()
-    {
-        return this.id;
-    }
-    public VersionType getType()
-    {
-        return this.type;
-    }
-    public VersionOrigin getOrigin()
-    {
-        return this.origin;
-    }
-    public URL getURL(VersionOrigin o)
-    {
-        if (this.url.containsKey(o))
-        {
+    public boolean isPrepared(){return this.prepared;}
+    public File getPath(){return this.path;}
+    public Version getRoot(){return this.rootVer;}
+    public void putURL(URL u, VersionOrigin o){this.url.put(o, u);}
+    public String getID(){return this.id;}
+    public VersionType getType(){return this.type;}
+    public VersionOrigin getOrigin(){return this.origin;}
+    public URL getURL(VersionOrigin o){
+        if (this.url.containsKey(o)){
             return this.url.get(o);
-        }
-        else
-        {
+        }else{
             return null;
         }
     }
-    public JSONObject getMeta()
-    {
-        return this.versionMeta;
-    }
-    public boolean hasMinecraftArguments()
-    {
-        return (this.minecraftArguments != null);
-    }
-    public boolean hasMainClass()
-    {
-        return (this.mainClass != null);
-    }
-    public String getMinecraftArguments()
-    {
-        return this.minecraftArguments;
-    }
-    public String getMainClass()
-    {
-        return this.mainClass;
-    }
-    public Version getInheritedVersion()
-    {
-        return this.inheritedVersion;
-    }
-    public boolean hasInheritedVersion()
-    {
-        return (this.inheritedVersion != null);
-    }
-    public boolean hasLibraries()
-    {
-        return (this.libraries.size() > 0);
-    }
-    public Map<String, Library> getLibraries()
-    {
-        return this.libraries;
-    }
-    public boolean hasNatives()
-    {
-        return (this.natives.size() > 0);
-    }
-    public Map<String, Native> getNatives()
-    {
-        return this.natives;
-    }
-    public boolean hasAssetIndex()
-    {
-        return (this.assetIndex != null);
-    }
-    public boolean hasAssets()
-    {
-        return (this.assets != null);
-    }
-    public String getAssets()
-    {
-        return this.assets;
-    }
-    public AssetIndex getAssetIndex()
-    {
-        return this.assetIndex;
-    }
+    public JSONObject getMeta(){return this.versionMeta;}
+    public boolean hasMinecraftArguments(){return (this.minecraftArguments != null);}
+    public boolean hasMainClass(){return (this.mainClass != null);}
+    public String getMinecraftArguments(){return this.minecraftArguments;}
+    public String getMainClass(){return this.mainClass;}
+    public Version getInheritedVersion(){return this.inheritedVersion;}
+    public boolean hasInheritedVersion(){return (this.inheritedVersion != null);}
+    public boolean hasLibraries(){return (this.libraries.size() > 0);}
+    public Map<String, Library> getLibraries(){return this.libraries;}
+    public boolean hasNatives(){return (this.natives.size() > 0);}
+    public Map<String, Native> getNatives(){return this.natives;}
+    public boolean hasAssetIndex(){return (this.assetIndex != null);}
+    public boolean hasAssets(){return (this.assets != null);}
+    public String getAssets(){return this.assets;}
+    public AssetIndex getAssetIndex(){return this.assetIndex;}
 }

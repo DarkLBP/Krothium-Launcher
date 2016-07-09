@@ -22,29 +22,21 @@ import javax.net.ssl.HttpsURLConnection;
  */
 
 public class Utils {
-    public static OS getPlatform()
-    {
+    public static OS getPlatform(){
         final String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("win"))
-        {
+        if (osName.contains("win")){
             return OS.WINDOWS;
-        }
-        else if (osName.contains("mac"))
-        {
+        }else if (osName.contains("mac")){
             return OS.OSX;
-        }
-        else if (osName.contains("linux") || osName.contains("unix"))
-        {
+        }else if (osName.contains("linux") || osName.contains("unix")){
             return OS.LINUX;
         }
         return OS.UNKNOWN;
     }
-    public static File getWorkingDirectory()
-    {
+    public static File getWorkingDirectory(){
         final String userHome = System.getProperty("user.home", ".");
         File workingDirectory;
-        switch (getPlatform())
-        {
+        switch (getPlatform()){
             case LINUX:
                 workingDirectory = new File(userHome, ".minecraft/");
                 break;
@@ -61,50 +53,38 @@ public class Utils {
         }
         return workingDirectory;
     }
-    public static boolean downloadFile(URL url, File output)
-    {
-        try
-        {
+    public static boolean downloadFile(URL url, File output){
+        try{
             File parent = output.getParentFile();
-            if (!parent.exists())
-            {
+            if (!parent.exists()){
                 parent.mkdirs();
             }
             ReadableByteChannel rb = Channels.newChannel(url.openStream());
             FileOutputStream fo = new FileOutputStream(output);
             fo.getChannel().transferFrom(rb, 0, Long.MAX_VALUE);
             return true;
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             return false;
         }
     }
-    public static String readURL(URL url)
-    {
-        try
-        {
+    public static String readURL(URL url){
+        try{
             StringBuilder content = new StringBuilder();
             URLConnection con = url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
-            while ((line = bufferedReader.readLine()) != null)
-            {
+            while ((line = bufferedReader.readLine()) != null){
               content.append(line);
               content.append(System.lineSeparator());
             }
             bufferedReader.close();
             return content.toString();
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             return null;
         }
     }
-    public static boolean verifyChecksum(File file, String sha)
-    {
-        try
-        {
+    public static boolean verifyChecksum(File file, String sha){
+        try{
             MessageDigest sha1 = MessageDigest.getInstance("SHA1");
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[4096];
@@ -119,14 +99,11 @@ public class Utils {
             }
             String fileHash = sb.toString();
             return fileHash.equals(sha);
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             return false;
         }
     }
-    public static boolean writeToFile(String o, File f)
-    {
+    public static boolean writeToFile(String o, File f){
         try {
             FileOutputStream out = new FileOutputStream(f);
             out.write(o.getBytes());
@@ -136,8 +113,7 @@ public class Utils {
             return false;
         }     
     }
-    public static OSArch getOSArch()
-    {
+    public static OSArch getOSArch(){
         String arch = System.getenv("PROCESSOR_ARCHITECTURE");
         String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
         String realArch = arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? "64" : "32";
@@ -148,14 +124,9 @@ public class Utils {
         final String[] parts = artifact.split(":", 3);
         return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
     }
-    public static UUID stringToUUID(String s)
-    {
-        return UUID.fromString(s.substring(0, 8) + "-" + s.substring(8, 12) + "-" + s.substring(12, 16) + "-" + s.substring(16, 20) + "-" + s.substring(20, s.length()));
-    }
-    public static URL stringToURL(String url)
-    {
-        try
-        {
+    public static UUID stringToUUID(String s){return UUID.fromString(s.substring(0, 8) + "-" + s.substring(8, 12) + "-" + s.substring(12, 16) + "-" + s.substring(16, 20) + "-" + s.substring(20, s.length()));}
+    public static URL stringToURL(String url){
+        try{
             return new URL(url);
         }
         catch(Exception ex){}
@@ -173,8 +144,7 @@ public class Utils {
         out.close();
         InputStream i = null;
         StringBuilder response = new StringBuilder();
-        try
-        {
+        try{
             i = con.getInputStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(i));
             String inputLine;
@@ -184,12 +154,9 @@ public class Utils {
             }
             in.close();
             i.close();
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             i = con.getErrorStream();
-            if (i != null)
-            {
+            if (i != null){
                 BufferedReader in = new BufferedReader(new InputStreamReader(i));
                 String inputLine;
                 response = new StringBuilder();
