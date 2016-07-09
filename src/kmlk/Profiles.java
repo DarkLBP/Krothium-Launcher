@@ -176,8 +176,7 @@ public class Profiles {
         this.setSelectedProfile(p);
         return true;   
     }
-    public Profile getProfileByName(String pName)
-    {
+    public Profile getProfileByName(String pName){
         if (profiles.containsKey(pName)){
             return profiles.get(pName);
         }
@@ -244,7 +243,7 @@ public class Profiles {
                     prof.put("launcherVisibilityOnGameClose", output);
                 }
             }
-            profiles.put(key, prof);
+            profiles.put(p.getName(), prof);
         }
         o.put("profiles", profiles);
         o.put("selectedProfile", this.selected.getName());
