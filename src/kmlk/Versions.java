@@ -195,35 +195,24 @@ public class Versions {
     {
         return versions.get(latestAlpha);
     }
-    public Version getLatestVer()
+    public Version getLatestVersion()
     {
-        if (this.allowedTypes.isEmpty())
-        {
-            return this.getLatestRelease();
-        }
-        if ((this.isAllowed(VersionType.SNAPSHOT) && this.isAllowed(VersionType.RELEASE)) || (this.isAllowed(VersionType.SNAPSHOT) && !this.isAllowed(VersionType.RELEASE)))
+        if (this.isAllowed(VersionType.SNAPSHOT))
         {
             return this.getLatestSnapshot();
         }
-        else if (!this.isAllowed(VersionType.SNAPSHOT) && this.isAllowed(VersionType.RELEASE))
-        {
-            return this.getLatestRelease();
-        }
-        else
+        else if (!this.isAllowed(VersionType.RELEASE))
         {
             if (this.isAllowed(VersionType.OLD_BETA))
             {
                 return this.getLatestBeta();
             }
-            else if (!this.isAllowed(VersionType.OLD_BETA) && this.isAllowed(VersionType.OLD_ALPHA))
-            {
-                return this.getLatestAlpha();
-            }
-            else
+            else if (this.isAllowed(VersionType.OLD_ALPHA))
             {
                 return this.getLatestAlpha();
             }
         }
+        return this.getLatestRelease();
     }
     public void allowType(VersionType t)
     {

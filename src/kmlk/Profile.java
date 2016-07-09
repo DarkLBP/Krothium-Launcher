@@ -62,7 +62,7 @@ public class Profile {
     {
         if (!this.hasVersion())
         {
-            return this.versions.getLatestVer();
+            return this.versions.getLatestVersion();
         }
         return this.version;
     }
