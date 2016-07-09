@@ -1,5 +1,10 @@
 package kmlk;
 
+import kmlk.enums.VersionOrigin;
+import kmlk.objects.AssetIndex;
+import kmlk.objects.Native;
+import kmlk.objects.Version;
+import kmlk.objects.Library;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;

@@ -1,8 +1,11 @@
-package kmlk;
+package kmlk.objects;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import kmlk.Kernel;
+import kmlk.enums.LauncherVisibility;
+import kmlk.Versions;
 
 /**
  * @website http://krotium.com

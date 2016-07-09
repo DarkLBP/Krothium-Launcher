@@ -1,4 +1,4 @@
-package kmlk;
+package kmlk.objects;
 
 
 import java.io.File;

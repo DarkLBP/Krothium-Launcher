@@ -1,5 +1,9 @@
 package kmlk;
 
+import kmlk.enums.LauncherVisibility;
+import kmlk.enums.VersionType;
+import kmlk.objects.Version;
+import kmlk.objects.Profile;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;

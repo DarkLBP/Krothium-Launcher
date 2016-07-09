@@ -1,11 +1,20 @@
-package kmlk;
+package kmlk.objects;
 
+import kmlk.objects.Library;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kmlk.Console;
+import kmlk.Kernel;
+import kmlk.enums.LibraryRule;
+import kmlk.enums.OS;
+import kmlk.enums.OSArch;
+import kmlk.Utils;
+import kmlk.enums.VersionOrigin;
+import kmlk.enums.VersionType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -1,5 +1,11 @@
 package kmlk;
 
+import kmlk.enums.OSArch;
+import kmlk.objects.Native;
+import kmlk.objects.Version;
+import kmlk.objects.Library;
+import kmlk.objects.Profile;
+import kmlk.objects.User;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

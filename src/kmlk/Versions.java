@@ -1,5 +1,8 @@
 package kmlk;
 
+import kmlk.enums.VersionOrigin;
+import kmlk.enums.VersionType;
+import kmlk.objects.Version;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;

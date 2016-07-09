@@ -1,5 +1,7 @@
 package kmlk;
 
+import kmlk.enums.OSArch;
+import kmlk.enums.OS;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

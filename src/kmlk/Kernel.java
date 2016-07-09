@@ -1,5 +1,7 @@
 package kmlk;
 
+import kmlk.objects.Profile;
+import kmlk.objects.User;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;

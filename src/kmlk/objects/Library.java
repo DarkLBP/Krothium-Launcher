@@ -1,9 +1,14 @@
-package kmlk;
+package kmlk.objects;
 
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import kmlk.Console;
+import kmlk.Kernel;
+import kmlk.enums.LibraryRule;
+import kmlk.enums.OS;
+import kmlk.Utils;
 
 /**
  * @website http://krotium.com

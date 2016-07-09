@@ -1,4 +1,4 @@
-package kmlk;
+package kmlk.objects;
 
 import java.util.UUID;
 import java.util.Map;

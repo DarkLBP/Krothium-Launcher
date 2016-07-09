@@ -1,5 +1,8 @@
 package kmlk;
 
+import kmlk.exceptions.AuthenticationException;
+import kmlk.objects.Profile;
+import kmlk.objects.User;
 import java.io.File;
 import java.util.Map;
 import java.util.HashMap;

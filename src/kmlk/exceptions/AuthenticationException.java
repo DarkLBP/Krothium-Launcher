@@ -1,4 +1,4 @@
-package kmlk;
+package kmlk.exceptions;
 
 /**
  * @website http://krotium.com

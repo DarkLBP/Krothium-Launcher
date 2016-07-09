@@ -1,4 +1,4 @@
-package kmlk;
+package kmlk.enums;
 
 /**
  * @website http://krotium.com
