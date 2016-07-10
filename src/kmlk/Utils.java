@@ -69,6 +69,14 @@ public class Utils {
             return false;
         }
     }
+    public static String getExtension(String s){
+        String extension = "";
+        int i = s.lastIndexOf('.');
+        if (i >= 0) {
+            extension = s.substring(i+1);
+        }
+        return extension;
+    }
     public static String readURL(URL url){
         try{
             StringBuilder content = new StringBuilder();
