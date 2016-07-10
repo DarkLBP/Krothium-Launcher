@@ -104,7 +104,8 @@ public class WebLauncherThread extends Thread{
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web/" + abstractFile.getName());
+                    System.out.println("/kmlk/web" + path);
+                    InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web" + path);
                     if (s == null)
                     {
                         throw new WebLauncherException(path, 404, out);
