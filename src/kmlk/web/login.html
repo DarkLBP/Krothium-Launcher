@@ -70,11 +70,9 @@
   <body>
     <div class="login">
 	<h1>Minecraft Login</h1>
-        <form method="post">
-            <input type="text" name="u" placeholder="Username" required="required" />
-            <input type="password" name="p" placeholder="Password" required="required" />
-            <button type="submit" class="btn btn-primary btn-block btn-large">Let me in.</button>
-        </form>
+        <input id="username" type="text" name="u" placeholder="Username" required="required" />
+        <input id="password" type="password" name="p" placeholder="Password" required="required" />
+        <button onclick="authenticate(document.getElementById('username').value, document.getElementById('password').value)" class="btn btn-primary btn-block btn-large">LOGIN</button>
     </div>
     <script src="js/index.js"></script>
   </body>

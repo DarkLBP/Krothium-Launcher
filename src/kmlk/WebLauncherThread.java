@@ -57,9 +57,9 @@ public class WebLauncherThread extends Thread{
             }
             request = b.toString();
             System.out.println(request);
+            String[] requestChunks = request.split(" ");
+            String path = requestChunks[1];
             if (request.startsWith("GET")){
-                String[] requestChunks = request.split(" ");
-                String path = requestChunks[1];
                 if (path.equals("/"))
                 {
                     if (!kernel.getAuthentication().isAuthenticated())
@@ -126,71 +126,32 @@ public class WebLauncherThread extends Thread{
                     {
                         ex.printStackTrace();
                     }
-                }
-                if (path.endsWith(".png"))
-                {
-                    File abstractFile = new File(path);
-                    InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web/" + abstractFile.getName());
-                    if (s == null)
-                    {
-                        throw new WebLauncherException(path, 404, out);
-                    }
-                    out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                    out.write("Content-Type: image/png\r\n".getBytes());
-                    out.write("\r\n".getBytes());
-                    try
-                    {
-                        
-                        while((i=s.read())!=-1)
-                        {
-                           out.write(i);
-                        }
-                        s.close();
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.printStackTrace();
-                    }
-                    
-                    /*bufferedWriter.write("HTTP/1.1 200 OK\r\n");
-                    bufferedWriter.write("Content-Type: image/png\r\n");
-                    bufferedWriter.write("\r\n");*/
-
-                }
-                switch (path)
-                {
-                    case "/":
-                        console.printInfo("Reached root");
-                        Authentication a = this.kernel.getAuthentication();
-                        if (!a.isAuthenticated())
-                        {
-                            console.printInfo("Not authenticated");
-                            /*bufferedWriter.write("HTTP/1.1 301 Moved Permanently\r\n");
-                            bufferedWriter.write("Location: /login\r\n");
-                            bufferedWriter.write("\r\n");*/
-                        }
-                        else
-                        {
-                            console.printInfo("Authenticated");
-                            /*bufferedWriter.write("HTTP/1.1 200 OK\r\n");
-                            bufferedWriter.write("\r\n");
-                            bufferedWriter.write("<html><h1>AUTHENTICATED</h1></html>");*/
-                        }
-                        break;
-                    case "/login":
-                        console.printInfo("Reached.");
-                        /*bufferedWriter.write("HTTP/1.1 200 OK\r\n");
-                        bufferedWriter.write("\r\n");
-                        bufferedWriter.write("<html><h1>IT WORKS</h1></html>");*/
-                        break;
-                }
-                
+                }                
             }
             else if (request.startsWith("POST"))
             {
+                String responseCode = "ERROR";
+                if (path.startsWith("/action/")){
+                    String function = path.replace("/action/", "");
+                    switch (function){
+                        case "authenticate":
+                            System.out.println("AUTHENTICATE");
+                            try{
+                                String[] requestData = request.split("\r\n");
+                                String userData = requestData[requestData.length - 1];
+                                String userName = userData.split("&")[0].replace("u=", "");
+                                String password = userData.split("&")[1].replace("p=", "");
+                                responseCode = "Username: " + userName + " | Password: " + password;
+                            }catch (Exception ex){
+                                throw new WebLauncherException(path, 400, out);
+                            }
+                            break;
+                    }
+                }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                out.write("Content-Type: text/html\r\n".getBytes());
                 out.write("\r\n".getBytes());
-                out.write("<html><h1>UNSUPPORTED POST REQUESTS</h1></html>".getBytes());
+                out.write(responseCode.getBytes());
             }
             out.close();
             in.close();
