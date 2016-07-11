@@ -5,6 +5,7 @@ import kmlk.objects.User;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
+import kmlk.exceptions.AuthenticationException;
 import org.json.JSONObject;
 
 
@@ -46,6 +47,8 @@ public final class Kernel {
     public void setSelectedProfile(Profile p){this.profiles.setSelectedProfile(p);}
     public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
+    public void launchGame(){this.gameLauncher.launch(this.getSelectedProfile());}
+    public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

@@ -7,6 +7,7 @@ function authenticate(user, pass){
 function play(){
     postRequest("play", "");
 }
+
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {

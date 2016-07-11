@@ -37,10 +37,10 @@ public class WebLauncher {
         int portStart = 24000;
         int portEnd = 25000;
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        ServerSocket ss = new ServerSocket(8080);
+        ServerSocket ss = new ServerSocket(port);
         boolean status = true;
         k.getConsole().printInfo("Started bundled web server in port " + port);
-        //Runtime.getRuntime().exec("cmd /c start http://localhost:" + port + "/");
+        Runtime.getRuntime().exec("cmd /c start http://localhost:" + port + "/");
         while (status)
         {
             System.out.println("Awaiting connection.");

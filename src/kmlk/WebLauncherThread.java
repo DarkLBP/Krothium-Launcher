@@ -43,19 +43,15 @@ public class WebLauncherThread extends Thread{
             StringBuilder b = new StringBuilder();
             int available = in.available();
             if (available == 0){
-                throw new WebLauncherException(400, out);
+                throw new WebLauncherException(null, 400, out);
             }
-            System.out.println("Input available: " + available);
-            while((i=in.read())!=-1)
-            {
+            while((i=in.read())!=-1){
                read++;
                c=(char)i;
                b.append(c);
-               if (read == available)
-               {
+               if (read == available){
                    available+=in.available();
-                   if (read == available)
-                   {
+                   if (read == available){
                        break;
                    }
                }
@@ -107,33 +103,27 @@ public class WebLauncherThread extends Thread{
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    System.out.println("/kmlk/web" + path);
                     InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web" + path);
-                    if (s == null)
-                    {
+                    if (s == null){
                         throw new WebLauncherException(path, 404, out);
                     }
                     out.write("HTTP/1.1 200 OK\r\n".getBytes());
                     out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
                     out.write("\r\n".getBytes());
-                    try
-                    {
+                    try{
                         byte[] buffer = new byte[4096];
-                        while((i=s.read(buffer))!=-1)
-                        {
+                        while((i=s.read(buffer))!=-1){
                            out.write(buffer, 0, i);
                         }
                         s.close();
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.printStackTrace();
+                    }catch (Exception ex){
+                        throw new WebLauncherException(path, 500, out);
                     }
                 }                
             }
             else if (request.startsWith("POST"))
             {
-                String responseCode = "ERROR";
+                String responseCode = "";
                 if (path.startsWith("/action/")){
                     String function = path.replace("/action/", "");
                     switch (function){
@@ -141,11 +131,10 @@ public class WebLauncherThread extends Thread{
                             try{
                                 String[] requestData = request.split("\r\n");
                                 String userData = requestData[requestData.length - 1];
-                                System.out.println("DATOS DE USUARIO: " + userData);
                                 String userName = userData.split("&")[0].replace("u=", "");
                                 String password = userData.split("&")[1].replace("p=", "");
                                 try{
-                                    kernel.getAuthentication().authenticate(userName, password);
+                                    kernel.authenticate(userName, password);
                                     kernel.saveProfiles();
                                     responseCode = "OK";
                                 }catch (AuthenticationException ex){
@@ -156,8 +145,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "play":
-                            GameLauncher g = kernel.getGameLauncher();
-                            g.launch(kernel.getSelectedProfile());
+                            kernel.launchGame();
                             break;
                     }
                 }
