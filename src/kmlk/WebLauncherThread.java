@@ -53,7 +53,11 @@ public class WebLauncherThread extends Thread{
                b.append(c);
                if (read == available)
                {
-                   break;
+                   available+=in.available();
+                   if (read == available)
+                   {
+                       break;
+                   }
                }
             }
             request = b.toString();
@@ -71,13 +75,10 @@ public class WebLauncherThread extends Thread{
                     }
                     else
                     {
-                        out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                        out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
+                        out.write("Location: /play.html\r\n".getBytes());
                         out.write("\r\n".getBytes());
-                        out.write("<html><h1>LOGGED IN</h1></html>".getBytes());
                     }
-                }
-                else if (path.startsWith("/action/")){
-                    
                 }else{
                     File abstractFile = new File(path);
                     String fileName = abstractFile.getName();
@@ -140,10 +141,12 @@ public class WebLauncherThread extends Thread{
                             try{
                                 String[] requestData = request.split("\r\n");
                                 String userData = requestData[requestData.length - 1];
+                                System.out.println("DATOS DE USUARIO: " + userData);
                                 String userName = userData.split("&")[0].replace("u=", "");
                                 String password = userData.split("&")[1].replace("p=", "");
                                 try{
                                     kernel.getAuthentication().authenticate(userName, password);
+                                    kernel.saveProfiles();
                                     responseCode = "OK";
                                 }catch (AuthenticationException ex){
                                     responseCode = ex.getMessage();
@@ -151,6 +154,10 @@ public class WebLauncherThread extends Thread{
                             }catch (Exception ex){
                                 throw new WebLauncherException(path, 400, out);
                             }
+                            break;
+                        case "play":
+                            GameLauncher g = kernel.getGameLauncher();
+                            g.launch(kernel.getSelectedProfile());
                             break;
                     }
                 }

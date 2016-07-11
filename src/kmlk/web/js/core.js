@@ -2,9 +2,12 @@
 
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
-    postRequest("authenticate", "POST", parameters);
+    postRequest("authenticate", parameters);
 }
-function postRequest(action, requestType, parameters){
+function play(){
+    postRequest("play", "");
+}
+function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -19,7 +22,7 @@ function postRequest(action, requestType, parameters){
             }
         }
     };
-    xhr.open(requestType, "/action/" + action, true);
+    xhr.open("POST", "/action/" + action, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send(parameters);
 }
