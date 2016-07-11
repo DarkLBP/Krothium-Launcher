@@ -16,11 +16,22 @@ import javax.net.ServerSocketFactory;
 public class WebLauncher {
     public static void main(String[] args) throws IOException, AuthenticationException
     {
+        
         Kernel k = new Kernel();
-        Console c = k.getConsole();
+        k.getConsole().setEnabled(true);
+        k.getConsole().includeTimestamps(true);
         k.setWorkingDir(new File("C:\\Minecraft"));
-        c.setEnabled(true);
-        c.includeTimestamps(true);
+        k.loadVersions();
+        k.loadProfiles();
+        k.loadUsers();
+        Authentication a = k.getAuthentication();
+        if (a.hasSelectedUser()){
+            try{
+                a.validate();
+            }catch(Exception ex){
+                //
+            }
+        }
         ServerSocketFactory ssf = ServerSocketFactory.getDefault();
         Random rand = new Random();
         int portStart = 24000;
@@ -28,7 +39,7 @@ public class WebLauncher {
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
         ServerSocket ss = new ServerSocket(8080);
         boolean status = true;
-        c.printInfo("Started bundled web server in port " + port);
+        k.getConsole().printInfo("Started bundled web server in port " + port);
         //Runtime.getRuntime().exec("cmd /c start http://localhost:" + port + "/");
         while (status)
         {

@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kmlk.exceptions.AuthenticationException;
 
 /**
  * @website http://krotium.com
@@ -71,6 +72,7 @@ public class WebLauncherThread extends Thread{
                     else
                     {
                         out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                        out.write("\r\n".getBytes());
                         out.write("<html><h1>LOGGED IN</h1></html>".getBytes());
                     }
                 }
@@ -135,13 +137,17 @@ public class WebLauncherThread extends Thread{
                     String function = path.replace("/action/", "");
                     switch (function){
                         case "authenticate":
-                            System.out.println("AUTHENTICATE");
                             try{
                                 String[] requestData = request.split("\r\n");
                                 String userData = requestData[requestData.length - 1];
                                 String userName = userData.split("&")[0].replace("u=", "");
                                 String password = userData.split("&")[1].replace("p=", "");
-                                responseCode = "Username: " + userName + " | Password: " + password;
+                                try{
+                                    kernel.getAuthentication().authenticate(userName, password);
+                                    responseCode = "OK";
+                                }catch (AuthenticationException ex){
+                                    responseCode = ex.getMessage();
+                                }
                             }catch (Exception ex){
                                 throw new WebLauncherException(path, 400, out);
                             }
