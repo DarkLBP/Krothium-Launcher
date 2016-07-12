@@ -40,7 +40,7 @@ public class WebLauncher {
         ServerSocket ss = new ServerSocket(port);
         boolean status = true;
         k.getConsole().printInfo("Started bundled web server in port " + port);
-        Runtime.getRuntime().exec("cmd /c start http://localhost:" + port + "/");
+        Utils.openWebsite("http://localhost:" + port);
         while (status)
         {
             System.out.println("Awaiting connection.");

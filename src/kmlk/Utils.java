@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -54,6 +55,22 @@ public class Utils {
                 workingDirectory = new File(userHome, "minecraft/");
         }
         return workingDirectory;
+    }
+    public static void openWebsite(String url) throws IOException
+    {
+        String os = System.getProperty("os.name").toLowerCase();
+        Runtime rt = Runtime.getRuntime();
+        if (os.contains("win")) {
+            rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
+        } else if (os.contains("mac")) {
+            rt.exec( "open " + url);
+        } else if (os.contains("nix") || os.indexOf( "nux") >=0) {
+            String[] browsers = {"firefox", "epiphany", "mozilla", "konqueror", "netscape","opera","links","lynx", "chromium"};
+            StringBuilder cmd = new StringBuilder();
+            for (int i=0; i<browsers.length; i++)
+                cmd.append(i==0  ? "" : " || ").append(browsers[i]).append(" \"").append(url).append("\" ");
+            rt.exec(new String[] { "sh", "-c", cmd.toString() });
+       }
     }
     public static boolean downloadFile(URL url, File output){
         try{
