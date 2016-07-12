@@ -1,29 +1,25 @@
 //Core javascript functions for KMLK inner functionality
+var play_interval;
 
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
-    postRequest("authenticate", parameters);
+    var response = postRequest("authenticate", parameters);
+    if (response === "OK"){
+        document.location.href("/");
+    } else {
+        alert(response);
+    }
 }
 function play(){
     postRequest("play", "");
+    play_interval = setInterval(function(){play_update();}, 1000);
 }
-
+function play_update(){
+    console.info("WORKS");
+}
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            switch (action){
-                case "authenticate":
-                    if (xhr.responseText === "OK"){
-                        document.location.href("/");
-                    }else{
-                        alert(xhr.responseText);
-                    }
-                    break;
-            }
-        }
-    };
-    xhr.open("POST", "/action/" + action, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.open("POST", "/action/" + action, false);
     xhr.send(parameters);
+    return xhr.responseText;
 }
