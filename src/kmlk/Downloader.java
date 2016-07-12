@@ -305,4 +305,5 @@ public class Downloader {
             }
         }
     }
+    public int getProgress(){return (this.progressDownload + this.progressValid);}
 }

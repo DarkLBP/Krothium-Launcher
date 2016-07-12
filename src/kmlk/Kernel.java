@@ -49,6 +49,12 @@ public final class Kernel {
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public void launchGame(){this.gameLauncher.launch(this.getSelectedProfile());}
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
+    public int getDownloadProgress(){return this.downloader.getProgress();}
+    public boolean isGameStarted(){return this.gameLauncher.isStarted();};
+    public void downloadAssets(){this.downloader.downloadAssets(this.getSelectedProfile().getVersion());}
+    public void downloadVersion(){this.downloader.downloadVersion(this.getSelectedProfile().getVersion());}
+    public void downloadLibraries(){this.downloader.downloadLibraries(this.getSelectedProfile().getVersion());}
+    public void downloadNatives(){this.downloader.downloadNatives(this.getSelectedProfile().getVersion());}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

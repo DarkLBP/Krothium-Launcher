@@ -120,9 +120,7 @@ public class WebLauncherThread extends Thread{
                         throw new WebLauncherException(path, 500, out);
                     }
                 }                
-            }
-            else if (request.startsWith("POST"))
-            {
+            } else if (request.startsWith("POST")){
                 String responseCode = "";
                 if (path.startsWith("/action/")){
                     String function = path.replace("/action/", "");
@@ -145,7 +143,22 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "play":
-                            kernel.launchGame();
+                            Thread t = new Thread(){
+                                @Override
+                                public void run(){
+                                    kernel.downloadAssets();
+                                    kernel.downloadVersion();
+                                    kernel.downloadLibraries();
+                                    kernel.downloadNatives();
+                                    kernel.launchGame();
+                                }
+                            };
+                            t.start();
+                            break;
+                        case "status":
+                            responseCode = String.valueOf(kernel.isGameStarted());
+                            responseCode += "\n";
+                            responseCode += String.valueOf(kernel.getDownloadProgress());
                             break;
                     }
                 }

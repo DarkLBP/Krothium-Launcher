@@ -1,6 +1,5 @@
 //Core javascript functions for KMLK inner functionality
-var play_interval;
-
+var play_interval = setInterval(function(){update();}, 1000);
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
     var response = postRequest("authenticate", parameters);
@@ -12,10 +11,22 @@ function authenticate(user, pass){
 }
 function play(){
     postRequest("play", "");
-    play_interval = setInterval(function(){play_update();}, 1000);
 }
-function play_update(){
-    console.info("WORKS");
+function update(){
+    var response = postRequest("status", "");
+    var data = response.split("\n");
+    if (data.constructor === Array){
+        if (data.length === 2){
+            var gameStarted = data[0];
+            var progress = data[1];
+            document.getElementById("progress").value = progress;
+            if (gameStarted === "true"){
+                document.getElementById("play").value = "PLAYING";
+            } else {
+                document.getElementById("play").value = "PLAY";
+            }
+        }
+    }
 }
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
