@@ -1,14 +1,10 @@
 package kmlk;
 
 import kmlk.exceptions.WebLauncherException;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,26 +33,25 @@ public class WebLauncherThread extends Thread{
             InputStream in = this.clientSocket.getInputStream();
             OutputStream out = this.clientSocket.getOutputStream();
             String request = null;
-            int i;
-            char c;
+            char[] data;
             int read = 0;
             StringBuilder b = new StringBuilder();
             int available = in.available();
-            if (available == 0){
-                throw new WebLauncherException(null, 400, out);
-            }
-            while((i=in.read())!=-1){
-               read++;
-               c=(char)i;
-               b.append(c);
-               if (read == available){
-                   available+=in.available();
-                   if (read == available){
-                       break;
-                   }
+            byte[] tmp = new byte[4096];
+            while((read = in.read(tmp)) != -1){
+               data = new char[read];
+               for (int i = 0; i < read; i++){
+                   data[i] = (char)tmp[i];
+               }
+               b.append(data);
+               if (in.available() == 0){
+                   break;
                }
             }
             request = b.toString();
+            if (request.isEmpty()){
+                throw new WebLauncherException(null, 400, out);
+            }
             System.out.println(request);
             String[] requestChunks = request.split(" ");
             String path = requestChunks[1];
@@ -111,6 +106,7 @@ public class WebLauncherThread extends Thread{
                     out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
                     out.write("\r\n".getBytes());
                     try{
+                        int i;
                         byte[] buffer = new byte[4096];
                         while((i=s.read(buffer))!=-1){
                            out.write(buffer, 0, i);

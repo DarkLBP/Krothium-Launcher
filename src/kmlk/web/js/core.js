@@ -1,10 +1,9 @@
 //Core javascript functions for KMLK inner functionality
-var play_interval = setInterval(function(){update();}, 1000);
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
     var response = postRequest("authenticate", parameters);
     if (response === "OK"){
-        document.location.href("/");
+        document.location.href = "/";
     } else {
         alert(response);
     }
