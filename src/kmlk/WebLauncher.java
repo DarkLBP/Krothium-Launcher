@@ -3,6 +3,7 @@ package kmlk;
 import kmlk.exceptions.AuthenticationException;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
@@ -37,7 +38,7 @@ public class WebLauncher {
         int portStart = 24000;
         int portEnd = 25000;
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        ServerSocket ss = new ServerSocket(port);
+        ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
         boolean status = true;
         k.getConsole().printInfo("Started bundled web server in port " + port);
         Utils.openWebsite("http://localhost:" + port);
