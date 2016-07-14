@@ -55,6 +55,7 @@ public final class Kernel {
     public void downloadVersion(){this.downloader.downloadVersion(this.getSelectedProfile().getVersion());}
     public void downloadLibraries(){this.downloader.downloadLibraries(this.getSelectedProfile().getVersion());}
     public void downloadNatives(){this.downloader.downloadNatives(this.getSelectedProfile().getVersion());}
+    public boolean isDownloading(){return this.downloader.isDownloading();}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

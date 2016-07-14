@@ -152,7 +152,13 @@ public class WebLauncherThread extends Thread{
                             t.start();
                             break;
                         case "status":
-                            responseCode = String.valueOf(kernel.isGameStarted());
+                            if (kernel.isDownloading()){
+                                responseCode = "1";
+                            } else if (kernel.isGameStarted()){
+                                responseCode = "2";
+                            } else {
+                                responseCode = "0";
+                            }
                             responseCode += "\n";
                             responseCode += String.valueOf(kernel.getDownloadProgress());
                             break;

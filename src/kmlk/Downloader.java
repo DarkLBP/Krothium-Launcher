@@ -32,8 +32,10 @@ public class Downloader {
     private int progressValid = 0;
     private long downloaded = 0;
     private long validated = 0;
+    private boolean downloading = false;
     public Downloader(){this.console = Kernel.getKernel().getConsole();}
     public void downloadAssets(Version v){
+        this.downloading = true;
         ExecutorService pool = Executors.newFixedThreadPool(5);
         Version ver = (v.getRoot() == null) ? v : v.getRoot();
         console.printInfo("Downloading assets for version: " + ver.getID());
@@ -124,8 +126,10 @@ public class Downloader {
         }catch (Exception ex){
             console.printError("Failed to download assets for version: " + ver.getID());
         }
+        this.downloading = false;
     }
     public void downloadVersion(Version ver){
+        this.downloading = true;
         Version v = (ver.getRoot() == null) ? ver : ver.getRoot();
         console.printInfo("Downloading version file: " + ver.getID() + ".jar");
         JSONObject root = v.getMeta();
@@ -178,8 +182,10 @@ public class Downloader {
         }else{
             console.printInfo("Version " + ver.getID() + " JSON file found locally and it is valid.");
         }
+        this.downloading = false;
     }
     public void downloadLibraries(Version ver){
+        this.downloading = true;
         Version v = ver;
         while (v != null){
             console.printInfo("Downloading required libraries for version " + v.getID());
@@ -255,8 +261,10 @@ public class Downloader {
                 v = null;
             }
         }
+        this.downloading = false;
     }
     public void downloadNatives(Version ver){
+        this.downloading = true;
         Version v = ver;
         while (v != null){
             if (!v.isPrepared()){
@@ -304,6 +312,8 @@ public class Downloader {
                 v = null;
             }
         }
+        this.downloading = false;
     }
     public int getProgress(){return (this.progressDownload + this.progressValid);}
+    public boolean isDownloading(){return this.downloading;}
 }

@@ -16,13 +16,19 @@ function update(){
     var data = response.split("\n");
     if (data.constructor === Array){
         if (data.length === 2){
-            var gameStarted = data[0];
+            var status = data[0];
             var progress = data[1];
             document.getElementById("progress").value = progress;
-            if (gameStarted === "true"){
-                document.getElementById("play").value = "PLAYING";
-            } else {
-                document.getElementById("play").value = "PLAY";
+            switch (status){
+                case "0":
+                    document.getElementById("play").value = "PLAY";
+                    break;
+                case "1":
+                    document.getElementById("play").value = "DOWNLOADING";
+                    break;
+                case "2":
+                    document.getElementById("play").value = "PLAYING";
+                    break;
             }
         }
     }
