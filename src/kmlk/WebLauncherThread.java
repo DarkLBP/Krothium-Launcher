@@ -55,6 +55,7 @@ public class WebLauncherThread extends Thread{
             System.out.println(request);
             String[] requestChunks = request.split(" ");
             String path = requestChunks[1];
+            boolean closeWhenFinished = false;
             if (request.startsWith("GET")){
                 if (path.equals("/"))
                 {
@@ -163,7 +164,8 @@ public class WebLauncherThread extends Thread{
                             responseCode += String.valueOf(kernel.getDownloadProgress());
                             break;
                         case "close":
-                            System.exit(0);
+                            kernel.saveProfiles();
+                            closeWhenFinished = true;
                             break;
                     }
                 }
@@ -175,6 +177,9 @@ public class WebLauncherThread extends Thread{
             out.close();
             in.close();
             console.printInfo("Connection ended");
+            if (closeWhenFinished){
+                System.exit(0);
+            }
         } catch (IOException ex) {
             Logger.getLogger(WebLauncherThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (WebLauncherException ex) {
