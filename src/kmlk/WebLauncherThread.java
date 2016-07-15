@@ -1,9 +1,11 @@
 package kmlk;
 
+import java.io.BufferedReader;
 import kmlk.exceptions.WebLauncherException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -148,6 +150,27 @@ public class WebLauncherThread extends Thread{
                                     kernel.downloadLibraries();
                                     kernel.downloadNatives();
                                     kernel.launchGame();
+                                    Thread u = new Thread(){
+                                        @Override
+                                        public void run(){
+                                            InputStreamReader isr = new InputStreamReader(kernel.getGameInputStream());
+                                            BufferedReader br = new BufferedReader(isr);
+                                            String lineRead;
+                                            try{
+                                                while (kernel.isGameStarted())
+                                                {
+                                                    if ((lineRead = br.readLine()) != null)
+                                                    {
+                                                        System.out.println(lineRead);
+                                                    }
+                                                }
+                                            } catch (Exception ex){
+                                                console.printError("Game stopped unexpectedly.");
+                                            }
+                                            
+                                        }
+                                    };
+                                    u.start();
                                 }
                             };
                             t.start();

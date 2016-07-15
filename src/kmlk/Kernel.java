@@ -3,6 +3,7 @@ package kmlk;
 import kmlk.objects.Profile;
 import kmlk.objects.User;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Set;
 import kmlk.exceptions.AuthenticationException;
@@ -51,6 +52,7 @@ public final class Kernel {
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
     public int getDownloadProgress(){return this.downloader.getProgress();}
     public boolean isGameStarted(){return this.gameLauncher.isStarted();};
+    public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};
     public void downloadAssets(){this.downloader.downloadAssets(this.getSelectedProfile().getVersion());}
     public void downloadVersion(){this.downloader.downloadVersion(this.getSelectedProfile().getVersion());}
     public void downloadLibraries(){this.downloader.downloadLibraries(this.getSelectedProfile().getVersion());}
