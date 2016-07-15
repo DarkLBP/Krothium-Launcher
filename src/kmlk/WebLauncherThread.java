@@ -162,6 +162,9 @@ public class WebLauncherThread extends Thread{
                             responseCode += "\n";
                             responseCode += String.valueOf(kernel.getDownloadProgress());
                             break;
+                        case "close":
+                            System.exit(0);
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

@@ -2,6 +2,12 @@
 var play_interval;
 var progress_value;
 var play_value;
+var last_key;
+var mouse_out;
+window.onbeforeunload = close;
+window.onkeydown = keyreg;
+window.onmousemove = mousereg;
+window.onmouseout = mousereg;
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
     var response = postRequest("authenticate", parameters);
@@ -43,6 +49,37 @@ function play_update(){
             }
         }
     }
+}
+function keyreg(e){
+    console.info(e.keyCode);
+    last_key = e.keyCode;
+}
+function mousereg(e){
+    if (e.type === "mousemove"){
+        mouse_out = false;
+    } else {
+        if (e.relatedTarget === null){
+            mouse_out = true;
+        } else {
+            mouse_out = false;
+        }
+    }
+}
+function close(){
+    var shutdown = false;
+    if (last_key !== 116 && mouse_out){
+        shutdown = true;
+    } else if (last_key === 17 || last_key === 18 || last_key === 115 || last_key === 87){
+        shutdown = true;
+    } else if (last_key === 116){
+        shutdown = false;
+    } else {
+        return "Are you sure you want to quit? Any progress won't be saved!";
+    }
+    if (shutdown){
+        postRequest("close", null);
+    }
+    return null;
 }
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
