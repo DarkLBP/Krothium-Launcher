@@ -121,11 +121,12 @@ public class GameLauncher {
                 Map<String, Library> libs = v2.getLibraries();
                 Set set = libs.keySet();
                 Iterator it = set.iterator();
+                String separator = System.getProperty("path.separator");
                 while (it.hasNext()){
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
                     File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
-                    libraries += completePath.getAbsolutePath() + ";";
+                    libraries += completePath.getAbsolutePath() + separator;
                 }
             }
             if (v2.hasInheritedVersion()){
