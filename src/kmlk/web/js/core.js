@@ -1,9 +1,12 @@
 //Core javascript functions for KMLK inner functionality
-var play_interval;
-var progress_value;
-var play_value;
-var last_key;
-var mouse_out;
+var play_interval = null;
+var progress_value = 0;
+var play_value = "";
+var last_key = -1;
+var mouse_out = false;;
+var close_override = false;;
+var current_url = window.location.href;
+var current_host = window.location.hostname;
 window.onbeforeunload = close;
 window.onkeydown = keyreg;
 window.onmousemove = mousereg;
@@ -12,7 +15,7 @@ function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
     var response = postRequest("authenticate", parameters);
     if (response === "OK"){
-        document.location.href = "/";
+        redirect("/");
     } else {
         alert(response);
     }
@@ -64,7 +67,14 @@ function mousereg(e){
         }
     }
 }
+function redirect(url){
+    close_override = true;
+    window.location.href = url;
+}
 function close(){
+    if (close_override){
+        return null;
+    }
     var shutdown = false;
     if (last_key !== 116 && mouse_out){
         shutdown = true;
