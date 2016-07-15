@@ -51,7 +51,6 @@ function play_update(){
     }
 }
 function keyreg(e){
-    console.info(e.keyCode);
     last_key = e.keyCode;
 }
 function mousereg(e){

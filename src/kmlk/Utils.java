@@ -141,9 +141,8 @@ public class Utils {
         }     
     }
     public static OSArch getOSArch(){
-        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-        String realArch = arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? "64" : "32";
+        String arch = System.getProperty("os.arch");
+        String realArch = arch.endsWith("64") ? "64" : "32";
         return (realArch.equals("32") ? OSArch.OLD : OSArch.NEW);
     }
     public static String getArtifactPath(String artifact, String ext) {
