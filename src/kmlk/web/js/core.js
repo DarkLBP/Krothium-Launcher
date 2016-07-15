@@ -15,7 +15,7 @@ function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
     var response = postRequest("authenticate", parameters);
     if (response === "OK"){
-        redirect("/");
+        redirect("/play.html");
     } else {
         alert(response);
     }
