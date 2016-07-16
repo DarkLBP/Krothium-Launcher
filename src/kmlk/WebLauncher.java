@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import javax.net.ServerSocketFactory;
 
 /**
@@ -15,17 +16,19 @@ import javax.net.ServerSocketFactory;
  */
 
 public class WebLauncher {
+    
+    public static long lastKeepAlive;
     public static void main(String[] args) throws IOException, AuthenticationException
     {
-        
-        Kernel k = new Kernel();
-        k.getConsole().setEnabled(true);
-        k.getConsole().includeTimestamps(true);
-        k.setWorkingDir(new File("C:\\Minecraft"));
-        k.loadVersions();
-        k.loadProfiles();
-        k.loadUsers();
-        Authentication a = k.getAuthentication();
+        Kernel kernel = new Kernel();
+        Console console = kernel.getConsole();
+        console.setEnabled(true);
+        console.includeTimestamps(true);
+        kernel.setWorkingDir(new File("C:\\Minecraft"));
+        kernel.loadVersions();
+        kernel.loadProfiles();
+        kernel.loadUsers();
+        Authentication a = kernel.getAuthentication();
         if (a.hasSelectedUser()){
             try{
                 a.validate();
@@ -40,8 +43,29 @@ public class WebLauncher {
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
         ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
         boolean status = true;
-        k.getConsole().printInfo("Started bundled web server in port " + port);
+        console.printInfo("Started bundled web server in port " + port);
         Utils.openWebsite("http://localhost:" + port);
+        WebLauncher.lastKeepAlive = System.nanoTime();
+        Thread keepAlive = new Thread(){
+            @Override
+            public void run(){
+                long diff = (System.nanoTime() - lastKeepAlive);
+                long result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
+                while (result < Constants.KEEPALIVE_TIMEOUT){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        console.printError("Error in KeepAlive thread.");
+                    }
+                    diff = (System.nanoTime() - lastKeepAlive);
+                    result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
+                }
+                console.printError("KeepAlive timeout exceeded. Closing launcher...");
+                kernel.saveProfiles();
+                System.exit(0);
+            }
+        };
+        keepAlive.start();
         while (status)
         {
             System.out.println("Awaiting connection.");

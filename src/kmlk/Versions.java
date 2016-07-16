@@ -43,7 +43,7 @@ public class Versions {
         console.printInfo("Fetching remote version list.");
         try {
             StringBuilder content = new StringBuilder();
-            URLConnection con = Constants.versionsJSON.openConnection();
+            URLConnection con = Constants.JSON_FILE.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
             while ((line = bufferedReader.readLine()) != null){

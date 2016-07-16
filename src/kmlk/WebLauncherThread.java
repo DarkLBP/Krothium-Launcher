@@ -190,6 +190,9 @@ public class WebLauncherThread extends Thread{
                             kernel.saveProfiles();
                             closeWhenFinished = true;
                             break;
+                        case "keepalive":
+                            WebLauncher.lastKeepAlive = System.nanoTime();
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

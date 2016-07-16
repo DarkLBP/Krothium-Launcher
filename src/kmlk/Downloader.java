@@ -75,7 +75,7 @@ public class Downloader {
                     JSONObject o = objects.getJSONObject(object);
                     String hash = o.getString("hash");
                     long size = o.getLong("size");
-                    URL downloadURL = Utils.stringToURL(Constants.resourcesRoot + hash.substring(0,2) + "/" + hash);
+                    URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0,2) + "/" + hash);
                     File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
                     boolean localValid = false;
                     if (destPath.exists() && destPath.isFile()){
@@ -89,10 +89,10 @@ public class Downloader {
                             public void run(){
                                 console.printInfo("Downloading " + object);
                                 int tries = 0;
-                                while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.downloadTries)){
+                                while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.DOWNLOAD_TRIES)){
                                     tries++;
                                 }
-                                if (tries == Constants.downloadTries){
+                                if (tries == Constants.DOWNLOAD_TRIES){
                                     console.printError("Failed to download asset file: " + object);
                                 }else{
                                     downloaded += size;
@@ -146,10 +146,10 @@ public class Downloader {
         }
         if (!localValid){
             int tries = 0;
-            while (!Utils.downloadFile(jarURL, destPath) && (tries < Constants.downloadTries)){
+            while (!Utils.downloadFile(jarURL, destPath) && (tries < Constants.DOWNLOAD_TRIES)){
                 tries++;
             }
-            if (tries == Constants.downloadTries){
+            if (tries == Constants.DOWNLOAD_TRIES){
                 console.printError("Failed to download version jar: " + destPath.getName());
             }
         }else{
@@ -173,10 +173,10 @@ public class Downloader {
         }
         if (!JSONValid){
             int tries = 0;
-            while (!Utils.downloadFile(ver.getURL(VersionOrigin.REMOTE), jsonFile) && (tries < Constants.downloadTries)){
+            while (!Utils.downloadFile(ver.getURL(VersionOrigin.REMOTE), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
                 tries++;
             }
-            if (tries == Constants.downloadTries){
+            if (tries == Constants.DOWNLOAD_TRIES){
                 console.printError("Failed to download version jar: " + destPath.getName());
             }
         }else{
@@ -239,10 +239,10 @@ public class Downloader {
                         }
                         if (!localValid){
                             int tries = 0;
-                            while (!Utils.downloadFile(lib.getURL(), libPath) && (tries < Constants.downloadTries)){
+                            while (!Utils.downloadFile(lib.getURL(), libPath) && (tries < Constants.DOWNLOAD_TRIES)){
                                 tries++;
                             }
-                            if (tries == Constants.downloadTries){
+                            if (tries == Constants.DOWNLOAD_TRIES){
                                 console.printError("Failed to download library jar: " + libPath.getName());
                             }
                         }else{
@@ -290,10 +290,10 @@ public class Downloader {
                         }
                         if (!localValid){
                             int tries = 0;
-                            while (!Utils.downloadFile(nat.getURL(), natPath) && (tries < Constants.downloadTries)){
+                            while (!Utils.downloadFile(nat.getURL(), natPath) && (tries < Constants.DOWNLOAD_TRIES)){
                                 tries++;
                             }
-                            if (tries == Constants.downloadTries){
+                            if (tries == Constants.DOWNLOAD_TRIES){
                                 console.printError("Failed to download native jar: " + natPath.getName());
                             }
                         }else{

@@ -33,7 +33,7 @@ public final class Kernel {
         this.downloader = new Downloader();
         this.authentication = new Authentication();
         this.gameLauncher = new GameLauncher();
-        System.out.println("KMLK r" + String.valueOf(Constants.kernelRevision) + " by DarkLBP (http://krotium.com)");
+        System.out.println("KMLK r" + String.valueOf(Constants.KERNEL_REVISION) + " by DarkLBP (http://krotium.com)");
     }
     public Console getConsole(){return this.console;}
     public void setWorkingDir(File dir){

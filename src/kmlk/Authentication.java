@@ -61,7 +61,7 @@ public class Authentication {
         request.put("requestUser", true);
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.authAuthenticate, request.toString());
+            response = Utils.sendJSONPost(Constants.AUTHENTICATE_URL, request.toString());
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -120,7 +120,7 @@ public class Authentication {
         request.put("requestUser", true);
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.authRefresh, request.toString());
+            response = Utils.sendJSONPost(Constants.REFRESH_URL, request.toString());
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -156,7 +156,7 @@ public class Authentication {
         request.put("clientToken", this.clientToken);
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.authValidate, request.toString());
+            response = Utils.sendJSONPost(Constants.VALIDATE_URL, request.toString());
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
