@@ -24,20 +24,20 @@ function playGame_Update(){
             var status = data[0];
             var progress = data[1];
             if (progress !== progress_value){
-                updateElement("progress", progress);
+                document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>'
                 progress_value = progress;
             }
             if (status !== play_value){
                 switch (status){
                     case "0":
-                        updateElement("play", "PLAY");
+                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>';
                         clearInterval(play_interval);
                         break;
                     case "1":
-                        updateElement("play", "DOWNLOADING");
+                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DOWNLOADING</a>';
                         break;
                     case "2":
-                        updateElement("play", "PLAYING");
+                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAYING</a>';
                         break;
                 }
                 play_value = status;
@@ -47,9 +47,6 @@ function playGame_Update(){
 }
 function redirect(url){
     window.location.href = url;
-}
-function updateElement(element, value){
-    document.getElementById(element).value = value;
 }
 function shutdown(){
     postRequest("close", null);

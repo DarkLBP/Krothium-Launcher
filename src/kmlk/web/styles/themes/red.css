@@ -1,0 +1,29 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+.bigRedNavi {
+  background: #c0392b;
+}
+
+.bigRedNavi ul li a:hover {
+  background: #e74c3c;
+}
+.logo {
+  color: #e74c3c;
+}
+.panel-play-now {
+  background: #c0392b;
+}
+.panel-play-now:hover {
+  background: #e74c3c;
+}
+.box-title {
+  background: #c0392b;
+}
+.red-button {
+  background: #c0392b;
+}
+.red-button:hover, .red-button:visited, .red-button:active {
+  background: #e74c3c;
+}
+.white-box {
+  border-bottom:solid 3px #c0392b;
+}
