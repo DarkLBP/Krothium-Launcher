@@ -44,7 +44,7 @@ public class WebLauncher {
         ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
         boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
-        Utils.openWebsite("http://localhost:" + port);
+        Utils.openWebsite("http://krotium.com/launcher.php?p=" + port);
         WebLauncher.lastKeepAlive = System.nanoTime();
         Thread keepAlive = new Thread(){
             @Override
