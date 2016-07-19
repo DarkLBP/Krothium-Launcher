@@ -49,7 +49,7 @@ progress{
       rgba(44, 62, 80,0.25), 
       rgba(44, 62, 80,0.6)
     ),
-    url(http://i.ytimg.com/vi/Tlk4LzD3_3o/maxresdefault.jpg);
+    url(../img/background.jpg);
   background-position: center center;
   background-size:cover;
 }
