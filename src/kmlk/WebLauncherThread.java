@@ -107,6 +107,9 @@ public class WebLauncherThread extends Thread{
                         case "jpg":
                             contentTag = "image/jpeg";
                             break;
+                        case "woff":
+                            contentTag = "font/woff";
+                            break;
                     }
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
