@@ -85,6 +85,8 @@ function loadProfiles(){
     }
     response = postRequest("selectedprofile", "");
     document.getElementById("profiles").value = response;
+    response = postRequest("selectedversion", "");
+    document.getElementById("version").innerHTML = "Minecraft " + response;
     profile_value = response;
 }
 function setSelectedProfile(){
@@ -93,6 +95,9 @@ function setSelectedProfile(){
         var response = postRequest("setselectedprofile", selected);
         if (response !== "OK"){
             alert("Failed to change the selected profile.");
+        } else {
+            response = postRequest("selectedversion", "");
+            document.getElementById("version").innerHTML = "Minecraft " + response;
         }
         loadProfiles();
     }

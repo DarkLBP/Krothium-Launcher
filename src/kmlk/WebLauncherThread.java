@@ -234,6 +234,10 @@ public class WebLauncherThread extends Thread{
                             }catch (Exception ex){
                                 throw new WebLauncherException(path, 400, out);
                             }
+                            break;
+                        case "selectedversion":
+                            responseCode = kernel.getSelectedProfile().getVersion().getID();
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
