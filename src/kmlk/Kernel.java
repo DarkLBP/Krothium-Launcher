@@ -50,6 +50,7 @@ public final class Kernel {
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public void launchGame(){this.gameLauncher.launch(this.getSelectedProfile());}
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
+    public boolean logOut(){return this.authentication.logOut();}
     public int getDownloadProgress(){return this.downloader.getProgress();}
     public boolean isGameStarted(){return this.gameLauncher.isStarted();};
     public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};

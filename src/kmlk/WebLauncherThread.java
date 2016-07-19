@@ -196,6 +196,11 @@ public class WebLauncherThread extends Thread{
                         case "signature":
                             responseCode = "Krotium Minecraft Launcher rev " + String.valueOf(Constants.KERNEL_REVISION);
                             break;
+                        case "logout":
+                            kernel.logOut();
+                            kernel.saveProfiles();
+                            responseCode = "OK";
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

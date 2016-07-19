@@ -47,6 +47,20 @@ public class Authentication {
     }
     public User getSelectedUser(){return this.userDatabase.get(this.selectedProfile);}
     public boolean hasSelectedUser(){return (this.selectedProfile != null);}
+    public boolean logOut(){
+        if (this.hasSelectedUser()){
+            return this.removeUser(this.selectedProfile);
+        }
+        return false;
+    }
+    public boolean removeUser(String u){
+        if (this.userDatabase.containsKey(u)){
+            this.userDatabase.remove(u);
+            return true;
+        } else {
+            return false;
+        }
+    }
     public void authenticate(final String username, final String password) throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
