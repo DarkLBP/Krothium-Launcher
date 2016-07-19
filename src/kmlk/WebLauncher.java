@@ -24,7 +24,6 @@ public class WebLauncher {
         Console console = kernel.getConsole();
         console.setEnabled(true);
         console.includeTimestamps(true);
-        kernel.setWorkingDir(new File("C:\\Minecraft"));
         kernel.loadVersions();
         kernel.loadProfiles();
         kernel.loadUsers();
