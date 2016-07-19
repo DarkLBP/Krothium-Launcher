@@ -62,17 +62,17 @@ function postRequest(action, parameters){
     return xhr.responseText;
 }
 function loadSignature(){
-    var response = postRequest("signature", "");
+    var response = postRequest("signature", null);
     document.getElementById("signature").innerHTML = "<center>" + response + "</center>";
 }
 function logOut(){
-    var response = postRequest("logout", "");
+    var response = postRequest("logout", null);
     if (response === "OK"){
         redirect("/login.html");
     }
 }
 function loadProfiles(){
-    var response = postRequest("profiles", "");
+    var response = postRequest("profiles", null);
     var data = response.split("\n");
     if (data.constructor === Array){
         var data_length = data.length;
@@ -83,9 +83,9 @@ function loadProfiles(){
         }
         document.getElementById("profiles").innerHTML = value;
     }
-    response = postRequest("selectedprofile", "");
+    response = postRequest("selectedprofile", null);
     document.getElementById("profiles").value = response;
-    response = postRequest("selectedversion", "");
+    response = postRequest("selectedversion", null);
     document.getElementById("version").innerHTML = "Minecraft " + response;
     profile_value = response;
 }
@@ -95,9 +95,6 @@ function setSelectedProfile(){
         var response = postRequest("setselectedprofile", selected);
         if (response !== "OK"){
             alert("Failed to change the selected profile.");
-        } else {
-            response = postRequest("selectedversion", "");
-            document.getElementById("version").innerHTML = "Minecraft " + response;
         }
         loadProfiles();
     }

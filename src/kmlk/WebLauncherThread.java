@@ -36,23 +36,29 @@ public class WebLauncherThread extends Thread{
     public void run()
     {
         try {
-            InputStream in = this.clientSocket.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
             OutputStream out = this.clientSocket.getOutputStream();
-            String request = null;
-            char[] data;
-            int read = 0;
+            String request;
             StringBuilder b = new StringBuilder();
-            int available = in.available();
-            byte[] tmp = new byte[4096];
-            while((read = in.read(tmp)) != -1){
-               data = new char[read];
-               for (int i = 0; i < read; i++){
-                   data[i] = (char)tmp[i];
-               }
-               b.append(data);
-               if (in.available() == 0){
-                   break;
-               }
+            String line = in.readLine();
+            boolean isPost = line.startsWith("POST");
+            int contentLength = 0;
+            b.append(line).append("\n");
+            while (!(line = in.readLine()).equals("")) {
+                b.append(line).append("\n");
+                if (isPost){
+                    final String contentHeader = "Content-Length: ";
+                    if (line.startsWith(contentHeader)){
+                        contentLength = Integer.parseInt(line.substring(contentHeader.length()));
+                    }
+                }
+            }
+            if (isPost && contentLength > 0){
+                int read;
+                for (int i = 0; i < contentLength; i++){
+                    read = in.read();
+                    b.append((char)read);
+                }
             }
             request = b.toString();
             if (request.isEmpty()){
@@ -130,7 +136,7 @@ public class WebLauncherThread extends Thread{
                     switch (function){
                         case "authenticate":
                             try{
-                                String[] requestData = request.split("\r\n");
+                                String[] requestData = request.split("\n");
                                 String userData = requestData[requestData.length - 1];
                                 String userName = userData.split("&")[0].replace("u=", "");
                                 String password = userData.split("&")[1].replace("p=", "");
@@ -222,7 +228,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "setselectedprofile":
                             try{
-                                String[] requestData = request.split("\r\n");
+                                String[] requestData = request.split("\n");
                                 String profile = requestData[requestData.length - 1];
                                 if (kernel.existsProfile(profile)){
                                     kernel.setSelectedProfile(kernel.getProfile(profile));
