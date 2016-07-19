@@ -60,3 +60,7 @@ function postRequest(action, parameters){
     xhr.send(parameters);
     return xhr.responseText;
 }
+function loadSignature(){
+    var response = postRequest("signature", "");
+    document.getElementById("signature").innerHTML = "<center>" + response + "</center>";
+}

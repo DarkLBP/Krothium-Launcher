@@ -193,6 +193,9 @@ public class WebLauncherThread extends Thread{
                         case "keepalive":
                             WebLauncher.lastKeepAlive = System.nanoTime();
                             break;
+                        case "signature":
+                            responseCode = "Krotium Minecraft Launcher rev " + String.valueOf(Constants.KERNEL_REVISION);
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
