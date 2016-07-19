@@ -64,3 +64,9 @@ function loadSignature(){
     var response = postRequest("signature", "");
     document.getElementById("signature").innerHTML = "<center>" + response + "</center>";
 }
+function logOut(){
+    var response = postRequest("logout", "");
+    if (response === "OK"){
+        redirect("/login.html");
+    }
+}
