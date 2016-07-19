@@ -2,6 +2,7 @@
 var play_interval = null;
 var progress_value = 0;
 var play_value = "";
+var profile_value = "";
 var keepAlive_interval = setInterval(function(){keepAlive();}, 2000);
 function authenticate(user, pass){
     var parameters = "u=" + user + "&p=" + pass;
@@ -68,5 +69,31 @@ function logOut(){
     var response = postRequest("logout", "");
     if (response === "OK"){
         redirect("/login.html");
+    }
+}
+function loadProfiles(){
+    var response = postRequest("profiles", "");
+    var data = response.split("\n");
+    if (data.constructor === Array){
+        var data_length = data.length;
+        var value;
+        for (var i = 0; i < data_length; i++){
+            var name = data[i];
+            value += '<option value="' + name + '">' + name + '</option>';
+        }
+        document.getElementById("profiles").innerHTML = value;
+    }
+    response = postRequest("selectedprofile", "");
+    document.getElementById("profiles").value = response;
+    profile_value = response;
+}
+function setSelectedProfile(){
+    var selected = document.getElementById("profiles").value;
+    if (selected !== profile_value){
+        var response = postRequest("setselectedprofile", selected);
+        if (response !== "OK"){
+            alert("Failed to change the selected profile.");
+        }
+        loadProfiles();
     }
 }

@@ -8,9 +8,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import kmlk.exceptions.AuthenticationException;
+import kmlk.objects.Profile;
 
 /**
  * @website http://krotium.com
@@ -202,6 +206,34 @@ public class WebLauncherThread extends Thread{
                                 responseCode = "OK"; 
                             }
                             break;
+                        case "profiles":
+                            Map<String, Profile> p = kernel.getProfileDB();
+                            Set keys = p.keySet();
+                            Iterator i = keys.iterator();
+                            while (i.hasNext()){
+                                responseCode += i.next().toString();
+                                if (i.hasNext()){
+                                    responseCode += "\n";
+                                }
+                            }
+                            break;
+                        case "selectedprofile":
+                            responseCode = kernel.getSelectedProfile().getName();
+                            break;
+                        case "setselectedprofile":
+                            try{
+                                String[] requestData = request.split("\r\n");
+                                String profile = requestData[requestData.length - 1];
+                                if (kernel.existsProfile(profile)){
+                                    kernel.setSelectedProfile(kernel.getProfile(profile));
+                                    responseCode = "OK";
+                                    kernel.saveProfiles();
+                                } else {
+                                    responseCode = "ERROR";
+                                }
+                            }catch (Exception ex){
+                                throw new WebLauncherException(path, 400, out);
+                            }
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

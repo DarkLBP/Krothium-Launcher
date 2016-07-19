@@ -25,6 +25,7 @@ public class Profiles {
     private Profile selected;
     
     public Profiles(){this.console = Kernel.getKernel().getConsole();}
+    public Map<String, Profile> getProfiles(){return this.profiles;}
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
             profiles.put(p.getName(), p);

@@ -5,6 +5,7 @@ import kmlk.objects.User;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import kmlk.exceptions.AuthenticationException;
 import org.json.JSONObject;
@@ -58,6 +59,9 @@ public final class Kernel {
     public void downloadVersion(){this.downloader.downloadVersion(this.getSelectedProfile().getVersion());}
     public void downloadLibraries(){this.downloader.downloadLibraries(this.getSelectedProfile().getVersion());}
     public void downloadNatives(){this.downloader.downloadNatives(this.getSelectedProfile().getVersion());}
+    public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
+    public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
+    public Map<String, Profile> getProfileDB(){return this.profiles.getProfiles();}
     public boolean isDownloading(){return this.downloader.isDownloading();}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();

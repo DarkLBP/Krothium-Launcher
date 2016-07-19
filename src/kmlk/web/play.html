@@ -65,6 +65,12 @@
           </div>
         </div>
         <div class="col-md-4">
+          <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
+          <div class="white-box">
+              Selected Profile:
+              <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select>
+              <script>loadProfiles();</script>
+          </div>
           <div class="box-title"><i class="fa fa-user"></i> Our Website</div>
           <div class="white-box">
             <a class="red-button wide" href="http://krotium.com">Go Now!</a>
@@ -82,19 +88,11 @@
               <option value="turquoise" class="styleswitch" rel="turquoise">Turquoise</option>
             </select>
           </div>
-          <div class="box-title"><i class="fa fa-info-circle"></i> About</div>
-          <div class="white-box">
-            This is a web launcher for Minecraft, a game created by Mojang.<br><br>
-            <h4>Launcher Revision: </h4><div id="revision"></div>
-          </div>
         </div>
       </div><br />
       <div class="row">
-          <div id="signature" class="white-box">
-              <script>
-                loadSignature();
-              </script>
-          </div>
+          <div id="signature" class="white-box"></div>
+          <script>loadSignature();</script>
       </div>
     </div>
   </div>
