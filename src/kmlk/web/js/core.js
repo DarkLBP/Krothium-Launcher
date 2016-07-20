@@ -76,7 +76,7 @@ function loadProfiles(){
     var data = response.split("\n");
     if (data.constructor === Array){
         var data_length = data.length;
-        var value;
+        var value = "";
         for (var i = 0; i < data_length; i++){
             var name = data[i];
             value += '<option value="' + name + '">' + name + '</option>';
@@ -88,6 +88,20 @@ function loadProfiles(){
     response = postRequest("selectedversion", null);
     document.getElementById("version").innerHTML = "Minecraft " + response;
     profile_value = response;
+}
+function loadProfileList(){
+    var response = postRequest("profiles", null);
+    var data = response.split("\n");
+    if (data.constructor === Array){
+        var data_length = data.length;
+        var value = "";
+        for (var i = 0; i < data_length; i++){
+            var name = data[i];
+            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" href="#">Delete</a><br>';
+        }
+        value += '<br><a class="red-button wide" href="#">Create New</a>';
+        document.getElementById("profileList").innerHTML = value;
+    }
 }
 function setSelectedProfile(){
     var selected = document.getElementById("profiles").value;

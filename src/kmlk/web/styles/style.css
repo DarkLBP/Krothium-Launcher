@@ -132,6 +132,10 @@ progress{
 .playButton{
   font-size:30px;
 }
+.profileButton{
+    width:50%;
+    margin-bottom:5px;
+}
 .copyright {
   margin:0;
   text-align:center;
