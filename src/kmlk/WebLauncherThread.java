@@ -84,7 +84,8 @@ public class WebLauncherThread extends Thread{
                         out.write("\r\n".getBytes());
                     }
                 }else{
-                    File abstractFile = new File(path);
+                    String finalPath = (path.contains("?") ? path.split("\\?")[0] : path);
+                    File abstractFile = new File(finalPath);
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
                     String contentTag = "";
@@ -108,13 +109,25 @@ public class WebLauncherThread extends Thread{
                             contentTag = "image/jpeg";
                             break;
                         case "woff":
-                            contentTag = "font/woff";
+                            contentTag = "application/font-woff";
+                            break;
+                        case "woff2":
+                            contentTag = "application/font-woff2";
+                            break;
+                        case "svg":
+                            contentTag = "image/svg+xml";
+                            break;
+                        case "eot":
+                            contentTag = "application/vnd.ms-fontobject";
+                            break;
+                        case "ttf":
+                            contentTag = "application/x-font-ttf";
                             break;
                     }
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web" + path);
+                    InputStream s = WebLauncher.class.getResourceAsStream("/kmlk/web" + finalPath);
                     if (s == null){
                         throw new WebLauncherException(path, 404, out);
                     }
