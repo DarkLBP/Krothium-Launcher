@@ -50,7 +50,7 @@ public class Profiles {
                 console.printInfo("Profile " + p + " is selected and is going to be removed.");
                 profiles.remove(p);
                 console.printInfo("Profile " + p + " deleted.");
-                if (this.count() > 0){
+                if (this.profileCount() > 0){
                     Set keySet = this.profiles.keySet();
                     this.setSelectedProfile(keySet.toArray()[0].toString());
                 } else {
@@ -172,7 +172,7 @@ public class Profiles {
                         console.printError("Invalid profile found: " + name);
                     }
                 }
-                if (this.count() > 0){
+                if (this.profileCount() > 0){
                     String selProfile = root.getString("selectedProfile");
                     if (this.profiles.containsKey(selProfile)){
                         console.printInfo("Profile " + selProfile + " marked as selected.");
@@ -213,7 +213,7 @@ public class Profiles {
         }
         return null;
     }
-    public int count(){return profiles.size();}
+    public int profileCount(){return profiles.size();}
     public Profile getSelectedProfile(){return this.getProfileByName(selected);}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){

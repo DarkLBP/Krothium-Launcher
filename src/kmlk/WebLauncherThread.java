@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -233,19 +234,19 @@ public class WebLauncherThread extends Thread{
                             Set keys = p.keySet();
                             Iterator i = keys.iterator();
                             while (i.hasNext()){
-                                responseCode += i.next().toString();
+                                responseCode += Base64.getEncoder().encodeToString(i.next().toString().getBytes());
                                 if (i.hasNext()){
                                     responseCode += "\n";
                                 }
                             }
                             break;
                         case "selectedprofile":
-                            responseCode = kernel.getSelectedProfile().getName();
+                            responseCode = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getName().getBytes());
                             break;
                         case "setselectedprofile":
                             try{
                                 String[] requestData = request.split("\n");
-                                String profile = requestData[requestData.length - 1];
+                                String profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
                                         responseCode = "OK";
@@ -265,7 +266,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "deleteprofile":
                             String[] requestData = request.split("\n");
-                            String profile = requestData[requestData.length - 1];
+                            String profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                             if (!kernel.existsProfile(profile)){
                                 responseCode = "ERROR";
                             } else {

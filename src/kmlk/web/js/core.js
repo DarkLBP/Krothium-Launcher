@@ -78,16 +78,16 @@ function loadProfiles(){
         var data_length = data.length;
         var value = "";
         for (var i = 0; i < data_length; i++){
-            var name = data[i];
-            value += '<option value="' + name + '">' + name + '</option>';
+            var name = fromBase64(data[i]);
+            value += '<option value="' + data[i] + '">' + name + '</option>';
         }
         document.getElementById("profiles").innerHTML = value;
     }
     response = postRequest("selectedprofile", null);
     document.getElementById("profiles").value = response;
+    profile_value = response;
     response = postRequest("selectedversion", null);
     document.getElementById("version").innerHTML = "Minecraft " + response;
-    profile_value = response;
 }
 function loadProfileList(){
     var response = postRequest("profiles", null);
@@ -96,8 +96,8 @@ function loadProfileList(){
         var data_length = data.length;
         var value = "";
         for (var i = 0; i < data_length; i++){
-            var name = data[i];
-            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" onclick="deleteProfile(\'' + name + '\');" href="#">Delete</a><br>';
+            var name = fromBase64(data[i]);
+            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
         }
         value += '<br><a class="red-button wide" href="#">Create New</a>';
         document.getElementById("profileList").innerHTML = value;
@@ -113,12 +113,18 @@ function setSelectedProfile(){
         loadProfiles();
     }
 }
-function deleteProfile(name){
-    var response = postRequest("deleteprofile", name);
+function deleteProfile(base64name){
+    var response = postRequest("deleteprofile", base64name);
     if (response !== "OK"){
-        alert("Failed to delete profile " + name + ".");
+        alert("Failed to delete profile " + fromBase64(base64name) + ".");
     } else {
-        alert("Profile " + name + " deleted successfully.");
+        alert("Profile " + fromBase64(base64name) + " deleted successfully.");
         redirect("/profiles.html");
     }
+}
+function toBase64(string){
+    return window.btoa(string);
+}
+function fromBase64(string){
+    return window.atob(string);
 }
