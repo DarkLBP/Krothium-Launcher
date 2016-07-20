@@ -22,7 +22,7 @@ public class Profiles {
     private final Map<String, Profile> profiles = new HashMap();
     private final Console console;
     private Versions versions;
-    private Profile selected;
+    private String selected;
     
     public Profiles(){this.console = Kernel.getKernel().getConsole();}
     public Map<String, Profile> getProfiles(){return this.profiles;}
@@ -44,6 +44,27 @@ public class Profiles {
         console.printError("Profile " + p.getName() + " doesn't exist.");
         return false;
     }
+    public boolean deleteProfile(String p){
+        if (this.existsProfile(p)){
+            if (this.selected.equals(p)){
+                console.printInfo("Profile " + p + " is selected and is going to be removed.");
+                profiles.remove(p);
+                console.printInfo("Profile " + p + " deleted.");
+                if (this.count() > 0){
+                    Set keySet = this.profiles.keySet();
+                    this.setSelectedProfile(keySet.toArray()[0].toString());
+                } else {
+                    this.createDefaultProfile();
+                }
+            } else {
+                profiles.remove(p);
+                console.printInfo("Profile " + p + " deleted.");
+            }
+            return true;
+        }
+        console.printError("Profile " + p + " doesn't exist.");
+        return false;
+    }
     public boolean duplicateProfile(Profile p)
     {
         if (this.existsProfile(p)){
@@ -60,6 +81,7 @@ public class Profiles {
         return false;
     }
     public boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
+    public boolean existsProfile(String p){return this.profiles.containsKey(p);}
     public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
         this.versions = Kernel.getKernel().getVersions();
@@ -70,7 +92,7 @@ public class Profiles {
                 JSONObject ples = root.getJSONObject("profiles");
                 Set keys = ples.keySet();
                 Iterator it = keys.iterator();
-                Profile first = null;
+                String first = null;
                 while (it.hasNext()){
                     String key = it.next().toString();
                     JSONObject o = ples.getJSONObject(key);
@@ -139,7 +161,7 @@ public class Profiles {
                     if (name != null){
                         Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility);
                         if (first == null){
-                            first = p;
+                            first = name;
                         }
                         if (!this.existsProfile(p)){
                             this.addProfile(p);
@@ -154,10 +176,14 @@ public class Profiles {
                     String selProfile = root.getString("selectedProfile");
                     if (this.profiles.containsKey(selProfile)){
                         console.printInfo("Profile " + selProfile + " marked as selected.");
-                        this.setSelectedProfile(this.profiles.get(selProfile));
+                        if (!this.setSelectedProfile(selProfile)){
+                            this.createDefaultProfile();
+                        }
                     }else{
-                        console.printError("Invalid profile selected! Using first loaded (" + first.getName() + ")");
-                        this.setSelectedProfile(first);
+                        console.printError("Invalid profile selected! Using first loaded (" + first + ")");
+                        if (this.setSelectedProfile(first)){
+                            this.createDefaultProfile();
+                        }
                     }
                 }else{
                     this.createDefaultProfile();
@@ -178,7 +204,7 @@ public class Profiles {
             return false;
         }
         this.addProfile(p);
-        this.setSelectedProfile(p);
+        this.setSelectedProfile("(Default)");
         return true;   
     }
     public Profile getProfileByName(String pName){
@@ -188,12 +214,18 @@ public class Profiles {
         return null;
     }
     public int count(){return profiles.size();}
-    public Profile getSelectedProfile(){return this.selected;}
-    public void setSelectedProfile(Profile p){
-        if (!p.getVersion().isPrepared()){
-            p.getVersion().prepare();
+    public Profile getSelectedProfile(){return this.getProfileByName(selected);}
+    public boolean setSelectedProfile(String p){
+        if (this.existsProfile(p)){
+            Profile prof = this.getProfileByName(p);
+            if (!prof.getVersion().isPrepared()){
+                prof.getVersion().prepare();
+            }
+            console.printInfo("Profile " + p + " has been selected.");
+            this.selected = p;
+            return true;
         }
-        this.selected = p;
+        return false;
     }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
@@ -251,7 +283,7 @@ public class Profiles {
             profiles.put(p.getName(), prof);
         }
         o.put("profiles", profiles);
-        o.put("selectedProfile", this.selected.getName());
+        o.put("selectedProfile", this.selected);
         return o;
     }
 }

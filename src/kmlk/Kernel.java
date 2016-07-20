@@ -46,7 +46,7 @@ public final class Kernel {
     public File getWorkingDir(){return this.workingDir;}
     public User getSelectedUser(){return this.authentication.getSelectedUser();}
     public Profile getSelectedProfile(){return this.profiles.getSelectedProfile();}
-    public void setSelectedProfile(Profile p){this.profiles.setSelectedProfile(p);}
+    public boolean setSelectedProfile(String p){return this.profiles.setSelectedProfile(p);}
     public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public void launchGame(){this.gameLauncher.launch(this.getSelectedProfile());}
@@ -63,6 +63,7 @@ public final class Kernel {
     public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
     public Map<String, Profile> getProfileDB(){return this.profiles.getProfiles();}
     public boolean isDownloading(){return this.downloader.isDownloading();}
+    public boolean deleteProfile(String name){return this.profiles.deleteProfile(name);}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

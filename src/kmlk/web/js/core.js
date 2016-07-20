@@ -97,7 +97,7 @@ function loadProfileList(){
         var value = "";
         for (var i = 0; i < data_length; i++){
             var name = data[i];
-            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" href="#">Delete</a><br>';
+            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" onclick="deleteProfile(\'' + name + '\');" href="#">Delete</a><br>';
         }
         value += '<br><a class="red-button wide" href="#">Create New</a>';
         document.getElementById("profileList").innerHTML = value;
@@ -111,5 +111,14 @@ function setSelectedProfile(){
             alert("Failed to change the selected profile.");
         }
         loadProfiles();
+    }
+}
+function deleteProfile(name){
+    var response = postRequest("deleteprofile", name);
+    if (response !== "OK"){
+        alert("Failed to delete profile " + name + ".");
+    } else {
+        alert("Profile " + name + " deleted successfully.");
+        redirect("/profiles.html");
     }
 }

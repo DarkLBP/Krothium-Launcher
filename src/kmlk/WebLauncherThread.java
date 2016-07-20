@@ -247,9 +247,12 @@ public class WebLauncherThread extends Thread{
                                 String[] requestData = request.split("\n");
                                 String profile = requestData[requestData.length - 1];
                                 if (kernel.existsProfile(profile)){
-                                    kernel.setSelectedProfile(kernel.getProfile(profile));
-                                    responseCode = "OK";
-                                    kernel.saveProfiles();
+                                    if (kernel.setSelectedProfile(profile)){
+                                        responseCode = "OK";
+                                        kernel.saveProfiles();
+                                    } else {
+                                        responseCode = "ERROR";
+                                    }
                                 } else {
                                     responseCode = "ERROR";
                                 }
@@ -259,6 +262,20 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "selectedversion":
                             responseCode = kernel.getSelectedProfile().getVersion().getID();
+                            break;
+                        case "deleteprofile":
+                            String[] requestData = request.split("\n");
+                            String profile = requestData[requestData.length - 1];
+                            if (!kernel.existsProfile(profile)){
+                                responseCode = "ERROR";
+                            } else {
+                                if (kernel.deleteProfile(profile)){
+                                    responseCode = "OK";
+                                    kernel.saveProfiles();
+                                } else {
+                                    responseCode = "ERROR";
+                                }
+                            }
                             break;
                     }
                 }
