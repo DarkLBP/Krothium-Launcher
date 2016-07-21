@@ -241,7 +241,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedprofile":
-                            responseCode = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getName().getBytes());
+                            responseCode = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getBytes());
                             break;
                         case "setselectedprofile":
                             try{
@@ -262,7 +262,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedversion":
-                            responseCode = kernel.getSelectedProfile().getVersion().getID();
+                            responseCode = kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID();
                             break;
                         case "deleteprofile":
                             String[] requestData = request.split("\n");

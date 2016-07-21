@@ -80,6 +80,20 @@ public class Profiles {
         console.printError("Profile " + p.getName() + " doesn't exist.");
         return false;
     }
+    public boolean renameProfile(String oldName, String newName){
+        if (this.existsProfile(oldName)){
+            boolean sel = oldName.equals(this.selected);
+            Profile tmp = this.getProfileByName(oldName);
+            tmp.setName(newName);
+            this.addProfile(tmp);
+            if (sel){
+                this.setSelectedProfile(newName);
+            }
+            this.deleteProfile(oldName);
+            return true;
+        }
+        return false;
+    }
     public boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
     public boolean existsProfile(String p){return this.profiles.containsKey(p);}
     public void fetchProfiles(){ 
@@ -214,7 +228,7 @@ public class Profiles {
         return null;
     }
     public int profileCount(){return profiles.size();}
-    public Profile getSelectedProfile(){return this.getProfileByName(selected);}
+    public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
             Profile prof = this.getProfileByName(p);

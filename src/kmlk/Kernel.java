@@ -45,20 +45,21 @@ public final class Kernel {
     }
     public File getWorkingDir(){return this.workingDir;}
     public User getSelectedUser(){return this.authentication.getSelectedUser();}
-    public Profile getSelectedProfile(){return this.profiles.getSelectedProfile();}
+    public String getSelectedProfile(){return this.profiles.getSelectedProfile();}
     public boolean setSelectedProfile(String p){return this.profiles.setSelectedProfile(p);}
     public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
-    public void launchGame(){this.gameLauncher.launch(this.getSelectedProfile());}
+    public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
+    public void launchGame(){this.gameLauncher.launch(this.getProfile(this.getSelectedProfile()));}
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
     public boolean logOut(){return this.authentication.logOut();}
     public int getDownloadProgress(){return this.downloader.getProgress();}
     public boolean isGameStarted(){return this.gameLauncher.isStarted();};
     public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};
-    public void downloadAssets(){this.downloader.downloadAssets(this.getSelectedProfile().getVersion());}
-    public void downloadVersion(){this.downloader.downloadVersion(this.getSelectedProfile().getVersion());}
-    public void downloadLibraries(){this.downloader.downloadLibraries(this.getSelectedProfile().getVersion());}
-    public void downloadNatives(){this.downloader.downloadNatives(this.getSelectedProfile().getVersion());}
+    public void downloadAssets(){this.downloader.downloadAssets(this.getProfile(this.getSelectedProfile()).getVersion());}
+    public void downloadVersion(){this.downloader.downloadVersion(this.getProfile(this.getSelectedProfile()).getVersion());}
+    public void downloadLibraries(){this.downloader.downloadLibraries(this.getProfile(this.getSelectedProfile()).getVersion());}
+    public void downloadNatives(){this.downloader.downloadNatives(this.getProfile(this.getSelectedProfile()).getVersion());}
     public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
     public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
     public Map<String, Profile> getProfileDB(){return this.profiles.getProfiles();}

@@ -105,11 +105,8 @@ public class Authentication {
             User u = new User(profileName, accessToken, userID, username, Utils.stringToUUID(profileID), properties);
             this.addToDatabase(profileID, u);
             this.selectedProfile = profileID;
-            Profile p = Kernel.getKernel().getSelectedProfile();
-            if (p != null){
-                if (p.getName().equals("(Default)")){
-                    p.setName(profileName);
-                }
+            if (Kernel.getKernel().getSelectedProfile().equals("(Default)")){
+                Kernel.getKernel().renameProfile("(Default)", profileName);
             }
             this.authenticated = true;
         }else{
