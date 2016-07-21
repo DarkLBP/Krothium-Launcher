@@ -1,11 +1,13 @@
 package kmlk.objects;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import kmlk.Kernel;
 import kmlk.enums.LauncherVisibility;
-import kmlk.Versions;
+import kmlk.enums.VersionType;
 
 /**
  * @website http://krotium.com
@@ -19,22 +21,23 @@ public class Profile {
     private File javaDir = null;
     private String javaArgs = null;
     private Map<String, Integer> resolution = new HashMap();
-    private final Versions versions;
     private LauncherVisibility visibility = null;
+    private final List<VersionType> allowedVersionTypes;
     
     public Profile(String name){
         this.name = name;
-        this.versions = Kernel.getKernel().getVersions();
+        this.allowedVersionTypes = new ArrayList();
+        this.allowedVersionTypes.add(VersionType.RELEASE);
     }
-    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v){
+    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v, List<VersionType> types){
         this.name = name;
         this.version = lastVersionId;
         this.gameDir = gameDir;
         this.javaDir = javaDir;
         this.javaArgs = javaArgs;
         this.resolution = resolution;
-        this.versions = Kernel.getKernel().getVersions();
         this.visibility = v;
+        this.allowedVersionTypes = types;
     }
     public void setName(String newName){this.name = newName;}
     public void setVersion(Version ver){
@@ -47,12 +50,7 @@ public class Profile {
     public String getName(){
         return this.name;
     }
-    public Version getVersion(){
-        if (!this.hasVersion()){
-            return this.versions.getLatestVersion();
-        }
-        return this.version;
-    }
+    public Version getVersion(){return this.version;}
     public boolean hasVersion(){return (this.version != null);}
     public File getGameDir(){return this.gameDir;}
     public boolean hasGameDir(){return (this.gameDir != null);}
@@ -90,4 +88,5 @@ public class Profile {
     }
     public boolean hasVisibility(){return (this.visibility != null);}
     public LauncherVisibility getVisibility(){return this.visibility;}
+    public List<VersionType> getAllowedVersionTypes(){return this.allowedVersionTypes;}
 }

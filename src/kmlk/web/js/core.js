@@ -4,13 +4,57 @@ var progress_value = 0;
 var play_value = "";
 var profile_value = "";
 var keepAlive_interval = setInterval(function(){keepAlive();}, 2000);
-function authenticate(user, pass){
-    var parameters = "u=" + user + "&p=" + pass;
-    var response = postRequest("authenticate", parameters);
-    if (response === "OK"){
-        redirect("/play.html");
+function authenticate(){
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    if (username === "" || password === "" || username === null || password === null){
+        alert("Invalid credentials!");
     } else {
-        alert(response);
+        var parameters = toBase64(username) + ":" + toBase64(password);
+        var response = postRequest("authenticate", parameters);
+        if (response === "OK"){
+            redirect("/play.html");
+        } else {
+            alert(response);
+        }
+    }
+}
+function loadProfileData(){
+    var name_base = window.location.href.split("?")[1];
+    if (name_base === null){
+        alert("Invalid profile request!");
+    } else {
+        var name = fromBase64(name_base);
+        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
+        document.getElementById("profileName").value = name;
+        var response = postRequest("versions", null);
+        var data = response.split("\n");
+        if (data.constructor === Array){
+            var data_length = data.length;
+            var value = "";
+            for (var i = 0; i < data_length; i++){
+                var name = fromBase64(data[i]);
+                value += '<option value="' + data[i] + '">' + name + '</option>';
+            }
+            document.getElementById("versionList").innerHTML = value;
+            response = postRequest("selectedversion", null);
+            document.getElementById("versionList").value = response;
+        }
+    }
+}
+function saveProfile(){
+    var name_base = window.location.href.split("?")[1];
+    if (name_base === null){
+        alert("Invalid profile request!");
+    } else {
+        var parameters = name_base + ":" + toBase64(document.getElementById("profileName").value) + ":" + document.getElementById("versionList").value;
+        var response = postRequest("saveprofile", parameters);
+        if (response !== "OK"){
+            alert("Failed to save the profile!");
+        } else {
+            alert("Profile saved successfully!");
+            redirect("/profiles.html");
+        }
     }
 }
 function playGame(){
@@ -87,7 +131,7 @@ function loadProfiles(){
     document.getElementById("profiles").value = response;
     profile_value = response;
     response = postRequest("selectedversion", null);
-    document.getElementById("version").innerHTML = "Minecraft " + response;
+    document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response);
 }
 function loadProfileList(){
     var response = postRequest("profiles", null);
@@ -97,7 +141,7 @@ function loadProfileList(){
         var value = "";
         for (var i = 0; i < data_length; i++){
             var name = fromBase64(data[i]);
-            value += '<b>' + name + '</b><a class="red-button wide profileButton" href="#">Edit</a><a class="red-button wide profileButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
+            value += '<b>' + name + '</b><a class="red-button wide profileButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button wide profileButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
         }
         value += '<br><a class="red-button wide" href="#">Create New</a>';
         document.getElementById("profileList").innerHTML = value;

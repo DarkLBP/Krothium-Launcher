@@ -7,10 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.json.JSONArray;
@@ -28,8 +26,8 @@ public class Versions {
     private String latestRel;
     private String latestBeta;
     private String latestAlpha;
-    private List<VersionType> allowedTypes = new ArrayList();
     public Versions(){this.console = Kernel.getKernel().getConsole();}
+    public Map<String, Version> getVersions(){return this.versions;};
     public void add(String name, Version v){
         if (!versions.containsKey(name)){
             versions.put(name, v);
@@ -151,26 +149,5 @@ public class Versions {
     public Version getLatestSnapshot(){return versions.get(latestSnap);}
     public Version getLatestBeta(){return versions.get(latestBeta);}
     public Version getLatestAlpha(){return versions.get(latestAlpha);}
-    public Version getLatestVersion(){
-        if (this.isAllowed(VersionType.SNAPSHOT)){
-            return this.getLatestSnapshot();
-        }else if (!this.isAllowed(VersionType.RELEASE)){
-            if (this.isAllowed(VersionType.OLD_BETA)){
-                return this.getLatestBeta();
-            }else if (this.isAllowed(VersionType.OLD_ALPHA)){
-                return this.getLatestAlpha();
-            }
-        }
-        return this.getLatestRelease();
-    }
-    public void allowType(VersionType t){
-        if (!this.allowedTypes.contains(t)){
-            console.printInfo("Allowed version type " + t.name());
-            this.allowedTypes.add(t);
-        }
-    }
-    public List<VersionType> getAllowedTypes(){return this.allowedTypes;}
-    public void clearAllowList(){this.allowedTypes.clear();}
-    public boolean isAllowed(VersionType t){return this.allowedTypes.contains(t);}
-    public int count(){return versions.size();}
+    public int versionCount(){return versions.size();}
 }

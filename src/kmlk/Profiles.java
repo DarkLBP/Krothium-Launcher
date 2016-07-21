@@ -5,6 +5,7 @@ import kmlk.enums.VersionType;
 import kmlk.objects.Version;
 import kmlk.objects.Profile;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -117,28 +118,40 @@ public class Profiles {
                     String javaArgs = null;
                     Map<String, Integer> resolution = new HashMap();
                     LauncherVisibility visibility = null;
+                    List<VersionType> types = new ArrayList();
                     if (o.has("name")){
                         name = o.getString("name");
                     }
                     if (o.has("allowedReleaseTypes")){
                         JSONArray a = o.getJSONArray("allowedReleaseTypes");
-                        versions.clearAllowList();
                         if (a.length() == 0){
-                            versions.allowType(VersionType.RELEASE);
+                            types.add(VersionType.RELEASE);
                         }else{
                             for (int i = 0; i < a.length(); i++){
                                 try{
-                                    versions.allowType(VersionType.valueOf(a.getString(i).toUpperCase()));
+                                    types.add(VersionType.valueOf(a.getString(i).toUpperCase()));
+                                    console.printInfo("Added version type " + VersionType.valueOf(a.getString(i).toUpperCase()));
                                 }catch (Exception ex){
                                     console.printError(a.get(i) + " version type does not exist.");
                                 }
                             }
                         }    
                     }else{
-                        versions.allowType(VersionType.RELEASE);
+                        types.add(VersionType.RELEASE);
                     }
                     if (o.has("lastVersionId")){
                         ver = versions.getVersionByName(o.getString("lastVersionId"));
+                    } else {
+                        ver = versions.getLatestRelease();
+                        if (types.contains(VersionType.SNAPSHOT)){
+                            ver = versions.getLatestSnapshot();
+                        }else if (!types.contains(VersionType.RELEASE)){
+                            if (types.contains(VersionType.OLD_BETA)){
+                                ver = versions.getLatestBeta();
+                            }else if (types.contains(VersionType.OLD_ALPHA)){
+                                ver = versions.getLatestAlpha();
+                            }
+                        }
                     }
                     if (o.has("gameDir")){
                         gameDir = new File(o.getString("gameDir"));
@@ -173,7 +186,7 @@ public class Profiles {
                         }
                     }
                     if (name != null){
-                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility);
+                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility, types);
                         if (first == null){
                             first = name;
                         }
@@ -269,7 +282,7 @@ public class Profiles {
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
             }
-            List<VersionType> allowed = versions.getAllowedTypes();
+            List<VersionType> allowed = p.getAllowedVersionTypes();
             if (allowed.size() > 0){
                 JSONArray at = new JSONArray();
                 for (VersionType t : allowed){

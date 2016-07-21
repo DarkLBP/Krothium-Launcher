@@ -10,12 +10,15 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Base64;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
 import kmlk.objects.Profile;
+import kmlk.objects.Version;
 
 /**
  * @website http://krotium.com
@@ -150,13 +153,16 @@ public class WebLauncherThread extends Thread{
                 String responseCode = "";
                 if (path.startsWith("/action/")){
                     String function = path.replace("/action/", "");
+                    String[] requestData;
+                    String profile;
                     switch (function){
                         case "authenticate":
                             try{
-                                String[] requestData = request.split("\n");
+                                requestData = request.split("\n");
                                 String userData = requestData[requestData.length - 1];
-                                String userName = userData.split("&")[0].replace("u=", "");
-                                String password = userData.split("&")[1].replace("p=", "");
+                                String[] userArray = userData.split(":");
+                                String userName = new String(Base64.getDecoder().decode(userArray[0]));
+                                String password = new String(Base64.getDecoder().decode(userArray[1]));
                                 try{
                                     kernel.authenticate(userName, password);
                                     kernel.saveProfiles();
@@ -245,8 +251,8 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "setselectedprofile":
                             try{
-                                String[] requestData = request.split("\n");
-                                String profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
+                                requestData = request.split("\n");
+                                profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
                                         responseCode = "OK";
@@ -262,11 +268,11 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedversion":
-                            responseCode = kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID();
+                            responseCode = Base64.getEncoder().encodeToString(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID().getBytes());
                             break;
                         case "deleteprofile":
-                            String[] requestData = request.split("\n");
-                            String profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
+                            requestData = request.split("\n");
+                            profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                             if (!kernel.existsProfile(profile)){
                                 responseCode = "ERROR";
                             } else {
@@ -275,6 +281,50 @@ public class WebLauncherThread extends Thread{
                                     kernel.saveProfiles();
                                 } else {
                                     responseCode = "ERROR";
+                                }
+                            }
+                            break;
+                        case "versions":
+                            Map<String, Version> v = kernel.getVersionDB();
+                            Set vkeys = v.keySet();
+                            Iterator vi = vkeys.iterator();
+                            Profile prof = kernel.getProfile(kernel.getSelectedProfile());
+                            List<VersionType> allowedTypes = prof.getAllowedVersionTypes();
+                            boolean first = true;
+                            while (vi.hasNext()){
+                                String index = vi.next().toString();
+                                Version version = v.get(index);
+                                if (allowedTypes.contains(version.getType())){
+                                    if (first){
+                                        first = false;
+                                    } else {
+                                        responseCode += "\n";
+                                    }
+                                    responseCode += Base64.getEncoder().encodeToString(version.getID().getBytes());
+                                }
+                            }
+                            break;
+                        case "saveprofile":
+                            requestData = request.split("\n");
+                            String profileData = requestData[requestData.length - 1];
+                            String[] profileArray = profileData.split(":");
+                            String profileName = new String(Base64.getDecoder().decode(profileArray[0]));
+                            String profileNameNew = new String(Base64.getDecoder().decode(profileArray[1]));
+                            String profileVersion = new String(Base64.getDecoder().decode(profileArray[2]));
+                            if (!kernel.existsProfile(profileName)){
+                                responseCode += "ERROR";
+                            } else {
+                                Profile up = kernel.getProfile(profileName);
+                                if (!kernel.existsVersion(profileVersion)){
+                                    responseCode += "ERROR";
+                                } else {
+                                    up.setVersion(kernel.getVersion(profileVersion));
+                                    kernel.updateProfile(up);
+                                    if (!profileName.equals(profileNameNew)){
+                                        kernel.renameProfile(profileName, profileNameNew);
+                                    }
+                                    responseCode += "OK";
+                                    kernel.saveProfiles();
                                 }
                             }
                             break;
