@@ -124,33 +124,25 @@ public class Profiles {
                     }
                     if (o.has("allowedReleaseTypes")){
                         JSONArray a = o.getJSONArray("allowedReleaseTypes");
-                        if (a.length() == 0){
-                            types.add(VersionType.RELEASE);
-                        }else{
-                            for (int i = 0; i < a.length(); i++){
-                                try{
-                                    types.add(VersionType.valueOf(a.getString(i).toUpperCase()));
-                                    console.printInfo("Added version type " + VersionType.valueOf(a.getString(i).toUpperCase()));
-                                }catch (Exception ex){
-                                    console.printError(a.get(i) + " version type does not exist.");
-                                }
+                        for (int i = 0; i < a.length(); i++){
+                            try{
+                                types.add(VersionType.valueOf(a.getString(i).toUpperCase()));
+                                console.printInfo("Added version type " + VersionType.valueOf(a.getString(i).toUpperCase()));
+                            }catch (Exception ex){
+                                console.printError(a.get(i) + " version type does not exist.");
                             }
-                        }    
-                    }else{
+                        }
+                    }
+                    if (!types.contains(VersionType.RELEASE)){
                         types.add(VersionType.RELEASE);
                     }
                     if (o.has("lastVersionId")){
                         ver = versions.getVersionByName(o.getString("lastVersionId"));
                     } else {
-                        ver = versions.getLatestRelease();
                         if (types.contains(VersionType.SNAPSHOT)){
                             ver = versions.getLatestSnapshot();
-                        }else if (!types.contains(VersionType.RELEASE)){
-                            if (types.contains(VersionType.OLD_BETA)){
-                                ver = versions.getLatestBeta();
-                            }else if (types.contains(VersionType.OLD_ALPHA)){
-                                ver = versions.getLatestAlpha();
-                            }
+                        } else {
+                            ver = versions.getLatestRelease();
                         }
                     }
                     if (o.has("gameDir")){

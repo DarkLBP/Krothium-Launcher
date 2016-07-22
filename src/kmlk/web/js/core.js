@@ -24,21 +24,36 @@ function loadProfileData(){
     if (name_base === null){
         alert("Invalid profile request!");
     } else {
-        var name = fromBase64(name_base);
-        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
-        document.getElementById("profileName").value = name;
-        var response = postRequest("versions", null);
-        var data = response.split("\n");
+        var response = postRequest("profiledata", name_base);
+        var data = response.split(":");
         if (data.constructor === Array){
-            var data_length = data.length;
-            var value = "";
-            for (var i = 0; i < data_length; i++){
-                var name = fromBase64(data[i]);
-                value += '<option value="' + data[i] + '">' + name + '</option>';
+            if (data.length === 6){
+                var name = fromBase64(data[0]);
+                document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
+                document.getElementById("profileName").value = name;
+                document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
+                document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
+                document.getElementById("oldAlpha").checked = (fromBase64(data[4]) === "true");
+                response = postRequest("versions", null);
+                var vers = response.split(":");
+                if (vers.constructor === Array){
+                    var data_length = vers.length;
+                    var value = "";
+                    for (var i = 0; i < data_length; i++){
+                        var name = fromBase64(vers[i]);
+                        value += '<option value="' + vers[i] + '">' + name + '</option>';
+                    }
+                    document.getElementById("versionList").innerHTML = value;
+                }
+                document.getElementById("versionList").value = data[1];
+                if (data[5] !== "noset"){
+                    document.getElementById("javaArgs").value = fromBase64(data[5]);
+                }
+            }else{
+                alert("Server replied with wrong amount of data.");
             }
-            document.getElementById("versionList").innerHTML = value;
-            response = postRequest("selectedversion", null);
-            document.getElementById("versionList").value = response;
+        } else {
+            alert("Could not load profile data.");
         }
     }
 }
@@ -47,7 +62,7 @@ function saveProfile(){
     if (name_base === null){
         alert("Invalid profile request!");
     } else {
-        var parameters = name_base + ":" + toBase64(document.getElementById("profileName").value) + ":" + document.getElementById("versionList").value;
+        var parameters = name_base + ":" + toBase64(document.getElementById("profileName").value) + ":" + document.getElementById("versionList").value + ":" + toBase64(document.getElementById("snapshot").checked.toString()) + ":" + toBase64(document.getElementById("oldBeta").checked.toString()) + ":" + toBase64(document.getElementById("oldAlpha").checked.toString()) + ":" + toBase64(document.getElementById("javaArgs").value);
         var response = postRequest("saveprofile", parameters);
         if (response !== "OK"){
             alert("Failed to save the profile!");
@@ -63,7 +78,7 @@ function playGame(){
 }
 function playGame_Update(){
     var response = postRequest("status", "");
-    var data = response.split("\n");
+    var data = response.split(":");
     if (data.constructor === Array){
         if (data.length === 2){
             var status = data[0];
@@ -117,7 +132,7 @@ function logOut(){
 }
 function loadProfiles(){
     var response = postRequest("profiles", null);
-    var data = response.split("\n");
+    var data = response.split(":");
     if (data.constructor === Array){
         var data_length = data.length;
         var value = "";
@@ -135,7 +150,7 @@ function loadProfiles(){
 }
 function loadProfileList(){
     var response = postRequest("profiles", null);
-    var data = response.split("\n");
+    var data = response.split(":");
     if (data.constructor === Array){
         var data_length = data.length;
         var value = "";

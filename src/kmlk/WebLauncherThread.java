@@ -150,7 +150,7 @@ public class WebLauncherThread extends Thread{
                     }
                 }                
             } else if (request.startsWith("POST")){
-                String responseCode = "";
+                String response = "";
                 if (path.startsWith("/action/")){
                     String function = path.replace("/action/", "");
                     String[] requestData;
@@ -166,9 +166,9 @@ public class WebLauncherThread extends Thread{
                                 try{
                                     kernel.authenticate(userName, password);
                                     kernel.saveProfiles();
-                                    responseCode = "OK";
+                                    response = "OK";
                                 }catch (AuthenticationException ex){
-                                    responseCode = ex.getMessage();
+                                    response = ex.getMessage();
                                 }
                             }catch (Exception ex){
                                 throw new WebLauncherException(path, 400, out);
@@ -210,14 +210,14 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "status":
                             if (kernel.isDownloading()){
-                                responseCode = "1";
+                                response = "1";
                             } else if (kernel.isGameStarted()){
-                                responseCode = "2";
+                                response = "2";
                             } else {
-                                responseCode = "0";
+                                response = "0";
                             }
-                            responseCode += "\n";
-                            responseCode += String.valueOf(kernel.getDownloadProgress());
+                            response += ":";
+                            response += String.valueOf(kernel.getDownloadProgress());
                             break;
                         case "close":
                             kernel.saveProfiles();
@@ -227,12 +227,12 @@ public class WebLauncherThread extends Thread{
                             WebLauncher.lastKeepAlive = System.nanoTime();
                             break;
                         case "signature":
-                            responseCode = "Krotium Minecraft Launcher rev " + String.valueOf(Constants.KERNEL_REVISION);
+                            response = "Krotium Minecraft Launcher rev " + String.valueOf(Constants.KERNEL_REVISION);
                             break;
                         case "logout":
                             if (kernel.logOut()){
                                kernel.saveProfiles();
-                                responseCode = "OK"; 
+                                response = "OK"; 
                             }
                             break;
                         case "profiles":
@@ -240,14 +240,14 @@ public class WebLauncherThread extends Thread{
                             Set keys = p.keySet();
                             Iterator i = keys.iterator();
                             while (i.hasNext()){
-                                responseCode += Base64.getEncoder().encodeToString(i.next().toString().getBytes());
+                                response += Base64.getEncoder().encodeToString(i.next().toString().getBytes());
                                 if (i.hasNext()){
-                                    responseCode += "\n";
+                                    response += ":";
                                 }
                             }
                             break;
                         case "selectedprofile":
-                            responseCode = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getBytes());
+                            response = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getBytes());
                             break;
                         case "setselectedprofile":
                             try{
@@ -255,32 +255,32 @@ public class WebLauncherThread extends Thread{
                                 profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
-                                        responseCode = "OK";
+                                        response = "OK";
                                         kernel.saveProfiles();
                                     } else {
-                                        responseCode = "ERROR";
+                                        response = "ERROR";
                                     }
                                 } else {
-                                    responseCode = "ERROR";
+                                    response = "ERROR";
                                 }
                             }catch (Exception ex){
                                 throw new WebLauncherException(path, 400, out);
                             }
                             break;
                         case "selectedversion":
-                            responseCode = Base64.getEncoder().encodeToString(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID().getBytes());
+                            response = Base64.getEncoder().encodeToString(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID().getBytes());
                             break;
                         case "deleteprofile":
                             requestData = request.split("\n");
                             profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
                             if (!kernel.existsProfile(profile)){
-                                responseCode = "ERROR";
+                                response = "ERROR";
                             } else {
                                 if (kernel.deleteProfile(profile)){
-                                    responseCode = "OK";
+                                    response = "OK";
                                     kernel.saveProfiles();
                                 } else {
-                                    responseCode = "ERROR";
+                                    response = "ERROR";
                                 }
                             }
                             break;
@@ -298,9 +298,9 @@ public class WebLauncherThread extends Thread{
                                     if (first){
                                         first = false;
                                     } else {
-                                        responseCode += "\n";
+                                        response += ":";
                                     }
-                                    responseCode += Base64.getEncoder().encodeToString(version.getID().getBytes());
+                                    response += Base64.getEncoder().encodeToString(version.getID().getBytes());
                                 }
                             }
                             break;
@@ -311,21 +311,67 @@ public class WebLauncherThread extends Thread{
                             String profileName = new String(Base64.getDecoder().decode(profileArray[0]));
                             String profileNameNew = new String(Base64.getDecoder().decode(profileArray[1]));
                             String profileVersion = new String(Base64.getDecoder().decode(profileArray[2]));
+                            boolean snapshot = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[3])));
+                            boolean oldBeta = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[4])));
+                            boolean oldAlpha = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[5])));
+                            String javaArgs = new String(Base64.getDecoder().decode(profileArray[6]));
                             if (!kernel.existsProfile(profileName)){
-                                responseCode += "ERROR";
+                                response += "ERROR";
                             } else {
-                                Profile up = kernel.getProfile(profileName);
-                                if (!kernel.existsVersion(profileVersion)){
-                                    responseCode += "ERROR";
-                                } else {
-                                    up.setVersion(kernel.getVersion(profileVersion));
-                                    kernel.updateProfile(up);
-                                    if (!profileName.equals(profileNameNew)){
-                                        kernel.renameProfile(profileName, profileNameNew);
+                                if (!profileNameNew.isEmpty()){
+                                    Profile up = kernel.getProfile(profileName);
+                                    if (!kernel.existsVersion(profileVersion)){
+                                        response += "ERROR";
+                                    } else {
+                                        up.setVersion(kernel.getVersion(profileVersion));
+                                        if (!javaArgs.isEmpty()){
+                                            up.setJavaArgs(javaArgs);
+                                        }
+                                        if (snapshot){
+                                            up.allowVersionType(VersionType.SNAPSHOT);
+                                        } else {
+                                            up.removeVersionType(VersionType.SNAPSHOT);
+                                        }
+                                        if (oldBeta){
+                                            up.allowVersionType(VersionType.OLD_BETA);
+                                        } else {
+                                            up.removeVersionType(VersionType.OLD_BETA);
+                                        }
+                                        if (oldAlpha){
+                                            up.allowVersionType(VersionType.OLD_ALPHA);
+                                        } else {
+                                            up.removeVersionType(VersionType.OLD_ALPHA);
+                                        }
+                                        kernel.updateProfile(up);
+                                        if (!profileName.equals(profileNameNew)){
+                                            kernel.renameProfile(profileName, profileNameNew);
+                                        }
+                                        response += "OK";
+                                        kernel.saveProfiles();
                                     }
-                                    responseCode += "OK";
-                                    kernel.saveProfiles();
+                                } else {
+                                    response += "ERROR";
                                 }
+                            }
+                            break;
+                        case "profiledata":
+                            requestData = request.split("\n");
+                            profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
+                            if (kernel.existsProfile(profile)){
+                                Profile rp = kernel.getProfile(profile);
+                                response += Base64.getEncoder().encodeToString(rp.getName().getBytes());
+                                response += ":";
+                                response += Base64.getEncoder().encodeToString(rp.getVersion().getID().getBytes());
+                                response += ":";
+                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT)).getBytes());
+                                response += ":";
+                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_BETA)).getBytes());
+                                response += ":";
+                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)).getBytes());
+                                response += ":";
+                                response += (rp.hasJavaArgs() ? Base64.getEncoder().encodeToString(rp.getJavaArgs().getBytes()) : "noset");
+                            } else {
+                                response = "ERROR";
                             }
                             break;
                     }
@@ -333,7 +379,7 @@ public class WebLauncherThread extends Thread{
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
                 out.write("Content-Type: text/html\r\n".getBytes());
                 out.write("\r\n".getBytes());
-                out.write(responseCode.getBytes());
+                out.write(response.getBytes());
             }
             out.close();
             in.close();

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kmlk.Kernel;
 import kmlk.enums.LauncherVisibility;
 import kmlk.enums.VersionType;
 
@@ -86,7 +85,18 @@ public class Profile {
         resolution.put("width", w);
         resolution.put("height", h);
     }
+    public void allowVersionType(VersionType t){
+        if (!this.allowedVersionTypes.contains(t)){
+            this.allowedVersionTypes.add(t);
+        }
+    }
+    public void removeVersionType(VersionType t){
+        if (this.allowedVersionTypes.contains(t)){
+            this.allowedVersionTypes.remove(t);
+        }
+    }
     public boolean hasVisibility(){return (this.visibility != null);}
     public LauncherVisibility getVisibility(){return this.visibility;}
     public List<VersionType> getAllowedVersionTypes(){return this.allowedVersionTypes;}
+    public boolean isAllowedVersionType(VersionType t){return (this.allowedVersionTypes.contains(t));}
 }
