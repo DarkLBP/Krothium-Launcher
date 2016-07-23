@@ -57,6 +57,22 @@ function loadProfileData(){
         }
     }
 }
+function refreshVersionList(){
+    var parameters = toBase64(document.getElementById("snapshot").checked.toString()) + ":" + toBase64(document.getElementById("oldBeta").checked.toString()) + ":" + toBase64(document.getElementById("oldAlpha").checked.toString());
+    var response = postRequest("versions", parameters);
+    var vers = response.split(":");
+    if (vers.constructor === Array){
+        var data_length = vers.length;
+        var value = "";
+        for (var i = 0; i < data_length; i++){
+            var name = fromBase64(vers[i]);
+            value += '<option value="' + vers[i] + '">' + name + '</option>';
+        }
+        document.getElementById("versionList").innerHTML = value;
+    }
+    response = postRequest("selectedversion", null);
+    document.getElementById("versionList").value = response;
+}
 function saveProfile(){
     var name_base = window.location.href.split("?")[1];
     if (name_base === null){

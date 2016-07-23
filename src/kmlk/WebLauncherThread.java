@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
@@ -291,19 +292,52 @@ public class WebLauncherThread extends Thread{
                             Map<String, Version> v = kernel.getVersionDB();
                             Set vkeys = v.keySet();
                             Iterator vi = vkeys.iterator();
-                            Profile prof = kernel.getProfile(kernel.getSelectedProfile());
-                            List<VersionType> allowedTypes = prof.getAllowedVersionTypes();
                             boolean first = true;
-                            while (vi.hasNext()){
-                                String index = vi.next().toString();
-                                Version version = v.get(index);
-                                if (allowedTypes.contains(version.getType())){
-                                    if (first){
-                                        first = false;
-                                    } else {
-                                        response += ":";
+                            List<VersionType> allowedTypes = new ArrayList();
+                            if (contentLength > 0){
+                                String[] types = parameters.split(":");
+                                if (types.length != 3){
+                                    throw new WebLauncherException(path, 400, out);
+                                }
+                                boolean snapshot = Boolean.valueOf(Utils.fromBase64(types[0]));
+                                boolean oldBeta = Boolean.valueOf(Utils.fromBase64(types[1]));
+                                boolean oldAlpha = Boolean.valueOf(Utils.fromBase64(types[2]));
+                                allowedTypes.add(VersionType.RELEASE);
+                                if (snapshot){
+                                    allowedTypes.add(VersionType.SNAPSHOT);
+                                }
+                                if (oldBeta){
+                                    allowedTypes.add(VersionType.OLD_BETA);
+                                }
+                                if (oldAlpha){
+                                    allowedTypes.add(VersionType.OLD_ALPHA);
+                                }
+                                while (vi.hasNext()){
+                                    String index = vi.next().toString();
+                                    Version version = v.get(index);
+                                    if (allowedTypes.contains(version.getType())){
+                                        if (first){
+                                            first = false;
+                                        } else {
+                                            response += ":";
+                                        }
+                                        response += Utils.toBase64(version.getID());
                                     }
-                                    response += Utils.toBase64(version.getID());
+                                }
+                            } else {
+                                Profile prof = kernel.getProfile(kernel.getSelectedProfile());
+                                allowedTypes = prof.getAllowedVersionTypes();
+                                while (vi.hasNext()){
+                                    String index = vi.next().toString();
+                                    Version version = v.get(index);
+                                    if (allowedTypes.contains(version.getType())){
+                                        if (first){
+                                            first = false;
+                                        } else {
+                                            response += ":";
+                                        }
+                                        response += Utils.toBase64(version.getID());
+                                    }
                                 }
                             }
                             break;

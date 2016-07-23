@@ -65,9 +65,9 @@
               <input type="text" id="profileName" value=""/><br><br>
               Minecraft Version:<br>
               <select id="versionList" class="form-control"></select><br>
-              <input type="checkbox" id="snapshot"/> Allow Snapshots Versions<br><br>
-              <input type="checkbox" id="oldBeta"/> Allow Old Beta Versions<br><br>
-              <input type="checkbox" id="oldAlpha"/> Allow Old Alpha Versions<br><br>
+              <input type="checkbox" onclick="refreshVersionList();" id="snapshot"/> Allow Snapshots Versions<br><br>
+              <input type="checkbox" onclick="refreshVersionList();" id="oldBeta"/> Allow Old Beta Versions<br><br>
+              <input type="checkbox" onclick="refreshVersionList();" id="oldAlpha"/> Allow Old Alpha Versions<br><br>
               Java Arguments:<br>
               <input type="text" id="javaArgs" value=""/><br>
               <br><a class="red-button wide" onclick="saveProfile();" href="#">Save Profile</a>
