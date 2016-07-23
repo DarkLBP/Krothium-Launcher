@@ -49,6 +49,7 @@ public class Authentication {
     public boolean hasSelectedUser(){return (this.selectedProfile != null);}
     public boolean logOut(){
         if (this.hasSelectedUser()){
+            this.authenticated = false;
             return this.removeUser(this.selectedProfile);
         }
         return false;
