@@ -16,6 +16,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.UUID;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -202,5 +203,29 @@ public class Utils {
             return path + "javaw.exe";
         }
         return path + "java";
+    }
+    public static String toBase64(String st){
+        if (st == null || st.isEmpty()){
+            return null;
+        }
+        String conversion;
+        try{
+            conversion = Base64.getEncoder().encodeToString(st.getBytes());
+        } catch (Exception ex) {
+            conversion = null;
+        }
+        return conversion;
+    }
+    public static String fromBase64(String st){
+        if (st == null || st.isEmpty()){
+            return null;
+        }
+        String conversion;
+        try{
+            conversion = new String(Base64.getDecoder().decode(st));
+        } catch (Exception ex) {
+            conversion = null;
+        }
+        return conversion;
     }
 }

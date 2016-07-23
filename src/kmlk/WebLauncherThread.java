@@ -153,16 +153,24 @@ public class WebLauncherThread extends Thread{
                 String response = "";
                 if (path.startsWith("/action/")){
                     String function = path.replace("/action/", "");
-                    String[] requestData;
+                    String[] requestData = request.split("\n");
+                    String parameters = "";
+                    if (contentLength > 0){
+                        parameters = requestData[requestData.length - 1];
+                        if (parameters.isEmpty()){
+                            throw new WebLauncherException(path, 400, out);
+                        }
+                    }
                     String profile;
                     switch (function){
                         case "authenticate":
-                            try{
-                                requestData = request.split("\n");
-                                String userData = requestData[requestData.length - 1];
-                                String[] userArray = userData.split(":");
-                                String userName = new String(Base64.getDecoder().decode(userArray[0]));
-                                String password = new String(Base64.getDecoder().decode(userArray[1]));
+                            if (contentLength > 0){
+                                String[] userArray = parameters.split(":");
+                                if (userArray.length != 2){
+                                    throw new WebLauncherException(path, 400, out);
+                                }
+                                String userName = Utils.fromBase64(userArray[0]);
+                                String password = Utils.fromBase64(userArray[1]);
                                 try{
                                     kernel.authenticate(userName, password);
                                     kernel.saveProfiles();
@@ -170,9 +178,10 @@ public class WebLauncherThread extends Thread{
                                 }catch (AuthenticationException ex){
                                     response = ex.getMessage();
                                 }
-                            }catch (Exception ex){
+                            } else {
                                 throw new WebLauncherException(path, 400, out);
                             }
+                            
                             break;
                         case "play":
                             Thread t = new Thread(){
@@ -240,39 +249,33 @@ public class WebLauncherThread extends Thread{
                             Set keys = p.keySet();
                             Iterator i = keys.iterator();
                             while (i.hasNext()){
-                                response += Base64.getEncoder().encodeToString(i.next().toString().getBytes());
+                                response += Utils.toBase64(i.next().toString());
                                 if (i.hasNext()){
                                     response += ":";
                                 }
                             }
                             break;
                         case "selectedprofile":
-                            response = Base64.getEncoder().encodeToString(kernel.getSelectedProfile().getBytes());
+                            response = Utils.toBase64(kernel.getSelectedProfile());
                             break;
                         case "setselectedprofile":
-                            try{
-                                requestData = request.split("\n");
-                                profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
-                                if (kernel.existsProfile(profile)){
-                                    if (kernel.setSelectedProfile(profile)){
-                                        response = "OK";
-                                        kernel.saveProfiles();
-                                    } else {
-                                        response = "ERROR";
-                                    }
+                            profile = Utils.fromBase64(parameters);
+                            if (kernel.existsProfile(profile)){
+                                if (kernel.setSelectedProfile(profile)){
+                                    response = "OK";
+                                    kernel.saveProfiles();
                                 } else {
                                     response = "ERROR";
                                 }
-                            }catch (Exception ex){
-                                throw new WebLauncherException(path, 400, out);
+                            } else {
+                                response = "ERROR";
                             }
                             break;
                         case "selectedversion":
-                            response = Base64.getEncoder().encodeToString(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID().getBytes());
+                            response = Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID());
                             break;
                         case "deleteprofile":
-                            requestData = request.split("\n");
-                            profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
+                            profile = Utils.fromBase64(parameters);
                             if (!kernel.existsProfile(profile)){
                                 response = "ERROR";
                             } else {
@@ -300,21 +303,22 @@ public class WebLauncherThread extends Thread{
                                     } else {
                                         response += ":";
                                     }
-                                    response += Base64.getEncoder().encodeToString(version.getID().getBytes());
+                                    response += Utils.toBase64(version.getID());
                                 }
                             }
                             break;
                         case "saveprofile":
-                            requestData = request.split("\n");
-                            String profileData = requestData[requestData.length - 1];
-                            String[] profileArray = profileData.split(":");
-                            String profileName = new String(Base64.getDecoder().decode(profileArray[0]));
-                            String profileNameNew = new String(Base64.getDecoder().decode(profileArray[1]));
-                            String profileVersion = new String(Base64.getDecoder().decode(profileArray[2]));
-                            boolean snapshot = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[3])));
-                            boolean oldBeta = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[4])));
-                            boolean oldAlpha = Boolean.valueOf(new String(Base64.getDecoder().decode(profileArray[5])));
-                            String javaArgs = new String(Base64.getDecoder().decode(profileArray[6]));
+                            String[] profileArray = parameters.split(":");
+                            if (profileArray.length != 7){
+                                throw new WebLauncherException(path, 400, out);
+                            }
+                            String profileName = Utils.fromBase64(profileArray[0]);
+                            String profileNameNew = Utils.fromBase64(profileArray[1]);
+                            String profileVersion = Utils.fromBase64(profileArray[2]);
+                            boolean snapshot = Boolean.valueOf(Utils.fromBase64(profileArray[3]));
+                            boolean oldBeta = Boolean.valueOf(Utils.fromBase64(profileArray[4]));
+                            boolean oldAlpha = Boolean.valueOf(Utils.fromBase64(profileArray[5]));
+                            String javaArgs = Utils.fromBase64(profileArray[6]);
                             if (!kernel.existsProfile(profileName)){
                                 response += "ERROR";
                             } else {
@@ -355,21 +359,20 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "profiledata":
-                            requestData = request.split("\n");
-                            profile = new String(Base64.getDecoder().decode(requestData[requestData.length - 1]));
+                            profile = Utils.fromBase64(parameters);
                             if (kernel.existsProfile(profile)){
                                 Profile rp = kernel.getProfile(profile);
-                                response += Base64.getEncoder().encodeToString(rp.getName().getBytes());
+                                response += Utils.toBase64(rp.getName());
                                 response += ":";
-                                response += Base64.getEncoder().encodeToString(rp.getVersion().getID().getBytes());
+                                response += Utils.toBase64(rp.getVersion().getID());
                                 response += ":";
-                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT)).getBytes());
+                                response += Utils.toBase64((String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT))));
                                 response += ":";
-                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_BETA)).getBytes());
+                                response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_BETA)));
                                 response += ":";
-                                response += Base64.getEncoder().encodeToString(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)).getBytes());
+                                response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)));
                                 response += ":";
-                                response += (rp.hasJavaArgs() ? Base64.getEncoder().encodeToString(rp.getJavaArgs().getBytes()) : "noset");
+                                response += (rp.hasJavaArgs() ? Utils.toBase64(rp.getJavaArgs()) : "noset");
                             } else {
                                 response = "ERROR";
                             }
