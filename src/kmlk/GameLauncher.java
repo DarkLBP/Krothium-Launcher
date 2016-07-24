@@ -8,10 +8,12 @@ import kmlk.objects.Profile;
 import kmlk.objects.User;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -21,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import kmlk.exceptions.GameLauncherException;
 import org.json.JSONObject;
 
 /**
@@ -34,7 +37,10 @@ public class GameLauncher {
     private Process process;
     
     public GameLauncher(){this.console = Kernel.getKernel().getConsole();}
-    public void launch(Profile p){
+    public void launch(Profile p) throws GameLauncherException{
+        if (this.isStarted()){
+            throw new GameLauncherException("Game is already started!");
+        }
         Version ver = p.getVersion();
         File workingDir = Kernel.getKernel().getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
@@ -230,6 +236,27 @@ public class GameLauncher {
         pb.directory(workingDir);
         try{
             this.process = pb.start();
+            Thread log = new Thread(){
+                @Override
+                public void run(){
+                    InputStreamReader isr = new InputStreamReader(getInputStream());
+                    BufferedReader br = new BufferedReader(isr);
+                    String lineRead;
+                    try{
+                        while (isStarted())
+                        {
+                            if ((lineRead = br.readLine()) != null)
+                            {
+                                console.printInfo(lineRead);
+                            }
+                        }
+                    } catch (Exception ex){
+                        console.printError("Game stopped unexpectedly.");
+                    }
+
+                }
+            };
+            log.start();
         }catch (Exception ex){
             console.printError("Game returned an error code.");
         }

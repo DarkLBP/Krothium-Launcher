@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
+import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Version;
 import org.json.JSONObject;
 
@@ -53,7 +54,7 @@ public final class Kernel {
     public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
-    public void launchGame(){this.gameLauncher.launch(this.getProfile(this.getSelectedProfile()));}
+    public void launchGame() throws GameLauncherException{this.gameLauncher.launch(this.getProfile(this.getSelectedProfile()));}
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
     public boolean logOut(){return this.authentication.logOut();}
     public int getDownloadProgress(){return this.downloader.getProgress();}

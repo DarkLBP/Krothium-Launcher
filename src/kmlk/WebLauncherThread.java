@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
+import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Profile;
 import kmlk.objects.Version;
 
@@ -191,28 +192,11 @@ public class WebLauncherThread extends Thread{
                                     kernel.downloadVersion();
                                     kernel.downloadLibraries();
                                     kernel.downloadNatives();
-                                    kernel.launchGame();
-                                    Thread u = new Thread(){
-                                        @Override
-                                        public void run(){
-                                            InputStreamReader isr = new InputStreamReader(kernel.getGameInputStream());
-                                            BufferedReader br = new BufferedReader(isr);
-                                            String lineRead;
-                                            try{
-                                                while (kernel.isGameStarted())
-                                                {
-                                                    if ((lineRead = br.readLine()) != null)
-                                                    {
-                                                        System.out.println(lineRead);
-                                                    }
-                                                }
-                                            } catch (Exception ex){
-                                                console.printError("Game stopped unexpectedly.");
-                                            }
-                                            
-                                        }
-                                    };
-                                    u.start();
+                                    try{
+                                        kernel.launchGame();
+                                    } catch (GameLauncherException ex){
+                                        console.printError(ex.getMessage());
+                                    }
                                 }
                             };
                             t.start();
