@@ -326,27 +326,74 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "saveprofile":
                             String[] profileArray = parameters.split(":");
-                            if (profileArray.length != 7){
+                            if (profileArray.length != 10){
                                 throw new WebLauncherException(path, 400, out);
                             }
-                            String profileName = Utils.fromBase64(profileArray[0]);
-                            String profileNameNew = Utils.fromBase64(profileArray[1]);
-                            String profileVersion = Utils.fromBase64(profileArray[2]);
-                            boolean snapshot = Boolean.valueOf(Utils.fromBase64(profileArray[3]));
-                            boolean oldBeta = Boolean.valueOf(Utils.fromBase64(profileArray[4]));
-                            boolean oldAlpha = Boolean.valueOf(Utils.fromBase64(profileArray[5]));
-                            String javaArgs = Utils.fromBase64(profileArray[6]);
-                            if (!kernel.existsProfile(profileName)){
-                                response += "ERROR";
+                            if (profileArray[0].equals("noset")){
+                                response = "Profile name not specified.";
+                            } else if (profileArray[1].equals("noset")){
+                                response = "Profile name cannot be blank.";
                             } else {
-                                if (!profileNameNew.isEmpty()){
-                                    Profile up = kernel.getProfile(profileName);
+                                String profileName = Utils.fromBase64(profileArray[0]);
+                                String profileNameNew = Utils.fromBase64(profileArray[1]);
+                                String profileVersion = Utils.fromBase64(profileArray[2]);
+                                boolean snapshot = Boolean.valueOf(Utils.fromBase64(profileArray[3]));
+                                boolean oldBeta = Boolean.valueOf(Utils.fromBase64(profileArray[4]));
+                                boolean oldAlpha = Boolean.valueOf(Utils.fromBase64(profileArray[5]));
+                                String gameDir = (profileArray[6].equals("noset") ? "" : Utils.fromBase64(profileArray[6]));
+                                String resolution = (profileArray[7].equals("noset") ? "" : Utils.fromBase64(profileArray[7]));
+                                String javaExec = (profileArray[8].equals("noset") ? "" : Utils.fromBase64(profileArray[8]));
+                                String javaArgs = (profileArray[9].equals("noset") ? "" : Utils.fromBase64(profileArray[9]));
+                                Profile up = kernel.getProfile(profileName);
+                                if (!kernel.existsProfile(profileName)){
+                                    response = "Profile " + profileName + " is specified but does not exist.";
+                                } else {
                                     if (!kernel.existsVersion(profileVersion)){
-                                        response += "ERROR";
+                                        response = "Selected version " + profileVersion + " does not exist.";
                                     } else {
+                                        boolean error = false;
                                         up.setVersion(kernel.getVersion(profileVersion));
+                                        if (!gameDir.isEmpty()){
+                                            File dir = new File(gameDir);
+                                            up.setGameDir(dir);
+                                        } else {
+                                            up.setGameDir(null);
+                                        }
+                                        if (!resolution.isEmpty()){
+                                            try{
+                                                int x = Integer.parseInt(resolution.split("x")[0]);
+                                                int y = Integer.parseInt(resolution.split("x")[1]);
+                                                up.setResolution(x, y);
+                                            } catch (Exception ex){
+                                                error = true;
+                                                response += "Invalid resolution values." + "\n";
+                                            }
+                                        }
+                                        else{
+                                            up.setResolution(-1, -1);
+                                        }
+                                        if (!javaExec.isEmpty()){
+                                            File file = new File(javaExec);
+                                            if (file.exists()){
+                                                if (file.isFile()){
+                                                    up.setJavaDir(file); 
+                                                }
+                                                else {
+                                                    error = true;
+                                                    response += "Invalid java executable file." + "\n";
+                                                }
+                                              
+                                            } else {
+                                                error = true;
+                                                response += "Java executable does not exist." + "\n";
+                                            }
+                                        } else {
+                                            up.setJavaDir(null);
+                                        }
                                         if (!javaArgs.isEmpty()){
                                             up.setJavaArgs(javaArgs);
+                                        } else {
+                                            up.setJavaArgs(null);
                                         }
                                         if (snapshot){
                                             up.allowVersionType(VersionType.SNAPSHOT);
@@ -367,11 +414,12 @@ public class WebLauncherThread extends Thread{
                                         if (!profileName.equals(profileNameNew)){
                                             kernel.renameProfile(profileName, profileNameNew);
                                         }
-                                        response += "OK";
-                                        kernel.saveProfiles();
+                                        if (!error){
+                                            response = "OK";
+                                        } else {
+                                            kernel.saveProfiles();
+                                        }
                                     }
-                                } else {
-                                    response += "ERROR";
                                 }
                             }
                             break;
@@ -390,6 +438,8 @@ public class WebLauncherThread extends Thread{
                                 response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)));
                                 response += ":";
                                 response += (rp.hasGameDir() ? Utils.toBase64(rp.getGameDir().getAbsolutePath()) : "noset");
+                                response += ":";
+                                response += (rp.hasResolution() ? Utils.toBase64(String.valueOf(rp.getResolutionWidth()) + "x" + String.valueOf(rp.getResolutionHeight())) : "noset");
                                 response += ":";
                                 response += (rp.hasJavaDir() ? Utils.toBase64(rp.getJavaDir().getAbsolutePath()) : "noset");
                                 response += ":";

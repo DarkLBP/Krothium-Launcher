@@ -27,7 +27,7 @@ function loadProfileData(){
         var response = postRequest("profiledata", name_base);
         var data = response.split(":");
         if (data.constructor === Array){
-            if (data.length === 8){
+            if (data.length === 9){
                 var name = fromBase64(data[0]);
                 document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
                 document.getElementById("profileName").value = name;
@@ -50,10 +50,15 @@ function loadProfileData(){
                     document.getElementById("gameDirectory").value = fromBase64(data[5]);
                 }
                 if (data[6] !== "noset"){
-                    document.getElementById("javaExecutable").value = fromBase64(data[6]);
+                    var resolution = fromBase64(data[6]);
+                    document.getElementById("resX").value = resolution.split("x")[0];
+                    document.getElementById("resY").value = resolution.split("x")[1];
                 }
                 if (data[7] !== "noset"){
-                    document.getElementById("javaArgs").value = fromBase64(data[7]);
+                    document.getElementById("javaExecutable").value = fromBase64(data[7]);
+                }
+                if (data[8] !== "noset"){
+                    document.getElementById("javaArgs").value = fromBase64(data[8]);
                 }
             }else{
                 alert("Server replied with wrong amount of data.");
@@ -80,14 +85,38 @@ function refreshVersionList(){
     document.getElementById("versionList").value = response;
 }
 function saveProfile(){
-    var name_base = window.location.href.split("?")[1];
+    var name_base = window.location.href.split("?")[1].replace('#', '');
     if (name_base === null){
         alert("Invalid profile request!");
     } else {
-        var parameters = name_base + ":" + toBase64(document.getElementById("profileName").value) + ":" + document.getElementById("versionList").value + ":" + toBase64(document.getElementById("snapshot").checked.toString()) + ":" + toBase64(document.getElementById("oldBeta").checked.toString()) + ":" + toBase64(document.getElementById("oldAlpha").checked.toString()) + ":" + toBase64(document.getElementById("javaArgs").value);
+        var name = "noset";
+        var version = document.getElementById("versionList").value;
+        var snapshot = toBase64(document.getElementById("snapshot").checked.toString());
+        var oldbeta = toBase64(document.getElementById("oldBeta").checked.toString());
+        var oldalpha = toBase64(document.getElementById("oldAlpha").checked.toString());
+        var gamedir = "noset";
+        var resolution = "noset";
+        var javaexec = "noset";
+        var javaargs = "noset";
+        if (document.getElementById("profileName").value !== ""){
+            name = toBase64(document.getElementById("profileName").value);
+        }
+        if (document.getElementById("gameDirectory").value !== ""){
+            gamedir = toBase64(document.getElementById("gameDirectory").value);
+        }
+        if (document.getElementById("resX").value !== "" && document.getElementById("resY").value !== ""){
+            resolution = toBase64(document.getElementById("resX").value + "x" + document.getElementById("resY").value);
+        }
+        if (document.getElementById("javaExecutable").value !== ""){
+            javaexec = toBase64(document.getElementById("javaExecutable").value);
+        }
+        if (document.getElementById("javaArgs").value !== ""){
+            javaargs = toBase64(document.getElementById("javaArgs").value);
+        }
+        var parameters = name_base + ":" + name + ":" + version + ":" + snapshot + ":" + oldbeta + ":" + oldalpha + ":" + gamedir + ":" + resolution + ":" + javaexec + ":" + javaargs;
         var response = postRequest("saveprofile", parameters);
         if (response !== "OK"){
-            alert("Failed to save the profile!");
+            alert(response);
         } else {
             alert("Profile saved successfully!");
             redirect("/profiles.html");

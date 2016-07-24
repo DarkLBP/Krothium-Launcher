@@ -79,11 +79,15 @@ public class Profile {
         return 0;
     }
     public void setResolution(int w, int h){
-        if (resolution == null){
-            resolution = new HashMap();
+        if (w < 0 || h < 0){
+            resolution = null;
+        } else {
+            if (resolution == null){
+                resolution = new HashMap();
+            }
+            resolution.put("width", w);
+            resolution.put("height", h);
         }
-        resolution.put("width", w);
-        resolution.put("height", h);
     }
     public void allowVersionType(VersionType t){
         if (!this.allowedVersionTypes.contains(t)){
