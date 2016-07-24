@@ -27,7 +27,7 @@ function loadProfileData(){
         var response = postRequest("profiledata", name_base);
         var data = response.split(":");
         if (data.constructor === Array){
-            if (data.length === 6){
+            if (data.length === 8){
                 var name = fromBase64(data[0]);
                 document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
                 document.getElementById("profileName").value = name;
@@ -47,7 +47,13 @@ function loadProfileData(){
                 }
                 document.getElementById("versionList").value = data[1];
                 if (data[5] !== "noset"){
-                    document.getElementById("javaArgs").value = fromBase64(data[5]);
+                    document.getElementById("gameDirectory").value = fromBase64(data[5]);
+                }
+                if (data[6] !== "noset"){
+                    document.getElementById("javaExecutable").value = fromBase64(data[6]);
+                }
+                if (data[7] !== "noset"){
+                    document.getElementById("javaArgs").value = fromBase64(data[7]);
                 }
             }else{
                 alert("Server replied with wrong amount of data.");

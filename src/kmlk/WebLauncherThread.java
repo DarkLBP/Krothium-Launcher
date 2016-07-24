@@ -389,6 +389,10 @@ public class WebLauncherThread extends Thread{
                                 response += ":";
                                 response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)));
                                 response += ":";
+                                response += (rp.hasGameDir() ? Utils.toBase64(rp.getGameDir().getAbsolutePath()) : "noset");
+                                response += ":";
+                                response += (rp.hasJavaDir() ? Utils.toBase64(rp.getJavaDir().getAbsolutePath()) : "noset");
+                                response += ":";
                                 response += (rp.hasJavaArgs() ? Utils.toBase64(rp.getJavaArgs()) : "noset");
                             } else {
                                 response = "ERROR";
