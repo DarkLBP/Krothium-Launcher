@@ -91,8 +91,8 @@ progress{
   margin-left: auto;
 }
 .loginInputs{
-  margin-bottom: 10px;
-  margin-left: 18%;
+  padding-right: 50px;
+  padding-left: 50px;
 }
 .mainBody {
   margin:40px 0 0 0;
