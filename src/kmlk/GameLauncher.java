@@ -51,7 +51,11 @@ public class GameLauncher {
         console.printInfo("Using natives dir: " + nativesDir);
         console.printInfo("Exctracting natives.");
         List<String> gameArgs = new ArrayList();
-        gameArgs.add(Utils.getJavaDir());
+        if (p.hasJavaDir()){
+            gameArgs.add(p.getJavaDir().getAbsolutePath());
+        } else {
+            gameArgs.add(Utils.getJavaDir());
+        }
         if (!p.hasJavaArgs()){
             if (Utils.getOSArch().equals(OSArch.OLD)){
                 gameArgs.add("-Xmx512M");
