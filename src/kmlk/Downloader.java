@@ -294,7 +294,8 @@ public class Downloader {
                         }
                         total += nat.getSize();
                         if (!localValid){
-                            Downloadable d = new Downloadable(nat.getURL(), nat.getSize(), nat.getPath(), sha1);
+                            Downloadable d = new Downloadable(nat.getURL(), nat.getSize(), natPath, sha1);
+                            urls.add(d);
                         }else{
                             console.printInfo("Native file " + natPath.getName() + " found locally and it is valid.");
                             validated += nat.getSize();
