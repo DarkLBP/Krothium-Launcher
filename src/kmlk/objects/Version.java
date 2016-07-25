@@ -1,6 +1,5 @@
 package kmlk.objects;
 
-import kmlk.objects.Library;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;

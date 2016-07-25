@@ -138,12 +138,6 @@ public class Profiles {
                     }
                     if (o.has("lastVersionId")){
                         ver = versions.getVersionByName(o.getString("lastVersionId"));
-                    } else {
-                        if (types.contains(VersionType.SNAPSHOT)){
-                            ver = versions.getLatestSnapshot();
-                        } else {
-                            ver = versions.getLatestRelease();
-                        }
                     }
                     if (o.has("gameDir")){
                         gameDir = new File(o.getString("gameDir"));
@@ -208,6 +202,7 @@ public class Profiles {
                     this.createDefaultProfile();
                 }
             }catch (Exception ex){
+                ex.printStackTrace();
                 console.printError("Failed to fetch profiles.");
             }
         }else{
@@ -237,9 +232,6 @@ public class Profiles {
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
             Profile prof = this.getProfileByName(p);
-            if (!prof.getVersion().isPrepared()){
-                prof.getVersion().prepare();
-            }
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;

@@ -256,7 +256,11 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedversion":
-                            response = Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID());
+                            if (kernel.getProfile(kernel.getSelectedProfile()).hasVersion()){
+                                response = Utils.toBase64(Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID())) + ":" + Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID());
+                            } else {
+                                response = Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion().getID());
+                            }
                             break;
                         case "deleteprofile":
                             profile = Utils.fromBase64(parameters);
@@ -275,7 +279,6 @@ public class WebLauncherThread extends Thread{
                             Map<String, Version> v = kernel.getVersionDB();
                             Set vkeys = v.keySet();
                             Iterator vi = vkeys.iterator();
-                            boolean first = true;
                             List<VersionType> allowedTypes = new ArrayList();
                             if (contentLength > 0){
                                 String[] types = parameters.split(":");
@@ -295,31 +298,23 @@ public class WebLauncherThread extends Thread{
                                 if (oldAlpha){
                                     allowedTypes.add(VersionType.OLD_ALPHA);
                                 }
+                                response = "latest";
                                 while (vi.hasNext()){
                                     String index = vi.next().toString();
                                     Version version = v.get(index);
                                     if (allowedTypes.contains(version.getType())){
-                                        if (first){
-                                            first = false;
-                                        } else {
-                                            response += ":";
-                                        }
-                                        response += Utils.toBase64(version.getID());
+                                        response += ":" + Utils.toBase64(version.getID());
                                     }
                                 }
                             } else {
                                 Profile prof = kernel.getProfile(kernel.getSelectedProfile());
                                 allowedTypes = prof.getAllowedVersionTypes();
+                                response = "latest";
                                 while (vi.hasNext()){
                                     String index = vi.next().toString();
                                     Version version = v.get(index);
                                     if (allowedTypes.contains(version.getType())){
-                                        if (first){
-                                            first = false;
-                                        } else {
-                                            response += ":";
-                                        }
-                                        response += Utils.toBase64(version.getID());
+                                        response += ":" + Utils.toBase64(version.getID());
                                     }
                                 }
                             }
@@ -336,7 +331,12 @@ public class WebLauncherThread extends Thread{
                             } else {
                                 String profileName = Utils.fromBase64(profileArray[0]);
                                 String profileNameNew = Utils.fromBase64(profileArray[1]);
-                                String profileVersion = Utils.fromBase64(profileArray[2]);
+                                String profileVersion;
+                                if (profileArray[2].equals("latest")){
+                                    profileVersion = null;
+                                } else {
+                                    profileVersion = Utils.fromBase64(profileArray[2]);
+                                }
                                 boolean snapshot = Boolean.valueOf(Utils.fromBase64(profileArray[3]));
                                 boolean oldBeta = Boolean.valueOf(Utils.fromBase64(profileArray[4]));
                                 boolean oldAlpha = Boolean.valueOf(Utils.fromBase64(profileArray[5]));
@@ -344,81 +344,84 @@ public class WebLauncherThread extends Thread{
                                 String resolution = (profileArray[7].equals("noset") ? "" : Utils.fromBase64(profileArray[7]));
                                 String javaExec = (profileArray[8].equals("noset") ? "" : Utils.fromBase64(profileArray[8]));
                                 String javaArgs = (profileArray[9].equals("noset") ? "" : Utils.fromBase64(profileArray[9]));
-                                Profile up = kernel.getProfile(profileName);
                                 if (!kernel.existsProfile(profileName)){
                                     response = "Profile " + profileName + " is specified but does not exist.";
                                 } else {
-                                    if (!kernel.existsVersion(profileVersion)){
-                                        response = "Selected version " + profileVersion + " does not exist.";
+                                    Profile up = kernel.getProfile(profileName);
+                                    boolean error = false;
+                                    if (profileVersion == null){
+                                        up.setVersion(null);
+                                    } else if (!kernel.existsVersion(profileVersion)){
+                                        error = true;
+                                        response += "Selected version " + profileVersion + " does not exist." + "\n";
                                     } else {
-                                        boolean error = false;
                                         up.setVersion(kernel.getVersion(profileVersion));
-                                        if (!gameDir.isEmpty()){
-                                            File dir = new File(gameDir);
-                                            up.setGameDir(dir);
-                                        } else {
-                                            up.setGameDir(null);
+                                    }
+                                    if (!gameDir.isEmpty()){
+                                        File dir = new File(gameDir);
+                                        up.setGameDir(dir);
+                                    } else {
+                                        up.setGameDir(null);
+                                    }
+                                    if (!resolution.isEmpty()){
+                                        try{
+                                            int x = Integer.parseInt(resolution.split("x")[0]);
+                                            int y = Integer.parseInt(resolution.split("x")[1]);
+                                            up.setResolution(x, y);
+                                        } catch (Exception ex){
+                                            error = true;
+                                            response += "Invalid resolution values." + "\n";
                                         }
-                                        if (!resolution.isEmpty()){
-                                            try{
-                                                int x = Integer.parseInt(resolution.split("x")[0]);
-                                                int y = Integer.parseInt(resolution.split("x")[1]);
-                                                up.setResolution(x, y);
-                                            } catch (Exception ex){
-                                                error = true;
-                                                response += "Invalid resolution values." + "\n";
+                                    }
+                                    else{
+                                        up.setResolution(-1, -1);
+                                    }
+                                    if (!javaExec.isEmpty()){
+                                        File file = new File(javaExec);
+                                        if (file.exists()){
+                                            if (file.isFile()){
+                                                up.setJavaDir(file); 
                                             }
-                                        }
-                                        else{
-                                            up.setResolution(-1, -1);
-                                        }
-                                        if (!javaExec.isEmpty()){
-                                            File file = new File(javaExec);
-                                            if (file.exists()){
-                                                if (file.isFile()){
-                                                    up.setJavaDir(file); 
-                                                }
-                                                else {
-                                                    error = true;
-                                                    response += "Invalid java executable file." + "\n";
-                                                }
-                                              
-                                            } else {
+                                            else {
                                                 error = true;
-                                                response += "Java executable does not exist." + "\n";
+                                                response += "Invalid java executable file." + "\n";
                                             }
+
                                         } else {
-                                            up.setJavaDir(null);
+                                            error = true;
+                                            response += "Java executable does not exist." + "\n";
                                         }
-                                        if (!javaArgs.isEmpty()){
-                                            up.setJavaArgs(javaArgs);
-                                        } else {
-                                            up.setJavaArgs(null);
-                                        }
-                                        if (snapshot){
-                                            up.allowVersionType(VersionType.SNAPSHOT);
-                                        } else {
-                                            up.removeVersionType(VersionType.SNAPSHOT);
-                                        }
-                                        if (oldBeta){
-                                            up.allowVersionType(VersionType.OLD_BETA);
-                                        } else {
-                                            up.removeVersionType(VersionType.OLD_BETA);
-                                        }
-                                        if (oldAlpha){
-                                            up.allowVersionType(VersionType.OLD_ALPHA);
-                                        } else {
-                                            up.removeVersionType(VersionType.OLD_ALPHA);
-                                        }
-                                        kernel.updateProfile(up);
-                                        if (!profileName.equals(profileNameNew)){
-                                            kernel.renameProfile(profileName, profileNameNew);
-                                        }
-                                        if (!error){
-                                            response = "OK";
-                                        } else {
-                                            kernel.saveProfiles();
-                                        }
+                                    } else {
+                                        up.setJavaDir(null);
+                                    }
+                                    if (!javaArgs.isEmpty()){
+                                        up.setJavaArgs(javaArgs);
+                                    } else {
+                                        up.setJavaArgs(null);
+                                    }
+                                    if (snapshot){
+                                        up.allowVersionType(VersionType.SNAPSHOT);
+                                    } else {
+                                        up.removeVersionType(VersionType.SNAPSHOT);
+                                    }
+                                    if (oldBeta){
+                                        up.allowVersionType(VersionType.OLD_BETA);
+                                    } else {
+                                        up.removeVersionType(VersionType.OLD_BETA);
+                                    }
+                                    if (oldAlpha){
+                                        up.allowVersionType(VersionType.OLD_ALPHA);
+                                    } else {
+                                        up.removeVersionType(VersionType.OLD_ALPHA);
+                                    }
+                                    kernel.updateProfile(up);
+                                    if (!profileName.equals(profileNameNew)){
+                                        kernel.renameProfile(profileName, profileNameNew);
+                                    }
+                                    if (!error){
+                                        response = "OK";
+                                    } else {
+                                        kernel.saveProfiles();
                                     }
                                 }
                             }
@@ -429,7 +432,7 @@ public class WebLauncherThread extends Thread{
                                 Profile rp = kernel.getProfile(profile);
                                 response += Utils.toBase64(rp.getName());
                                 response += ":";
-                                response += Utils.toBase64(rp.getVersion().getID());
+                                response += (rp.hasVersion() ? Utils.toBase64(rp.getVersion().getID()) : "latest");
                                 response += ":";
                                 response += Utils.toBase64((String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT))));
                                 response += ":";

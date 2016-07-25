@@ -39,13 +39,7 @@ public class Profile {
         this.allowedVersionTypes = types;
     }
     public void setName(String newName){this.name = newName;}
-    public void setVersion(Version ver){
-        if (!ver.isPrepared()){
-            ver.prepare();
-        }
-        ver.prepare();
-        this.version = ver;
-    }
+    public void setVersion(Version ver){this.version = ver;}
     public String getName(){
         return this.name;
     }

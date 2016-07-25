@@ -40,8 +40,12 @@ function loadProfileData(){
                     var data_length = vers.length;
                     var value = "";
                     for (var i = 0; i < data_length; i++){
-                        var name = fromBase64(vers[i]);
-                        value += '<option value="' + vers[i] + '">' + name + '</option>';
+                        if (vers[i] === "latest"){
+                            value += '<option value="latest">Use Latest Release</option>';
+                        } else {
+                            var name = fromBase64(vers[i]);
+                            value += '<option value="' + vers[i] + '">' + name + '</option>';
+                        }
                     }
                     document.getElementById("versionList").innerHTML = value;
                 }
@@ -76,13 +80,17 @@ function refreshVersionList(){
         var data_length = vers.length;
         var value = "";
         for (var i = 0; i < data_length; i++){
-            var name = fromBase64(vers[i]);
-            value += '<option value="' + vers[i] + '">' + name + '</option>';
+            if (vers[i] === "latest"){
+                value += '<option value="latest">Use Latest Release</option>';
+            } else {
+                var name = fromBase64(vers[i]);
+                value += '<option value="' + vers[i] + '">' + name + '</option>';
+            }
         }
         document.getElementById("versionList").innerHTML = value;
     }
     response = postRequest("selectedversion", null);
-    document.getElementById("versionList").value = response;
+    document.getElementById("versionList").value = fromBase64(response.split(":")[0]);
 }
 function saveProfile(){
     var name_base = window.location.href.split("?")[1].replace('#', '');
@@ -197,7 +205,7 @@ function loadProfiles(){
     document.getElementById("profiles").value = response;
     profile_value = response;
     response = postRequest("selectedversion", null);
-    document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response);
+    document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response.split(":")[1]);
 }
 function loadProfileList(){
     var response = postRequest("profiles", null);
