@@ -346,6 +346,9 @@ public class Downloader {
         this.downloading = false;
     }
     public int getProgress(){
+        if (!isDownloading()){
+            return 0;
+        }
         long sum = this.downloaded + this.validated;
         return (int)((float)(sum)/this.total*100);
     }

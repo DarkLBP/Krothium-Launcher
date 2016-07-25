@@ -1,5 +1,5 @@
 //Core javascript functions for KMLK inner functionality
-var play_interval = null;
+var play_interval = setInterval(function(){playGame_Update();}, 2000);;
 var progress_value = 0;
 var play_value = "";
 var profile_value = "";
@@ -132,7 +132,6 @@ function saveProfile(){
     }
 }
 function playGame(){
-    play_interval = setInterval(function(){playGame_Update();}, 1000);
     postRequest("play", null);
 }
 function playGame_Update(){
@@ -150,7 +149,6 @@ function playGame_Update(){
                 switch (status){
                     case "0":
                         document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>';
-                        clearInterval(play_interval);
                         break;
                     case "1":
                         document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DOWNLOADING</a>';
