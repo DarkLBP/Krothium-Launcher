@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
+import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Profile;
 import kmlk.objects.Version;
@@ -30,10 +31,9 @@ public class WebLauncherThread extends Thread{
     private final Socket clientSocket;
     private final Kernel kernel;
     private final Console console;
-    public WebLauncherThread(Socket cl)
-    {
+    public WebLauncherThread(Socket cl, Kernel k){
         this.clientSocket = cl;
-        this.kernel = Kernel.getKernel();
+        this.kernel = k;
         this.console = kernel.getConsole();
     }
     
@@ -188,14 +188,13 @@ public class WebLauncherThread extends Thread{
                             Thread t = new Thread(){
                                 @Override
                                 public void run(){
-                                    kernel.downloadAssets();
-                                    kernel.downloadVersion();
-                                    kernel.downloadLibraries();
-                                    kernel.downloadNatives();
                                     try{
+                                        kernel.download();
                                         kernel.launchGame();
                                     } catch (GameLauncherException ex){
                                         console.printError(ex.getMessage());
+                                    } catch (DownloaderException ex) {
+                                       console.printError(ex.getMessage());
                                     }
                                 }
                             };
@@ -420,7 +419,6 @@ public class WebLauncherThread extends Thread{
                                     }
                                     if (!error){
                                         response = "OK";
-                                    } else {
                                         kernel.saveProfiles();
                                     }
                                 }

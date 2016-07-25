@@ -22,8 +22,12 @@ public class Authentication {
     protected String clientToken;
     protected Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
-
-    public Authentication(){this.console = Kernel.getKernel().getConsole();}
+    private final Kernel kernel;
+    
+    public Authentication(Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
+    }
     public void addToDatabase(String profileID, User u){
         console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(profileID)) ? " updated." : " loaded."));
         this.userDatabase.put(profileID, u);   
@@ -105,8 +109,8 @@ public class Authentication {
             User u = new User(profileName, accessToken, userID, username, Utils.stringToUUID(profileID), properties);
             this.addToDatabase(profileID, u);
             this.selectedProfile = profileID;
-            if (Kernel.getKernel().getSelectedProfile().equals("(Default)")){
-                Kernel.getKernel().renameProfile("(Default)", profileName);
+            if (kernel.getSelectedProfile().equals("(Default)")){
+                kernel.renameProfile("(Default)", profileName);
             }
             this.authenticated = true;
         }else{
@@ -194,7 +198,7 @@ public class Authentication {
     public String getClientToken() { return this.clientToken; }
     public void fetchUsers() {
         console.printInfo("Loading user data.");
-        File launcherProfiles = Kernel.getKernel().getConfigFile();
+        File launcherProfiles = kernel.getConfigFile();
         if (launcherProfiles.exists()) {
             try {
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));

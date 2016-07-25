@@ -22,10 +22,13 @@ import org.json.JSONObject;
 public class Profiles {
     private final Map<String, Profile> profiles = new HashMap();
     private final Console console;
-    private Versions versions;
     private String selected;
+    private final Kernel kernel;
     
-    public Profiles(){this.console = Kernel.getKernel().getConsole();}
+    public Profiles(Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
+    }
     public Map<String, Profile> getProfiles(){return this.profiles;}
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
@@ -99,8 +102,7 @@ public class Profiles {
     public boolean existsProfile(String p){return this.profiles.containsKey(p);}
     public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
-        this.versions = Kernel.getKernel().getVersions();
-        File launcherProfiles = Kernel.getKernel().getConfigFile();
+        File launcherProfiles = kernel.getConfigFile();
         if (launcherProfiles.exists()){
             try{
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
@@ -137,7 +139,7 @@ public class Profiles {
                         types.add(VersionType.RELEASE);
                     }
                     if (o.has("lastVersionId")){
-                        ver = versions.getVersionByName(o.getString("lastVersionId"));
+                        ver = kernel.getVersion(o.getString("lastVersionId"));
                     }
                     if (o.has("gameDir")){
                         gameDir = new File(o.getString("gameDir"));

@@ -24,9 +24,11 @@ public final class Library {
     private final File path;
     private final Console console;
     private final boolean legacy;
+    private final Kernel kernel;
     
-    public Library(String name, URL url, Map<OS, LibraryRule> rules){
-        this.console = Kernel.getKernel().getConsole();
+    public Library(String name, URL url, Map<OS, LibraryRule> rules, Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
         this.name = name;
         this.url = url;
         this.sha1 = null;
@@ -34,8 +36,9 @@ public final class Library {
         this.path = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
         this.legacy = true;
     }
-    public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules){
-        this.console = Kernel.getKernel().getConsole();
+    public Library(String name, URL url, String sha1, long size, Map<OS, LibraryRule> rules, Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
         this.name = name;
         this.url = url;
         this.sha1 = sha1;

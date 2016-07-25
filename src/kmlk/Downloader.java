@@ -7,7 +7,9 @@ import kmlk.objects.Version;
 import kmlk.objects.Library;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
+import kmlk.exceptions.DownloaderException;
+import kmlk.objects.Downloadable;
+import kmlk.objects.Profile;
 import org.json.JSONObject;
 
 /**
@@ -28,140 +33,143 @@ import org.json.JSONObject;
 
 public class Downloader {
     private final Console console;
-    private int progressDownload = 0;
-    private int progressValid = 0;
+    private final Kernel kernel;
     private long downloaded = 0;
     private long validated = 0;
+    private long total = 0;
     private boolean downloading = false;
-    public Downloader(){this.console = Kernel.getKernel().getConsole();}
-    public void downloadAssets(Version v){
-        this.downloading = true;
-        ExecutorService pool = Executors.newFixedThreadPool(5);
-        Version ver = (v.getRoot() == null) ? v : v.getRoot();
-        console.printInfo("Downloading assets for version: " + ver.getID());
-        try{
-            if (ver.hasAssetIndex()){
-                JSONObject verMeta = ver.getMeta();
-                AssetIndex index = ver.getAssetIndex();
-                String assetID = index.getID();
-                long length = index.getTotalSize();
-                long assetFileLength = index.getSize();
-                this.downloaded = 0;
-                this.validated = 0;
-                boolean localIndex = false;
-                File indexJSON = new File(Kernel.getKernel().getWorkingDir() + File.separator + index.getJSONFile());
-                URL assetsURL = null;
-                if (indexJSON.exists() && indexJSON.isFile()){
-                    if (indexJSON.length() == assetFileLength){
-                        assetsURL = indexJSON.toURI().toURL();
-                        localIndex = true;
-                    } 
-                }
-                assetsURL = (assetsURL == null) ? index.getURL() : assetsURL;
-                if (!localIndex){
-                    if (Utils.downloadFile(assetsURL, indexJSON)){
-                        console.printInfo("Asset index for version " + assetID + " created.");
-                    }else{
-                        console.printError("Failed to create asset index for version " + assetID);
-                    }
-                }
-                JSONObject root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-                JSONObject objects = root.getJSONObject("objects");
-                Set keys = objects.keySet();
-                Iterator it2 = keys.iterator();
-                List<String> processedHashes = new ArrayList();
-                while (it2.hasNext()){
-                    String object = it2.next().toString();
-                    JSONObject o = objects.getJSONObject(object);
-                    String hash = o.getString("hash");
-                    long size = o.getLong("size");
-                    URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0,2) + "/" + hash);
-                    File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
-                    boolean localValid = false;
-                    if (destPath.exists() && destPath.isFile()){
-                        if (destPath.length() == size){
-                            localValid = true;
-                        }
-                    }
-                    if (!localValid){
-                        Runnable t = new Runnable(){
-                        @Override
-                            public void run(){
-                                console.printInfo("Downloading " + object);
-                                int tries = 0;
-                                while (!Utils.downloadFile(downloadURL, destPath) && (tries < Constants.DOWNLOAD_TRIES)){
-                                    tries++;
-                                }
-                                if (tries == Constants.DOWNLOAD_TRIES){
-                                    console.printError("Failed to download asset file: " + object);
-                                }else{
-                                    downloaded += size;
-                                }
-                                progressDownload = (int)(downloaded * 100 / length);
-                                progressValid = (int)(validated * 100 / length);
-                                console.printInfo("Downloaded: " + progressDownload + "% | Validated " + progressValid + "% | Total: " + (progressDownload + progressValid) + "%");
-                            }
-                        };
-                        pool.execute(t);
-                    }else{
-                        console.printInfo("Asset file " + object + " found locally and it is valid.");
-                        if (!processedHashes.contains(hash)){
-                            processedHashes.add(hash);
-                            validated += size;
-                        }
-                        progressDownload = (int)(downloaded * 100 / length);
-                        progressValid = (int)(validated * 100 / length);
-                        console.printInfo("Downloaded: " + progressDownload + "% | Validated " + progressValid + "% | Total: " + (progressDownload + progressValid) + "%");
-                    }
-                }
-                pool.shutdown();
-                try {
-                    pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                } catch (InterruptedException e) {
-                    console.printError("Error has produced in dowload pool.");
-                }
-            }else{
-                console.printError("Root version " + ver.getID() + " doesn't have AssetIndex.");
-            }
-        }catch (Exception ex){
-            console.printError("Failed to download assets for version: " + ver.getID());
-        }
-        this.downloading = false;
+    public Downloader(Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
     }
-    public void downloadVersion(Version ver){
+    public void download() throws DownloaderException{
         this.downloading = true;
-        Version v = (ver.getRoot() == null) ? ver : ver.getRoot();
-        console.printInfo("Downloading version file: " + ver.getID() + ".jar");
-        JSONObject root = v.getMeta();
-        JSONObject client = root.getJSONObject("downloads").getJSONObject("client");
+        Profile p = this.kernel.getProfile(this.kernel.getSelectedProfile());
+        Version v;
+        Version r;
+        JSONObject v_meta;
+        JSONObject r_meta;
+        if (p.hasVersion()){
+            v = p.getVersion();
+            if (!v.isPrepared()){
+                v.prepare();
+            }
+            if (v.hasRoot()){
+                r = v.getRoot();
+                if (!r.isPrepared()){
+                    r.prepare();
+                }
+            } else {
+                r = v;
+            }
+        } else {
+            v = kernel.getLatestVersion();
+            v.prepare();
+            r = v;
+        }
+        if (!v.hasMeta()){
+            this.downloading = false;
+            throw new DownloaderException("Failed to fetch meta from version " + v.getID());
+        }
+        if (!r.hasMeta()){
+            this.downloading = false;
+            throw new DownloaderException("Failed to fetch meta from version " + r.getID());
+        }
+        v_meta = v.getMeta();
+        r_meta = r.getMeta();
+        ExecutorService pool = Executors.newFixedThreadPool(5);
+        List<Downloadable> urls = new ArrayList();
+        this.downloaded = 0;
+        this.validated = 0;
+        this.total = 0;
+        console.printInfo("Fetching asset urls..");
+        if (r.hasAssetIndex()){
+            AssetIndex index = r.getAssetIndex();
+            String assetID = index.getID();
+            long assetFileLength = index.getSize();
+            boolean localIndex = false;
+            File indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getJSONFile());
+            URL assetsURL = null;
+            if (indexJSON.exists() && indexJSON.isFile()){
+                if (indexJSON.length() == assetFileLength){
+                    try {
+                        assetsURL = indexJSON.toURI().toURL();
+                    } catch (MalformedURLException ex) {
+                        this.downloading = false;
+                        throw new DownloaderException("Invalid asset index json file path.");
+                    }
+                    localIndex = true;
+                } 
+            }
+            assetsURL = (assetsURL == null) ? index.getURL() : assetsURL;
+            if (!localIndex){
+                int tries = 0;
+                while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)){
+                    tries++;
+                }
+                if (tries == Constants.DOWNLOAD_TRIES){
+                    console.printError("Failed to download asset index for version " + assetID);
+                }
+            }
+            JSONObject root;
+            try {
+                root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
+            } catch (UnsupportedEncodingException ex) {
+                this.downloading = false;
+                throw new DownloaderException("Your computer does not support ISO-8859-1 encoding.");
+            } catch (IOException ex) {
+                this.downloading = false;
+                throw new DownloaderException("Failed to read asset index json file.");
+            }
+            JSONObject objects = root.getJSONObject("objects");
+            Set keys = objects.keySet();
+            Iterator it2 = keys.iterator();
+            List<String> processedHashes = new ArrayList();
+            while (it2.hasNext()){
+                String object = it2.next().toString();
+                JSONObject o = objects.getJSONObject(object);
+                String hash = o.getString("hash");
+                long size = o.getLong("size");
+                URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0,2) + "/" + hash);
+                File destPath = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "objects" + File.separator + hash.substring(0,2) + File.separator + hash);
+                boolean localValid = false;
+                if (destPath.exists() && destPath.isFile()){
+                    if (destPath.length() == size){
+                        localValid = true;
+                    }
+                }
+                this.total += size;
+                if (!localValid){
+                    Downloadable d = new Downloadable(downloadURL, size, destPath, hash);
+                    urls.add(d);
+                }else{
+                    console.printInfo("Asset file " + object + " found locally and it is valid.");
+                    if (!processedHashes.contains(hash)){
+                        processedHashes.add(hash);
+                        validated += size;
+                    } else {
+                        this.total -= size;
+                    }
+                }
+            }
+        } else {
+            this.downloading = false;
+            throw new DownloaderException("Version " + r.getID() + " does not have AssetIndex.");
+        }
+        console.printInfo("Fetching version urls..");
+        JSONObject client = r_meta.getJSONObject("downloads").getJSONObject("client");
         URL jarURL = Utils.stringToURL(client.getString("url"));
         String jarSHA1 = client.getString("sha1");
         long jarSize = client.getLong("size");
-        File destPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".jar");
+        total += jarSize;
+        File destPath = new File(kernel.getWorkingDir() + File.separator + "versions" + File.separator + r.getID() + File.separator + r.getID() + ".jar");
         boolean localValid = false;
-        if (destPath.exists() && destPath.isFile()){
-            if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)){
-                localValid = true;
-            }
-        }
-        if (!localValid){
-            int tries = 0;
-            while (!Utils.downloadFile(jarURL, destPath) && (tries < Constants.DOWNLOAD_TRIES)){
-                tries++;
-            }
-            if (tries == Constants.DOWNLOAD_TRIES){
-                console.printError("Failed to download version jar: " + destPath.getName());
-            }
-        }else{
-            console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
-        }
-        console.printInfo("Creating version " + ver.getID() + " JSON file.");
-        File jsonFile = new File(Kernel.getKernel().getWorkingDir() + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + ".json");
+        File jsonFile = new File(kernel.getWorkingDir() + File.separator + "versions" + File.separator + r.getID() + File.separator + r.getID() + ".json");
         boolean JSONValid = false;
         if (jsonFile.exists() && jsonFile.isFile()){
             try {
-                if (ver.getOrigin() != VersionOrigin.LOCAL){
-                    if (jsonFile.length() == ver.getURL(VersionOrigin.REMOTE).openConnection().getContentLength()){
+                if (r.getOrigin() != VersionOrigin.LOCAL){
+                    if (jsonFile.length() == r.getURL(VersionOrigin.REMOTE).openConnection().getContentLength()){
                         JSONValid = true;
                     }
                 }else{
@@ -173,34 +181,41 @@ public class Downloader {
         }
         if (!JSONValid){
             int tries = 0;
-            while (!Utils.downloadFile(ver.getURL(VersionOrigin.REMOTE), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
+            while (!Utils.downloadFile(r.getURL(VersionOrigin.REMOTE), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
                 tries++;
             }
             if (tries == Constants.DOWNLOAD_TRIES){
-                console.printError("Failed to download version jar: " + destPath.getName());
+                console.printError("Failed to download version index " + destPath.getName());
             }
         }else{
-            console.printInfo("Version " + ver.getID() + " JSON file found locally and it is valid.");
+            console.printInfo("Version " + r.getID() + " JSON file found locally and it is valid.");
         }
-        this.downloading = false;
-    }
-    public void downloadLibraries(Version ver){
-        this.downloading = true;
-        Version v = ver;
-        while (v != null){
-            console.printInfo("Downloading required libraries for version " + v.getID());
-            if (v.hasLibraries()){
-                Map<String, Library> libs = v.getLibraries();
+        if (destPath.exists() && destPath.isFile()){
+            if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)){
+                localValid = true;
+            }
+        }
+        if (!localValid){
+            Downloadable d = new Downloadable(jarURL, jarSize, destPath, jarSHA1);
+            urls.add(d);
+        }else{
+            console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
+            validated += jarSize;
+        }
+        console.printInfo("Fetching library urls..");
+        Version tmp = v;
+        while (tmp != null){
+            if (tmp.hasLibraries()){
+                Map<String, Library> libs = tmp.getLibraries();
                 Set set = libs.keySet();
                 Iterator it = set.iterator();
                 while (it.hasNext()){
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
-                    console.printInfo("Downloading library " + lib_name);
                     if (lib.isDownloadable()){
                         String sha1 = lib.getSHA1();
-                        File libPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
-                        boolean localValid = false;
+                        File libPath = new File(kernel.getWorkingDir() + File.separator + lib.getPath());
+                        localValid = false;
                         if (libPath.exists() && libPath.isFile()){
                             if (lib.isLegacy()){
                                 try{
@@ -237,83 +252,102 @@ public class Downloader {
                                 }
                             }
                         }
+                        total += lib.getSize();
                         if (!localValid){
-                            int tries = 0;
-                            while (!Utils.downloadFile(lib.getURL(), libPath) && (tries < Constants.DOWNLOAD_TRIES)){
-                                tries++;
-                            }
-                            if (tries == Constants.DOWNLOAD_TRIES){
-                                console.printError("Failed to download library jar: " + libPath.getName());
-                            }
+                            Downloadable d = new Downloadable(lib.getURL(), lib.getSize(), libPath, sha1);
+                            urls.add(d);
                         }else{
                             console.printInfo("Library file " + libPath.getName() + " found locally and it is valid.");
+                            validated += lib.getSize();
                         }
                     }else{
                         console.printInfo("Library " + lib_name + " is not downloadable.");
                     }
                 }
             }else{
-                console.printInfo("Version " + v.getID() + " has no libraries.");
+                console.printInfo("Version " + tmp.getID() + " has no libraries.");
             }
-            if (v.hasInheritedVersion()){
-                v = v.getInheritedVersion();
+            if (tmp.hasInheritedVersion()){
+                tmp = tmp.getInheritedVersion();
             }else{
-                v = null;
+                tmp = null;
             }
         }
-        this.downloading = false;
-    }
-    public void downloadNatives(Version ver){
-        this.downloading = true;
-        Version v = ver;
-        while (v != null){
-            if (!v.isPrepared()){
-                v.prepare();
-            }
-            console.printInfo("Downloading required natives for version " + v.getID());
-            if (v.hasNatives()){
-                Map<String, Native> natives = v.getNatives();
+        console.printInfo("Fetching natives urls..");
+        tmp = v;
+        while (tmp != null){
+            if (tmp.hasNatives()){
+                Map<String, Native> natives = tmp.getNatives();
                 Set set = natives.keySet();
                 Iterator it = set.iterator();
                 while (it.hasNext()){
                     String nat_name = it.next().toString();
                     Native nat = natives.get(nat_name);
-                    console.printInfo("Downloading native " + nat_name);
                     if (nat.isDownloadable()){
                         String sha1 = nat.getSHA1();
-                        File natPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + nat.getPath());
-                        boolean localValid = false;
+                        File natPath = new File(kernel.getWorkingDir() + File.separator + nat.getPath());
+                        localValid = false;
                         if (natPath.exists() && natPath.isFile()){
                             if (natPath.length() == nat.getSize() && Utils.verifyChecksum(natPath, sha1)){
                                 localValid = true;
                             }
                         }
+                        total += nat.getSize();
                         if (!localValid){
-                            int tries = 0;
-                            while (!Utils.downloadFile(nat.getURL(), natPath) && (tries < Constants.DOWNLOAD_TRIES)){
-                                tries++;
-                            }
-                            if (tries == Constants.DOWNLOAD_TRIES){
-                                console.printError("Failed to download native jar: " + natPath.getName());
-                            }
+                            Downloadable d = new Downloadable(nat.getURL(), nat.getSize(), nat.getPath(), sha1);
                         }else{
                             console.printInfo("Native file " + natPath.getName() + " found locally and it is valid.");
+                            validated += nat.getSize();
                         }
                     }else{
                         console.printInfo("Native " + nat_name + " is not downloadable.");
                     }
                 }
             }else{
-                console.printInfo("Version " + v.getID() + " has no natives.");
+                console.printInfo("Version " + tmp.getID() + " has no natives.");
             }
-            if (v.hasInheritedVersion()){
-                v = v.getInheritedVersion();
+            if (tmp.hasInheritedVersion()){
+                tmp = tmp.getInheritedVersion();
             }else{
-                v = null;
+                tmp = null;
+            }
+        }
+        console.printInfo("Downloading required game files...");
+        if (urls.isEmpty()){
+            console.printInfo("Nothing to download.");
+        } else {
+            for (Downloadable d : urls){
+                Runnable thread = new Runnable(){
+                    @Override
+                    public void run(){
+                        File path = d.getPath();
+                        URL url = d.getURL();
+                        int tries = 0; 
+                        console.printInfo("Downloading " + path.getName() + "...");
+                        while (!Utils.downloadFile(url, path) && (tries < Constants.DOWNLOAD_TRIES)){ 
+                           tries++; 
+                        } 
+                        if (tries == Constants.DOWNLOAD_TRIES){ 
+                            console.printError("Failed to download file: " + path.getName()); 
+                        }
+                        downloaded += d.getSize();
+                    }
+                };
+                pool.execute(thread);                
+            }
+            pool.shutdown();
+            try{
+                pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException ex){
+                this.downloading = false;
+                throw new DownloaderException("Thread pool unexceptedly closed.");
             }
         }
         this.downloading = false;
     }
-    public int getProgress(){return (this.progressDownload + this.progressValid);}
+    public int getProgress(){
+        long sum = this.downloaded + this.validated;
+        return (int)((float)(sum)/this.total*100);
+    }
     public boolean isDownloading(){return this.downloading;}
 }

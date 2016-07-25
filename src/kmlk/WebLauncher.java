@@ -69,7 +69,7 @@ public class WebLauncher {
             System.out.println("Awaiting connection.");
             Socket s = ss.accept();
             System.out.println("Connected from " + s.getInetAddress().toString());
-            WebLauncherThread thread = new WebLauncherThread(s);
+            WebLauncherThread thread = new WebLauncherThread(s, kernel);
             thread.start();
             System.out.println("Thread ended.");
         }

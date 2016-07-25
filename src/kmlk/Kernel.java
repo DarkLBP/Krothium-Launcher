@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
+import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Version;
 import org.json.JSONObject;
@@ -28,16 +29,14 @@ public final class Kernel {
     public final Downloader downloader;
     public final Authentication authentication;
     public final GameLauncher gameLauncher;
-    public static Kernel kernel;
     public Kernel(){
-        this.kernel = this;
         this.workingDir = Utils.getWorkingDirectory();
         this.console = new Console();
-        this.profiles = new Profiles();
-        this.versions = new Versions();
-        this.downloader = new Downloader();
-        this.authentication = new Authentication();
-        this.gameLauncher = new GameLauncher();
+        this.profiles = new Profiles(this);
+        this.versions = new Versions(this);
+        this.downloader = new Downloader(this);
+        this.authentication = new Authentication(this);
+        this.gameLauncher = new GameLauncher(this);
         System.out.println("KMLK r" + String.valueOf(Constants.KERNEL_REVISION) + " by DarkLBP (http://krotium.com)");
     }
     public Console getConsole(){return this.console;}
@@ -54,16 +53,13 @@ public final class Kernel {
     public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
-    public void launchGame() throws GameLauncherException{this.gameLauncher.launch(this.getProfile(this.getSelectedProfile()));}
+    public void launchGame() throws GameLauncherException{this.gameLauncher.launch();}
     public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
     public boolean logOut(){return this.authentication.logOut();}
     public int getDownloadProgress(){return this.downloader.getProgress();}
     public boolean isGameStarted(){return this.gameLauncher.isStarted();};
     public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};
-    public void downloadAssets(){this.downloader.downloadAssets(this.getProfile(this.getSelectedProfile()).getVersion());}
-    public void downloadVersion(){this.downloader.downloadVersion(this.getProfile(this.getSelectedProfile()).getVersion());}
-    public void downloadLibraries(){this.downloader.downloadLibraries(this.getProfile(this.getSelectedProfile()).getVersion());}
-    public void downloadNatives(){this.downloader.downloadNatives(this.getProfile(this.getSelectedProfile()).getVersion());}
+    public void download() throws DownloaderException{this.downloader.download();}
     public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
     public boolean existsVersion(String v){return (this.versions.getVersionByName(v) != null);}
     public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
@@ -100,10 +96,4 @@ public final class Kernel {
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){return new File(this.getWorkingDir() + File.separator + "launcher_profiles.json");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
-    public static Kernel getKernel(){
-        if (kernel == null){
-            return new Kernel();
-        }
-        return kernel;
-    }
 }

@@ -39,13 +39,15 @@ public final class Version {
     private Version rootVer;
     public String minecraftArguments = null;
     public String mainClass = null;
+    private final Kernel kernel;
     
-    public Version(String id, VersionType type, VersionOrigin or, URL url){
+    public Version(String id, VersionType type, VersionOrigin or, URL url, Kernel k){
         this.id = id;
         this.type = type;
         this.url.put(or, url);
         this.origin = or;
-        this.console = Kernel.getKernel().getConsole();
+        this.kernel = k;
+        this.console = k.getConsole();
         this.path = new File("versions" + File.separator + id + File.separator + id + ".jar");
     }
     public boolean prepare(){
@@ -53,7 +55,7 @@ public final class Version {
             this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
             if (this.getOrigin() == VersionOrigin.LOCAL){
                 if (this.versionMeta.has("inheritsFrom")){
-                    this.inheritedVersion = Kernel.getKernel().getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
+                    this.inheritedVersion = kernel.getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
                     if (this.inheritedVersion != null){
                         if (!this.inheritedVersion.isPrepared()){
                             this.inheritedVersion.prepare();
@@ -183,9 +185,9 @@ public final class Version {
                     }
                     Library l;
                     if (!legacy){
-                        l = new Library(name, url, sha1, size, ruls);
+                        l = new Library(name, url, sha1, size, ruls, kernel);
                     }else{
-                        l = new Library(name, url, ruls);
+                        l = new Library(name, url, ruls, kernel);
                     }
                     if (!libraries.containsKey(name)){
                         libraries.put(name, l);
@@ -240,6 +242,7 @@ public final class Version {
     public boolean isPrepared(){return this.prepared;}
     public File getPath(){return this.path;}
     public Version getRoot(){return this.rootVer;}
+    public boolean hasRoot(){return (this.rootVer != null);}
     public void putURL(URL u, VersionOrigin o){this.url.put(o, u);}
     public String getID(){return this.id;}
     public VersionType getType(){return this.type;}
@@ -252,6 +255,7 @@ public final class Version {
         }
     }
     public JSONObject getMeta(){return this.versionMeta;}
+    public boolean hasMeta(){return (this.versionMeta != null);}
     public boolean hasMinecraftArguments(){return (this.minecraftArguments != null);}
     public boolean hasMainClass(){return (this.mainClass != null);}
     public String getMinecraftArguments(){return this.minecraftArguments;}

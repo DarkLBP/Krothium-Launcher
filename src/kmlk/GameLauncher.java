@@ -35,14 +35,27 @@ public class GameLauncher {
     
     private final Console console;
     private Process process;
+    private final Kernel kernel;
     
-    public GameLauncher(){this.console = Kernel.getKernel().getConsole();}
-    public void launch(Profile p) throws GameLauncherException{
+    public GameLauncher(Kernel k){
+        this.kernel = k;
+        this.console = k.getConsole();
+    }
+    public void launch() throws GameLauncherException{
+        Profile p = kernel.getProfile(kernel.getSelectedProfile());
         if (this.isStarted()){
             throw new GameLauncherException("Game is already started!");
         }
-        Version ver = p.getVersion();
-        File workingDir = Kernel.getKernel().getWorkingDir();
+        Version ver;
+        if (p.hasVersion()){
+            ver = p.getVersion();
+        } else {
+            ver = kernel.getLatestVersion();
+        }
+        if (!ver.isPrepared()){
+            ver.prepare();
+        }
+        File workingDir = kernel.getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory()){
             nativesDir.mkdirs();
@@ -85,7 +98,7 @@ public class GameLauncher {
                 while (it.hasNext()){
                     String nat_name = it.next().toString();
                     Native nat = nats.get(nat_name);
-                    File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + nat.getPath());
+                    File completePath = new File(kernel.getWorkingDir() + File.separator + nat.getPath());
                     try {
                         ZipFile zip = new ZipFile(completePath);
                         final Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -117,6 +130,7 @@ public class GameLauncher {
                             outputStream.close();
                             inputStream.close();
                         }
+                        zip.close();
                     } catch (IOException ex) {
                         console.printError("Failed to extract native: " + nat_name);
                     }
@@ -135,7 +149,7 @@ public class GameLauncher {
                 while (it.hasNext()){
                     String lib_name = it.next().toString();
                     Library lib = libs.get(lib_name);
-                    File completePath = new File(Kernel.getKernel().getWorkingDir() + File.separator + lib.getPath());
+                    File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getPath());
                     libraries += completePath.getAbsolutePath() + separator;
                 }
             }
@@ -145,7 +159,7 @@ public class GameLauncher {
                 v2 = null;
             }
         }
-        File verPath = new File(Kernel.getKernel().getWorkingDir() + File.separator + ver.getPath());
+        File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getPath());
         libraries += verPath.getAbsolutePath();
         String assetsID = ver.getAssets();
         File assetsDir;
@@ -190,7 +204,7 @@ public class GameLauncher {
         }
         gameArgs.add(libraries);
         gameArgs.add(ver.getMainClass());
-        Authentication a = Kernel.getKernel().getAuthentication();
+        Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         String versionArgs = ver.getMinecraftArguments();
         versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());
