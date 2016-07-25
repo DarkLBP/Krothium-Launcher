@@ -7,11 +7,6 @@
 (function($)
 {
     $(document).ready(function() {
-        $('.styleswitch').click(function()
-        {
-            switchStylestyle(this.getAttribute("rel"));
-            return false;
-        });
         var c = readCookie('style');
         if (c) switchStylestyle(c);
     });
@@ -28,6 +23,17 @@
     }
 })(jQuery);
 // cookie functions http://www.quirksmode.org/js/cookies.html
+function switchStyle()
+{
+    var styleName = document.getElementById("style").value;
+    $('link[rel*=style][title]').each(function(i) 
+    {
+        this.disabled = true;
+        if (this.getAttribute('title') === styleName) this.disabled = false;
+    });
+    createCookie('style', styleName, 365);
+    document.getElementById('style').value=styleName;
+}
 function createCookie(name,value,days)
 {
     if (days)
