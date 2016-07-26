@@ -1,5 +1,5 @@
 //Core javascript functions for KMLK inner functionality
-var play_interval = setInterval(function(){playGame_Update();}, 2000);;
+var status_interval = setInterval(function(){status();}, 2000);
 var progress_value = 0;
 var play_value = "";
 var profile_value = "";
@@ -133,7 +133,7 @@ function saveProfile(){
 function playGame(){
     postRequest("play", null);
 }
-function playGame_Update(){
+function status(){
     var response = postRequest("status", "");
     var data = response.split(":");
     if (data.constructor === Array){

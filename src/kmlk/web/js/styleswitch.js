@@ -19,7 +19,9 @@
             if (this.getAttribute('title') === styleName) this.disabled = false;
         });
         createCookie('style', styleName, 365);
-        document.getElementById('style').value=styleName;
+        if (document.getElementById('style') !== null){
+            document.getElementById('style').value=styleName;
+        }
     }
 })(jQuery);
 // cookie functions http://www.quirksmode.org/js/cookies.html
