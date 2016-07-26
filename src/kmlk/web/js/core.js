@@ -8,21 +8,21 @@ function authenticate(){
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
     if (username === "" || password === "" || username === null || password === null){
-        alert("Invalid credentials!");
+        swal("Error", "Invalid credentials!", "error");
     } else {
         var parameters = toBase64(username) + ":" + toBase64(password);
         var response = postRequest("authenticate", parameters);
         if (response === "OK"){
             redirect("/play.html");
         } else {
-            alert(response);
+            swal("Error", response, "error");
         }
     }
 }
 function loadProfileData(){
     var name_base = window.location.href.split("?")[1];
     if (name_base === null){
-        alert("Invalid profile request!");
+        swal("Error", "Invalid profile request!", "error");
     } else {
         var response = postRequest("profiledata", name_base);
         var data = response.split(":");
@@ -65,10 +65,10 @@ function loadProfileData(){
                     document.getElementById("javaArgs").value = fromBase64(data[8]);
                 }
             }else{
-                alert("Server replied with wrong amount of data.");
+                swal("Error", "Server replied with wrong amount of data.", "error");
             }
         } else {
-            alert("Could not load profile data.");
+            swal("Error", "Could not load profile data.", "error");
         }
     }
 }
@@ -95,7 +95,7 @@ function refreshVersionList(){
 function saveProfile(){
     var name_base = window.location.href.split("?")[1].replace('#', '');
     if (name_base === null){
-        alert("Invalid profile request!");
+        swal("Error", "Invalid profile request!", "error");
     } else {
         var name = "noset";
         var version = document.getElementById("versionList").value;
@@ -124,9 +124,8 @@ function saveProfile(){
         var parameters = name_base + ":" + name + ":" + version + ":" + snapshot + ":" + oldbeta + ":" + oldalpha + ":" + gamedir + ":" + resolution + ":" + javaexec + ":" + javaargs;
         var response = postRequest("saveprofile", parameters);
         if (response !== "OK"){
-            alert(response);
+             swal("Error", response, "error");
         } else {
-            alert("Profile saved successfully!");
             redirect("/profiles.html");
         }
     }
@@ -224,7 +223,7 @@ function setSelectedProfile(){
     if (selected !== profile_value){
         var response = postRequest("setselectedprofile", selected);
         if (response !== "OK"){
-            alert("Failed to change the selected profile.");
+            swal("Error", "Failed to change the selected profile.", "error");
         }
         loadProfiles();
     }
@@ -232,9 +231,8 @@ function setSelectedProfile(){
 function deleteProfile(base64name){
     var response = postRequest("deleteprofile", base64name);
     if (response !== "OK"){
-        alert("Failed to delete profile " + fromBase64(base64name) + ".");
+        swal("Error", "Failed to delete profile " + fromBase64(base64name) + ".", "error");
     } else {
-        alert("Profile " + fromBase64(base64name) + " deleted successfully.");
         redirect("/profiles.html");
     }
 }
