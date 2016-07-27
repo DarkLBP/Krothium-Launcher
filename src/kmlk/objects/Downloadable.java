@@ -11,16 +11,17 @@ import java.net.URL;
 public class Downloadable {
     private final long size;
     private final URL url;
-    private final File path;
+    private final File relPath;
     private final String hash;
     public Downloadable(URL url, long size, File path, String hash){
         this.url = url;
         this.size = size;
-        this.path = path;
+        this.relPath = path;
         this.hash = hash;
     }
     public long getSize(){return this.size;}
     public URL getURL(){return this.url;}
-    public File getPath(){return this.path;}
+    public File getRelativePath(){return this.relPath;}
     public String getHash(){return this.hash;}
+    public boolean hasHash(){return (this.hash != null);}
 }

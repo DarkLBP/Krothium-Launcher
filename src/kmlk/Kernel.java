@@ -5,14 +5,14 @@ import kmlk.objects.User;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
 import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Version;
+import kmlk.objects.VersionMeta;
 import org.json.JSONObject;
 
 
@@ -61,11 +61,12 @@ public final class Kernel {
     public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};
     public void download() throws DownloaderException{this.downloader.download();}
     public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
-    public boolean existsVersion(String v){return (this.versions.getVersionByName(v) != null);}
+    public boolean existsVersion(String v){return (this.versions.getVersion(v) != null);}
     public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
-    public Version getVersion(String v){return this.versions.getVersionByName(v);}
+    public Version getVersion(String v){return this.versions.getVersion(v);}
+    public VersionMeta getVersionMeta(String v){return this.versions.getVersionMeta(v);}
     public Map<String, Profile> getProfileDB(){return this.profiles.getProfiles();}
-    public Map<String, Version> getVersionDB(){return this.versions.getVersions();}
+    public LinkedHashSet<String> getVersionDB(){return this.versions.getVersions();}
     public boolean isDownloading(){return this.downloader.isDownloading();}
     public boolean deleteProfile(String name){return this.profiles.deleteProfile(name);}
     public Version getLatestVersion(){return this.versions.getLatestRelease();}

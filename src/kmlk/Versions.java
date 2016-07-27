@@ -1,16 +1,17 @@
 package kmlk;
 
-import kmlk.enums.VersionOrigin;
 import kmlk.enums.VersionType;
 import kmlk.objects.Version;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import kmlk.exceptions.ObjectException;
+import kmlk.objects.VersionMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,7 +21,8 @@ import org.json.JSONObject;
  */
 
 public class Versions {
-    private final Map<String, Version> versions = new HashMap();
+    private final Map<String, VersionMeta> versions = new LinkedHashMap();
+    private Map<String, Version> version_cache = new HashMap();
     private final Console console;
     private String latestSnap;
     private String latestRel;
@@ -31,54 +33,103 @@ public class Versions {
         this.kernel = k;
         this.console = k.getConsole();
     }
-    public Map<String, Version> getVersions(){return this.versions;};
-    public void add(String name, Version v){
+    public void add(String name, VersionMeta m){
         if (!versions.containsKey(name)){
-            versions.put(name, v);
+            versions.put(name, m);
             console.printInfo("Version " + name + " loaded.");
-        }else{
-            versions.put(name, v);
-            console.printInfo("Version " + name + " updated!.");
         }
+    }
+    public Version getVersion(String id){
+        if (this.versions.containsKey(id)){
+            if (this.version_cache.containsKey(id)){
+                return this.version_cache.get(id);
+            }
+            VersionMeta vm = this.versions.get(id);
+            if (!vm.hasURL()){
+                console.printError("Version meta from version " + id + " is incomplete.");
+                return null;
+            }
+            try{
+                Version v = new Version(vm.getURL(), kernel);
+                this.version_cache.put(id, v);
+                return v;
+            } catch (ObjectException ex){
+                console.printError(ex.getMessage());
+                return null;
+            }
+        }
+        console.printError("Version id " + id + " not found.");
+        return null;
+    }
+    public VersionMeta getVersionMeta(String id){
+        if (this.versions.containsKey(id)){
+            return this.versions.get(id);
+        }
+        return null;
     }
     public void fetchVersions(){
         console.printInfo("Fetching remote version list.");
         try {
-            StringBuilder content = new StringBuilder();
-            URLConnection con = Constants.JSON_FILE.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null){
-              content.append(line).append("\n");
+            JSONObject root = new JSONObject(Utils.readURL(Constants.VERSION_MANIFEST_FILE));
+            if (root.has("latest")){
+                JSONObject latest = root.getJSONObject("latest");
+                if (latest.has("snapshot")){
+                    this.latestSnap = latest.getString("snapshot");
+                }
+                if (latest.has("release")){
+                    this.latestRel = latest.getString("release");
+                }
             }
-            bufferedReader.close();
-            JSONObject root = new JSONObject(content.toString());
-            JSONObject latest = root.getJSONObject("latest");
-            this.latestSnap = latest.getString("snapshot");
-            this.latestRel = latest.getString("release");
             JSONArray vers = root.getJSONArray("versions");
+            boolean last_rel = (this.latestRel != null);
+            boolean last_snap = (this.latestSnap != null);
             boolean last_beta = false;
             boolean last_alpha = false;
             for (int i = 0; i < vers.length(); i++){
                 JSONObject ver = vers.getJSONObject(i);
-                Version v = new Version(ver.getString("id"), VersionType.valueOf(ver.getString("type").toUpperCase()), VersionOrigin.REMOTE, Utils.stringToURL(ver.getString("url")), kernel);
-                if (!last_beta && v.getType() == VersionType.OLD_BETA){
-                    this.latestBeta = v.getID();
+                String id = null;
+                VersionType type = null;
+                URL url = null;
+                if (ver.has("id")){
+                    id = ver.getString("id");
+                }
+                if (ver.has("type")){
+                    type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                } else {
+                    type = VersionType.RELEASE;
+                    console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                }
+                if (ver.has("url")){
+                    url = Utils.stringToURL(ver.getString("url"));
+                }
+                if (id == null || type == null || url == null){
+                    continue;
+                }
+                VersionMeta vm = new VersionMeta(id, url, type);
+                this.add(id, vm);
+                if (!last_rel && type.equals(VersionType.RELEASE)){
+                    this.latestRel = id;
+                    last_rel = true;
+                }
+                if (!last_snap && type.equals(VersionType.SNAPSHOT)){
+                    this.latestSnap = id;
+                    last_snap = true;
+                }
+                if (!last_beta && type.equals(VersionType.OLD_BETA)){
+                    this.latestBeta = id;
                     last_beta = true;
                 }
-                if (!last_alpha && v.getType() == VersionType.OLD_ALPHA){
-                    this.latestAlpha = v.getID();
+                if (!last_alpha && type.equals(VersionType.OLD_ALPHA)){
+                    this.latestAlpha = id;
                     last_alpha = true;
                 }
-                this.add(ver.getString("id"), v);
             }
             console.printInfo("Remote version list loaded.");
         } catch (Exception ex) {
             console.printError("Failed to fetch remote version list.");
         }
-        console.printInfo("Fetching local version list and inherited versions.");
-        try
-        {
+        console.printInfo("Fetching local version list versions.");
+        try{
             File versionsDir = new File(kernel.getWorkingDir() + File.separator + "versions");
             if (versionsDir.exists()){
                 if (versionsDir.isDirectory()){
@@ -87,19 +138,19 @@ public class Versions {
                         if (file.isDirectory()){
                             File jsonFile = new File(file.getAbsolutePath() + File.separator + file.getName() + ".json");
                             if (jsonFile.exists()){
-                                if (this.versions.containsKey(file.getName())){
-                                    Version v = this.versions.get(file.getName());
-                                    v.putURL(jsonFile.toURI().toURL(), VersionOrigin.LOCAL);
-                                    this.add(file.getName(), v);
-                                }else{
-                                    JSONObject json = new JSONObject(Utils.readURL(jsonFile.toURI().toURL()));
-                                    Version ver;
-                                    if (this.versions.containsKey(file.getName())){
-                                        ver = new Version(file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.BOTH, jsonFile.toURI().toURL(), kernel);
-                                    }else{
-                                        ver = new Version(file.getName(), VersionType.valueOf(json.getString("type").toUpperCase()), VersionOrigin.LOCAL, jsonFile.toURI().toURL(), kernel);
-                                    }
-                                    this.add(file.getName(), ver);
+                                String id = file.getName();
+                                URL url = jsonFile.toURI().toURL();
+                                VersionType type;
+                                JSONObject ver = new JSONObject(Utils.readURL(url));
+                                if (ver.has("type")){
+                                    type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                                } else {
+                                    type = VersionType.RELEASE;
+                                    console.printError("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
+                                }
+                                VersionMeta vm = new VersionMeta(id, url, type);
+                                if (!this.versions.containsKey(id)){
+                                    this.add(id, vm);
                                 }
                             }
                         }
@@ -111,47 +162,39 @@ public class Versions {
                 versionsDir.mkdirs();
             }
             console.printInfo("Local version list loaded.");
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             console.printError("Failed to fetch local version list.");
         }
     }
-    public Version getVersionByName(String verName){
-        if (versions.containsKey(verName)){
-            return versions.get(verName);
-        }
-        return null;
-    }
-    public Map<String, Version> getVersionsByType(VersionType type){
-        Map<String, Version> vers = new HashMap();
+    public LinkedHashSet<String> getVersionsByType(VersionType t){
+        LinkedHashSet<String> vers = new LinkedHashSet();
         Set keys = this.versions.keySet();
         Iterator it = keys.iterator();
         while (it.hasNext()){
             String verName = it.next().toString();
-            Version v = this.versions.get(verName);
-            if (v.getType() == type){
-                vers.put(verName, v);
+            VersionMeta vm = this.versions.get(verName);
+            if (vm.hasType()){
+                VersionType type = vm.getType();
+                if (type.equals(t)){
+                    vers.add(verName);
+                }
             }
         }
         return vers;
     }
-    public Map<String, Version> getVersionsByOrigin(VersionOrigin orig){
-        Map<String, Version> vers = new HashMap();
+    public LinkedHashSet<String> getVersions(){
+       LinkedHashSet<String> vers = new LinkedHashSet();
         Set keys = this.versions.keySet();
         Iterator it = keys.iterator();
         while (it.hasNext()){
             String verName = it.next().toString();
-            Version v = this.versions.get(verName);
-            if (v.getOrigin() == orig){
-                vers.put(verName, v);
-            }
+            vers.add(verName);
         }
-        return vers;
+        return vers; 
     }
-    public Version getLatestRelease(){return versions.get(latestRel);}
-    public Version getLatestSnapshot(){return versions.get(latestSnap);}
-    public Version getLatestBeta(){return versions.get(latestBeta);}
-    public Version getLatestAlpha(){return versions.get(latestAlpha);}
+    public Version getLatestRelease(){return this.getVersion(latestRel);}
+    public Version getLatestSnapshot(){return this.getVersion(latestSnap);}
+    public Version getLatestBeta(){return this.getVersion(latestBeta);}
+    public Version getLatestAlpha(){return this.getVersion(latestAlpha);}
     public int versionCount(){return versions.size();}
 }

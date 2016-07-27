@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Profile;
 import kmlk.objects.Version;
+import kmlk.objects.VersionMeta;
 
 /**
  * @website http://krotium.com
@@ -275,9 +277,8 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "versions":
-                            Map<String, Version> v = kernel.getVersionDB();
-                            Set vkeys = v.keySet();
-                            Iterator vi = vkeys.iterator();
+                            LinkedHashSet<String> v = kernel.getVersionDB();
+                            Iterator vi = v.iterator();
                             List<VersionType> allowedTypes = new ArrayList();
                             if (contentLength > 0){
                                 String[] types = parameters.split(":");
@@ -300,7 +301,7 @@ public class WebLauncherThread extends Thread{
                                 response = "latest";
                                 while (vi.hasNext()){
                                     String index = vi.next().toString();
-                                    Version version = v.get(index);
+                                    VersionMeta version = kernel.getVersionMeta(index);
                                     if (allowedTypes.contains(version.getType())){
                                         response += ":" + Utils.toBase64(version.getID());
                                     }
@@ -311,7 +312,7 @@ public class WebLauncherThread extends Thread{
                                 response = "latest";
                                 while (vi.hasNext()){
                                     String index = vi.next().toString();
-                                    Version version = v.get(index);
+                                    VersionMeta version = kernel.getVersionMeta(index);
                                     if (allowedTypes.contains(version.getType())){
                                         response += ":" + Utils.toBase64(version.getID());
                                     }

@@ -1,7 +1,6 @@
 package kmlk;
 
 import kmlk.enums.OSArch;
-import kmlk.objects.Native;
 import kmlk.objects.Version;
 import kmlk.objects.Library;
 import kmlk.objects.Profile;
@@ -52,9 +51,6 @@ public class GameLauncher {
         } else {
             ver = kernel.getLatestVersion();
         }
-        if (!ver.isPrepared()){
-            ver.prepare();
-        }
         File workingDir = kernel.getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory()){
@@ -89,17 +85,13 @@ public class GameLauncher {
         gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
         gameArgs.add("-cp");
         String libraries = "";
-        Version v = ver;
-        while (v != null){
-            if (v.hasNatives()){
-                Map<String, Native> nats = v.getNatives();
-                Set set = nats.keySet();
-                Iterator it = set.iterator();
-                while (it.hasNext()){
-                    String nat_name = it.next().toString();
-                    Native nat = nats.get(nat_name);
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + nat.getPath());
+        List<Library> libs = ver.getLibraries();
+        String separator = System.getProperty("path.separator");
+        for (Library lib : libs){
+            if (lib.isCompatible()){
+                if (lib.isNative()){
                     try {
+                        File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativeNativePath());
                         ZipFile zip = new ZipFile(completePath);
                         final Enumeration<? extends ZipEntry> entries = zip.entries();
                         while (entries.hasMoreElements()) {
@@ -108,7 +100,7 @@ public class GameLauncher {
                                 continue;
                             }
                             final File targetFile = new File(nativesDir, entry.getName());
-                            List<String> exclude = nat.getExclusions();
+                            List<String> exclude = lib.getExtractExclusions();
                             boolean excluded = false;
                             for (String e : exclude){
                                 if (entry.getName().startsWith(e)){
@@ -132,34 +124,17 @@ public class GameLauncher {
                         }
                         zip.close();
                     } catch (IOException ex) {
-                        console.printError("Failed to extract native: " + nat_name);
+                        ex.printStackTrace();
+                        console.printError("Failed to extract native: " + lib.getName());
                     }
-                }
-            }
-            v = (v.hasInheritedVersion() ? v.getInheritedVersion() : null);
-        }
-        console.printInfo("Preparing game args.");
-        Version v2 = ver;
-        while (v2 != null){
-            if (v2.hasLibraries()){
-                Map<String, Library> libs = v2.getLibraries();
-                Set set = libs.keySet();
-                Iterator it = set.iterator();
-                String separator = System.getProperty("path.separator");
-                while (it.hasNext()){
-                    String lib_name = it.next().toString();
-                    Library lib = libs.get(lib_name);
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getPath());
+                } else {
+                    File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativePath());
                     libraries += completePath.getAbsolutePath() + separator;
                 }
             }
-            if (v2.hasInheritedVersion()){
-                v2 = v2.getInheritedVersion();
-            }else{
-                v2 = null;
-            }
         }
-        File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getPath());
+        console.printInfo("Preparing game args.");
+        File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
         libraries += verPath.getAbsolutePath();
         String assetsID = ver.getAssets();
         File assetsDir;

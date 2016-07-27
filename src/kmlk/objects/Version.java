@@ -8,12 +8,9 @@ import java.util.List;
 import java.util.Map;
 import kmlk.Console;
 import kmlk.Kernel;
-import kmlk.enums.LibraryRule;
-import kmlk.enums.OS;
-import kmlk.enums.OSArch;
 import kmlk.Utils;
-import kmlk.enums.VersionOrigin;
 import kmlk.enums.VersionType;
+import kmlk.exceptions.ObjectException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,251 +20,229 @@ import org.json.JSONObject;
  */
 
 public final class Version {
-    private final String id;
-    private final VersionType type;
-    private final VersionOrigin origin;
-    private final Map<VersionOrigin, URL> url = new HashMap();
-    private final File path;
-    private JSONObject versionMeta;
-    private Version inheritedVersion;
-    private final Map<String, Library> libraries = new HashMap();
-    private final Map<String, Native> natives = new HashMap();
-    private final Console console;
-    private boolean prepared = false;
-    private AssetIndex assetIndex;
-    private String assets;
-    private Version rootVer;
-    public String minecraftArguments = null;
-    public String mainClass = null;
-    private final Kernel kernel;
     
-    public Version(String id, VersionType type, VersionOrigin or, URL url, Kernel k){
-        this.id = id;
-        this.type = type;
-        this.url.put(or, url);
-        this.origin = or;
+    private final Kernel kernel;
+    private final Console console;
+    private final String id;
+    public String mainClass;
+    public String minecraftArguments;
+    private final VersionType type;
+    private String assets;
+    private AssetIndex assetIndex;
+    private Map<String, Downloadable> downloads = new HashMap();
+    private List<Library> libraries = new ArrayList();
+    private String inheritsFrom;
+    private String jar;
+    private File relativeJar;
+    private File relativeJSON;
+    private final URL jsonURL;
+    
+    public Version(URL durl, Kernel k) throws ObjectException{
         this.kernel = k;
         this.console = k.getConsole();
-        this.path = new File("versions" + File.separator + id + File.separator + id + ".jar");
-    }
-    public boolean prepare(){
-        try{
-            this.versionMeta = new JSONObject(Utils.readURL(this.getURL((this.getOrigin() != VersionOrigin.REMOTE) ? VersionOrigin.LOCAL : VersionOrigin.REMOTE)));
-            if (this.getOrigin() == VersionOrigin.LOCAL){
-                if (this.versionMeta.has("inheritsFrom")){
-                    this.inheritedVersion = kernel.getVersions().getVersionByName(this.versionMeta.getString("inheritsFrom"));
-                    if (this.inheritedVersion != null){
-                        if (!this.inheritedVersion.isPrepared()){
-                            this.inheritedVersion.prepare();
-                        }
-                        console.printInfo("Version " + this.getID() + " inherits from version " + this.inheritedVersion.getID());
-                    }
-                }else{
-                    this.inheritedVersion = null;
-                }
-            }else{
-                this.inheritedVersion = null;
+        this.jsonURL = durl;
+        JSONObject version = new JSONObject(Utils.readURL(durl));
+        if (version.has("id")){
+            this.id = version.getString("id");
+        } else {
+            throw new ObjectException("Invalid version id.");
+        }
+        if (version.has("type")){
+            this.type = VersionType.valueOf(version.getString("type").toUpperCase());
+        } else {
+            this.type = VersionType.RELEASE;
+            console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+        }
+        if (version.has("mainClass")){
+            this.mainClass = version.getString("mainClass");
+        }
+        if (version.has("minecraftArguments")){
+            this.minecraftArguments = version.getString("minecraftArguments");
+        }
+        if (version.has("assets")){
+            this.assets = version.getString("assets");
+        }
+        if (version.has("jar")){
+            this.jar = version.getString("jar");
+        }
+        if (version.has("assetIndex")){
+            JSONObject aIndex = version.getJSONObject("assetIndex");
+            String id = null;
+            long totalSize = -1;
+            long size = -1;
+            URL url = null;
+            String sha1 = null;
+            if (aIndex.has("id")){
+                id = aIndex.getString("id");
             }
-            console.printInfo("Fetching required versions libraries.");
-            JSONArray array = this.versionMeta.getJSONArray("libraries");
-            for (int i = 0; i < array.length(); i++){
-                OS currentOS = Utils.getPlatform();
-                JSONObject lib = array.getJSONObject(i);
-                String name = lib.getString("name");
+            if (aIndex.has("totalSize")){
+                totalSize = aIndex.getLong("totalSize");
+            }
+            if (aIndex.has("size")){
+                size = aIndex.getLong("size");
+            }
+            if (aIndex.has("url")){
+                url = Utils.stringToURL(aIndex.getString("url"));
+            }
+            if (aIndex.has("sha1")){
+                sha1 = aIndex.getString("sha1");
+            }
+            AssetIndex index = new AssetIndex(id, size, totalSize, url, sha1);
+            this.assetIndex = index;
+        }
+        if (version.has("downloads")){
+            JSONObject downloads = version.getJSONObject("downloads");
+            if (downloads.has("client")){
+                JSONObject client = downloads.getJSONObject("client");
                 URL url = null;
+                long size = 0;
                 String sha1 = null;
-                long size = -1;
-                JSONArray rules = null;
-                Map<OS, LibraryRule> ruls = new HashMap();
-                boolean skip = false;
-                String native_class = null;
-                List<String> exclude = new ArrayList();
-                if (lib.has("rules")){
-                    rules = lib.getJSONArray("rules");
-                    List<LibraryRule> used = new ArrayList();
-                    OS[] oses = OS.values();
-                    for (int j = 0; j < rules.length(); j++){
-                        JSONObject rule = rules.getJSONObject(j);
-                        LibraryRule lr = LibraryRule.valueOf(rule.getString("action").toUpperCase());
-                        if (rule.has("os")){
-                            JSONObject os = rule.getJSONObject("os");
-                            OS o = OS.valueOf(os.getString("name").toUpperCase());
-                            console.printInfo((ruls.containsKey(o) ? "Updated" : "Added") + " " + o.name() + " rule (" + lr.name() + ") in library " + name);
-                            ruls.put(o, lr);
-                        }else{
-                            for (OS o : oses){
-                                if (!ruls.containsKey(o)){
-                                    console.printInfo("Added " + o.name() + " rule (" + lr.name() + ") in library " + name);
-                                    ruls.put(o, lr);
-                                }
-                            }
-                        }
-                        if (!used.contains(lr)){
-                            used.add(lr);
-                        }
-                    }
-                    if (used.contains(LibraryRule.ALLOW) && !used.contains(LibraryRule.DISALLOW)){
-                        for (OS o : oses){
-                            if (!ruls.containsKey(o)){
-                                ruls.put(o, LibraryRule.DISALLOW);
-                                console.printInfo("Added " + o.name() + " rule (" + LibraryRule.DISALLOW.name() + ") in library " + name);
-                            }
-                        }
-                    }else if (!used.contains(LibraryRule.ALLOW) && used.contains(LibraryRule.DISALLOW)){
-                        for (OS o : oses){
-                            if (!ruls.containsKey(o)){
-                                ruls.put(o, LibraryRule.ALLOW);
-                                console.printInfo("Added " + o.name() + " rule (" + LibraryRule.ALLOW.name() + ") in library " + name);
-                            }
-                        }
-                    }
-                    if (currentOS != OS.UNKNOWN){
-                        if (ruls.get(currentOS) != LibraryRule.ALLOW){
-                            skip = true;
-                        }
+                if (client.has("url")){
+                    url = Utils.stringToURL(client.getString("url"));
+                }
+                if (client.has("size")){
+                    size = client.getLong("size");
+                }
+                if (client.has("sha1")){
+                    sha1 = client.getString("sha1");
+                }
+                File path = new File("versions" + File.separator + this.id + File.separator + this.id + ".jar");
+                Downloadable d = new Downloadable(url, size, path, sha1);
+                this.downloads.put("client", d);
+            }
+            if (downloads.has("server")){
+                JSONObject server = downloads.getJSONObject("server");
+                URL url = null;
+                long size = 0;
+                String sha1 = null;
+                if (server.has("url")){
+                    url = Utils.stringToURL(server.getString("url"));
+                }
+                if (server.has("size")){
+                    size = server.getLong("size");
+                }
+                if (server.has("sha1")){
+                    sha1 = server.getString("sha1");
+                }
+                File path = new File("versions" + File.separator + id + File.separator + id + "_server.jar");
+                Downloadable d = new Downloadable(url, size, path, sha1);
+                this.downloads.put("server", d);
+            }
+            if (downloads.has("windows_server")){
+                JSONObject windows_server = downloads.getJSONObject("windows_server");
+                URL url = null;
+                long size = 0;
+                String sha1 = null;
+                if (windows_server.has("url")){
+                    url = Utils.stringToURL(windows_server.getString("url"));
+                }
+                if (windows_server.has("size")){
+                    size = windows_server.getLong("size");
+                }
+                if (windows_server.has("sha1")){
+                    sha1 = windows_server.getString("sha1");
+                }
+                File path = new File("versions" + File.separator + id + File.separator + id + "_server.exe");
+                Downloadable d = new Downloadable(url, size, path, sha1);
+                this.downloads.put("server", d);
+            }
+        }
+        if (version.has("libraries")){
+            JSONArray libraries = version.getJSONArray("libraries");
+            for (int i = 0; i < libraries.length(); i++){
+                Library lib = new Library(libraries.getJSONObject(i), this.kernel);
+                this.libraries.add(lib);
+            }
+        }
+        if (version.has("inheritsFrom")){
+            String inheritsFrom = version.getString("inheritsFrom");
+            Version ver = kernel.getVersion(inheritsFrom);
+            if (ver.hasLibraries()){
+                for (Library lib : ver.getLibraries()){
+                    if (!this.libraries.contains(lib)){
+                        this.libraries.add(lib);
                     }
                 }
-                if (!skip){
-                    if (lib.has("natives")){
-                        JSONObject natives = lib.getJSONObject("natives");
-                        String osArch = (Utils.getOSArch().equals(OSArch.NEW) ? "64" : "32");
-                        native_class = (natives.has(currentOS.name().toLowerCase()) ? natives.getString(currentOS.name().toLowerCase()).replace("${arch}", osArch) : null);
-                    }
-                    if (lib.has("extract")){
-                        JSONObject extract = lib.getJSONObject("extract");
-                        if (extract.has("exclude")){
-                            JSONArray exc = extract.getJSONArray("exclude");
-                            for (int k = 0; k < exc.length(); k++){
-                                String value = exc.getString(k);
-                                if (!exclude.contains(value)){
-                                    exclude.add(value);
-                                    console.printInfo("Exclusion added for path " + value + " in " + name);
-                                }
-                            }
-                        }
-                    }
-                    boolean legacy = false;
-                    if (lib.has("downloads")){
-                        JSONObject downloads = lib.getJSONObject("downloads");
-                        if (downloads.has("artifact")){
-                            JSONObject artifact = downloads.getJSONObject("artifact");
-                            if (artifact.has("url")){
-                                url = Utils.stringToURL(artifact.getString("url"));
-                            }
-                            if (artifact.has("sha1")){
-                                sha1 = artifact.getString("sha1");
-                            }
-                            if (artifact.has("size")){
-                                size = artifact.getLong("size");
-                            }
-                        }
-                        if (native_class != null){
-                            if (downloads.has("classifiers")){
-                                JSONObject classifiers = downloads.getJSONObject("classifiers");
-                                if (classifiers.has(native_class)){
-                                    JSONObject clas = classifiers.getJSONObject(native_class);
-                                    long nSize = (clas.has("size") ? clas.getLong("size") : -1);
-                                    String nSha = (clas.has("sha1") ? clas.getString("sha1") : null);
-                                    URL nURL = (clas.has("url") ? Utils.stringToURL(clas.getString("url")) : null);
-                                    Native n = new Native(name, nURL, nSha, nSize, exclude, native_class);
-                                    console.printInfo("Native " + name + (this.natives.containsKey(name) ? " updated" : " added"));
-                                    this.natives.put(name, n);
-                                }
-                            }
-                        }
-                    }else{
-                        if (lib.has("url")){
-                            url = Utils.stringToURL(lib.getString("url") + Utils.getArtifactPath(name, "jar"));
-                        }else{
-                            url = Utils.stringToURL("https://libraries.minecraft.net/" + Utils.getArtifactPath(name, "jar"));
-                        }
-                        legacy = true;
-                    }
-                    Library l;
-                    if (!legacy){
-                        l = new Library(name, url, sha1, size, ruls, kernel);
-                    }else{
-                        l = new Library(name, url, ruls, kernel);
-                    }
-                    if (!libraries.containsKey(name)){
-                        libraries.put(name, l);
-                        console.printInfo("Library " + name + " loaded.");
-                    }else{
-                        libraries.put(name, l);
-                        console.printInfo("Library " + name + " updated!.");
-                    }
-                }else{
-                    console.printInfo("Library " + name + " skipped because does not support the current OS (" + Utils.getPlatform().name() + ").");
+            }
+            if (ver.hasDownloads()){
+                Map<String, Downloadable> downloads = ver.getDownloads();
+                if (!this.downloads.containsKey("client")){
+                    this.downloads.put("client", downloads.get("client"));
+                }
+                if (!this.downloads.containsKey("server")){
+                    this.downloads.put("server", downloads.get("server"));
+                }
+                if (!this.downloads.containsKey("windows_server")){
+                    this.downloads.put("windows_server", downloads.get("windows_server"));
                 }
             }
-            if (this.versionMeta.has("assets")){
-                this.assets = this.versionMeta.getString("assets");
-                console.printInfo("Found assets dependency from version " + this.assets);
-            }
-            if (this.versionMeta.has("assetIndex")){
-                JSONObject index = this.versionMeta.getJSONObject("assetIndex");
-                AssetIndex aInd = new AssetIndex(index.getString("id"), index.getLong("size"), index.getLong("totalSize"), Utils.stringToURL(index.getString("url")), index.getString("sha1"));
-                this.assetIndex = aInd;
-                console.printInfo("Found assets download for version " + this.assetIndex);
-            }else{
-                this.assetIndex = null;
-            }
-            Version tmp = this;
-            while (tmp != null){
-                if (tmp.hasInheritedVersion()){
-                    tmp = tmp.getInheritedVersion();
-                }else{
-                    if (tmp != this){
-                        this.rootVer = tmp;
-                        console.printInfo("Found root version " + tmp.getID() + " in version " + this.getID());
-                    }
-                    tmp = null;
+            if (ver.hasJar()){
+                if (!this.hasJar()){
+                   this.jar = ver.getJar(); 
                 }
             }
-            JSONObject meta = this.getMeta();
-            if (meta.has("minecraftArguments")){
-                this.minecraftArguments = meta.getString("minecraftArguments");
+            if (ver.hasAssets()){
+                if (!this.hasAssets()){
+                    this.assets = ver.getAssets();
+                }
             }
-            if (meta.has("mainClass")){
-                this.mainClass = meta.getString("mainClass");
+            if (ver.hasAssetIndex()){
+                if (!this.hasAssetIndex()){
+                    this.assetIndex = ver.getAssetIndex();
+                }
             }
-            this.prepared = true;
-            return true;
-        }catch (Exception ex){
-            console.printError("Failed to prepare version " + this.getID());
-            this.prepared = false;
-            return false;
+            if (ver.hasMainClass()){
+                if (!this.hasMainClass()){
+                    this.mainClass = ver.getMainClass();
+                }
+            }
+            if (ver.hasMinecraftArguments()){
+                if (!this.hasMinecraftArguments()){
+                    this.minecraftArguments = ver.getMinecraftArguments();
+                }
+            }
+        }
+        String idToUse = this.id;
+        if (this.hasJar()){
+            idToUse = this.getJar();
+        }
+        this.relativeJar = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".jar");
+        this.relativeJSON = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".json");
+        if (this.hasClientDownload() && this.hasJar()){
+            Downloadable d = this.getClientDownload();
+            Downloadable dnew = new Downloadable(d.getURL(), d.getSize(), this.relativeJar, d.getHash());
+            this.downloads.remove("client");
+            this.downloads.put("client", dnew);
         }
     }
-    public boolean isPrepared(){return this.prepared;}
-    public File getPath(){return this.path;}
-    public Version getRoot(){return this.rootVer;}
-    public boolean hasRoot(){return (this.rootVer != null);}
-    public void putURL(URL u, VersionOrigin o){this.url.put(o, u);}
+    public File getRelativeJar(){return this.relativeJar;}
+    public File getRelativeJSON(){return this.relativeJSON;}
+    public URL getJSONURL(){return this.jsonURL;}
     public String getID(){return this.id;}
     public VersionType getType(){return this.type;}
-    public VersionOrigin getOrigin(){return this.origin;}
-    public URL getURL(VersionOrigin o){
-        if (this.url.containsKey(o)){
-            return this.url.get(o);
-        }else{
-            return null;
-        }
-    }
-    public JSONObject getMeta(){return this.versionMeta;}
-    public boolean hasMeta(){return (this.versionMeta != null);}
     public boolean hasMinecraftArguments(){return (this.minecraftArguments != null);}
     public boolean hasMainClass(){return (this.mainClass != null);}
     public String getMinecraftArguments(){return this.minecraftArguments;}
     public String getMainClass(){return this.mainClass;}
-    public Version getInheritedVersion(){return this.inheritedVersion;}
-    public boolean hasInheritedVersion(){return (this.inheritedVersion != null);}
+    public String getInheritedVersion(){return this.inheritsFrom;}
+    public boolean hasInheritedVersion(){return (this.inheritsFrom != null);}
     public boolean hasLibraries(){return (this.libraries.size() > 0);}
-    public Map<String, Library> getLibraries(){return this.libraries;}
-    public boolean hasNatives(){return (this.natives.size() > 0);}
-    public Map<String, Native> getNatives(){return this.natives;}
+    public List<Library> getLibraries(){return this.libraries;}
     public boolean hasAssetIndex(){return (this.assetIndex != null);}
     public boolean hasAssets(){return (this.assets != null);}
     public String getAssets(){return this.assets;}
     public AssetIndex getAssetIndex(){return this.assetIndex;}
+    public boolean hasDownloads(){return (this.downloads.size() > 0);}
+    public Map<String, Downloadable> getDownloads(){return this.downloads;}
+    public boolean hasJar(){return (this.jar != null);}
+    public String getJar(){return this.jar;}
+    public boolean hasClientDownload(){
+        if (!this.hasDownloads()){
+            return false;
+        }
+        return this.getDownloads().containsKey("client");
+    }
+    public Downloadable getClientDownload(){
+        return this.getDownloads().get("client");
+    }
 }
