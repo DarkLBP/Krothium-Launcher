@@ -192,9 +192,9 @@ public class Versions {
         }
         return vers; 
     }
-    public Version getLatestRelease(){return this.getVersion(latestRel);}
-    public Version getLatestSnapshot(){return this.getVersion(latestSnap);}
-    public Version getLatestBeta(){return this.getVersion(latestBeta);}
+    public String getLatestRelease(){return latestRel;}
+    public String getLatestSnapshot(){return latestSnap;}
+    public String getLatestBeta(){return latestBeta;}
     public Version getLatestAlpha(){return this.getVersion(latestAlpha);}
     public int versionCount(){return versions.size();}
 }

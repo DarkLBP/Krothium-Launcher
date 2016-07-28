@@ -69,7 +69,7 @@ public final class Kernel {
     public LinkedHashSet<String> getVersionDB(){return this.versions.getVersions();}
     public boolean isDownloading(){return this.downloader.isDownloading();}
     public boolean deleteProfile(String name){return this.profiles.deleteProfile(name);}
-    public Version getLatestVersion(){return this.versions.getLatestRelease();}
+    public String getLatestVersion(){return this.versions.getLatestRelease();}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

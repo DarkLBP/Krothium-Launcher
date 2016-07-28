@@ -15,7 +15,7 @@ import kmlk.enums.VersionType;
 
 public class Profile {
     private String name;
-    private Version version = null;
+    private String versionID = null;
     private File gameDir = null;
     private File javaDir = null;
     private String javaArgs = null;
@@ -28,9 +28,9 @@ public class Profile {
         this.allowedVersionTypes = new ArrayList();
         this.allowedVersionTypes.add(VersionType.RELEASE);
     }
-    public Profile(String name, Version lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v, List<VersionType> types){
+    public Profile(String name, String lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v, List<VersionType> types){
         this.name = name;
-        this.version = lastVersionId;
+        this.versionID = lastVersionId;
         this.gameDir = gameDir;
         this.javaDir = javaDir;
         this.javaArgs = javaArgs;
@@ -39,12 +39,12 @@ public class Profile {
         this.allowedVersionTypes = types;
     }
     public void setName(String newName){this.name = newName;}
-    public void setVersion(Version ver){this.version = ver;}
+    public void setVersionID(String ver){this.versionID = ver;}
     public String getName(){
         return this.name;
     }
-    public Version getVersion(){return this.version;}
-    public boolean hasVersion(){return (this.version != null);}
+    public String getVersionID(){return this.versionID;}
+    public boolean hasVersion(){return (this.versionID != null);}
     public File getGameDir(){return this.gameDir;}
     public boolean hasGameDir(){return (this.gameDir != null);}
     public void setGameDir(File dir){this.gameDir = dir;}

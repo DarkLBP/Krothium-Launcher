@@ -45,12 +45,14 @@ public class GameLauncher {
         if (this.isStarted()){
             throw new GameLauncherException("Game is already started!");
         }
+        String verID;
         Version ver;
         if (p.hasVersion()){
-            ver = p.getVersion();
+            verID = p.getVersionID();
         } else {
-            ver = kernel.getLatestVersion();
+            verID = kernel.getLatestVersion();
         }
+        ver = kernel.getVersion(verID);
         File workingDir = kernel.getWorkingDir();
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory()){

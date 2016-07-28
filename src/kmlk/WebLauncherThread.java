@@ -257,10 +257,11 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedversion":
-                            if (kernel.getProfile(kernel.getSelectedProfile()).hasVersion()){
-                                response = Utils.toBase64(Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID())) + ":" + Utils.toBase64(kernel.getProfile(kernel.getSelectedProfile()).getVersion().getID());
+                            Profile sprof = kernel.getProfile(kernel.getSelectedProfile());
+                            if (sprof.hasVersion()){
+                                response = Utils.toBase64(Utils.toBase64(sprof.getVersionID())) + ":" + Utils.toBase64(sprof.getVersionID());
                             } else {
-                                response = Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion().getID());
+                                response = Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion());
                             }
                             break;
                         case "deleteprofile":
@@ -350,12 +351,12 @@ public class WebLauncherThread extends Thread{
                                     Profile up = kernel.getProfile(profileName);
                                     boolean error = false;
                                     if (profileVersion == null){
-                                        up.setVersion(null);
+                                        up.setVersionID(null);
                                     } else if (!kernel.existsVersion(profileVersion)){
                                         error = true;
                                         response += "Selected version " + profileVersion + " does not exist." + "\n";
                                     } else {
-                                        up.setVersion(kernel.getVersion(profileVersion));
+                                        up.setVersionID(profileVersion);
                                     }
                                     if (!gameDir.isEmpty()){
                                         File dir = new File(gameDir);
@@ -431,7 +432,7 @@ public class WebLauncherThread extends Thread{
                                 Profile rp = kernel.getProfile(profile);
                                 response += Utils.toBase64(rp.getName());
                                 response += ":";
-                                response += (rp.hasVersion() ? Utils.toBase64(rp.getVersion().getID()) : "latest");
+                                response += (rp.hasVersion() ? Utils.toBase64(rp.getVersionID()) : "latest");
                                 response += ":";
                                 response += Utils.toBase64((String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT))));
                                 response += ":";

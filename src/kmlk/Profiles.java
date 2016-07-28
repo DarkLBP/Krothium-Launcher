@@ -114,7 +114,7 @@ public class Profiles {
                     String key = it.next().toString();
                     JSONObject o = ples.getJSONObject(key);
                     String name = null;
-                    Version ver = null;
+                    String ver = null;
                     File gameDir = null;
                     File javaDir = null;
                     String javaArgs = null;
@@ -139,7 +139,7 @@ public class Profiles {
                         types.add(VersionType.RELEASE);
                     }
                     if (o.has("lastVersionId")){
-                        ver = kernel.getVersion(o.getString("lastVersionId"));
+                        ver = o.getString("lastVersionId");
                     }
                     if (o.has("gameDir")){
                         gameDir = new File(o.getString("gameDir"));
@@ -254,7 +254,7 @@ public class Profiles {
                 prof.put("gameDir", p.getGameDir().toString());
             }
             if (p.hasVersion()){
-                prof.put("lastVersionId", p.getVersion().getID());
+                prof.put("lastVersionId", p.getVersionID());
             }
             if (p.hasJavaDir()){
                 prof.put("javaDir", p.getJavaDir().toString());
