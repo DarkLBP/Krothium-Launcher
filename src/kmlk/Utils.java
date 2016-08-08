@@ -21,7 +21,7 @@ import java.util.UUID;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

@@ -21,11 +21,10 @@ import kmlk.exceptions.AuthenticationException;
 import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Profile;
-import kmlk.objects.Version;
 import kmlk.objects.VersionMeta;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

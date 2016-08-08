@@ -22,7 +22,7 @@ import kmlk.objects.Profile;
 import org.json.JSONObject;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

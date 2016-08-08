@@ -9,7 +9,7 @@ import kmlk.enums.LauncherVisibility;
 import kmlk.enums.VersionType;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  *  @author DarkLBP
  */
 

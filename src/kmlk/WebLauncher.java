@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ServerSocketFactory;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

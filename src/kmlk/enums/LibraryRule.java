@@ -1,7 +1,7 @@
 package kmlk.enums;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 public enum LibraryRule {ALLOW, DISALLOW, NOSET}

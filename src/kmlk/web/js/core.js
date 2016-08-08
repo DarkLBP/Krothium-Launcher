@@ -1,4 +1,5 @@
 //Core javascript functions for KMLK inner functionality
+//Created by DarkLBP (https://krothium.com)
 var status_interval = setInterval(function(){status();}, 2000);
 var progress_value = 0;
 var play_value = "";

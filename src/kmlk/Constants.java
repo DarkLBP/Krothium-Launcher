@@ -3,7 +3,7 @@ package kmlk;
 import java.net.URL;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

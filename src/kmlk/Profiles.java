@@ -2,7 +2,6 @@ package kmlk;
 
 import kmlk.enums.LauncherVisibility;
 import kmlk.enums.VersionType;
-import kmlk.objects.Version;
 import kmlk.objects.Profile;
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

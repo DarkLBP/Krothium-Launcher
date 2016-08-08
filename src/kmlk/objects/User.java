@@ -3,7 +3,7 @@ package kmlk.objects;
 import java.util.UUID;
 import java.util.Map;
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 

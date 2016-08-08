@@ -4,7 +4,7 @@ import java.net.URL;
 import kmlk.enums.VersionType;
 
 /**
- * @website http://krotium.com
+ * @website https://krothium.com
  * @author DarkLBP
  */
 
