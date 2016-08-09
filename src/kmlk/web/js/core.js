@@ -20,6 +20,9 @@ function authenticate(){
         }
     }
 }
+function register(){
+    redirect("https://krothium.com/index.php?/register/");
+}
 function loadProfileData(){
     var name_base = window.location.href.split("?")[1];
     if (name_base === null){

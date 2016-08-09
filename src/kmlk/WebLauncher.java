@@ -29,7 +29,7 @@ public class WebLauncher {
         Authentication a = kernel.getAuthentication();
         if (a.hasSelectedUser()){
             try{
-                a.validate();
+                a.refresh();
             }catch(Exception ex){
                 //
             }
@@ -42,7 +42,7 @@ public class WebLauncher {
         ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
         boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
-        Utils.openWebsite("http://krotium.com/launcher/?p=" + port);
+        Utils.openWebsite("http://mc.krothium.com/?p=" + port);
         WebLauncher.lastKeepAlive = System.nanoTime();
         Thread keepAlive = new Thread(){
             @Override

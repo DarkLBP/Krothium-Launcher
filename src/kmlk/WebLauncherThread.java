@@ -75,16 +75,12 @@ public class WebLauncherThread extends Thread{
             String path = requestChunks[1];
             boolean closeWhenFinished = false;
             if (request.startsWith("GET")){
-                if (path.equals("/"))
-                {
-                    if (!kernel.getAuthentication().isAuthenticated())
-                    {
+                if (path.equals("/")){
+                    if (!kernel.getAuthentication().isAuthenticated()){
                         out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
                         out.write("Location: /login.html\r\n".getBytes());
                         out.write("\r\n".getBytes());
-                    }
-                    else
-                    {
+                    }else{
                         out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
                         out.write("Location: /play.html\r\n".getBytes());
                         out.write("\r\n".getBytes());
@@ -220,7 +216,7 @@ public class WebLauncherThread extends Thread{
                             WebLauncher.lastKeepAlive = System.nanoTime();
                             break;
                         case "signature":
-                            response = "Krotium Minecraft Launcher rev " + String.valueOf(Constants.KERNEL_REVISION);
+                            response = "Krothium Minecraft Launcher v" + Constants.KERNEL_BUILD_NAME;
                             break;
                         case "logout":
                             if (kernel.logOut()){
