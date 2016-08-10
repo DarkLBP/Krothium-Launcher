@@ -220,10 +220,6 @@ public class WebLauncherThread extends Thread{
                             response += ":";
                             response += String.valueOf(kernel.getDownloadProgress());
                             break;
-                        case "close":
-                            kernel.saveProfiles();
-                            closeWhenFinished = true;
-                            break;
                         case "keepalive":
                             WebLauncher.lastKeepAlive = System.nanoTime();
                             break;
@@ -494,7 +490,7 @@ public class WebLauncherThread extends Thread{
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
                 out.write("Content-Type: text/plain\r\n".getBytes());
-                out.write(("Content-Length: " + response.length()).getBytes());
+                out.write(("Content-Length: " + response.length() + "\r\n").getBytes());
                 out.write("\r\n".getBytes());
                 out.write(response.getBytes());
             }

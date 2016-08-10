@@ -6,18 +6,33 @@ var play_value = "";
 var profile_value = "";
 var keepAlive_interval = setInterval(function(){keepAlive();}, 1000);
 var keepAlive_requested = false;
+var authenticate_requested = false;
 function authenticate(){
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    if (username === "" || password === "" || username === null || password === null){
-        swal("Error", "Invalid credentials!", "error");
-    } else {
-        var parameters = toBase64(username) + ":" + toBase64(password);
-        var response = postRequest("authenticate", parameters);
-        if (response === "OK"){
-            redirect("/play.html");
+    if (!authenticate_requested){
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        if (username === "" || password === "" || username === null || password === null){
+            swal("Error", "Invalid credentials!", "error");
         } else {
-            swal("Error", response, "error");
+            var parameters = toBase64(username) + ":" + toBase64(password);
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    authenticate_requested = false;
+                    var response = xhr.responseText;
+                    if (response === "OK"){
+                        redirect("/play.html");
+                    } else {
+                        swal("Error", response, "error");
+                    }
+                }
+            };
+            xhr.onerror = function(){
+                swal("Error", "Failed to send authentication query.", "error");
+            };
+            xhr.open("POST", "/action/authenticate", true);
+            xhr.send(parameters);  
+            authenticate_requested = true;
         }
     }
 }
@@ -127,16 +142,31 @@ function saveProfile(){
             javaargs = toBase64(document.getElementById("javaArgs").value);
         }
         var parameters = name_base + ":" + name + ":" + version + ":" + snapshot + ":" + oldbeta + ":" + oldalpha + ":" + gamedir + ":" + resolution + ":" + javaexec + ":" + javaargs;
-        var response = postRequest("saveprofile", parameters);
-        if (response !== "OK"){
-             swal("Error", response, "error");
-        } else {
-            redirect("/profiles.html");
-        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var response = xhr.responseText;
+                if (response !== "OK"){
+                    swal("Error", response, "error");
+                } else {
+                    swal({title: "Success", text: "Profile " + fromBase64(name_base) + " saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                }
+            }
+        };
+        xhr.onerror = function(){
+            swal("Error", "Failed to send saveprofile query.", "error");
+        };
+        xhr.open("POST", "/action/saveprofile", true);
+        xhr.send(parameters);
     }
 }
 function playGame(){
-    postRequest("play", null);
+    var xhr = new XMLHttpRequest();
+    xhr.onerror = function(){
+        swal("Error", "Failed to send play query.", "error");
+    };
+    xhr.open("POST", "/action/play", true);
+    xhr.send();
 }
 function status(){
     var xhr = new XMLHttpRequest();
@@ -176,9 +206,6 @@ function status(){
 function redirect(url){
     window.location.href = url;
 }
-function shutdown(){
-    postRequest("close", null);
-}
 function keepAlive(){
     if (!keepAlive_requested){
         var xhr = new XMLHttpRequest();
@@ -214,14 +241,34 @@ function postRequest(action, parameters){
     return xhr.responseText;
 }
 function loadSignature(){
-    var response = postRequest("signature", null);
-    document.getElementById("signature").innerHTML = "<center>" + response + "</center>";
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            document.getElementById("signature").innerHTML = "<center>" + response + "</center>";
+        }
+    };
+    xhr.onerror = function(){
+        document.getElementById("signature").innerHTML = "<center>Failed to signature.</center>";
+    };
+    xhr.open("POST", "/action/signature", true);
+    xhr.send();
 }
 function logOut(){
-    var response = postRequest("logout", null);
-    if (response === "OK"){
-        redirect("/login.html");
-    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response === "OK"){
+                redirect("/login.html");
+            }
+        }
+    };
+    xhr.onerror = function(){
+                swal("Error", "Failed to send logout query.", "error");
+    };
+    xhr.open("POST", "/action/logout", true);
+    xhr.send();
 }
 function loadProfiles(){
     var response = postRequest("profiles", null);
@@ -242,36 +289,66 @@ function loadProfiles(){
     document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response.split(":")[1]);
 }
 function loadProfileList(){
-    var response = postRequest("profiles", null);
-    var data = response.split(":");
-    if (data.constructor === Array){
-        var data_length = data.length;
-        var value = "";
-        for (var i = 0; i < data_length; i++){
-            var name = fromBase64(data[i]);
-            value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            var data = response.split(":");
+            if (data.constructor === Array){
+                var data_length = data.length;
+                var value = "";
+                for (var i = 0; i < data_length; i++){
+                    var name = fromBase64(data[i]);
+                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
+                }
+                value += '<br><a class="red-button wide" href="#">Create New</a>';
+                document.getElementById("profileList").innerHTML = value;
+            }
         }
-        value += '<br><a class="red-button wide" href="#">Create New</a>';
-        document.getElementById("profileList").innerHTML = value;
-    }
+    };
+    xhr.onerror = function(){
+         swal("Error", "Failed to send profiles query.", "error");
+    };
+    xhr.open("POST", "/action/profiles", true);
+    xhr.send();
 }
 function setSelectedProfile(){
     var selected = document.getElementById("profiles").value;
     if (selected !== profile_value){
-        var response = postRequest("setselectedprofile", selected);
-        if (response !== "OK"){
-            swal("Error", "Failed to change the selected profile.", "error");
-        }
-        loadProfiles();
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var response = xhr.responseText;
+                if (response !== "OK"){
+                    swal("Error", "Failed to change the selected profile.", "error");
+                }
+                loadProfiles();
+            }
+        };
+        xhr.onerror = function(){
+            swal("Error", "Failed to send setselectedprofile query.", "error");
+        };
+        xhr.open("POST", "/action/setselectedprofile", true);
+        xhr.send();
     }
 }
 function deleteProfile(base64name){
-    var response = postRequest("deleteprofile", base64name);
-    if (response !== "OK"){
-        swal("Error", "Failed to delete profile " + fromBase64(base64name) + ".", "error");
-    } else {
-        redirect("/profiles.html");
-    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response !== "OK"){
+                swal("Error", "Failed to delete profile " + fromBase64(base64name) + ".", "error");
+            } else {
+                swal("Success", "Profile " + fromBase64(base64name) + " deleted successfully.", "success");
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send deleteprofile query.", "error");
+    };
+    xhr.open("POST", "/action/deleteprofile", true);
+    xhr.send(base64name);
 }
 function toBase64(string){
     return window.btoa(string);
