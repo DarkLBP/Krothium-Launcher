@@ -458,6 +458,38 @@ public class WebLauncherThread extends Thread{
                                 response = "ERROR";
                             }
                             break;
+                        case "changeskin":
+                            if (!isBinary){
+                                response = "No binary data.";
+                                break;
+                            } else if (contentLength == 0){
+                                response = "File has 0 bytes.";
+                                break;
+                            } else if (contentType == null){
+                                response = "Invalid content type.";
+                                break;
+                            } else if (!contentType.equals("image/png")){
+                                response = "Invalid skin format. Must be a valid PNG file.";
+                                break;
+                            }
+                            response = "OK";
+                            break;
+                        case "changecape":
+                            if (!isBinary){
+                                response = "No binary data.";
+                                break;
+                            } else if (contentLength == 0){
+                                response = "File has 0 bytes.";
+                                break;
+                            } else if (contentType == null){
+                                response = "Invalid content type.";
+                                break;
+                            } else if (!contentType.equals("image/png")){
+                                response = "Invalid cape format. Must be a valid PNG file.";
+                                break;
+                            }
+                            response = "OK";
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

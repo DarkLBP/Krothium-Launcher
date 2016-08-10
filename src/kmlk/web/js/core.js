@@ -185,6 +185,7 @@ function postRequest(action, parameters){
     xhr.open("POST", "/action/" + action, false);
     if (parameters !== null){
         if (parameters.constructor === File){
+            xhr.setRequestHeader("Content-Length", parameters.size);
             xhr.setRequestHeader("Content-Type", parameters.type);
         } else {
             xhr.setRequestHeader("Content-Type", "text/plain");
@@ -263,14 +264,20 @@ function fromBase64(string){
 }
 function updateSkin(){
     if (document.getElementById("skinFile").files.length > 0){
-        postRequest("changeskin", document.getElementById("skinFile").files[0]);
+        var response = postRequest("changeskin", document.getElementById("skinFile").files[0]);
+        if (response !== "OK"){
+            swal("Error", response, "error");
+        }
     } else {
         swal("Warning", "Select a skin first.", "warning");
     }
 }
 function updateCape(){
     if (document.getElementById("capeFile").files.length > 0){
-        postRequest("changecape", document.getElementById("capeFile").files[0]);
+        var response = postRequest("changecape", document.getElementById("capeFile").files[0]);
+        if (response !== "OK"){
+            swal("Error", response, "error");
+        }
     } else {
         swal("Warning", "Select a cape first.", "warning");
     }

@@ -162,9 +162,8 @@ public class Utils {
         catch(Exception ex){}
         return null;
     }
-    public static String sendPost(URL url, String data, Map<String, String> params) throws Exception {
+    public static String sendPost(URL url, byte[] data, Map<String, String> params) throws Exception {
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-        byte[] postAsBytes = data.getBytes(Charset.forName("UTF-8"));
         con.setDoOutput(true);
         con.setRequestMethod("POST");
         if (params.size() > 0){
@@ -176,9 +175,9 @@ public class Utils {
             }
         }
         con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-        con.setRequestProperty("Content-Length", "" + postAsBytes.length);
+        con.setRequestProperty("Content-Length", "" + data.length);
         OutputStream out = con.getOutputStream();
-        out.write(postAsBytes);
+        out.write(data);
         out.close();
         InputStream i = null;
         StringBuilder response = new StringBuilder();

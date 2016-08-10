@@ -3,6 +3,7 @@ package kmlk;
 import kmlk.exceptions.AuthenticationException;
 import kmlk.objects.User;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString(), postParams);
+            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -141,7 +142,7 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.REFRESH_URL, request.toString(), postParams);
+            response = Utils.sendPost(Constants.REFRESH_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -180,7 +181,7 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString(), postParams);
+            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
