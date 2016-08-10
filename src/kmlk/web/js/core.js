@@ -1,10 +1,10 @@
 //Core javascript functions for KMLK inner functionality
 //Created by DarkLBP (https://krothium.com)
-var status_interval = setInterval(function(){status();}, 2000);
+var status_interval = setInterval(function(){status();}, 1000);
 var progress_value = 0;
 var play_value = "";
 var profile_value = "";
-var keepAlive_interval = setInterval(function(){keepAlive();}, 2000);
+var keepAlive_interval = setInterval(function(){keepAlive();}, 1000);
 function authenticate(){
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
@@ -172,7 +172,13 @@ function shutdown(){
     postRequest("close", null);
 }
 function keepAlive(){
-    postRequest("keepalive", null);
+    try{
+        postRequest("keepalive", null);
+    } catch (ex){
+        clearInterval(status_interval);
+        clearInterval(keepAlive_interval);
+        swal("Error", "Connection lost with the launcher.\n" + ex, "error");
+    }
 }
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();

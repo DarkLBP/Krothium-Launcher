@@ -14,8 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
 import kmlk.exceptions.DownloaderException;
@@ -186,10 +184,8 @@ public class WebLauncherThread extends Thread{
                                     try{
                                         kernel.download();
                                         kernel.launchGame();
-                                    } catch (GameLauncherException ex){
+                                    } catch (GameLauncherException | DownloaderException ex){
                                         console.printError(ex.getMessage());
-                                    } catch (DownloaderException ex) {
-                                       console.printError(ex.getMessage());
                                     }
                                 }
                             };
@@ -219,7 +215,7 @@ public class WebLauncherThread extends Thread{
                         case "logout":
                             if (kernel.logOut()){
                                kernel.saveProfiles();
-                                response = "OK"; 
+                               response = "OK"; 
                             }
                             break;
                         case "profiles":
@@ -457,9 +453,7 @@ public class WebLauncherThread extends Thread{
             if (closeWhenFinished){
                 System.exit(0);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(WebLauncherThread.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (WebLauncherException ex) {
+        } catch (IOException | WebLauncherException  ex) {
             console.printError(ex.getMessage());
         }
         console.printInfo("Ended thread task");
