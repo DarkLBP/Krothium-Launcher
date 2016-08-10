@@ -37,10 +37,8 @@ public class WebLauncherThread extends Thread{
         this.kernel = k;
         this.console = kernel.getConsole();
     }
-    
     @Override
-    public void run()
-    {
+    public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
             OutputStream out = this.clientSocket.getOutputStream();

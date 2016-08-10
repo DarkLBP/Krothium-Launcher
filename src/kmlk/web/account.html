@@ -60,28 +60,10 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <div class="box-title" id="profileTitle"></div>
-          <div id="profileList" class="white-box">
-              Profile Name:<br>
-              <input class="wide" type="text" id="profileName" value=""/><br>
-              Minecraft Version:<br>
-              <select id="versionList" class="form-control"></select><br>
-              <input type="checkbox" onclick="refreshVersionList();" id="snapshot"/> Allow Snapshot Versions<br>
-              <input type="checkbox" onclick="refreshVersionList();" id="oldBeta"/> Allow Old Beta Versions<br>
-              <input type="checkbox" onclick="refreshVersionList();" id="oldAlpha"/> Allow Old Alpha Versions<br>
-              <br>
-              Game Directory:<br>
-              <input class="wide" type="text" id="gameDirectory" value=""/><br>
-              Resolution:<br>
-              <input type="text" id="resX" value=""/>
-              x
-              <input type="text" id="resY" value=""/><br><br>
-              Java Executable:<br>
-              <input class="wide" type="text" id="javaExecutable" value=""/><br>
-              Java Arguments:<br>
-              <input class="wide" type="text" id="javaArgs" value=""/><br>
-              <br><a class="red-button wide" onclick="saveProfile();" href="#">Save Profile</a>
-              <script>loadProfileData();</script>
+          <div class="box-title"><i class="fa fa-newspaper-o"></i> Account</div>
+          <div id="accountData" class="white-box">
+              <b>Current Skin:</b><br>
+              <b>Current Cape:</b>
           </div>
         </div>
         <div class="col-md-4">
@@ -90,7 +72,7 @@
               <b>Selected Profile:</b>
               <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
               <b>Minecraft Version:</b>
-              <div id="version"></div><br>
+              <div id="version"></div>
               <script>loadProfiles();</script>
           </div>
           <div class="box-title"><i class="fa fa-user"></i> Our Website</div>

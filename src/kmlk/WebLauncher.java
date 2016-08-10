@@ -30,6 +30,7 @@ public class WebLauncher {
         if (a.hasSelectedUser()){
             try{
                 a.refresh();
+                kernel.saveProfiles();
             }catch(Exception ex){
                 //
             }
