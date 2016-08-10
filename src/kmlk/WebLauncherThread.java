@@ -1,6 +1,7 @@
 package kmlk;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import kmlk.exceptions.WebLauncherException;
 import java.io.File;
 import java.io.IOException;
@@ -45,21 +46,38 @@ public class WebLauncherThread extends Thread{
             String line = in.readLine();
             boolean isPost = line.startsWith("POST");
             int contentLength = 0;
+            String contentType = null;
+            ByteArrayOutputStream binary = new ByteArrayOutputStream();
+            boolean isBinary = false;
             b.append(line).append("\n");
             while (!(line = in.readLine()).equals("")) {
                 b.append(line).append("\n");
                 if (isPost){
                     final String contentHeader = "Content-Length: ";
+                    final String typeHeader = "Content-Type: ";
                     if (line.startsWith(contentHeader)){
                         contentLength = Integer.parseInt(line.substring(contentHeader.length()));
                     }
+                    if (line.startsWith(typeHeader)){
+                        contentType = line.substring(typeHeader.length());
+                    }
                 }
             }
-            if (isPost && contentLength > 0){
-                int read;
-                for (int i = 0; i < contentLength; i++){
-                    read = in.read();
-                    b.append((char)read);
+            if (isPost && contentLength > 0 && contentType != null){
+                if (contentType.startsWith("text/")){
+                    int read;
+                    for (int i = 0; i < contentLength; i++){
+                        read = in.read();
+                        b.append((char)read);
+                    }
+                } else {
+                    isBinary = true;
+                    int read;
+                    InputStream in2 = this.clientSocket.getInputStream();
+                    for (int i = 0; i < contentLength; i++){
+                        read = in2.read();
+                        binary.write(read);
+                    }
                 }
             }
             request = b.toString();

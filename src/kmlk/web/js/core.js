@@ -183,6 +183,15 @@ function keepAlive(){
 function postRequest(action, parameters){
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/action/" + action, false);
+    if (parameters !== null){
+        if (parameters.constructor === File){
+            xhr.setRequestHeader("Content-Type", parameters.type);
+        } else {
+            xhr.setRequestHeader("Content-Type", "text/plain");
+        }
+    } else {
+        xhr.setRequestHeader("Content-Type", "text/plain");
+    }
     xhr.send(parameters);
     return xhr.responseText;
 }
@@ -251,4 +260,18 @@ function toBase64(string){
 }
 function fromBase64(string){
     return window.atob(string);
+}
+function updateSkin(){
+    if (document.getElementById("skinFile").files.length > 0){
+        postRequest("changeskin", document.getElementById("skinFile").files[0]);
+    } else {
+        swal("Warning", "Select a skin first.", "warning");
+    }
+}
+function updateCape(){
+    if (document.getElementById("capeFile").files.length > 0){
+        postRequest("changecape", document.getElementById("capeFile").files[0]);
+    } else {
+        swal("Warning", "Select a cape first.", "warning");
+    }
 }
