@@ -265,7 +265,7 @@ function logOut(){
         }
     };
     xhr.onerror = function(){
-                swal("Error", "Failed to send logout query.", "error");
+        swal("Error", "Failed to send logout query.", "error");
     };
     xhr.open("POST", "/action/logout", true);
     xhr.send();
