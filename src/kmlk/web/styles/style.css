@@ -133,7 +133,8 @@ progress{
 .playButton{
   font-size:30px;
 }
-.profileButton{
+.halfWideButton{
+    display:block;
     width:50%;
     margin-bottom:5px;
 }

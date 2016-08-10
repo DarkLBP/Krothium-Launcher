@@ -17,6 +17,9 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -159,11 +162,19 @@ public class Utils {
         catch(Exception ex){}
         return null;
     }
-    public static String sendJSONPost(URL url, String data) throws Exception {
+    public static String sendPost(URL url, String data, Map<String, String> params) throws Exception {
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
         byte[] postAsBytes = data.getBytes(Charset.forName("UTF-8"));
         con.setDoOutput(true);
         con.setRequestMethod("POST");
+        if (params.size() > 0){
+            Set keys = params.keySet();
+            Iterator it = keys.iterator();
+            while (it.hasNext()){
+                String param = it.next().toString();
+                con.setRequestProperty(param, params.get(param));
+            }
+        }
         con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         con.setRequestProperty("Content-Length", "" + postAsBytes.length);
         OutputStream out = con.getOutputStream();

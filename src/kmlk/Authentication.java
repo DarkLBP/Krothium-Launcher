@@ -77,9 +77,12 @@ public class Authentication {
             request.put("clientToken", this.clientToken);
         }
         request.put("requestUser", true);
+        Map<String, String> postParams = new HashMap();
+        postParams.put("Content-Type", "application/json; charset=utf-8");
+        postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.AUTHENTICATE_URL, request.toString());
+            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString(), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -133,9 +136,12 @@ public class Authentication {
         request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
         request.put("requestUser", true);
+        Map<String, String> postParams = new HashMap();
+        postParams.put("Content-Type", "application/json; charset=utf-8");
+        postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.REFRESH_URL, request.toString());
+            response = Utils.sendPost(Constants.REFRESH_URL, request.toString(), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
@@ -169,9 +175,12 @@ public class Authentication {
         agent.put("version", 1);
         request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
+        Map<String, String> postParams = new HashMap();
+        postParams.put("Content-Type", "application/json; charset=utf-8");
+        postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendJSONPost(Constants.VALIDATE_URL, request.toString());
+            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString(), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.");
         }
