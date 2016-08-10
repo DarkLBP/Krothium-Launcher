@@ -5,6 +5,7 @@ var progress_value = 0;
 var play_value = "";
 var profile_value = "";
 var keepAlive_interval = setInterval(function(){keepAlive();}, 1000);
+var keepAlive_requested = false;
 function authenticate(){
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
@@ -138,32 +139,39 @@ function playGame(){
     postRequest("play", null);
 }
 function status(){
-    var response = postRequest("status", "");
-    var data = response.split(":");
-    if (data.constructor === Array){
-        if (data.length === 2){
-            var status = data[0];
-            var progress = data[1];
-            if (progress !== progress_value){
-                document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>'
-                progress_value = progress;
-            }
-            if (status !== play_value){
-                switch (status){
-                    case "0":
-                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>';
-                        break;
-                    case "1":
-                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DOWNLOADING</a>';
-                        break;
-                    case "2":
-                        document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAYING</a>';
-                        break;
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            var data = response.split(":");
+            if (data.constructor === Array){
+                if (data.length === 2){
+                    var status = data[0];
+                    var progress = data[1];
+                    if (progress !== progress_value){
+                        document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>'
+                        progress_value = progress;
+                    }
+                    if (status !== play_value){
+                        switch (status){
+                            case "0":
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>';
+                                break;
+                            case "1":
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DOWNLOADING</a>';
+                                break;
+                            case "2":
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAYING</a>';
+                                break;
+                        }
+                        play_value = status;
+                    }
                 }
-                play_value = status;
             }
         }
-    }
+    };
+    xhr.open("POST", "/action/status", true);
+    xhr.send();
 }
 function redirect(url){
     window.location.href = url;
@@ -172,12 +180,21 @@ function shutdown(){
     postRequest("close", null);
 }
 function keepAlive(){
-    try{
-        postRequest("keepalive", null);
-    } catch (ex){
-        clearInterval(status_interval);
-        clearInterval(keepAlive_interval);
-        swal("Error", "Connection lost with the launcher.\n" + ex, "error");
+    if (!keepAlive_requested){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                keepAlive_requested = false;
+            }
+        };
+        xhr.onerror = function(){
+            clearInterval(status_interval);
+            clearInterval(keepAlive_interval);
+            swal("Error", "Connection lost with the launcher.\nYou can close this page safely.", "error");  
+        };
+        xhr.open("POST", "/action/keepalive", true);
+        xhr.send();
+        keepAlive_requested = true;
     }
 }
 function postRequest(action, parameters){

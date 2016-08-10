@@ -493,7 +493,8 @@ public class WebLauncherThread extends Thread{
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                out.write("Content-Type: text/html\r\n".getBytes());
+                out.write("Content-Type: text/plain\r\n".getBytes());
+                out.write(("Content-Length: " + response.length()).getBytes());
                 out.write("\r\n".getBytes());
                 out.write(response.getBytes());
             }
