@@ -9,17 +9,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.net.ssl.HttpsURLConnection;
 import kmlk.enums.VersionType;
 import kmlk.exceptions.AuthenticationException;
 import kmlk.exceptions.DownloaderException;
 import kmlk.exceptions.GameLauncherException;
 import kmlk.objects.Profile;
+import kmlk.objects.User;
 import kmlk.objects.VersionMeta;
 
 /**
@@ -47,6 +52,7 @@ public class WebLauncherThread extends Thread{
             boolean isPost = line.startsWith("POST");
             int contentLength = 0;
             String contentType = null;
+            String contentExtra = null;
             ByteArrayOutputStream binary = new ByteArrayOutputStream();
             boolean isBinary = false;
             b.append(line).append("\n");
@@ -55,11 +61,13 @@ public class WebLauncherThread extends Thread{
                 if (isPost){
                     final String contentHeader = "Content-Length: ";
                     final String typeHeader = "Content-Type: ";
+                    final String extraHeader = "Content-Extra: ";
                     if (line.startsWith(contentHeader)){
                         contentLength = Integer.parseInt(line.substring(contentHeader.length()));
-                    }
-                    if (line.startsWith(typeHeader)){
+                    } else if (line.startsWith(typeHeader)){
                         contentType = line.substring(typeHeader.length());
+                    } else if (line.startsWith(extraHeader)){
+                        contentExtra = line.substring(extraHeader.length());
                     }
                 }
             }
@@ -454,36 +462,81 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "changeskin":
-                            if (!isBinary){
-                                response = "No binary data.";
-                                break;
-                            } else if (contentLength == 0){
-                                response = "File has 0 bytes.";
-                                break;
-                            } else if (contentType == null){
+                            if (contentType == null){
                                 response = "Invalid content type.";
                                 break;
                             } else if (!contentType.equals("image/png")){
                                 response = "Invalid skin format. Must be a valid PNG file.";
                                 break;
-                            }
-                            response = "OK";
-                            break;
-                        case "changecape":
-                            if (!isBinary){
+                            } else if (!isBinary){
                                 response = "No binary data.";
                                 break;
                             } else if (contentLength == 0){
                                 response = "File has 0 bytes.";
                                 break;
-                            } else if (contentType == null){
+                            } else if (contentExtra == null){
+                                response = "Skin type not specified.";
+                                break;
+                            } else if (!contentExtra.equals("alex") && !contentExtra.equals("steve")){
+                                response = "Invalid skin type.";
+                                break;
+                            }
+                            Map<String, String> params = new HashMap();
+                            User u = kernel.getSelectedUser();
+                            params.put("Access-Token", u.getAccessToken());
+                            params.put("Client-Token", kernel.getClientToken());
+                            params.put("Skin-Type", contentExtra);
+                            params.put("Content-Type", "image/png");
+                            params.put("Content-Length", "" + contentLength);
+                            try{
+                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params);
+                            } catch (Exception ex){
+                                response = "Failed to change skin. (NETWORK_ERROR)";
+                            }
+                            break;
+                        case "changecape":
+                            if (contentType == null){
                                 response = "Invalid content type.";
                                 break;
                             } else if (!contentType.equals("image/png")){
                                 response = "Invalid cape format. Must be a valid PNG file.";
                                 break;
+                            } else if (!isBinary){
+                                response = "No binary data.";
+                                break;
+                            } else if (contentLength == 0){
+                                response = "File has 0 bytes.";
+                                break;
                             }
-                            response = "OK";
+                            Map<String, String> params2 = new HashMap();
+                            User u2 = kernel.getSelectedUser();
+                            params2.put("Access-Token", u2.getAccessToken());
+                            params2.put("Client-Token", kernel.getClientToken());
+                            params2.put("Content-Type", "image/png");
+                            params2.put("Content-Length", "" + contentLength);
+                            try{
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params2);
+                            } catch (Exception ex){
+                                response = "Failed to change cape. (NETWORK_ERROR)";
+                            }
+                            break;
+                        case "getskin":
+                            User u3 = kernel.getSelectedUser();
+                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/" + u3.getProfileID().toString().replaceAll("-", "") + ".png");
+                            HttpsURLConnection con = (HttpsURLConnection)skinURL.openConnection();
+                            int responseCode = con.getResponseCode();
+                            if (responseCode == 200){
+                                response = skinURL.toString();
+                            }
+                            break;
+                        case "getcape":
+                            User u4 = kernel.getSelectedUser();
+                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/" + u4.getProfileID().toString().replaceAll("-", "") + ".png");
+                            HttpsURLConnection con2 = (HttpsURLConnection)capeURL.openConnection();
+                            int responseCode2 = con2.getResponseCode();
+                            if (responseCode2 == 200){
+                                response = capeURL.toString();
+                            }
                             break;
                     }
                 }

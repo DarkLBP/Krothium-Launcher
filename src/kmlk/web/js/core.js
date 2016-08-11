@@ -419,6 +419,8 @@ function updateSkin(){
                 var response = xhr.responseText;
                 if (response !== "OK"){
                     swal("Error", response, "error");
+                } else {
+                    swal({title: "Success", text: "Skin saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
                 }
             }
         };
@@ -428,6 +430,7 @@ function updateSkin(){
         xhr.open("POST", "/action/changeskin", true);
         xhr.setRequestHeader("Content-Type", document.getElementById("skinFile").files[0].type);
         xhr.setRequestHeader("Content-Length", document.getElementById("skinFile").files[0].length);
+        xhr.setRequestHeader("Content-Extra", document.getElementById("skinFormat").value);
         xhr.send(document.getElementById("skinFile").files[0]);
     } else {
         swal("Warning", "Select a skin first.", "warning");
@@ -441,6 +444,8 @@ function updateCape(){
                 var response = xhr.responseText;
                 if (response !== "OK"){
                     swal("Error", response, "error");
+                } else {
+                    swal({title: "Success", text: "Cape saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
                 }
             }
         };
@@ -454,4 +459,35 @@ function updateCape(){
     } else {
         swal("Warning", "Select a cape first.", "warning");
     }
+}
+function getTexturePreviews(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response !== ""){
+                document.getElementById("capePreview").innerHTML = "<img src=\"" + response + "\">";
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send hascape query.", "error");
+    };
+    xhr.open("POST", "/action/getcape", true);
+    xhr.send();
+    
+    var xhr2 = new XMLHttpRequest();
+    xhr2.onreadystatechange = function() {
+        if (xhr2.readyState === XMLHttpRequest.DONE) {
+            var response = xhr2.responseText;
+            if (response !== ""){
+                document.getElementById("skinPreview").innerHTML = "<img src=\"" + response + "\">";
+            }
+        }
+    };
+    xhr2.onerror = function(){
+        swal("Error", "Failed to send hasskin query.", "error");
+    };
+    xhr2.open("POST", "/action/getskin", true);
+    xhr2.send();
 }
