@@ -70,6 +70,8 @@ public final class Kernel {
     public boolean isDownloading(){return this.downloader.isDownloading();}
     public boolean deleteProfile(String name){return this.profiles.deleteProfile(name);}
     public String getLatestVersion(){return this.versions.getLatestRelease();}
+    public boolean isAuthenticated(){return this.authentication.isAuthenticated();}
+    public String getClientToken(){return this.authentication.getClientToken();}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

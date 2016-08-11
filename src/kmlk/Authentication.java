@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class Authentication {
     private boolean authenticated = false;
     private final Console console;
-    protected String clientToken;
+    protected String clientToken = UUID.randomUUID().toString();
     protected Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
     private final Kernel kernel;
@@ -167,8 +167,7 @@ public class Authentication {
             }
         }
     }
-    public void validate() throws AuthenticationException
-    {
+    public void validate() throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         User u = this.getFromDatabase(this.selectedProfile);
@@ -275,7 +274,6 @@ public class Authentication {
             }
         }else{
             console.printError("Launcher profiles file not found. Using defaults.");
-            this.clientToken = UUID.randomUUID().toString();
         }
     }
     public void setClientToken(String clientToken){this.clientToken = clientToken;}

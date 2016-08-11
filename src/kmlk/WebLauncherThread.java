@@ -90,7 +90,7 @@ public class WebLauncherThread extends Thread{
             boolean closeWhenFinished = false;
             if (request.startsWith("GET")){
                 if (path.equals("/")){
-                    if (!kernel.getAuthentication().isAuthenticated()){
+                    if (!kernel.isAuthenticated()){
                         out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
                         out.write("Location: /login.html\r\n".getBytes());
                         out.write("\r\n".getBytes());
@@ -193,7 +193,6 @@ public class WebLauncherThread extends Thread{
                             } else {
                                 throw new WebLauncherException(path, 400, out);
                             }
-                            
                             break;
                         case "play":
                             Thread t = new Thread(){
