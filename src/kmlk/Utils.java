@@ -174,8 +174,6 @@ public class Utils {
                 con.setRequestProperty(param, params.get(param));
             }
         }
-        con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-        con.setRequestProperty("Content-Length", "" + data.length);
         OutputStream out = con.getOutputStream();
         out.write(data);
         out.close();
