@@ -426,6 +426,8 @@ function updateSkin(){
             swal("Error", "Failed to send changeskin query.", "error");
         };
         xhr.open("POST", "/action/changeskin", true);
+        xhr.setRequestHeader("Content-Type", document.getElementById("skinFile").files[0].type);
+        xhr.setRequestHeader("Content-Length", document.getElementById("skinFile").files[0].length);
         xhr.send(document.getElementById("skinFile").files[0]);
     } else {
         swal("Warning", "Select a skin first.", "warning");
@@ -446,6 +448,8 @@ function updateCape(){
             swal("Error", "Failed to send changecape query.", "error");
         };
         xhr.open("POST", "/action/changecape", true);
+        xhr.setRequestHeader("Content-Type", document.getElementById("capeFile").files[0].type);
+        xhr.setRequestHeader("Content-Length", document.getElementById("capeFile").files[0].length);
         xhr.send(document.getElementById("capeFile").files[0]);
     } else {
         swal("Warning", "Select a cape first.", "warning");
