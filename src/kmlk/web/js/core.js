@@ -44,73 +44,113 @@ function loadProfileData(){
     if (name_base === null){
         swal("Error", "Invalid profile request!", "error");
     } else {
-        var response = postRequest("profiledata", name_base);
-        var data = response.split(":");
-        if (data.constructor === Array){
-            if (data.length === 9){
-                var name = fromBase64(data[0]);
-                document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
-                document.getElementById("profileName").value = name;
-                document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
-                document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
-                document.getElementById("oldAlpha").checked = (fromBase64(data[4]) === "true");
-                response = postRequest("versions", null);
-                var vers = response.split(":");
-                if (vers.constructor === Array){
-                    var data_length = vers.length;
-                    var value = "";
-                    for (var i = 0; i < data_length; i++){
-                        if (vers[i] === "latest"){
-                            value += '<option value="latest">Use Latest Release</option>';
-                        } else {
-                            var name = fromBase64(vers[i]);
-                            value += '<option value="' + vers[i] + '">' + name + '</option>';
-                        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var response = xhr.responseText;
+                var data = response.split(":");
+                if (data.constructor === Array){
+                    if (data.length === 9){
+                        var name = fromBase64(data[0]);
+                        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
+                        document.getElementById("profileName").value = name;
+                        document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
+                        document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
+                        document.getElementById("oldAlpha").checked = (fromBase64(data[4]) === "true");
+                        var xhr2 = new XMLHttpRequest();
+                        xhr2.onreadystatechange = function() {
+                            if (xhr2.readyState === XMLHttpRequest.DONE) {
+                                var response2 = xhr2.responseText;
+                                var vers = response2.split(":");
+                                if (vers.constructor === Array){
+                                    var data_length = vers.length;
+                                    var value = "";
+                                    for (var i = 0; i < data_length; i++){
+                                        if (vers[i] === "latest"){
+                                            value += '<option value="latest">Use Latest Release</option>';
+                                        } else {
+                                            var name = fromBase64(vers[i]);
+                                            value += '<option value="' + vers[i] + '">' + name + '</option>';
+                                        }
+                                    }
+                                    document.getElementById("versionList").innerHTML = value;
+                                }
+                                document.getElementById("versionList").value = data[1];
+                                if (data[5] !== "noset"){
+                                    document.getElementById("gameDirectory").value = fromBase64(data[5]);
+                                }
+                                if (data[6] !== "noset"){
+                                    var resolution = fromBase64(data[6]);
+                                    document.getElementById("resX").value = resolution.split("x")[0];
+                                    document.getElementById("resY").value = resolution.split("x")[1];
+                                }
+                                if (data[7] !== "noset"){
+                                    document.getElementById("javaExecutable").value = fromBase64(data[7]);
+                                }
+                                if (data[8] !== "noset"){
+                                    document.getElementById("javaArgs").value = fromBase64(data[8]);
+                                }
+                            }
+                        };
+                        xhr2.onerror = function(){
+                            swal("Error", "Failed to send versions query.", "error");
+                        };
+                        xhr2.open("POST", "/action/versions", true);
+                        xhr2.send();
+                    }else{
+                        swal("Error", "Server replied with wrong amount of data.", "error");
                     }
-                    document.getElementById("versionList").innerHTML = value;
+                } else {
+                    swal("Error", "Could not load profile data.", "error");
                 }
-                document.getElementById("versionList").value = data[1];
-                if (data[5] !== "noset"){
-                    document.getElementById("gameDirectory").value = fromBase64(data[5]);
-                }
-                if (data[6] !== "noset"){
-                    var resolution = fromBase64(data[6]);
-                    document.getElementById("resX").value = resolution.split("x")[0];
-                    document.getElementById("resY").value = resolution.split("x")[1];
-                }
-                if (data[7] !== "noset"){
-                    document.getElementById("javaExecutable").value = fromBase64(data[7]);
-                }
-                if (data[8] !== "noset"){
-                    document.getElementById("javaArgs").value = fromBase64(data[8]);
-                }
-            }else{
-                swal("Error", "Server replied with wrong amount of data.", "error");
             }
-        } else {
-            swal("Error", "Could not load profile data.", "error");
-        }
+        };
+        xhr.onerror = function(){
+            swal("Error", "Failed to send profiledata query.", "error");
+        };
+        xhr.open("POST", "/action/profiledata", true);
+        xhr.send(name_base);
     }
 }
 function refreshVersionList(){
     var parameters = toBase64(document.getElementById("snapshot").checked.toString()) + ":" + toBase64(document.getElementById("oldBeta").checked.toString()) + ":" + toBase64(document.getElementById("oldAlpha").checked.toString());
-    var response = postRequest("versions", parameters);
-    var vers = response.split(":");
-    if (vers.constructor === Array){
-        var data_length = vers.length;
-        var value = "";
-        for (var i = 0; i < data_length; i++){
-            if (vers[i] === "latest"){
-                value += '<option value="latest">Use Latest Release</option>';
-            } else {
-                var name = fromBase64(vers[i]);
-                value += '<option value="' + vers[i] + '">' + name + '</option>';
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            var vers = response.split(":");
+            if (vers.constructor === Array){
+                var data_length = vers.length;
+                var value = "";
+                for (var i = 0; i < data_length; i++){
+                    if (vers[i] === "latest"){
+                        value += '<option value="latest">Use Latest Release</option>';
+                    } else {
+                        var name = fromBase64(vers[i]);
+                        value += '<option value="' + vers[i] + '">' + name + '</option>';
+                    }
+                }
+                document.getElementById("versionList").innerHTML = value;
             }
+            var xhr2 = new XMLHttpRequest();
+            xhr2.onreadystatechange = function() {
+                if (xhr2.readyState === XMLHttpRequest.DONE) {
+                    var response2 = xhr2.responseText;
+                    document.getElementById("versionList").value = fromBase64(response2.split(":")[0]);
+                }
+            };
+            xhr2.onerror = function(){
+                swal("Error", "Failed to send selectedversion query.", "error");
+            };
+            xhr2.open("POST", "/action/selectedversion", true);
+            xhr2.send();
         }
-        document.getElementById("versionList").innerHTML = value;
-    }
-    response = postRequest("selectedversion", null);
-    document.getElementById("versionList").value = fromBase64(response.split(":")[0]);
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send versions query.", "error");
+    };
+    xhr.open("POST", "/action/versions", true);
+    xhr.send(parameters);
 }
 function saveProfile(){
     var name_base = window.location.href.split("?")[1].replace('#', '');
@@ -224,22 +264,6 @@ function keepAlive(){
         keepAlive_requested = true;
     }
 }
-function postRequest(action, parameters){
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/action/" + action, false);
-    if (parameters !== null){
-        if (parameters.constructor === File){
-            xhr.setRequestHeader("Content-Length", parameters.size);
-            xhr.setRequestHeader("Content-Type", parameters.type);
-        } else {
-            xhr.setRequestHeader("Content-Type", "text/plain");
-        }
-    } else {
-        xhr.setRequestHeader("Content-Type", "text/plain");
-    }
-    xhr.send(parameters);
-    return xhr.responseText;
-}
 function loadSignature(){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -271,22 +295,53 @@ function logOut(){
     xhr.send();
 }
 function loadProfiles(){
-    var response = postRequest("profiles", null);
-    var data = response.split(":");
-    if (data.constructor === Array){
-        var data_length = data.length;
-        var value = "";
-        for (var i = 0; i < data_length; i++){
-            var name = fromBase64(data[i]);
-            value += '<option value="' + data[i] + '">' + name + '</option>';
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            var data = response.split(":");
+            if (data.constructor === Array){
+                var data_length = data.length;
+                var value = "";
+                for (var i = 0; i < data_length; i++){
+                    var name = fromBase64(data[i]);
+                    value += '<option value="' + data[i] + '">' + name + '</option>';
+                }
+                document.getElementById("profiles").innerHTML = value;
+            }
+            var xhr2 = new XMLHttpRequest();
+            xhr2.onreadystatechange = function() {
+                if (xhr2.readyState === XMLHttpRequest.DONE) {
+                    var response2 = xhr2.responseText;
+                    document.getElementById("profiles").value = response2;
+                    profile_value = response2;
+                }
+            };
+            xhr2.onerror = function(){
+                swal("Error", "Failed to send selectedprofile query.", "error");
+            };
+            xhr2.open("POST", "/action/selectedprofile", true);
+            xhr2.send();
+            
+            var xhr3 = new XMLHttpRequest();
+            xhr3.onreadystatechange = function() {
+                if (xhr3.readyState === XMLHttpRequest.DONE) {
+                    var response3 = xhr3.responseText;
+                    document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response3.split(":")[1]);
+                }
+            };
+            xhr3.onerror = function(){
+                swal("Error", "Failed to send selectedversion query.", "error");
+            };
+            xhr3.open("POST", "/action/selectedversion", true);
+            xhr3.send();
         }
-        document.getElementById("profiles").innerHTML = value;
-    }
-    response = postRequest("selectedprofile", null);
-    document.getElementById("profiles").value = response;
-    profile_value = response;
-    response = postRequest("selectedversion", null);
-    document.getElementById("version").innerHTML = "Minecraft " + fromBase64(response.split(":")[1]);
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send profiles query.", "error");
+    };
+    xhr.open("POST", "/action/profiles", true);
+    xhr.send();
 }
 function loadProfileList(){
     var xhr = new XMLHttpRequest();
@@ -358,20 +413,40 @@ function fromBase64(string){
 }
 function updateSkin(){
     if (document.getElementById("skinFile").files.length > 0){
-        var response = postRequest("changeskin", document.getElementById("skinFile").files[0]);
-        if (response !== "OK"){
-            swal("Error", response, "error");
-        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var response = xhr.responseText;
+                if (response !== "OK"){
+                    swal("Error", response, "error");
+                }
+            }
+        };
+        xhr.onerror = function(){
+            swal("Error", "Failed to send changeskin query.", "error");
+        };
+        xhr.open("POST", "/action/changeskin", true);
+        xhr.send(document.getElementById("skinFile").files[0]);
     } else {
         swal("Warning", "Select a skin first.", "warning");
     }
 }
 function updateCape(){
     if (document.getElementById("capeFile").files.length > 0){
-        var response = postRequest("changecape", document.getElementById("capeFile").files[0]);
-        if (response !== "OK"){
-            swal("Error", response, "error");
-        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var response = xhr.responseText;
+                if (response !== "OK"){
+                    swal("Error", response, "error");
+                }
+            }
+        };
+        xhr.onerror = function(){
+            swal("Error", "Failed to send changecape query.", "error");
+        };
+        xhr.open("POST", "/action/changecape", true);
+        xhr.send(document.getElementById("capeFile").files[0]);
     } else {
         swal("Warning", "Select a cape first.", "warning");
     }
