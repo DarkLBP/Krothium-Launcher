@@ -444,6 +444,7 @@ function deleteProfile(base64name){
             } else {
                 swal("Success", "Profile " + fromBase64(base64name) + " deleted successfully.", "success");
                 loadProfileList();
+                loadProfiles();
             }
         }
     };
