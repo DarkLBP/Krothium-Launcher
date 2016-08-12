@@ -538,6 +538,30 @@ public class WebLauncherThread extends Thread{
                                 response = capeURL.toString();
                             }
                             break;
+                        case "deleteskin":
+                            Map<String, String> params3 = new HashMap();
+                            User u5 = kernel.getSelectedUser();
+                            params3.put("Access-Token", u5.getAccessToken());
+                            params3.put("Client-Token", kernel.getClientToken());
+                            params3.put("Content-Length", "0");
+                            try{
+                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params3);
+                            } catch (Exception ex){
+                                response = "Failed to change skin. (NETWORK_ERROR)";
+                            }
+                            break;
+                        case "deletecape":
+                            Map<String, String> params4 = new HashMap();
+                            User u6 = kernel.getSelectedUser();
+                            params4.put("Access-Token", u6.getAccessToken());
+                            params4.put("Client-Token", kernel.getClientToken());
+                            params4.put("Content-Length", "0");
+                            try{
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params4);
+                            } catch (Exception ex){
+                                response = "Failed to change skin. (NETWORK_ERROR)";
+                            }
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());

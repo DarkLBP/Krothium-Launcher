@@ -460,13 +460,15 @@ function updateCape(){
         swal("Warning", "Select a cape first.", "warning");
     }
 }
-function getTexturePreviews(){
+function updateCapePreview(){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = xhr.responseText;
             if (response !== ""){
                 document.getElementById("capePreview").innerHTML = "<img src=\"" + response + "\">";
+            } else {
+                document.getElementById("capePreview").innerHTML = "";
             }
         }
     };
@@ -475,19 +477,60 @@ function getTexturePreviews(){
     };
     xhr.open("POST", "/action/getcape", true);
     xhr.send();
-    
-    var xhr2 = new XMLHttpRequest();
-    xhr2.onreadystatechange = function() {
-        if (xhr2.readyState === XMLHttpRequest.DONE) {
-            var response = xhr2.responseText;
+}
+function updateSkinPreview(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
             if (response !== ""){
                 document.getElementById("skinPreview").innerHTML = "<img src=\"" + response + "\">";
+            } else {
+                document.getElementById("skinPreview").innerHTML = "";
             }
         }
     };
-    xhr2.onerror = function(){
+    xhr.onerror = function(){
         swal("Error", "Failed to send hasskin query.", "error");
     };
-    xhr2.open("POST", "/action/getskin", true);
-    xhr2.send();
+    xhr.open("POST", "/action/getskin", true);
+    xhr.send();
+}
+function deleteSkin(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response !== "OK"){
+                swal("Error", "Failed to delete skin.\nError: " + response, "error");
+            } else {
+                swal("Success", "Skin deleted successfully.", "success");
+                updateSkinPreview();
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send deleteskin query.", "error");
+    };
+    xhr.open("POST", "/action/deleteskin", true);
+    xhr.send();
+}
+function deleteCape(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response !== "OK"){
+                swal("Error", "Failed to delete cape.\nError: " + response, "error");
+            } else {
+                swal("Success", "Cape deleted successfully.", "success");
+                updateCapePreview();
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("Error", "Failed to send deletecape query.", "error");
+    };
+    xhr.open("POST", "/action/deletecape", true);
+    xhr.send();
 }
