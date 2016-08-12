@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -182,6 +181,8 @@ public class WebLauncherThread extends Thread{
                         }
                     }
                     String profile;
+                    Map<String, String> params;
+                    User user;
                     switch (function){
                         case "authenticate":
                             if (contentLength > 0){
@@ -481,9 +482,9 @@ public class WebLauncherThread extends Thread{
                                 response = "Invalid skin type.";
                                 break;
                             }
-                            Map<String, String> params = new HashMap();
-                            User u = kernel.getSelectedUser();
-                            params.put("Access-Token", u.getAccessToken());
+                            params = new HashMap();
+                            user = kernel.getSelectedUser();
+                            params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Skin-Type", contentExtra);
                             params.put("Content-Type", "image/png");
@@ -508,21 +509,21 @@ public class WebLauncherThread extends Thread{
                                 response = "File has 0 bytes.";
                                 break;
                             }
-                            Map<String, String> params2 = new HashMap();
-                            User u2 = kernel.getSelectedUser();
-                            params2.put("Access-Token", u2.getAccessToken());
-                            params2.put("Client-Token", kernel.getClientToken());
-                            params2.put("Content-Type", "image/png");
-                            params2.put("Content-Length", "" + contentLength);
+                            params = new HashMap();
+                            user = kernel.getSelectedUser();
+                            params.put("Access-Token", user.getAccessToken());
+                            params.put("Client-Token", kernel.getClientToken());
+                            params.put("Content-Type", "image/png");
+                            params.put("Content-Length", "" + contentLength);
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params2);
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params);
                             } catch (Exception ex){
                                 response = "Failed to change cape. (NETWORK_ERROR)";
                             }
                             break;
                         case "getskin":
-                            User u3 = kernel.getSelectedUser();
-                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/legacy/" + u3.getDisplayName() + ".png");
+                            user = kernel.getSelectedUser();
+                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/legacy/" + user.getDisplayName() + ".png");
                             HttpsURLConnection con = (HttpsURLConnection)skinURL.openConnection();
                             int responseCode = con.getResponseCode();
                             if (responseCode == 200){
@@ -530,8 +531,8 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "getcape":
-                            User u4 = kernel.getSelectedUser();
-                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/legacy/" + u4.getDisplayName() + ".png");
+                            user = kernel.getSelectedUser();
+                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/legacy/" + user.getDisplayName() + ".png");
                             HttpsURLConnection con2 = (HttpsURLConnection)capeURL.openConnection();
                             int responseCode2 = con2.getResponseCode();
                             if (responseCode2 == 200){
@@ -539,25 +540,25 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "deleteskin":
-                            Map<String, String> params3 = new HashMap();
-                            User u5 = kernel.getSelectedUser();
-                            params3.put("Access-Token", u5.getAccessToken());
-                            params3.put("Client-Token", kernel.getClientToken());
-                            params3.put("Content-Length", "0");
+                            params = new HashMap();
+                            user = kernel.getSelectedUser();
+                            params.put("Access-Token", user.getAccessToken());
+                            params.put("Client-Token", kernel.getClientToken());
+                            params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params3);
+                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
                             break;
                         case "deletecape":
-                            Map<String, String> params4 = new HashMap();
-                            User u6 = kernel.getSelectedUser();
-                            params4.put("Access-Token", u6.getAccessToken());
-                            params4.put("Client-Token", kernel.getClientToken());
-                            params4.put("Content-Length", "0");
+                            params = new HashMap();
+                            user = kernel.getSelectedUser();
+                            params.put("Access-Token", user.getAccessToken());
+                            params.put("Client-Token", kernel.getClientToken());
+                            params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params4);
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
