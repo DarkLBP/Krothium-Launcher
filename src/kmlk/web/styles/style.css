@@ -130,6 +130,11 @@ progress{
   display:block;
   width:100%;
 }
+.wideWithMargin{
+   display:block;
+   margin-bottom:5px;
+   width:100%;
+}
 .playButton{
   font-size:30px;
 }

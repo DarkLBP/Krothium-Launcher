@@ -40,76 +40,109 @@ function register(){
     redirect("https://krothium.com/index.php?/register/");
 }
 function loadProfileData(){
-    var name_base = window.location.href.split("?")[1];
-    if (name_base === null){
-        swal("Error", "Invalid profile request!", "error");
+    if (window.location.href.indexOf("?") !== -1){
+        var name_base = window.location.href.split("?")[1];
+        if (name_base === null){
+            swal("Error", "Invalid profile request!", "error");
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = xhr.responseText;
+                    var data = response.split(":");
+                    if (data.constructor === Array){
+                        if (data.length === 9){
+                            var name = fromBase64(data[0]);
+                            document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
+                            document.getElementById("profileName").value = name;
+                            document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
+                            document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
+                            document.getElementById("oldAlpha").checked = (fromBase64(data[4]) === "true");
+                            var xhr2 = new XMLHttpRequest();
+                            xhr2.onreadystatechange = function() {
+                                if (xhr2.readyState === XMLHttpRequest.DONE) {
+                                    var response2 = xhr2.responseText;
+                                    var vers = response2.split(":");
+                                    if (vers.constructor === Array){
+                                        var data_length = vers.length;
+                                        var value = "";
+                                        for (var i = 0; i < data_length; i++){
+                                            if (vers[i] === "latest"){
+                                                value += '<option value="latest">Use Latest Release</option>';
+                                            } else {
+                                                var name = fromBase64(vers[i]);
+                                                value += '<option value="' + vers[i] + '">' + name + '</option>';
+                                            }
+                                        }
+                                        document.getElementById("versionList").innerHTML = value;
+                                    } else {
+                                        swal("Error", "Could not load version list.", "error");
+                                    }
+                                    document.getElementById("versionList").value = data[1];
+                                    if (data[5] !== "noset"){
+                                        document.getElementById("gameDirectory").value = fromBase64(data[5]);
+                                    }
+                                    if (data[6] !== "noset"){
+                                        var resolution = fromBase64(data[6]);
+                                        document.getElementById("resX").value = resolution.split("x")[0];
+                                        document.getElementById("resY").value = resolution.split("x")[1];
+                                    }
+                                    if (data[7] !== "noset"){
+                                        document.getElementById("javaExecutable").value = fromBase64(data[7]);
+                                    }
+                                    if (data[8] !== "noset"){
+                                        document.getElementById("javaArgs").value = fromBase64(data[8]);
+                                    }
+                                }
+                            };
+                            xhr2.onerror = function(){
+                                swal("Error", "Failed to send versions query.", "error");
+                            };
+                            xhr2.open("POST", "/action/versions", true);
+                            xhr2.send();
+                        }else{
+                            swal("Error", "Server replied with wrong amount of data.", "error");
+                        }
+                    } else {
+                        swal("Error", "Could not load profile data.", "error");
+                    }
+                }
+            };
+            xhr.onerror = function(){
+                swal("Error", "Failed to send profiledata query.", "error");
+            };
+            xhr.open("POST", "/action/profiledata", true);
+            xhr.send(name_base);
+        }
     } else {
+        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> New Profile';
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                var response = xhr.responseText;
-                var data = response.split(":");
-                if (data.constructor === Array){
-                    if (data.length === 9){
-                        var name = fromBase64(data[0]);
-                        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
-                        document.getElementById("profileName").value = name;
-                        document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
-                        document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
-                        document.getElementById("oldAlpha").checked = (fromBase64(data[4]) === "true");
-                        var xhr2 = new XMLHttpRequest();
-                        xhr2.onreadystatechange = function() {
-                            if (xhr2.readyState === XMLHttpRequest.DONE) {
-                                var response2 = xhr2.responseText;
-                                var vers = response2.split(":");
-                                if (vers.constructor === Array){
-                                    var data_length = vers.length;
-                                    var value = "";
-                                    for (var i = 0; i < data_length; i++){
-                                        if (vers[i] === "latest"){
-                                            value += '<option value="latest">Use Latest Release</option>';
-                                        } else {
-                                            var name = fromBase64(vers[i]);
-                                            value += '<option value="' + vers[i] + '">' + name + '</option>';
-                                        }
-                                    }
-                                    document.getElementById("versionList").innerHTML = value;
-                                }
-                                document.getElementById("versionList").value = data[1];
-                                if (data[5] !== "noset"){
-                                    document.getElementById("gameDirectory").value = fromBase64(data[5]);
-                                }
-                                if (data[6] !== "noset"){
-                                    var resolution = fromBase64(data[6]);
-                                    document.getElementById("resX").value = resolution.split("x")[0];
-                                    document.getElementById("resY").value = resolution.split("x")[1];
-                                }
-                                if (data[7] !== "noset"){
-                                    document.getElementById("javaExecutable").value = fromBase64(data[7]);
-                                }
-                                if (data[8] !== "noset"){
-                                    document.getElementById("javaArgs").value = fromBase64(data[8]);
-                                }
-                            }
-                        };
-                        xhr2.onerror = function(){
-                            swal("Error", "Failed to send versions query.", "error");
-                        };
-                        xhr2.open("POST", "/action/versions", true);
-                        xhr2.send();
-                    }else{
-                        swal("Error", "Server replied with wrong amount of data.", "error");
+                var response2 = xhr.responseText;
+                var vers = response2.split(":");
+                if (vers.constructor === Array){
+                    var data_length = vers.length;
+                    var value = "";
+                    for (var i = 0; i < data_length; i++){
+                        if (vers[i] === "latest"){
+                            value += '<option value="latest">Use Latest Release</option>';
+                        } else {
+                            var name = fromBase64(vers[i]);
+                            value += '<option value="' + vers[i] + '">' + name + '</option>';
+                        }
                     }
+                    document.getElementById("versionList").innerHTML = value;
                 } else {
-                    swal("Error", "Could not load profile data.", "error");
+                    swal("Error", "Could not load version list.", "error");
                 }
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send profiledata query.", "error");
+            swal("Error", "Failed to send versions query.", "error");
         };
-        xhr.open("POST", "/action/profiledata", true);
-        xhr.send(name_base);
+        xhr.open("POST", "/action/versions", true);
+        xhr.send();
     }
 }
 function refreshVersionList(){
@@ -131,6 +164,8 @@ function refreshVersionList(){
                     }
                 }
                 document.getElementById("versionList").innerHTML = value;
+            } else {
+                swal("Error", "Could not load version list.", "error");
             }
             var xhr2 = new XMLHttpRequest();
             xhr2.onreadystatechange = function() {
@@ -153,7 +188,11 @@ function refreshVersionList(){
     xhr.send(parameters);
 }
 function saveProfile(){
-    var name_base = window.location.href.split("?")[1].replace('#', '');
+    if (window.location.href.indexOf("?") !== -1){
+        var name_base = window.location.href.split("?")[1].replace('#', '');
+    } else {
+        var name_base = "noset";
+    }
     if (name_base === null){
         swal("Error", "Invalid profile request!", "error");
     } else {
@@ -189,7 +228,11 @@ function saveProfile(){
                 if (response !== "OK"){
                     swal("Error", response, "error");
                 } else {
-                    swal({title: "Success", text: "Profile " + fromBase64(name_base) + " saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                    if (name_base === "noset"){
+                        swal({title: "Success", text: "Profile " + fromBase64(name) + " added successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                    } else {
+                        swal({title: "Success", text: "Profile " + fromBase64(name_base) + " saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                    }
                 }
             }
         };
@@ -308,6 +351,8 @@ function loadProfiles(){
                     value += '<option value="' + data[i] + '">' + name + '</option>';
                 }
                 document.getElementById("profiles").innerHTML = value;
+            } else {
+                swal("Error", "Could not load profile list.", "error");
             }
             var xhr2 = new XMLHttpRequest();
             xhr2.onreadystatechange = function() {
@@ -356,8 +401,10 @@ function loadProfileList(){
                     var name = fromBase64(data[i]);
                     value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
                 }
-                value += '<br><a class="red-button wide" href="#">Create New</a>';
+                value += '<br><a class="red-button wide" href="/profile.html">Create New</a>';
                 document.getElementById("profileList").innerHTML = value;
+            } else {
+                swal("Error", "Could not load version list.", "error");
             }
         }
     };
@@ -384,7 +431,7 @@ function setSelectedProfile(){
             swal("Error", "Failed to send setselectedprofile query.", "error");
         };
         xhr.open("POST", "/action/setselectedprofile", true);
-        xhr.send();
+        xhr.send(selected);
     }
 }
 function deleteProfile(base64name){
@@ -396,6 +443,7 @@ function deleteProfile(base64name){
                 swal("Error", "Failed to delete profile " + fromBase64(base64name) + ".", "error");
             } else {
                 swal("Success", "Profile " + fromBase64(base64name) + " deleted successfully.", "success");
+                loadProfileList();
             }
         }
     };

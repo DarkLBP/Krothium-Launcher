@@ -256,15 +256,13 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "setselectedprofile":
                             profile = Utils.fromBase64(parameters);
-                            if (kernel.existsProfile(profile)){
-                                if (kernel.setSelectedProfile(profile)){
-                                    response = "OK";
-                                    kernel.saveProfiles();
-                                } else {
-                                    response = "ERROR";
+                            if (profile != null){
+                                if (kernel.existsProfile(profile)){
+                                    if (kernel.setSelectedProfile(profile)){
+                                        response = "OK";
+                                        kernel.saveProfiles();
+                                    }
                                 }
-                            } else {
-                                response = "ERROR";
                             }
                             break;
                         case "selectedversion":
@@ -277,14 +275,10 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "deleteprofile":
                             profile = Utils.fromBase64(parameters);
-                            if (!kernel.existsProfile(profile)){
-                                response = "ERROR";
-                            } else {
+                            if (kernel.existsProfile(profile)){
                                 if (kernel.deleteProfile(profile)){
                                     response = "OK";
                                     kernel.saveProfiles();
-                                } else {
-                                    response = "ERROR";
                                 }
                             }
                             break;
@@ -336,9 +330,7 @@ public class WebLauncherThread extends Thread{
                             if (profileArray.length != 10){
                                 throw new WebLauncherException(path, 400, out);
                             }
-                            if (profileArray[0].equals("noset")){
-                                response = "Profile name not specified.";
-                            } else if (profileArray[1].equals("noset")){
+                            if (profileArray[1].equals("noset")){
                                 response = "Profile name cannot be blank.";
                             } else {
                                 String profileName = Utils.fromBase64(profileArray[0]);
@@ -356,10 +348,15 @@ public class WebLauncherThread extends Thread{
                                 String resolution = (profileArray[7].equals("noset") ? "" : Utils.fromBase64(profileArray[7]));
                                 String javaExec = (profileArray[8].equals("noset") ? "" : Utils.fromBase64(profileArray[8]));
                                 String javaArgs = (profileArray[9].equals("noset") ? "" : Utils.fromBase64(profileArray[9]));
-                                if (!kernel.existsProfile(profileName)){
+                                if (!kernel.existsProfile(profileName) && !profileArray[0].equals("noset")){
                                     response = "Profile " + profileName + " is specified but does not exist.";
                                 } else {
-                                    Profile up = kernel.getProfile(profileName);
+                                    Profile up;
+                                    if (profileArray[0].equals("noset")){
+                                        up = new Profile(profileNameNew);
+                                    } else {
+                                        up = kernel.getProfile(profileName);
+                                    }
                                     boolean error = false;
                                     if (profileVersion == null){
                                         up.setVersionID(null);
@@ -426,14 +423,27 @@ public class WebLauncherThread extends Thread{
                                     } else {
                                         up.removeVersionType(VersionType.OLD_ALPHA);
                                     }
-                                    kernel.updateProfile(up);
-                                    if (!profileName.equals(profileNameNew)){
-                                        kernel.renameProfile(profileName, profileNameNew);
+                                    if (!profileArray[0].equals("noset")){
+                                        kernel.updateProfile(up);
+                                        if (!profileName.equals(profileNameNew) && !profileArray[0].equals("noset")){
+                                            kernel.renameProfile(profileName, profileNameNew);
+                                        }
+                                        if (!error){
+                                            response = "OK";
+                                            kernel.saveProfiles();
+                                        }
+                                    } else {
+                                        if (!error){
+                                            if (!kernel.existsProfile(profileNameNew)){
+                                                kernel.addProfile(up);
+                                                response = "OK";
+                                                kernel.saveProfiles();
+                                            } else {
+                                                response += "Profile " + profileNameNew + " already exists.";
+                                            }
+                                        }
                                     }
-                                    if (!error){
-                                        response = "OK";
-                                        kernel.saveProfiles();
-                                    }
+                                    
                                 }
                             }
                             break;
@@ -458,8 +468,6 @@ public class WebLauncherThread extends Thread{
                                 response += (rp.hasJavaDir() ? Utils.toBase64(rp.getJavaDir().getAbsolutePath()) : "noset");
                                 response += ":";
                                 response += (rp.hasJavaArgs() ? Utils.toBase64(rp.getJavaArgs()) : "noset");
-                            } else {
-                                response = "ERROR";
                             }
                             break;
                         case "changeskin":
