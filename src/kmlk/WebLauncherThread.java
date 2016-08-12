@@ -522,7 +522,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getskin":
                             User u3 = kernel.getSelectedUser();
-                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/" + u3.getProfileID().toString().replaceAll("-", "") + ".png");
+                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/legacy/" + u3.getDisplayName() + ".png");
                             HttpsURLConnection con = (HttpsURLConnection)skinURL.openConnection();
                             int responseCode = con.getResponseCode();
                             if (responseCode == 200){
@@ -531,7 +531,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getcape":
                             User u4 = kernel.getSelectedUser();
-                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/" + u4.getProfileID().toString().replaceAll("-", "") + ".png");
+                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/legacy/" + u4.getDisplayName() + ".png");
                             HttpsURLConnection con2 = (HttpsURLConnection)capeURL.openConnection();
                             int responseCode2 = con2.getResponseCode();
                             if (responseCode2 == 200){

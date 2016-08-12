@@ -138,6 +138,9 @@ progress{
     width:50%;
     margin-bottom:5px;
 }
+.almostHalfWide{
+    width: 49%;
+}
 .copyright {
   margin:0;
   text-align:center;

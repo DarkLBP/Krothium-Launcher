@@ -14,7 +14,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Iterator;
