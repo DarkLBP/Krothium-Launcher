@@ -43,7 +43,7 @@ public class WebLauncher {
         ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
         boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
-        Utils.openWebsite("http://mc.krothium.com/?p=" + port);
+        Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);
         WebLauncher.lastKeepAlive = System.nanoTime();
         Thread keepAlive = new Thread(){
             @Override
@@ -65,14 +65,10 @@ public class WebLauncher {
             }
         };
         keepAlive.start();
-        while (status)
-        {
-            System.out.println("Awaiting connection.");
+        while (status){
             Socket s = ss.accept();
-            System.out.println("Connected from " + s.getInetAddress().toString());
             WebLauncherThread thread = new WebLauncherThread(s, kernel);
             thread.start();
-            System.out.println("Thread ended.");
         }
     }
 }

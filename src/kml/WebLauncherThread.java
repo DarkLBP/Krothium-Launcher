@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class WebLauncherThread extends Thread{
             String request;
             StringBuilder b = new StringBuilder();
             String line = in.readLine();
+            console.printInfo("Request inbound: " + line);
             boolean isPost = line.startsWith("POST");
             int contentLength = 0;
             String contentType = null;
@@ -91,7 +93,6 @@ public class WebLauncherThread extends Thread{
             if (request.isEmpty()){
                 throw new WebLauncherException(null, 400, out);
             }
-            System.out.println(request);
             String[] requestChunks = request.split(" ");
             String path = requestChunks[1];
             boolean closeWhenFinished = false;
@@ -531,8 +532,8 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getskin":
                             user = kernel.getSelectedUser();
-                            URL skinURL = Utils.stringToURL("https://mc.krothium.com/skins/legacy/" + user.getDisplayName() + ".png");
-                            HttpsURLConnection con = (HttpsURLConnection)skinURL.openConnection();
+                            URL skinURL = Utils.stringToURL("http://mc.krothium.com/skins/legacy/" + user.getDisplayName() + ".png");
+                            HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
                             int responseCode = con.getResponseCode();
                             if (responseCode == 200){
                                 response = skinURL.toString();
@@ -540,8 +541,8 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getcape":
                             user = kernel.getSelectedUser();
-                            URL capeURL = Utils.stringToURL("https://mc.krothium.com/capes/legacy/" + user.getDisplayName() + ".png");
-                            HttpsURLConnection con2 = (HttpsURLConnection)capeURL.openConnection();
+                            URL capeURL = Utils.stringToURL("http://mc.krothium.com/capes/legacy/" + user.getDisplayName() + ".png");
+                            HttpURLConnection con2 = (HttpURLConnection)capeURL.openConnection();
                             int responseCode2 = con2.getResponseCode();
                             if (responseCode2 == 200){
                                 response = capeURL.toString();
@@ -581,13 +582,11 @@ public class WebLauncherThread extends Thread{
             }
             out.close();
             in.close();
-            console.printInfo("Connection ended");
             if (closeWhenFinished){
                 System.exit(0);
             }
         } catch (IOException | WebLauncherException  ex) {
             console.printError(ex.getMessage());
         }
-        console.printInfo("Ended thread task");
     }
 }

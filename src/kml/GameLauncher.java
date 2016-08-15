@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -126,7 +127,6 @@ public class GameLauncher {
                         }
                         zip.close();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
                         console.printError("Failed to extract native: " + lib.getName());
                     }
                 } else {
@@ -137,7 +137,13 @@ public class GameLauncher {
         }
         console.printInfo("Preparing game args.");
         File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
-        libraries += verPath.getAbsolutePath();
+        libraries += verPath.getAbsolutePath() + separator;
+        try {
+            File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            libraries += launchPath.getAbsolutePath();
+        } catch (URISyntaxException ex) {
+            console.printError("Failed to load GameStarter.");
+        }
         String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
@@ -180,6 +186,7 @@ public class GameLauncher {
             assetsDir = assetsRoot;
         }
         gameArgs.add(libraries);
+        gameArgs.add("kml.GameStarter");
         gameArgs.add(ver.getMainClass());
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
