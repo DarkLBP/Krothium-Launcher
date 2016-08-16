@@ -1,37 +1,61 @@
 package kml.handlers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import kml.Utils;
+import kml.matchers.URLMatcher;
 
 /**
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class ConnectionHandler extends URLConnection{
+public class ConnectionHandler extends HttpURLConnection{
     
-    private ByteArrayInputStream inputStream;
-    private ByteArrayOutputStream outputStream;
+    private final URLMatcher matcher;
+    private final HttpURLConnection relay;
     
-    public ConnectionHandler(URL url){
+    public ConnectionHandler(URL url, URLMatcher m){
         super(url);
-        this.outputStream = new ByteArrayOutputStream();
+        this.matcher = m;
+        this.relay = this.matcher.handle();
+        System.out.println("URL handled: " + super.url.toString() + " | " + (this.relay == null));
     }
-
+    @Override
+    public int getResponseCode(){
+        try {
+            System.out.println("CODIGO DE RESPUESTA: " + relay.getResponseCode());
+            return relay.getResponseCode();
+        } catch (IOException ex) {
+            return -1;
+        }
+    }
+    @Override
+    public String getContentType(){
+        if (relay == null){
+            return null;
+        } else {
+            return this.relay.getContentType();
+        }
+    }
     @Override
     public void connect() throws IOException {
-        //
+        connected = true;
     }
-    
     @Override
     public InputStream getInputStream(){
-        System.out.println("URL requested: " + super.url.toString());
-        String s = Utils.readURL(super.url);
-        this.inputStream = new ByteArrayInputStream(s.getBytes());
-        return this.inputStream;
+        try{
+            return this.relay.getInputStream();
+        } catch (IOException ex) { 
+            return null;
+        }
+    }
+    @Override
+    public void disconnect() {
+        connected = false;
+    }
+    @Override
+    public boolean usingProxy() {
+        return false;
     }
 }

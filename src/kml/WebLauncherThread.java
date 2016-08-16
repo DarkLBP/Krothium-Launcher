@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.net.ssl.HttpsURLConnection;
 import kml.enums.VersionType;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
@@ -532,7 +531,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getskin":
                             user = kernel.getSelectedUser();
-                            URL skinURL = Utils.stringToURL("http://mc.krothium.com/skins/legacy/" + user.getDisplayName() + ".png");
+                            URL skinURL = Utils.stringToURL("http://mc.krothium.com/skins/" + user.getDisplayName() + ".png");
                             HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
                             int responseCode = con.getResponseCode();
                             if (responseCode == 200){
@@ -541,7 +540,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "getcape":
                             user = kernel.getSelectedUser();
-                            URL capeURL = Utils.stringToURL("http://mc.krothium.com/capes/legacy/" + user.getDisplayName() + ".png");
+                            URL capeURL = Utils.stringToURL("http://mc.krothium.com/capes/" + user.getDisplayName() + ".png");
                             HttpURLConnection con2 = (HttpURLConnection)capeURL.openConnection();
                             int responseCode2 = con2.getResponseCode();
                             if (responseCode2 == 200){
