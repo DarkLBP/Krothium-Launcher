@@ -149,7 +149,6 @@ public class Utils {
         return (realArch.equals("32") ? OSArch.OLD : OSArch.NEW);
     }
     public static String getArtifactPath(String artifact, String ext) {
-
         final String[] parts = artifact.split(":", 3);
         return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
     }
