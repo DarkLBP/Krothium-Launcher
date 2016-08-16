@@ -55,6 +55,18 @@ public class GameLauncher {
         }
         ver = kernel.getVersion(verID);
         File workingDir = kernel.getWorkingDir();
+        console.printInfo("Deleting old natives.");
+        File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
+        if (nativesRoot.exists()){
+            if (nativesRoot.isDirectory()){
+                File[] files = nativesRoot.listFiles();
+                for (File f : files){
+                    if (f.isDirectory() && f.getName().contains("natives")){
+                        Utils.deleteDirectory(f);
+                    }
+                }
+            }
+        }
         File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory()){
             nativesDir.mkdirs();
@@ -252,10 +264,12 @@ public class GameLauncher {
                                 console.printInfo(lineRead);
                             }
                         }
+                        
                     } catch (Exception ex){
                         console.printError("Game stopped unexpectedly.");
                     }
-
+                    console.printInfo("Deleteting natives dir.");
+                    Utils.deleteDirectory(nativesDir);
                 }
             };
             log.start();

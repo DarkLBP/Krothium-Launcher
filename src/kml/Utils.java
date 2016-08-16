@@ -59,6 +59,22 @@ public class Utils {
         }
         return workingDirectory;
     }
+    public static boolean deleteDirectory(File directory) {
+        if(directory.exists()){
+            File[] files = directory.listFiles();
+            if(files != null){
+                for (File f : files) {
+                    if(f.isDirectory()) {
+                        deleteDirectory(f);
+                    }
+                    else {
+                        f.delete();
+                    }
+                }
+            }
+        }
+        return(directory.delete());
+    }
     public static void openWebsite(String url) throws IOException
     {
         String os = System.getProperty("os.name").toLowerCase();
