@@ -16,8 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class WebLauncher {
     
     public static long lastKeepAlive;
-    public static void main(String[] args) throws IOException, AuthenticationException
-    {
+    public static void main(String[] args) throws IOException, AuthenticationException{
         Kernel kernel = new Kernel();
         Console console = kernel.getConsole();
         console.setEnabled(true);
@@ -38,7 +37,7 @@ public class WebLauncher {
         int portStart = 24000;
         int portEnd = 25000;
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        ServerSocket ss = new ServerSocket(port, 50, InetAddress.getLoopbackAddress());
+        ServerSocket ss = new ServerSocket(port, 100, InetAddress.getLoopbackAddress());
         boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
         Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);

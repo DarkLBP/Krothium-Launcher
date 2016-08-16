@@ -37,7 +37,7 @@ public final class Kernel {
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
-        this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (http://krotium.com)");
+        this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krotium.com)");
     }
     public Console getConsole(){return this.console;}
     public void setWorkingDir(File dir){
