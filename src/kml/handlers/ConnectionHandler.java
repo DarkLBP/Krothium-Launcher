@@ -24,7 +24,6 @@ public class ConnectionHandler extends HttpURLConnection{
     @Override
     public int getResponseCode(){
         try {
-            System.out.println("CODIGO DE RESPUESTA: " + relay.getResponseCode());
             return relay.getResponseCode();
         } catch (IOException ex) {
             return -1;
