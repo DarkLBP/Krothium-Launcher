@@ -38,15 +38,6 @@ public class Profiles {
         console.printError("Profile " + p.getName() + " already exists!");
         return false;
     }
-    public boolean updateProfile(Profile p){
-        if (this.existsProfile(p)){
-            profiles.put(p.getName(), p);
-            console.printInfo("Profile " + p.getName() + " updated.");
-            return true;
-        }
-        console.printError("Profile " + p.getName() + " doesn't exist.");
-        return false;
-    }
     public boolean deleteProfile(String p){
         if (this.existsProfile(p)){
             if (this.selected.equals(p)){

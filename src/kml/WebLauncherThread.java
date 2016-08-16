@@ -424,7 +424,6 @@ public class WebLauncherThread extends Thread{
                                         up.removeVersionType(VersionType.OLD_ALPHA);
                                     }
                                     if (!profileArray[0].equals("noset")){
-                                        kernel.updateProfile(up);
                                         if (!profileName.equals(profileNameNew) && !profileArray[0].equals("noset")){
                                             kernel.renameProfile(profileName, profileNameNew);
                                         }

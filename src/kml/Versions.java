@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 public class Versions {
     private final Map<String, VersionMeta> versions = new LinkedHashMap();
-    private Map<String, Version> version_cache = new HashMap();
+    private final Map<String, Version> version_cache = new HashMap();
     private final Console console;
     private String latestSnap;
     private String latestRel;

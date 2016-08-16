@@ -37,7 +37,7 @@ public final class Kernel {
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
-        System.out.println("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (http://krotium.com)");
+        this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (http://krotium.com)");
     }
     public Console getConsole(){return this.console;}
     public void setWorkingDir(File dir){
@@ -50,7 +50,6 @@ public final class Kernel {
     public User getSelectedUser(){return this.authentication.getSelectedUser();}
     public String getSelectedProfile(){return this.profiles.getSelectedProfile();}
     public boolean setSelectedProfile(String p){return this.profiles.setSelectedProfile(p);}
-    public boolean updateProfile(Profile p){return this.profiles.updateProfile(p);}
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
     public void launchGame() throws GameLauncherException{this.gameLauncher.launch();}

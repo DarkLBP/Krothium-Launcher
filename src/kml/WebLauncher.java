@@ -7,7 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import javax.net.ServerSocketFactory;
 
 /**
  * @website https://krothium.com
@@ -35,7 +34,6 @@ public class WebLauncher {
             }
             kernel.saveProfiles();
         }
-        ServerSocketFactory ssf = ServerSocketFactory.getDefault();
         Random rand = new Random();
         int portStart = 24000;
         int portEnd = 25000;
@@ -52,7 +50,7 @@ public class WebLauncher {
                 long result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
                 while (result < Constants.KEEPALIVE_TIMEOUT){
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1500);
                     } catch (InterruptedException ex) {
                         console.printError("Error in KeepAlive thread.");
                     }
@@ -60,7 +58,6 @@ public class WebLauncher {
                     result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
                 }
                 console.printError("KeepAlive timeout exceeded. Closing launcher...");
-                kernel.saveProfiles();
                 System.exit(0);
             }
         };
