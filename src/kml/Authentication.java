@@ -29,19 +29,21 @@ public class Authentication {
         this.kernel = k;
         this.console = k.getConsole();
     }
-    public void addToDatabase(String profileID, User u){
+    public void addUser(String profileID, User u){
         console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(profileID)) ? " updated." : " loaded."));
         this.userDatabase.put(profileID, u);   
     }
-    public void removeFromDatabase(String profileID){
+    public boolean removeUser(String profileID){
         if (this.userDatabase.containsKey(profileID)){
             console.printInfo("User " + this.userDatabase.get(profileID).getDisplayName() + " deleted.");
             this.userDatabase.remove(profileID);
+            return true;
         }else{
             console.printError("Profile id " + profileID + " is not registered.");
+            return false;
         }
     }
-    public User getFromDatabase(String profileID) {
+    public User getUser(String profileID) {
         if (this.userDatabase.containsKey(profileID)){
             return this.userDatabase.get(profileID);
         }else{
@@ -57,14 +59,6 @@ public class Authentication {
             return this.removeUser(this.selectedProfile);
         }
         return false;
-    }
-    public boolean removeUser(String u){
-        if (this.userDatabase.containsKey(u)){
-            this.userDatabase.remove(u);
-            return true;
-        } else {
-            return false;
-        }
     }
     public void authenticate(final String username, final String password) throws AuthenticationException{
         JSONObject request = new JSONObject();
@@ -111,7 +105,7 @@ public class Authentication {
                 }
             }
             User u = new User(profileName, accessToken, userID, username, Utils.stringToUUID(profileID), properties);
-            this.addToDatabase(profileID, u);
+            this.addUser(profileID, u);
             this.selectedProfile = profileID;
             if (kernel.getSelectedProfile().equals("(Default)")){
                 kernel.renameProfile("(Default)", profileName);
@@ -131,7 +125,7 @@ public class Authentication {
     public void refresh() throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.getFromDatabase(this.selectedProfile);
+        User u = this.getUser(this.selectedProfile);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("accessToken", u.getAccessToken());
@@ -158,6 +152,7 @@ public class Authentication {
             this.authenticated = true;
         }else{
             this.authenticated = false;
+            this.removeUser(this.selectedProfile);
             if (r.has("errorMessage")){
                 throw new AuthenticationException(r.getString("errorMessage"));
             }else if (r.has("cause")){
@@ -170,7 +165,7 @@ public class Authentication {
     public void validate() throws AuthenticationException{
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.getFromDatabase(this.selectedProfile);
+        User u = this.getUser(this.selectedProfile);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("accessToken", u.getAccessToken());
@@ -193,6 +188,7 @@ public class Authentication {
             this.authenticated = false;
             JSONObject o = new JSONObject(response);
             if (o.has("error")){
+                this.removeUser(this.selectedProfile);
                 if (o.has("errorMessage")){
                     throw new AuthenticationException(o.getString("errorMessage"));
                 }else if (o.has("cause")){
@@ -241,7 +237,7 @@ public class Authentication {
                                     }
                                 }
                                 User u = new User(displayName, accessToken, userID, username, uuid, properties);
-                                this.addToDatabase(profile, u);
+                                this.addUser(profile, u);
                             }
                         }
                     }
