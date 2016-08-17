@@ -250,21 +250,18 @@ public class GameLauncher {
         pb.directory(workingDir);
         try{
             this.process = pb.start();
-            Thread log = new Thread(){
+            Thread log_info = new Thread(){
                 @Override
                 public void run(){
                     InputStreamReader isr = new InputStreamReader(getInputStream());
                     BufferedReader br = new BufferedReader(isr);
                     String lineRead;
                     try{
-                        while (isStarted())
-                        {
-                            if ((lineRead = br.readLine()) != null)
-                            {
+                        while (isStarted()){
+                            if ((lineRead = br.readLine()) != null){
                                 console.printInfo(lineRead);
                             }
                         }
-                        
                     } catch (Exception ex){
                         console.printError("Game stopped unexpectedly.");
                     }
@@ -272,7 +269,23 @@ public class GameLauncher {
                     Utils.deleteDirectory(nativesDir);
                 }
             };
-            log.start();
+            log_info.start();
+            Thread log_error = new Thread(){
+                @Override
+                public void run(){
+                    InputStreamReader isr = new InputStreamReader(getErrorStream());
+                    BufferedReader br = new BufferedReader(isr);
+                    String lineRead;
+                    try{
+                        while (isStarted()){
+                            if ((lineRead = br.readLine()) != null){
+                                console.printInfo(lineRead);
+                            }
+                        }
+                    } catch (Exception ex){}
+                }
+            };
+            log_error.start();
         }catch (Exception ex){
             console.printError("Game returned an error code.");
         }
@@ -284,5 +297,6 @@ public class GameLauncher {
         return false;
     }
     public InputStream getInputStream(){return this.process.getInputStream();}
+    public InputStream getErrorStream(){return this.process.getErrorStream();}
     public void forceQuit(){this.process.destroyForcibly();}
 }
