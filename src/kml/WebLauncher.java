@@ -60,6 +60,7 @@ public class WebLauncher {
                 console.printInfo("KeepAlive timeout exceeded. Saving logs and closing launcher...");
                 try {
                     File log;
+                    console.setEnabled(false);
                     if (console.usesCompression()){
                         console.stopCompressing();
                         log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log.gz");
