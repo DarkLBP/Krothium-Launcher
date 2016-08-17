@@ -1,7 +1,6 @@
 package kml;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import kml.exceptions.AuthenticationException;
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @website https://krothium.com
@@ -62,7 +59,13 @@ public class WebLauncher {
                 }
                 console.printInfo("KeepAlive timeout exceeded. Saving logs and closing launcher...");
                 try {
-                    File log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log");
+                    File log;
+                    if (console.usesCompression()){
+                        console.stopCompressing();
+                        log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log.gz");
+                    } else {
+                        log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log");
+                    }
                     if (log.exists()){
                         log.delete();
                     }
@@ -72,9 +75,7 @@ public class WebLauncher {
                     FileOutputStream out = new FileOutputStream(log);
                     out.write(console.getData());
                     out.close();
-                } catch (Exception ex) {
-                    console.printError("Failed to save log file.");
-                }
+                } catch (Exception ex) {}
                 System.exit(0);
             }
         };
