@@ -517,7 +517,7 @@ function updateCapePreview(){
             if (response !== ""){
                 document.getElementById("capePreview").innerHTML = "<img src=\"" + response + "\">";
             } else {
-                document.getElementById("capePreview").innerHTML = "";
+                document.getElementById("capePreview").innerHTML = "None";
             }
         }
     };
@@ -535,7 +535,7 @@ function updateSkinPreview(){
             if (response !== ""){
                 document.getElementById("skinPreview").innerHTML = "<img src=\"" + response + "\">";
             } else {
-                document.getElementById("skinPreview").innerHTML = "";
+                document.getElementById("skinPreview").innerHTML = "None";
             }
         }
     };
