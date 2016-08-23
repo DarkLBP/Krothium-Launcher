@@ -454,12 +454,6 @@ function deleteProfile(base64name){
     xhr.open("POST", "/action/deleteprofile", true);
     xhr.send(base64name);
 }
-function toBase64(string){
-    return window.btoa(string);
-}
-function fromBase64(string){
-    return window.atob(string);
-}
 function updateSkin(){
     if (document.getElementById("skinFile").files.length > 0){
         var xhr = new XMLHttpRequest();
@@ -535,7 +529,7 @@ function updateSkinPreview(){
             if (response !== ""){
                 document.getElementById("skinPreview").innerHTML = "<img src=\"" + response + "\">";
             } else {
-                document.getElementById("skinPreview").innerHTML = "Ninguno";
+                document.getElementById("skinPreview").innerHTML = "Ninguna";
             }
         }
     };
@@ -582,4 +576,23 @@ function deleteCape(){
     };
     xhr.open("POST", "/action/deletecape", true);
     xhr.send();
+}
+function switchLanguage(){
+    var xhr = new XMLHttpRequest();
+    var l = toBase64(document.getElementById("langSelect").value);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            if (response !== "OK"){
+                swal("Error", "Fallo al cambiar el idioma.\nError: " + response, "error");
+            } else {
+                location.reload();
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("Error", "Fallo al enviar la petición switchlanguage.", "error");
+    };
+    xhr.open("POST", "/action/switchlanguage", true);
+    xhr.send(l);
 }

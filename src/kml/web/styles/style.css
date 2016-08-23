@@ -106,7 +106,9 @@ progress{
   padding:10px 10px 10px 10px;
 }
 .login {
-  width: 500px; height: 380px; margin-right: auto; margin-left: auto;
+  width: 500px;
+  margin-right: auto; 
+  margin-left: auto;
 }
 .white-box {
   background:#eee;

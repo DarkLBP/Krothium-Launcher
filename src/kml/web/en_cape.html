@@ -6,19 +6,10 @@
   <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
-  <link rel="stylesheet" type="text/css" href="styles/themes/blue.css" title="blue">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/dark.css" title="dark">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/green.css" title="green">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/grey.css" title="grey">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/orange.css" title="orange">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/purple.css" title="purple">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/red.css" title="red">
-  <link rel="alternate stylesheet" type="text/css" href="styles/themes/turquoise.css" title="turquoise">
   <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
   <script src="js/sweetalert.min.js"></script> 
-  <script type="text/javascript" src="js/jQuery.js"></script>
-  <script type="text/javascript" src="js/styleswitch.js"></script>
+  <script type="text/javascript" src="js/core_extra.js"></script>
   <script type="text/javascript" src="js/core.js"></script>
 </head>
 <body>
@@ -77,11 +68,14 @@
               <div id="version"></div>
               <script>loadProfiles();</script>
           </div>
-          <div class="box-title"><i class="fa fa-user"></i> Our Website</div>
+          <div class="box-title"><i class="fa fa-brush"></i> Language</div>
           <div class="white-box">
-            <a class="red-button wide" href="https://krothium.com">Go Now!</a>
+            <select id="langSelect" onchange="switchLanguage();" class="form-control">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+            </select>
           </div>
-          <div class="box-title"><i class="fa fa-brush"></i> Theme Switcher</div>
+          <div class="box-title"><i class="fa fa-brush"></i> Theme</div>
           <div class="white-box">
             <select id="style" onchange="switchStyle();" class="form-control">
               <option value="blue">Blue</option>
@@ -94,6 +88,10 @@
               <option value="turquoise">Turquoise</option>
             </select>
           </div>
+          <div class="box-title"><i class="fa fa-user"></i> Website</div>
+          <div class="white-box">
+            <a class="red-button wide" href="https://krothium.com">Go Now!</a>
+          </div>
         </div>
       </div><br />
       <div class="row">
@@ -103,5 +101,6 @@
     </div>
   </div>
   <script src="js/particles.min.js"></script>
+  <script>loadTheme();</script>
 </body>
 </html>

@@ -575,6 +575,15 @@ public class WebLauncherThread extends Thread{
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
                             break;
+                        case "switchlanguage":
+                            String lang = Utils.fromBase64(parameters);
+                            if (lang.equals("es") || lang.equals("en")){
+                                Constants.LANG_CODE = lang;
+                                response = "OK";
+                                break;
+                            }
+                            response = "Unsupported lang code.";
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
