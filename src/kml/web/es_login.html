@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.ico"/>
+  <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <link rel="stylesheet" type="text/css" href="styles/themes/blue.css" title="blue">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/dark.css" title="dark">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/green.css" title="green">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/grey.css" title="grey">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/orange.css" title="orange">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/purple.css" title="purple">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/red.css" title="red">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/turquoise.css" title="turquoise">
+  <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
+  <script src="js/sweetalert.min.js"></script> 
+  <script type="text/javascript" src="js/jQuery.js"></script>
+  <script type="text/javascript" src="js/styleswitch.js"></script>
+  <script type="text/javascript" src="js/core.js"></script>
+</head>
+<body>
+  <div class="heroUnit">
+    <div class="container">
+      <div class="row">
+        <center>
+          <div class="logo">Krothium <span class="first">MC Launcher</span></div>
+        </center>
+      </div>
+    </div>
+  </div>
+  <div class="mainBody">
+    <div class="container">
+      <div class="row">
+          <div class="login">
+            <div class="box-title"><i class="fa fa-brush"></i>INICIAR SESIÓN</div>
+            <div class="white-box">
+              <div class="loginInputs">
+                <label style="font-size: 20px">Email o Usuario de Krothium:</label><br>
+                <input id="username" style="font-size: 18px" class="loginInput" type="text" name="username"/>
+                <br>
+                <label style="font-size: 20px">Contraseña:</label><br>
+                <input onkeypress="if (event.keyCode === 13) {authenticate();}" id="password" style="font-size: 18px" class="loginInput" type="password" name="password"/>
+                <br>
+                <br>
+                <input onclick="authenticate()" type="button" value="INICIAR SESIÓN" name="LOGIN" class="red-button almostHalfWide"/>
+                <input onclick="register()" type="button" value="REGISTRARSE" name="REGISTER" class="red-button almostHalfWide"/>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="row">
+        <div id="signature" class="white-box">
+            <script>
+              loadSignature();
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/particles.min.js"></script>
+  <script>clearInterval(status_interval);</script>
+</body>
+</html>

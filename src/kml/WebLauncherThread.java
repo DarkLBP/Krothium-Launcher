@@ -150,7 +150,12 @@ public class WebLauncherThread extends Thread{
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    InputStream s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
+                    InputStream s;
+                    if (contentTag.equalsIgnoreCase("text/html") || (contentTag.equalsIgnoreCase("application/javascript") && finalPath.equalsIgnoreCase("/js/core.js"))){
+                        s = WebLauncher.class.getResourceAsStream("/kml/web/" + finalPath.replace(fileName, Constants.LANG_CODE + "_" + fileName));
+                    } else {
+                        s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
+                    }
                     if (s == null){
                         throw new WebLauncherException(path, 404, out);
                     }

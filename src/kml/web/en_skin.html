@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.ico"/>
+  <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <link rel="stylesheet" type="text/css" href="styles/themes/blue.css" title="blue">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/dark.css" title="dark">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/green.css" title="green">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/grey.css" title="grey">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/orange.css" title="orange">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/purple.css" title="purple">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/red.css" title="red">
+  <link rel="alternate stylesheet" type="text/css" href="styles/themes/turquoise.css" title="turquoise">
+  <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
+  <script src="js/sweetalert.min.js"></script> 
+  <script type="text/javascript" src="js/jQuery.js"></script>
+  <script type="text/javascript" src="js/styleswitch.js"></script>
+  <script type="text/javascript" src="js/core.js"></script>
+</head>
+<body>
+  <div class="heroUnit">
+    <div class="container">
+      <div class="bigRedNavi">
+        <ul>
+          <li><a href="play.html">
+            <i class="fa fa-home"></i> Home
+          </a></li>
+          <li><a href="profiles.html">
+            <i class="fa fa-users"></i> Profiles
+          </a></li>
+          <li><a href="account.html">
+            <i class="fa fa-user"></i> My Account
+          </a></li>
+          <li><a onclick="logOut();" href="#">
+            Logout
+          </a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="logo">Krothium <span class="first"><br>MC Launcher</span></div>
+        </div>
+        <div class="col-md-4">
+          <div class="play-now-box">
+              <div id="play">
+                  <a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>
+              </div>
+              <div id="progress">
+                  <progress value="0" max="100"></progress>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mainBody">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="box-title"><i class="fa fa-newspaper-o"></i> Skin</div>
+          <div id="accountData" class="white-box">
+              <b>Skin File:</b><br>
+              <input class="wide" type="file" id="skinFile" accept="image/*"/><br>
+              <b>Skin Format:</b><br>
+              <select id="skinFormat" class="form-control">
+                  <option value="steve">Steve</option>
+                  <option value="alex">Alex</option>
+              </select><br><br>
+              <a class="red-button wide" href="#" onclick="updateSkin();">Save</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
+          <div class="white-box">
+              <b>Selected Profile:</b>
+              <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
+              <b>Minecraft Version:</b>
+              <div id="version"></div>
+              <script>loadProfiles();</script>
+          </div>
+          <div class="box-title"><i class="fa fa-user"></i> Our Website</div>
+          <div class="white-box">
+            <a class="red-button wide" href="https://krothium.com">Go Now!</a>
+          </div>
+          <div class="box-title"><i class="fa fa-brush"></i> Theme Switcher</div>
+          <div class="white-box">
+            <select id="style" onchange="switchStyle();" class="form-control">
+              <option value="blue">Blue</option>
+              <option value="dark">Dark</option>
+              <option value="green">Green</option>
+              <option value="grey">Grey</option>
+              <option value="orange">Orange</option>
+              <option value="purple">Purple</option>
+              <option value="red">Red</option>
+              <option value="turquoise">Turquoise</option>
+            </select>
+          </div>
+        </div>
+      </div><br />
+      <div class="row">
+          <div id="signature" class="white-box"></div>
+          <script>loadSignature();</script>
+      </div>
+    </div>
+  </div>
+  <script src="js/particles.min.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 //Created by DarkLBP (https://krothium.com)
 var status_interval = setInterval(function(){status();}, 1000);
 var progress_value = 0;
-var play_value = "";
+var play_value = "0";
 var profile_value = "";
 var keepAlive_interval = setInterval(function(){keepAlive();}, 1000);
 var keepAlive_requested = false;
@@ -12,7 +12,7 @@ function authenticate(){
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
         if (username === "" || password === "" || username === null || password === null){
-            swal("Error", "Invalid credentials!", "error");
+            swal("Error", "¡Credenciales inválidas!", "error");
         } else {
             var parameters = toBase64(username) + ":" + toBase64(password);
             var xhr = new XMLHttpRequest();
@@ -28,7 +28,7 @@ function authenticate(){
                 }
             };
             xhr.onerror = function(){
-                swal("Error", "Failed to send authentication query.", "error");
+                swal("Error", "Fallo al enviar la petición authentication.", "error");
             };
             xhr.open("POST", "/action/authenticate", true);
             xhr.send(parameters);  
@@ -43,7 +43,7 @@ function loadProfileData(){
     if (window.location.href.indexOf("?") !== -1){
         var name_base = window.location.href.split("?")[1];
         if (name_base === null){
-            swal("Error", "Invalid profile request!", "error");
+            swal("Error", "¡Petición de perfil inválida!", "error");
         } else {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -53,7 +53,7 @@ function loadProfileData(){
                     if (data.constructor === Array){
                         if (data.length === 9){
                             var name = fromBase64(data[0]);
-                            document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Profile: ' + name;
+                            document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Perfil: ' + name;
                             document.getElementById("profileName").value = name;
                             document.getElementById("snapshot").checked = (fromBase64(data[2]) === "true");
                             document.getElementById("oldBeta").checked = (fromBase64(data[3]) === "true");
@@ -68,7 +68,7 @@ function loadProfileData(){
                                         var value = "";
                                         for (var i = 0; i < data_length; i++){
                                             if (vers[i] === "latest"){
-                                                value += '<option value="latest">Use Latest Release</option>';
+                                                value += '<option value="latest">Usar Última Versión</option>';
                                             } else {
                                                 var name = fromBase64(vers[i]);
                                                 value += '<option value="' + vers[i] + '">' + name + '</option>';
@@ -76,7 +76,7 @@ function loadProfileData(){
                                         }
                                         document.getElementById("versionList").innerHTML = value;
                                     } else {
-                                        swal("Error", "Could not load version list.", "error");
+                                        swal("Error", "No se pudo cargar la lista de versiones.", "error");
                                     }
                                     document.getElementById("versionList").value = data[1];
                                     if (data[5] !== "noset"){
@@ -96,26 +96,26 @@ function loadProfileData(){
                                 }
                             };
                             xhr2.onerror = function(){
-                                swal("Error", "Failed to send versions query.", "error");
+                                swal("Error", "Fallo al enviar la petición versions.", "error");
                             };
                             xhr2.open("POST", "/action/versions", true);
                             xhr2.send();
                         }else{
-                            swal("Error", "Server replied with wrong amount of data.", "error");
+                            swal("Error", "El servidor respondión con una cantidad inválida de información.", "error");
                         }
                     } else {
-                        swal("Error", "Could not load profile data.", "error");
+                        swal("Error", "No se puedo cargar la información del perfil.", "error");
                     }
                 }
             };
             xhr.onerror = function(){
-                swal("Error", "Failed to send profiledata query.", "error");
+                swal("Error", "Fallo al enviar la petición profiledata.", "error");
             };
             xhr.open("POST", "/action/profiledata", true);
             xhr.send(name_base);
         }
     } else {
-        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> New Profile';
+        document.getElementById("profileTitle").innerHTML = '<i class="fa fa-newspaper-o"></i> Nuevo Perfil';
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -126,7 +126,7 @@ function loadProfileData(){
                     var value = "";
                     for (var i = 0; i < data_length; i++){
                         if (vers[i] === "latest"){
-                            value += '<option value="latest">Use Latest Release</option>';
+                            value += '<option value="latest">Usar Última Versión</option>';
                         } else {
                             var name = fromBase64(vers[i]);
                             value += '<option value="' + vers[i] + '">' + name + '</option>';
@@ -134,12 +134,12 @@ function loadProfileData(){
                     }
                     document.getElementById("versionList").innerHTML = value;
                 } else {
-                    swal("Error", "Could not load version list.", "error");
+                    swal("Error", "No se pudo cargar la lista de versiones.", "error");
                 }
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send versions query.", "error");
+            swal("Error", "Fallo al enviar la petición versions.", "error");
         };
         xhr.open("POST", "/action/versions", true);
         xhr.send();
@@ -157,7 +157,7 @@ function refreshVersionList(){
                 var value = "";
                 for (var i = 0; i < data_length; i++){
                     if (vers[i] === "latest"){
-                        value += '<option value="latest">Use Latest Release</option>';
+                        value += '<option value="latest">Usar Última Versión</option>';
                     } else {
                         var name = fromBase64(vers[i]);
                         value += '<option value="' + vers[i] + '">' + name + '</option>';
@@ -165,7 +165,7 @@ function refreshVersionList(){
                 }
                 document.getElementById("versionList").innerHTML = value;
             } else {
-                swal("Error", "Could not load version list.", "error");
+                swal("Error", "No se pudo cargar la lista de versiones.", "error");
             }
             var xhr2 = new XMLHttpRequest();
             xhr2.onreadystatechange = function() {
@@ -175,14 +175,14 @@ function refreshVersionList(){
                 }
             };
             xhr2.onerror = function(){
-                swal("Error", "Failed to send selectedversion query.", "error");
+                swal("Error", "Fallo al enviar la petición selectedversion.", "error");
             };
             xhr2.open("POST", "/action/selectedversion", true);
             xhr2.send();
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send versions query.", "error");
+        swal("Error", "Fallo al enviar la petición versions.", "error");
     };
     xhr.open("POST", "/action/versions", true);
     xhr.send(parameters);
@@ -194,7 +194,7 @@ function saveProfile(){
         var name_base = "noset";
     }
     if (name_base === null){
-        swal("Error", "Invalid profile request!", "error");
+        swal("Error", "¡Petición de perfil inválida!", "error");
     } else {
         var name = "noset";
         var version = document.getElementById("versionList").value;
@@ -229,15 +229,15 @@ function saveProfile(){
                     swal("Error", response, "error");
                 } else {
                     if (name_base === "noset"){
-                        swal({title: "Success", text: "Profile " + fromBase64(name) + " added successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                        swal({title: "Éxito", text: "Perfil " + fromBase64(name) + " añadido satisfactoriamente.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
                     } else {
-                        swal({title: "Success", text: "Profile " + fromBase64(name_base) + " saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
+                        swal({title: "Éxito", text: "Perfil " + fromBase64(name_base) + " guardado satisfactoriamente.", type: "success", closeOnConfirm: false}, function(){redirect("/profiles.html");});
                     }
                 }
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send saveprofile query.", "error");
+            swal("Error", "Fallo al enviar la petición saveprofile.", "error");
         };
         xhr.open("POST", "/action/saveprofile", true);
         xhr.send(parameters);
@@ -246,7 +246,7 @@ function saveProfile(){
 function playGame(){
     var xhr = new XMLHttpRequest();
     xhr.onerror = function(){
-        swal("Error", "Failed to send play query.", "error");
+        swal("Error", "Fallo al enviar la petición play.", "error");
     };
     xhr.open("POST", "/action/play", true);
     xhr.send();
@@ -268,13 +268,13 @@ function status(){
                     if (status !== play_value){
                         switch (status){
                             case "0":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>';
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">JUGAR</a>';
                                 break;
                             case "1":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DOWNLOADING</a>';
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">DESCARGANDO</a>';
                                 break;
                             case "2":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">PLAYING</a>';
+                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">JUGANDO</a>';
                                 break;
                         }
                         play_value = status;
@@ -300,7 +300,7 @@ function keepAlive(){
         xhr.onerror = function(){
             clearInterval(status_interval);
             clearInterval(keepAlive_interval);
-            swal("Error", "Connection lost with the launcher.\nYou can close this page safely.", "error");  
+            swal("Error", "Conexión perdida con el launcher.\nAhora puedes cerrar esta página de forma segura.", "error");  
         };
         xhr.open("POST", "/action/keepalive", true);
         xhr.send();
@@ -316,7 +316,7 @@ function loadSignature(){
         }
     };
     xhr.onerror = function(){
-        document.getElementById("signature").innerHTML = "<center>Failed to signature.</center>";
+        document.getElementById("signature").innerHTML = "<center>Fallo al cargar la firma.</center>";
     };
     xhr.open("POST", "/action/signature", true);
     xhr.send();
@@ -332,7 +332,7 @@ function logOut(){
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send logout query.", "error");
+        swal("Error", "Fallo al enviar la petición logout.", "error");
     };
     xhr.open("POST", "/action/logout", true);
     xhr.send();
@@ -352,7 +352,7 @@ function loadProfiles(){
                 }
                 document.getElementById("profiles").innerHTML = value;
             } else {
-                swal("Error", "Could not load profile list.", "error");
+                swal("Error", "No se puedo cargar la lista de perfiles.", "error");
             }
             var xhr2 = new XMLHttpRequest();
             xhr2.onreadystatechange = function() {
@@ -363,7 +363,7 @@ function loadProfiles(){
                 }
             };
             xhr2.onerror = function(){
-                swal("Error", "Failed to send selectedprofile query.", "error");
+                swal("Error", "Fallo al enviar la petición selectedprofile.", "error");
             };
             xhr2.open("POST", "/action/selectedprofile", true);
             xhr2.send();
@@ -376,14 +376,14 @@ function loadProfiles(){
                 }
             };
             xhr3.onerror = function(){
-                swal("Error", "Failed to send selectedversion query.", "error");
+                swal("Error", "Fallo al enviar la petición seslectedversion.", "error");
             };
             xhr3.open("POST", "/action/selectedversion", true);
             xhr3.send();
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send profiles query.", "error");
+        swal("Error", "Fallo al enviar la petición profiles.", "error");
     };
     xhr.open("POST", "/action/profiles", true);
     xhr.send();
@@ -399,17 +399,17 @@ function loadProfileList(){
                 var value = "";
                 for (var i = 0; i < data_length; i++){
                     var name = fromBase64(data[i]);
-                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
+                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Editar</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Eliminar</a><br>';
                 }
-                value += '<br><a class="red-button wide" href="/profile.html">Create New</a>';
+                value += '<br><a class="red-button wide" href="/profile.html">Crear Nuevo</a>';
                 document.getElementById("profileList").innerHTML = value;
             } else {
-                swal("Error", "Could not load version list.", "error");
+                swal("Error", "No se pudo cargar la lista de versiones.", "error");
             }
         }
     };
     xhr.onerror = function(){
-         swal("Error", "Failed to send profiles query.", "error");
+         swal("Error", "Fallo al enviar la petición profiles.", "error");
     };
     xhr.open("POST", "/action/profiles", true);
     xhr.send();
@@ -422,13 +422,13 @@ function setSelectedProfile(){
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 var response = xhr.responseText;
                 if (response !== "OK"){
-                    swal("Error", "Failed to change the selected profile.", "error");
+                    swal("Error", "Fallo al cambiar el perfil seleccionado.", "error");
                 }
                 loadProfiles();
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send setselectedprofile query.", "error");
+            swal("Error", "Fallo al enviar la petición setselectedprofile.", "error");
         };
         xhr.open("POST", "/action/setselectedprofile", true);
         xhr.send(selected);
@@ -440,16 +440,16 @@ function deleteProfile(base64name){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = xhr.responseText;
             if (response !== "OK"){
-                swal("Error", "Failed to delete profile " + fromBase64(base64name) + ".", "error");
+                swal("Error", "Fallo al eliminar el perfil " + fromBase64(base64name) + ".", "error");
             } else {
-                swal("Success", "Profile " + fromBase64(base64name) + " deleted successfully.", "success");
+                swal("Éxito", "Perfil " + fromBase64(base64name) + " eliminado satisfactoriamente.", "success");
                 loadProfileList();
                 loadProfiles();
             }
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send deleteprofile query.", "error");
+        swal("Error", "Fallo al enviar la petición deleteprofile.", "error");
     };
     xhr.open("POST", "/action/deleteprofile", true);
     xhr.send(base64name);
@@ -469,12 +469,12 @@ function updateSkin(){
                 if (response !== "OK"){
                     swal("Error", response, "error");
                 } else {
-                    swal({title: "Success", text: "Skin saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+                    swal({title: "Éxito", text: "Skin guardada satisfactoriamente.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
                 }
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send changeskin query.", "error");
+            swal("Error", "Fallo al enviar la petición changeskin.", "error");
         };
         xhr.open("POST", "/action/changeskin", true);
         xhr.setRequestHeader("Content-Type", document.getElementById("skinFile").files[0].type);
@@ -482,7 +482,7 @@ function updateSkin(){
         xhr.setRequestHeader("Content-Extra", document.getElementById("skinFormat").value);
         xhr.send(document.getElementById("skinFile").files[0]);
     } else {
-        swal("Warning", "Select a skin first.", "warning");
+        swal("Advertencia", "Selecciona una skin primero.", "warning");
     }
 }
 function updateCape(){
@@ -494,19 +494,19 @@ function updateCape(){
                 if (response !== "OK"){
                     swal("Error", response, "error");
                 } else {
-                    swal({title: "Success", text: "Cape saved successfully.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+                    swal({title: "Éxito", text: "Capa guardada satisfactoriamente.", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
                 }
             }
         };
         xhr.onerror = function(){
-            swal("Error", "Failed to send changecape query.", "error");
+            swal("Error", "Fallo al enviar la petición changecape.", "error");
         };
         xhr.open("POST", "/action/changecape", true);
         xhr.setRequestHeader("Content-Type", document.getElementById("capeFile").files[0].type);
         xhr.setRequestHeader("Content-Length", document.getElementById("capeFile").files[0].length);
         xhr.send(document.getElementById("capeFile").files[0]);
     } else {
-        swal("Warning", "Select a cape first.", "warning");
+        swal("Advertencia", "Selecciona una capa primero.", "warning");
     }
 }
 function updateCapePreview(){
@@ -517,12 +517,12 @@ function updateCapePreview(){
             if (response !== ""){
                 document.getElementById("capePreview").innerHTML = "<img src=\"" + response + "\">";
             } else {
-                document.getElementById("capePreview").innerHTML = "None";
+                document.getElementById("capePreview").innerHTML = "Ninguna";
             }
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send hascape query.", "error");
+        swal("Error", "Fallo al enviar la petición getcape.", "error");
     };
     xhr.open("POST", "/action/getcape", true);
     xhr.send();
@@ -535,12 +535,12 @@ function updateSkinPreview(){
             if (response !== ""){
                 document.getElementById("skinPreview").innerHTML = "<img src=\"" + response + "\">";
             } else {
-                document.getElementById("skinPreview").innerHTML = "None";
+                document.getElementById("skinPreview").innerHTML = "Ninguno";
             }
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send hasskin query.", "error");
+        swal("Error", "Fallo al enviar la petición getskin.", "error");
     };
     xhr.open("POST", "/action/getskin", true);
     xhr.send();
@@ -551,15 +551,15 @@ function deleteSkin(){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = xhr.responseText;
             if (response !== "OK"){
-                swal("Error", "Failed to delete skin.\nError: " + response, "error");
+                swal("Error", "Fallo al eliminar la skin.\nError: " + response, "error");
             } else {
-                swal("Success", "Skin deleted successfully.", "success");
+                swal("Éxito", "Skin eliminada satisfactoriamente.", "success");
                 updateSkinPreview();
             }
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send deleteskin query.", "error");
+        swal("Error", "Fallo al enviar la petición deleteskin.", "error");
     };
     xhr.open("POST", "/action/deleteskin", true);
     xhr.send();
@@ -570,15 +570,15 @@ function deleteCape(){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             var response = xhr.responseText;
             if (response !== "OK"){
-                swal("Error", "Failed to delete cape.\nError: " + response, "error");
+                swal("Error", "Fallo al eliminar la capa.\nError: " + response, "error");
             } else {
-                swal("Success", "Cape deleted successfully.", "success");
+                swal("Éxito", "Capa eliminada satisfactoriamente.", "success");
                 updateCapePreview();
             }
         }
     };
     xhr.onerror = function(){
-        swal("Error", "Failed to send deletecape query.", "error");
+        swal("Error", "Fallo al enviar la petición deletecape.", "error");
     };
     xhr.open("POST", "/action/deletecape", true);
     xhr.send();

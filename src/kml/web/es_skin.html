@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
   <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -26,16 +27,16 @@
       <div class="bigRedNavi">
         <ul>
           <li><a href="play.html">
-            <i class="fa fa-home"></i> Home
+            <i class="fa fa-home"></i> Inicio
           </a></li>
           <li><a href="profiles.html">
-            <i class="fa fa-users"></i> Profiles
+            <i class="fa fa-users"></i> Perfiles
           </a></li>
           <li><a href="account.html">
-            <i class="fa fa-user"></i> My Account
+            <i class="fa fa-user"></i> Mi Cuenta
           </a></li>
           <li><a onclick="logOut();" href="#">
-            Logout
+            Salir
           </a></li>
         </ul>
       </div>
@@ -46,7 +47,7 @@
         <div class="col-md-4">
           <div class="play-now-box">
               <div id="play">
-                  <a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>
+                  <a class="red-button wide playButton" onclick="playGame()" href="#">JUGAR</a>
               </div>
               <div id="progress">
                   <progress value="0" max="100"></progress>
@@ -60,55 +61,42 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <div class="box-title" id="profileTitle"></div>
-          <div id="profileList" class="white-box">
-              Profile Name:<br>
-              <input class="wide" type="text" id="profileName" value=""/><br>
-              Minecraft Version:<br>
-              <select id="versionList" class="form-control"></select><br>
-              <input type="checkbox" onclick="refreshVersionList();" id="snapshot"/> Allow Snapshot Versions<br>
-              <input type="checkbox" onclick="refreshVersionList();" id="oldBeta"/> Allow Old Beta Versions<br>
-              <input type="checkbox" onclick="refreshVersionList();" id="oldAlpha"/> Allow Old Alpha Versions<br>
-              <br>
-              Game Directory:<br>
-              <input class="wide" type="text" id="gameDirectory" value=""/><br>
-              Resolution:<br>
-              <input type="text" id="resX" value=""/>
-              x
-              <input type="text" id="resY" value=""/><br><br>
-              Java Executable:<br>
-              <input class="wide" type="text" id="javaExecutable" value=""/><br>
-              Java Arguments:<br>
-              <input class="wide" type="text" id="javaArgs" value=""/><br>
-              <br><a class="red-button wideWithMargin" onclick="saveProfile();" href="#">Save Profile</a>
-              <a class="red-button wideWithMargin" href="/profiles.html">Cancel</a>
-              <script>loadProfileData();</script>
+          <div class="box-title"><i class="fa fa-newspaper-o"></i> Skin</div>
+          <div id="accountData" class="white-box">
+              <b>Archivo de Skin:</b><br>
+              <input class="wide" type="file" id="skinFile" accept="image/*"/><br>
+              <b>Formato de Skin:</b><br>
+              <select id="skinFormat" class="form-control">
+                  <option value="steve">Steve</option>
+                  <option value="alex">Alex</option>
+              </select><br><br>
+              <a class="red-button wide" href="#" onclick="updateSkin();">Guardar</a>
           </div>
         </div>
         <div class="col-md-4">
           <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
           <div class="white-box">
-              <b>Selected Profile:</b>
+              <b>Perfil Seleccionado:</b>
               <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
-              <b>Minecraft Version:</b>
-              <div id="version"></div><br>
+              <b>Versión de Minecraft:</b>
+              <div id="version"></div>
               <script>loadProfiles();</script>
           </div>
-          <div class="box-title"><i class="fa fa-user"></i> Our Website</div>
+          <div class="box-title"><i class="fa fa-user"></i> Nuestro Sitio Web</div>
           <div class="white-box">
-            <a class="red-button wide" href="https://krothium.com">Go Now!</a>
+            <a class="red-button wide" href="https://krothium.com">¡Ir Ahora!</a>
           </div>
-          <div class="box-title"><i class="fa fa-brush"></i> Theme Switcher</div>
+          <div class="box-title"><i class="fa fa-brush"></i> Cambiar Tema</div>
           <div class="white-box">
             <select id="style" onchange="switchStyle();" class="form-control">
-              <option value="blue">Blue</option>
-              <option value="dark">Dark</option>
-              <option value="green">Green</option>
-              <option value="grey">Grey</option>
-              <option value="orange">Orange</option>
-              <option value="purple">Purple</option>
-              <option value="red">Red</option>
-              <option value="turquoise">Turquoise</option>
+              <option value="blue">Azul</option>
+              <option value="dark">Oscuro</option>
+              <option value="green">Verde</option>
+              <option value="grey">Gris</option>
+              <option value="orange">Naranja</option>
+              <option value="purple">Morado</option>
+              <option value="red">Rojo</option>
+              <option value="turquoise">Turquesa</option>
             </select>
           </div>
         </div>

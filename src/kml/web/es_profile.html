@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
   <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -26,16 +27,16 @@
       <div class="bigRedNavi">
         <ul>
           <li><a href="play.html">
-            <i class="fa fa-home"></i> Home
+            <i class="fa fa-home"></i> Inicio
           </a></li>
           <li><a href="profiles.html">
-            <i class="fa fa-users"></i> Profiles
+            <i class="fa fa-users"></i> Perfiles
           </a></li>
           <li><a href="account.html">
-            <i class="fa fa-user"></i> My Account
+            <i class="fa fa-user"></i> Mi Cuenta
           </a></li>
           <li><a onclick="logOut();" href="#">
-            Logout
+            Salir
           </a></li>
         </ul>
       </div>
@@ -46,7 +47,7 @@
         <div class="col-md-4">
           <div class="play-now-box">
               <div id="play">
-                  <a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>
+                  <a class="red-button wide playButton" onclick="playGame()" href="#">JUGAR</a>
               </div>
               <div id="progress">
                   <progress value="0" max="100"></progress>
@@ -60,35 +61,55 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <div class="box-title"><i class="fa fa-newspaper-o"></i> Minecraft News</div>
-          <div class="white-box" style="height: 499px">
-            <iframe src='http://mcupdate.tumblr.com/' style='border: 0; width: 100%; height: 100%'></iframe>
+          <div class="box-title" id="profileTitle"></div>
+          <div id="profileList" class="white-box">
+              Nombre del Perfil:<br>
+              <input class="wide" type="text" id="profileName" value=""/><br>
+              Versión de Minecraft:<br>
+              <select id="versionList" class="form-control"></select><br>
+              <input type="checkbox" onclick="refreshVersionList();" id="snapshot"/> Permitir Versiones Snapshot<br>
+              <input type="checkbox" onclick="refreshVersionList();" id="oldBeta"/> Permitir Versiones Antiguas Beta<br>
+              <input type="checkbox" onclick="refreshVersionList();" id="oldAlpha"/> Permitir Versiones Antiguas Alpha<br>
+              <br>
+              Directorio del Juego:<br>
+              <input class="wide" type="text" id="gameDirectory" value=""/><br>
+              Resolución:<br>
+              <input type="text" id="resX" value=""/>
+              x
+              <input type="text" id="resY" value=""/><br><br>
+              Ejecutable de Java:<br>
+              <input class="wide" type="text" id="javaExecutable" value=""/><br>
+              Argumentos de Java:<br>
+              <input class="wide" type="text" id="javaArgs" value=""/><br>
+              <br><a class="red-button wideWithMargin" onclick="saveProfile();" href="#">Guardar Perfil</a>
+              <a class="red-button wideWithMargin" href="/profiles.html">Cancelar</a>
+              <script>loadProfileData();</script>
           </div>
         </div>
         <div class="col-md-4">
           <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
           <div class="white-box">
-              <b>Selected Profile:</b>
+              <b>Perfil Seleccionado:</b>
               <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
-              <b>Minecraft Version:</b>
+              <b>Versión de Minecraft:</b>
               <div id="version"></div>
               <script>loadProfiles();</script>
           </div>
-          <div class="box-title"><i class="fa fa-user"></i> Our Website</div>
+          <div class="box-title"><i class="fa fa-user"></i> Nuestro Sitio Web</div>
           <div class="white-box">
-            <a class="red-button wide" href="https://krothium.com">Go Now!</a>
+            <a class="red-button wide" href="https://krothium.com">¡Ir Ahora!</a>
           </div>
-          <div class="box-title"><i class="fa fa-brush"></i> Theme Switcher</div>
+          <div class="box-title"><i class="fa fa-brush"></i> Cambiar Tema</div>
           <div class="white-box">
             <select id="style" onchange="switchStyle();" class="form-control">
-              <option value="blue">Blue</option>
-              <option value="dark">Dark</option>
-              <option value="green">Green</option>
-              <option value="grey">Grey</option>
-              <option value="orange">Orange</option>
-              <option value="purple">Purple</option>
-              <option value="red">Red</option>
-              <option value="turquoise">Turquoise</option>
+              <option value="blue">Azul</option>
+              <option value="dark">Oscuro</option>
+              <option value="green">Verde</option>
+              <option value="grey">Gris</option>
+              <option value="orange">Naranja</option>
+              <option value="purple">Morado</option>
+              <option value="red">Rojo</option>
+              <option value="turquoise">Turquesa</option>
             </select>
           </div>
         </div>

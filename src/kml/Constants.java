@@ -19,4 +19,5 @@ public class Constants {
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEPALIVE_TIMEOUT = 15000;
+    public static String LANG_CODE = "en";
 }

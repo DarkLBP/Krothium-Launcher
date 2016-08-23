@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
   <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -60,12 +61,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <div class="box-title"><i class="fa fa-newspaper-o"></i> Cape</div>
-          <div id="accountData" class="white-box">
-              <b>Cape File:</b><br>
-              <input class="wide" type="file" id="capeFile" accept="image/*"/><br>
-              <a class="red-button wide" href="#" onclick="updateCape();">Save</a>
-          </div>
+          <div class="box-title"><i class="fa fa-newspaper-o"></i> Profiles</div>
+          <div id="profileList" class="white-box"></div>
+          <script>loadProfileList();</script>
         </div>
         <div class="col-md-4">
           <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
