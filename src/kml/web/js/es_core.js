@@ -40,8 +40,8 @@ function register(){
     redirect("https://krothium.com/index.php?/register/");
 }
 function loadProfileData(){
-    if (window.location.href.indexOf("?") !== -1){
-        var name_base = window.location.href.split("?")[1];
+    if (location.href.indexOf("?") !== -1){
+        var name_base = location.href.split("?")[1];
         if (name_base === null){
             swal("Error", "¡Petición de perfil inválida!", "error");
         } else {
@@ -188,8 +188,8 @@ function refreshVersionList(){
     xhr.send(parameters);
 }
 function saveProfile(){
-    if (window.location.href.indexOf("?") !== -1){
-        var name_base = window.location.href.split("?")[1].replace('#', '');
+    if (location.href.indexOf("?") !== -1){
+        var name_base = location.href.split("?")[1].replace('#', '');
     } else {
         var name_base = "noset";
     }
@@ -285,9 +285,6 @@ function status(){
     };
     xhr.open("POST", "/action/status", true);
     xhr.send();
-}
-function redirect(url){
-    window.location.href = url;
 }
 function keepAlive(){
     if (!keepAlive_requested){
@@ -586,6 +583,7 @@ function switchLanguage(){
             if (response !== "OK"){
                 swal("Error", "Fallo al cambiar el idioma.\nError: " + response, "error");
             } else {
+                createCookie("lang", document.getElementById("langSelect").value, 365);
                 location.reload();
             }
         }

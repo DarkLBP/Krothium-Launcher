@@ -23,9 +23,9 @@ function eraseCookie(name){
 function loadTheme(){
     var c = readCookie('style');
     var fileref=document.createElement("link");
-    fileref.setAttribute("rel", "stylesheet");
-    fileref.setAttribute("type", "text/css");
-    fileref.setAttribute("href", "styles/themes/" + (c ? c : "blue") + ".css");
+    fileref.setAttribute("rel", "stylesheet");
+    fileref.setAttribute("type", "text/css");
+    fileref.setAttribute("href", "styles/themes/" + (c ? c : "blue") + ".css");
     document.getElementsByTagName("head")[0].appendChild(fileref);
     if (document.getElementById("style") !== null){
         console.info(c);
@@ -47,4 +47,7 @@ function fromBase64(string){
         return "";
     }
     return atob(string);
+}
+function redirect(url){
+    location.href = url;
 }

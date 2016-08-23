@@ -53,6 +53,7 @@ public class WebLauncherThread extends Thread{
             int contentLength = 0;
             String contentType = null;
             String contentExtra = null;
+            String cookie = null;
             ByteArrayOutputStream binary = new ByteArrayOutputStream();
             boolean isBinary = false;
             b.append(line).append("\n");
@@ -99,11 +100,11 @@ public class WebLauncherThread extends Thread{
                 if (path.equals("/")){
                     if (!kernel.isAuthenticated()){
                         out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
-                        out.write("Location: /login.html\r\n".getBytes());
+                        out.write("Location: /bootstrap.html?login\r\n".getBytes());
                         out.write("\r\n".getBytes());
                     }else{
                         out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
-                        out.write("Location: /play.html\r\n".getBytes());
+                        out.write("Location: /bootstrap.html?play\r\n".getBytes());
                         out.write("\r\n".getBytes());
                     }
                 }else{
@@ -151,7 +152,7 @@ public class WebLauncherThread extends Thread{
                         throw new WebLauncherException(path, 404, out);
                     }
                     InputStream s;
-                    if (contentTag.equalsIgnoreCase("text/html") || (contentTag.equalsIgnoreCase("application/javascript") && finalPath.equalsIgnoreCase("/js/core.js"))){
+                    if ((contentTag.equalsIgnoreCase("text/html") || (contentTag.equalsIgnoreCase("application/javascript") && finalPath.equalsIgnoreCase("/js/core.js"))) && !finalPath.equalsIgnoreCase("/bootstrap.html")){
                         s = WebLauncher.class.getResourceAsStream("/kml/web/" + finalPath.replace(fileName, Constants.LANG_CODE + "_" + fileName));
                     } else {
                         s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);

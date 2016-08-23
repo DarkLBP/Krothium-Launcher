@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Krothium Minecraft Launcher</title>
+        <script type="text/javascript" src="js/core_extra.js"></script>
+    </head>
+    <body>
+        <script>
+            var l = readCookie("lang");
+            var after = location.href.split("?")[1];
+            if (l){
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (after === "play"){
+                            redirect("/play.html");
+                        } else {
+                            redirect("/login.html");
+                        }
+                    }
+                };
+                xhr.onerror = function(){
+                    if (after === "play"){
+                        redirect("/play.html");
+                    } else {
+                        redirect("/login.html");
+                    }
+                };
+                xhr.open("POST", "/action/switchlanguage", true);
+                xhr.send(toBase64(l));
+            }
+        </script>
+    </body>
+</html>
