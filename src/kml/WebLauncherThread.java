@@ -53,7 +53,6 @@ public class WebLauncherThread extends Thread{
             int contentLength = 0;
             String contentType = null;
             String contentExtra = null;
-            String cookie = null;
             ByteArrayOutputStream binary = new ByteArrayOutputStream();
             boolean isBinary = false;
             b.append(line).append("\n");
