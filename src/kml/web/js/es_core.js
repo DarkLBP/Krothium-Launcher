@@ -393,9 +393,9 @@ function loadProfileList(){
                 var value = "";
                 for (var i = 0; i < data_length; i++){
                     var name = fromBase64(data[i]);
-                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Editar</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Eliminar</a><br>';
+                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">EDITAR</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">ELIMINAR</a><br>';
                 }
-                value += '<br><a class="red-button wide" href="/profile.html">Crear Nuevo</a>';
+                value += '<br><a class="red-button wide" href="/profile.html">CREAR NUEVO</a>';
                 document.getElementById("profileList").innerHTML = value;
             } else {
                 swal("Error", "No se pudo cargar la lista de versiones.", "error");

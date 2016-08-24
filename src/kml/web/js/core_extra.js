@@ -106,9 +106,6 @@ function cancelUpdate(){
         redirect("/login.html");
     }
 }
-function register(){
-    redirect("https://krothium.com/index.php?/register/");
-}
 function loadUpdate(){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {

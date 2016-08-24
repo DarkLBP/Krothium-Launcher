@@ -393,9 +393,9 @@ function loadProfileList(){
                 var value = "";
                 for (var i = 0; i < data_length; i++){
                     var name = fromBase64(data[i]);
-                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">Edit</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">Delete</a><br>';
+                    value += '<b>' + name + '</b><a class="red-button halfWideButton" href=\"/profile.html?' + data[i] + '\">EDIT</a><a class="red-button halfWideButton" onclick="deleteProfile(\'' + data[i] + '\');" href="#">DELETE</a><br>';
                 }
-                value += '<br><a class="red-button wide" href="/profile.html">Create New</a>';
+                value += '<br><a class="red-button wide" href="/profile.html">CREATE NEW</a>';
                 document.getElementById("profileList").innerHTML = value;
             } else {
                 swal("Error", "Could not load version list.", "error");
