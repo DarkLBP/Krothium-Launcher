@@ -3,14 +3,11 @@
 <head>
   <title>Krothium Minecraft Launcher</title>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
   <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
   <script src="js/sweetalert.min.js"></script> 
-  <script type="text/javascript" src="js/core_extra.js"></script>
-  <script type="text/javascript" src="js/core.js"></script>
 </head>
 <body>
   <div class="heroUnit">
@@ -60,14 +57,17 @@
       </div>
       <div class="row">
         <div id="signature" class="white-box">
-            <script>
-              loadSignature();
-            </script>
         </div>
       </div>
     </div>
   </div>
   <script src="js/particles.min.js"></script>
-  <script>clearInterval(status_interval);</script>
+  <script type="text/javascript" src="js/core.js"></script>
+  <script type="text/javascript" src="js/core_extra.js"></script>
+  <script>
+        loadTheme();
+        loadSignature();
+        clearInterval(status_interval);
+  </script>
 </body>
 </html>

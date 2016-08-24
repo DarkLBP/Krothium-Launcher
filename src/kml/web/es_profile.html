@@ -3,14 +3,11 @@
 <head>
   <title>Krothium Minecraft Launcher</title>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
   <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
   <script src="js/sweetalert.min.js"></script> 
-  <script type="text/javascript" src="js/core_extra.js"></script>
-  <script type="text/javascript" src="js/core.js"></script>
 </head>
 <body>
   <div class="heroUnit">
@@ -74,7 +71,6 @@
               <input class="wide" type="text" id="javaArgs" value=""/><br>
               <br><a class="red-button wideWithMargin" onclick="saveProfile();" href="#">Guardar Perfil</a>
               <a class="red-button wideWithMargin" href="/profiles.html">Cancelar</a>
-              <script>loadProfileData();</script>
           </div>
         </div>
         <div class="col-md-4">
@@ -84,7 +80,6 @@
               <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
               <b>Versión de Minecraft:</b>
               <div id="version"></div>
-              <script>loadProfiles();</script>
           </div>
           <div class="box-title"><i class="fa fa-brush"></i> Idioma</div>
           <div class="white-box">
@@ -114,10 +109,17 @@
       </div><br />
       <div class="row">
           <div id="signature" class="white-box"></div>
-          <script>loadSignature();</script>
       </div>
     </div>
   </div>
   <script src="js/particles.min.js"></script>
+  <script type="text/javascript" src="js/core.js"></script>
+  <script type="text/javascript" src="js/core_extra.js"></script>
+  <script>
+        loadTheme();
+        loadProfiles();
+        loadProfileData();
+        loadSignature();
+  </script>
 </body>
 </html>

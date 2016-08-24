@@ -126,4 +126,3 @@ function loadUpdate(){
     xhr.open("POST", "/action/getupdateurl", true);
     xhr.send();
 }
-loadTheme();
