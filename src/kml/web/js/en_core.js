@@ -36,9 +36,6 @@ function authenticate(){
         }
     }
 }
-function register(){
-    redirect("https://krothium.com/index.php?/register/");
-}
 function loadProfileData(){
     if (location.href.indexOf("?") !== -1){
         var name_base = location.href.split("?")[1];

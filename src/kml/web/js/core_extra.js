@@ -28,7 +28,6 @@ function loadTheme(){
     fileref.setAttribute("href", "styles/themes/" + (c ? c : "blue") + ".css");
     document.getElementsByTagName("head")[0].appendChild(fileref);
     if (document.getElementById("style") !== null){
-        console.info(c);
         document.getElementById("style").value = (c ? c : "blue");
     }
 }
@@ -51,3 +50,80 @@ function fromBase64(string){
 function redirect(url){
     location.href = url;
 }
+function bootstrap(){
+    var l = readCookie("lang");
+    var after = location.href.split("?")[1];
+    if (l){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var xhr2 = new XMLHttpRequest();
+                xhr2.onreadystatechange = function() {
+                    if (xhr2.readyState === XMLHttpRequest.DONE) {
+                        var response = xhr2.responseText;
+                        if (response === "YES"){
+                            if (after === "play"){
+                                redirect("/update.html?play");
+                            } else {
+                                redirect("/update.html?login");
+                            }
+                        } else {
+                            if (after === "play"){
+                                redirect("/play.html");
+                            } else {
+                                redirect("/login.html");
+                            }
+                        }
+                    }
+                };
+                xhr2.onerror = function(){
+                    if (after === "play"){
+                        redirect("/play.html");
+                    } else {
+                        redirect("/login.html");
+                    }
+                }
+                xhr2.open("POST", "/action/getlatestversion", true);
+                xhr2.send();
+            }
+        };
+        xhr.onerror = function(){
+            if (after === "play"){
+                redirect("/play.html");
+            } else {
+                redirect("/login.html");
+            }
+        };
+        xhr.open("POST", "/action/switchlanguage", true);
+        xhr.send(toBase64(l));
+    }
+}
+function cancelUpdate(){
+    var after = location.href.split("?")[1];
+    if (after === "play"){
+        redirect("/play.html");
+    } else {
+        redirect("/login.html");
+    }
+}
+function register(){
+    redirect("https://krothium.com/index.php?/register/");
+}
+function loadUpdate(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = fromBase64(xhr.responseText);
+            if (response.indexOf("http") !== -1){
+                document.getElementById("updateButton").target = "_blank";
+                document.getElementById("updateButton").href = response;
+            }
+        }
+    };
+    xhr.onerror = function(){
+        cancelUpdate();
+    };
+    xhr.open("POST", "/action/getupdateurl", true);
+    xhr.send();
+}
+loadTheme();

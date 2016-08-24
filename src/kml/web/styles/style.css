@@ -85,13 +85,14 @@ progress{
 .ip {
   margin: 4px;
 }
-.loginInput{
+.boxInput{
   margin-bottom: 10px;
   margin-right: auto;
   margin-left: auto;
   width: 100%;
+  display: inline-block;
 }
-.loginInputs{
+.boxInputs{
   padding-right: 50px;
   padding-left: 50px;
 }
@@ -105,7 +106,7 @@ progress{
   text-transform:uppercase;
   padding:10px 10px 10px 10px;
 }
-.login {
+.box {
   width: 500px;
   margin-right: auto; 
   margin-left: auto;

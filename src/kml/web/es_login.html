@@ -25,15 +25,15 @@
   <div class="mainBody">
     <div class="container">
       <div class="row">
-          <div class="login">
+          <div class="box">
             <div class="box-title"><i class="fa fa-brush"></i>INICIAR SESIÓN</div>
             <div class="white-box">
-              <div class="loginInputs">
+              <div class="boxInputs">
                 <label style="font-size: 20px">Email o Usuario de Krothium:</label><br>
-                <input id="username" style="font-size: 18px" class="loginInput" type="text" name="username"/>
+                <input id="username" style="font-size: 18px" class="boxInput" type="text" name="username"/>
                 <br>
                 <label style="font-size: 20px">Contraseña:</label><br>
-                <input onkeypress="if (event.keyCode === 13) {authenticate();}" id="password" style="font-size: 18px" class="loginInput" type="password" name="password"/>
+                <input onkeypress="if (event.keyCode === 13) {authenticate();}" id="password" style="font-size: 18px" class="boxInput" type="password" name="password"/>
                 <label style="font-size: 20px">Idioma:</label><br>
                 <select id="langSelect" onchange="switchLanguage();" class="form-control">
                     <option value="es">Español</option>
@@ -69,6 +69,5 @@
   </div>
   <script src="js/particles.min.js"></script>
   <script>clearInterval(status_interval);</script>
-  <script>loadTheme();</script>
 </body>
 </html>

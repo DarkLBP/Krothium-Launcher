@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Krothium Minecraft Launcher</title>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.ico"/>
+  <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/sweetalert.css">
+  <script src="js/sweetalert.min.js"></script> 
+  <script type="text/javascript" src="js/core_extra.js"></script>
+  <script type="text/javascript" src="js/core.js"></script>
+</head>
+<body>
+  <div class="heroUnit">
+    <div class="container">
+      <div class="row">
+        <center>
+          <div class="logo">Krothium <span class="first">MC Launcher</span></div>
+        </center>
+      </div>
+    </div>
+  </div>
+  <div class="mainBody">
+    <div class="container">
+      <div class="row">
+          <div class="box">
+            <div class="box-title"><i class="fa fa-brush"></i>ACTUALIZACIÓN</div>
+            <div class="white-box">
+              <div class="boxInputs">
+                <label style="font-size: 25px">Nueva versión del launcher está disponible. ¿Quiere actualizar?</label><br><br>
+                <a id="updateButton" class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">Actualizar</a>
+                <a class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">Cancelar</a>
+                <div id="link"></div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="row">
+        <div id="signature" class="white-box">
+            <script>
+              loadSignature();
+            </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/particles.min.js"></script>
+  <script>clearInterval(status_interval); loadUpdate();</script>
+</body>
+</html>

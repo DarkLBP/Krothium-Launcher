@@ -584,6 +584,34 @@ public class WebLauncherThread extends Thread{
                             }
                             response = "Unsupported lang code.";
                             break;
+                        case "getlatestversion":
+                            if (!Constants.UPDATE_CHECK){
+                                params = new HashMap();
+                                try{ 
+                                    String r = Utils.sendPost(Constants.GETLATEST_URL, binary.toByteArray(), params);
+                                    String[] data = r.split(":");
+                                    int version = Integer.parseInt(Utils.fromBase64(data[0]));
+                                    if (version > Constants.KERNEL_BUILD){
+                                        response = "YES";
+                                    } else {
+                                        response = "NO";
+                                    }
+                                    Constants.UPDATE_CHECK = true;
+                                } catch (Exception ex){
+                                    response = "Failed to get latest version. (NETWORK_ERROR)";
+                                }
+                            }
+                            break;
+                        case "getupdateurl":
+                            params = new HashMap();
+                            try{ 
+                                String r = Utils.sendPost(Constants.GETLATEST_URL, binary.toByteArray(), params);
+                                String[] data = r.split(":");
+                                response = data[1];
+                            } catch (Exception ex){
+                                response = "Failed to get latest version. (NETWORK_ERROR)";
+                            }
+                            break;
                     }
                 }
                 out.write("HTTP/1.1 200 OK\r\n".getBytes());
