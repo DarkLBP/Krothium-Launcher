@@ -675,7 +675,7 @@ function bootstrap(){
                     } else {
                         redirect("/login.html");
                     }
-                }
+                };
                 xhr2.open("POST", "/action/getlatestversion", true);
                 xhr2.send();
             }
@@ -715,4 +715,10 @@ function loadUpdate(){
     };
     xhr.open("POST", "/action/getupdateurl", true);
     xhr.send();
+}
+function loadLang(){
+    var l = readCookie('lang');
+    if (l){
+        document.getElementById("langSelect").value = l;
+    }
 }

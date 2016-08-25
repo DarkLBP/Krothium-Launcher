@@ -597,7 +597,7 @@ public class WebLauncherThread extends Thread{
                             response = "Unsupported lang code.";
                             break;
                         case "getlatestversion":
-                            if (!Constants.UPDATE_CHECK){
+                            if (!Constants.UPDATE_CHECKED){
                                 params = new HashMap();
                                 try{ 
                                     String r = Utils.sendPost(Constants.GETLATEST_URL, binary.toByteArray(), params);
@@ -608,7 +608,7 @@ public class WebLauncherThread extends Thread{
                                     } else {
                                         response = "NO";
                                     }
-                                    Constants.UPDATE_CHECK = true;
+                                    Constants.UPDATE_CHECKED = true;
                                 } catch (Exception ex){
                                     response = "Failed to get latest version. (NETWORK_ERROR)";
                                 }
