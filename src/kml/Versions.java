@@ -155,11 +155,7 @@ public class Versions {
                             }
                         }
                     }
-                }else{
-                    versionsDir.mkdirs();
                 }
-            }else{
-                versionsDir.mkdirs();
             }
             console.printInfo("Local version list loaded.");
         }catch (Exception ex){
