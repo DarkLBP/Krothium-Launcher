@@ -716,7 +716,7 @@ function loadUpdate(){
             }
         }
     };
-    xh.onerror = function(){
+    xhr.onerror = function(){
         cancelUpdate();
     };
     xhr.open("POST", "/action/getupdateurl", true);
