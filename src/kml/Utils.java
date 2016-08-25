@@ -151,6 +151,9 @@ public class Utils {
     }
     public static boolean writeToFile(String o, File f){
         try {
+            if (!f.getParentFile().exists()){
+                f.getParentFile().mkdirs();
+            }
             FileOutputStream out = new FileOutputStream(f);
             out.write(o.getBytes());
             out.close();
