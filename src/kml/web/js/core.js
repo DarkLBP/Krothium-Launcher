@@ -618,10 +618,10 @@ function loadTheme(){
     var fileref=document.createElement("link");
     fileref.setAttribute("rel", "stylesheet");
     fileref.setAttribute("type", "text/css");
-    fileref.setAttribute("href", "styles/themes/" + (c ? c : "blue") + ".css");
+    fileref.setAttribute("href", "styles/themes/" + ((c !== null) ? c : "blue") + ".css");
     document.getElementsByTagName("head")[0].appendChild(fileref);
     if (document.getElementById("style") !== null){
-        document.getElementById("style").value = (c ? c : "blue");
+        document.getElementById("style").value = ((c !== null) ? c : "blue");
     }
 }
 function switchStyle(){
@@ -646,7 +646,7 @@ function redirect(url){
 function bootstrap(){
     var l = readCookie("lang");
     var after = location.href.split("?")[1];
-    if (l){
+    if (l !== null){
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -689,6 +689,12 @@ function bootstrap(){
         };
         xhr.open("POST", "/action/switchlanguage", true);
         xhr.send(toBase64(l));
+    } else {
+        if (after === "play"){
+            redirect("/play.html");
+        } else {
+            redirect("/login.html");
+        }
     }
 }
 function cancelUpdate(){
@@ -710,7 +716,7 @@ function loadUpdate(){
             }
         }
     };
-    xhr.onerror = function(){
+    xh.onerror = function(){
         cancelUpdate();
     };
     xhr.open("POST", "/action/getupdateurl", true);
@@ -718,7 +724,7 @@ function loadUpdate(){
 }
 function loadLang(){
     var l = readCookie('lang');
-    if (l){
+    if (l !== null){
         document.getElementById("langSelect").value = l;
     }
 }
