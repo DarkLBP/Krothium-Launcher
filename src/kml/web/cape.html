@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Krothium Minecraft Launcher</title>
+  <title>{%s}</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -15,27 +15,27 @@
       <div class="bigRedNavi">
         <ul>
           <li><a href="play.html">
-            <i class="fa fa-home"></i> Home
+            <i class="fa fa-home"></i> {%s}
           </a></li>
           <li><a href="profiles.html">
-            <i class="fa fa-users"></i> Profiles
+            <i class="fa fa-users"></i> {%s}
           </a></li>
           <li><a href="account.html">
-            <i class="fa fa-user"></i> My Account
+            <i class="fa fa-user"></i> {%s}
           </a></li>
           <li><a onclick="logOut();" href="#">
-            Logout
+            {%s}
           </a></li>
         </ul>
       </div>
       <div class="row">
         <div class="col-md-8">
-          <div class="logo">Krothium <span class="first"><br>MC Launcher</span></div>
+          <div class="logo">{%s} <span class="first"><br>{%s}</span></div>
         </div>
         <div class="col-md-4">
           <div class="play-now-box">
               <div id="play">
-                  <a class="red-button wide playButton" onclick="playGame()" href="#">PLAY</a>
+                  <a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>
               </div>
               <div id="progress">
                   <progress value="0" max="100"></progress>
@@ -49,40 +49,45 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <div class="box-title"><i class="fa fa-newspaper-o"></i> Profiles</div>
-          <div id="profileList" class="white-box"></div>
+          <div class="box-title"><i class="fa fa-newspaper-o"></i> {%s}</div>
+          <div id="accountData" class="white-box">
+              <b>{%s}</b><br>
+              <input class="wide" type="file" id="capeFile" accept="image/*"/><br>
+              <a class="red-button wide" href="#" onclick="updateCape();">{%s}</a><br>
+              <a class="red-button wide" href="account.html">{%s}</a>
+          </div>
         </div>
         <div class="col-md-4">
-          <div class="box-title"><i class="fa fa-info-circle"></i> Info</div>
+          <div class="box-title"><i class="fa fa-info-circle"></i> {%s}</div>
           <div class="white-box">
-              <b>Selected Profile:</b>
+              <b>{%s}</b>
               <select id="profiles" onchange="setSelectedProfile();" class="form-control"></select><br>
-              <b>Minecraft Version:</b>
+              <b>{%s}</b>
               <div id="version"></div>
           </div>
           <div class="box-title"><i class="fa fa-brush"></i> Language</div>
           <div class="white-box">
             <select id="langSelect" onchange="switchLanguage();" class="form-control">
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
+              <option value="en">{%s}</option>
+              <option value="es">{%s}</option>
             </select>
           </div>
-          <div class="box-title"><i class="fa fa-brush"></i> Theme</div>
+          <div class="box-title"><i class="fa fa-brush"></i> {%s}</div>
           <div class="white-box">
             <select id="style" onchange="switchStyle();" class="form-control">
-              <option value="blue">Blue</option>
-              <option value="dark">Dark</option>
-              <option value="green">Green</option>
-              <option value="grey">Grey</option>
-              <option value="orange">Orange</option>
-              <option value="purple">Purple</option>
-              <option value="red">Red</option>
-              <option value="turquoise">Turquoise</option>
+              <option value="blue">{%s}</option>
+              <option value="dark">{%s}</option>
+              <option value="green">{%s}</option>
+              <option value="grey">{%s}</option>
+              <option value="orange">{%s}</option>
+              <option value="purple">{%s}</option>
+              <option value="red">{%s}</option>
+              <option value="turquoise">{%s}</option>
             </select>
           </div>
-          <div class="box-title"><i class="fa fa-user"></i> Website</div>
+          <div class="box-title"><i class="fa fa-user"></i> {%s}</div>
           <div class="white-box">
-            <a class="red-button wide" target="_blank" href="https://krothium.com">GO NOW!</a>
+            <a class="red-button wide" target="_blank" href="https://krothium.com">{%s}</a>
           </div>
         </div>
       </div><br />
@@ -93,11 +98,9 @@
   </div>
   <script src="js/particles.min.js"></script>
   <script type="text/javascript" src="js/core.js"></script>
-  <script type="text/javascript" src="js/core_extra.js"></script>
   <script>
         loadTheme();
         loadProfiles();
-        loadProfileList();
         loadSignature();
   </script>
 </body>

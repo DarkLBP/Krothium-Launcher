@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -150,25 +151,36 @@ public class WebLauncherThread extends Thread{
                     if (contentTag.isEmpty()){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    InputStream s;
-                    if ((contentTag.equalsIgnoreCase("text/html") || (contentTag.equalsIgnoreCase("application/javascript") && finalPath.equalsIgnoreCase("/js/core.js"))) && !finalPath.equalsIgnoreCase("/bootstrap.html")){
-                        s = WebLauncher.class.getResourceAsStream("/kml/web/" + finalPath.replace(fileName, Constants.LANG_CODE + "_" + fileName));
-                    } else {
-                        s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
-                    }
+                    InputStream s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
                     if (s == null){
                         throw new WebLauncherException(path, 404, out);
                     }
-                    out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                    out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
-                    out.write("\r\n".getBytes());
+                    InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""));
                     try{
+                        ByteArrayOutputStream bout = new ByteArrayOutputStream();
                         int i;
                         byte[] buffer = new byte[4096];
                         while((i=s.read(buffer))!=-1){
-                           out.write(buffer, 0, i);
+                           bout.write(buffer, 0, i);
                         }
                         s.close();
+                        if (l == null){
+                            out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                            out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
+                            out.write("\r\n".getBytes());
+                            out.write(bout.toByteArray());
+                        } else {
+                            String dataRaw = new String(bout.toByteArray(), Charset.forName("UTF-8"));
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(l));
+                            while ((line = reader.readLine()) != null){
+                                dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                            }
+                            reader.close();
+                            out.write("HTTP/1.1 200 OK\r\n".getBytes());
+                            out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
+                            out.write("\r\n".getBytes());
+                            out.write(dataRaw.getBytes(Charset.forName("UTF-8")));
+                        }
                     }catch (Exception ex){
                         throw new WebLauncherException(path, 500, out);
                     }

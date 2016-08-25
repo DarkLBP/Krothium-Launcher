@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Krothium Minecraft Launcher</title>
+  <title>{%s}</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="styles/style.css">
@@ -14,7 +14,7 @@
     <div class="container">
       <div class="row">
         <center>
-          <div class="logo">Krothium <span class="first">MC Launcher</span></div>
+          <div class="logo">{%s} <span class="first">{%s}</span></div>
         </center>
       </div>
     </div>
@@ -23,12 +23,12 @@
     <div class="container">
       <div class="row">
           <div class="box">
-            <div class="box-title"><i class="fa fa-brush"></i>UDPATE</div>
+            <div class="box-title"><i class="fa fa-brush"></i>{%s}</div>
             <div class="white-box">
               <div class="boxInputs">
-                <label style="font-size: 25px">New launcher version is available. Do you want to update?</label><br><br>
-                <a id="updateButton" class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">UPDATE</a>
-                <a class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">CANCEL</a>
+                <label style="font-size: 25px">{%s}</label><br><br>
+                <a id="updateButton" class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">{%s}</a>
+                <a class="red-button almostHalfWide boxInput" onclick="cancelUpdate();" href="#">{%s}</a>
               </div>
             </div>
           </div>
@@ -41,7 +41,6 @@
   </div>
   <script src="js/particles.min.js"></script>
   <script type="text/javascript" src="js/core.js"></script>
-  <script type="text/javascript" src="js/core_extra.js"></script>
   <script>
         loadTheme();
         loadUpdate();
