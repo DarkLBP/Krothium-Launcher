@@ -38,6 +38,12 @@ public final class Kernel {
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
         this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krotium.com)");
+        this.console.printInfo("OS: " + System.getProperty("os.name"));
+        this.console.printInfo("OS Version: " + System.getProperty("os.version"));
+        this.console.printInfo("OS Architecture: " + System.getProperty("os.arch"));
+        this.console.printInfo("Java Version: " + System.getProperty("java.version"));
+        this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
+        this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
     }
     public Console getConsole(){return this.console;}
     public void setWorkingDir(File dir){
