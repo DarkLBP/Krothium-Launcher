@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.net.ssl.HttpsURLConnection;
 import kml.Utils;
 
 /**
@@ -28,13 +29,13 @@ public class ProfileMatcher implements URLMatcher{
         return false;
     }
     @Override
-    public HttpURLConnection handle(){
+    public HttpsURLConnection handle(){
         Matcher m = profileRegex.matcher(this.url.getPath());
         if (m.matches()){
             String profileID = m.group(1);
             URL remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID);
             try{
-                HttpURLConnection con = (HttpURLConnection)remoteURL.openConnection();
+                HttpsURLConnection con = (HttpsURLConnection)remoteURL.openConnection();
                 return con;
             } catch (IOException ex) {
                 return null;

@@ -3,6 +3,7 @@ package kml.matchers;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import javax.net.ssl.HttpsURLConnection;
 import kml.Utils;
 
 /**
@@ -21,11 +22,11 @@ public class JoinMatcher implements URLMatcher{
         return this.url.toString().equalsIgnoreCase(joinURL);
     }
     @Override
-    public HttpURLConnection handle(){
+    public HttpsURLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(joinURL)){
             URL remoteURL = Utils.stringToURL("https://mc.krothium.com/server/join");
             try{
-                HttpURLConnection con = (HttpURLConnection)remoteURL.openConnection();
+                HttpsURLConnection con = (HttpsURLConnection)remoteURL.openConnection();
                 return con;
             } catch (IOException ex) {
                 return null;

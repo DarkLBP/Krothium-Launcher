@@ -2,6 +2,7 @@ package kml.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import kml.matchers.URLMatcher;
@@ -48,6 +49,15 @@ public class ConnectionHandler extends HttpURLConnection{
         } catch (IOException ex) { 
             return null;
         }
+    }
+    @Override
+    public OutputStream getOutputStream(){
+       try{
+            this.relay.setDoOutput(true);
+            return this.relay.getOutputStream();
+        } catch (IOException ex) { 
+            return null;
+        } 
     }
     @Override
     public void disconnect() {
