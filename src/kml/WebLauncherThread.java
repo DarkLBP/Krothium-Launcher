@@ -170,8 +170,8 @@ public class WebLauncherThread extends Thread{
                             out.write("\r\n".getBytes());
                             out.write(bout.toByteArray());
                         } else {
-                            String dataRaw = new String(bout.toByteArray(), Charset.forName("UTF-8"));
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(l));
+                            String dataRaw = new String(bout.toByteArray(), "UTF-8");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
                             while ((line = reader.readLine()) != null){
                                 dataRaw = dataRaw.replaceFirst("\\{%s}", line);
                             }
@@ -179,7 +179,7 @@ public class WebLauncherThread extends Thread{
                             out.write("HTTP/1.1 200 OK\r\n".getBytes());
                             out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
                             out.write("\r\n".getBytes());
-                            out.write(dataRaw.getBytes(Charset.forName("UTF-8")));
+                            out.write(dataRaw.getBytes("UTF-8"));
                         }
                     }catch (Exception ex){
                         throw new WebLauncherException(path, 500, out);
