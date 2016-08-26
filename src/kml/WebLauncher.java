@@ -19,8 +19,8 @@ public class WebLauncher {
     
     public static long lastKeepAlive;
     public static void main(String[] args) throws IOException, AuthenticationException{
-        final Kernel kernel = new Kernel();
-        final Console console = kernel.getConsole();
+        Kernel kernel = new Kernel();
+        Console console = kernel.getConsole();
         console.includeTimestamps(true);
         kernel.loadVersions();
         kernel.loadProfiles();

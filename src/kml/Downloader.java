@@ -208,7 +208,7 @@ public class Downloader {
         if (urls.isEmpty()){
             console.printInfo("Nothing to download.");
         } else {
-            for (final Downloadable dw : urls){
+            for (Downloadable dw : urls){
                 Runnable thread = new Runnable(){
                     @Override
                     public void run(){
