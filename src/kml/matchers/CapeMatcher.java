@@ -12,9 +12,9 @@ import kml.Utils;
  * @author DarkLBP
  */
 public class CapeMatcher implements URLMatcher{
-    private String capeHost = "skins.minecraft.net";
-    private String capeHostLegacy = "s3.amazonaws.com";
-    private Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
+    private final String capeHost = "skins.minecraft.net";
+    private final String capeHostLegacy = "s3.amazonaws.com";
+    private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
     private final URL url;
     
     public CapeMatcher(URL url){

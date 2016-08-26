@@ -12,8 +12,8 @@ import kml.Utils;
  * @author DarkLBP
  */
 public class ProfileMatcher implements URLMatcher{
-    private String profileHost = "sessionserver.mojang.com";
-    private Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");
+    private final String profileHost = "sessionserver.mojang.com";
+    private final Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");
     private final URL url;
     
     public ProfileMatcher(URL url){

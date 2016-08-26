@@ -12,8 +12,8 @@ import kml.Utils;
  * @author DarkLBP
  */
 public class SkinMatcher implements URLMatcher{
-    private String skinHost = "skins.minecraft.net";
-    private Pattern skinRegex = Pattern.compile("/MinecraftSkins/(.+?)\\.png");
+    private final String skinHost = "skins.minecraft.net";
+    private final Pattern skinRegex = Pattern.compile("/MinecraftSkins/(.+?)\\.png");
     private final URL url;
     
     public SkinMatcher(URL url){

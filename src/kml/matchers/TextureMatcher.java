@@ -3,8 +3,6 @@ package kml.matchers;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import kml.Utils;
@@ -14,8 +12,8 @@ import kml.Utils;
  * @author DarkLBP
  */
 public class TextureMatcher implements URLMatcher{
-    private String textureHost = "textures.minecraft.net";
-    private Pattern textureRegex = Pattern.compile("/texture/([0-9a-fA-F]+)");
+    private final String textureHost = "textures.minecraft.net";
+    private final Pattern textureRegex = Pattern.compile("/texture/([0-9a-fA-F]+)");
     private final URL url;
     
     public TextureMatcher(URL url){
