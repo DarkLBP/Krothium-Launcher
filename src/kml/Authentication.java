@@ -79,7 +79,7 @@ public class Authentication {
         try {
             response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
-            throw new AuthenticationException("Failed to send request to authentication server.");
+            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
         if (response == null || response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
@@ -138,7 +138,7 @@ public class Authentication {
         try {
             response = Utils.sendPost(Constants.REFRESH_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
-            throw new AuthenticationException("Failed to send request to authentication server.");
+            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
         if (response == null || response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
@@ -177,7 +177,7 @@ public class Authentication {
         try {
             response = Utils.sendPost(Constants.VALIDATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
-            throw new AuthenticationException("Failed to send request to authentication server.");
+            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
         if (response == null){
             throw new AuthenticationException("Authentication server does not respond.");

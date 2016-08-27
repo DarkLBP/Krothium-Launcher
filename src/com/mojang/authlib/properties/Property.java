@@ -21,8 +21,7 @@ public class Property{
       this.signature = signature;
     }
 
-    public String getName()
-    {
+    public String getName(){
       return this.name;
     }
 
