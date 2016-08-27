@@ -32,7 +32,7 @@ public class ProfileMatcher implements URLMatcher{
         Matcher m = profileRegex.matcher(this.url.getPath());
         if (m.matches()){
             String profileID = m.group(1);
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID);
+            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
             try{
                 HttpsURLConnection con = (HttpsURLConnection)remoteURL.openConnection();
                 return con;

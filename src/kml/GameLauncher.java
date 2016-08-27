@@ -102,6 +102,12 @@ public class GameLauncher {
         String libraries = "";
         List<Library> libs = ver.getLibraries();
         String separator = System.getProperty("path.separator");
+        try {
+            File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            libraries += launchPath.getAbsolutePath() + separator;
+        } catch (URISyntaxException ex) {
+            console.printError("Failed to load GameStarter.");
+        }
         for (Library lib : libs){
             if (lib.isCompatible()){
                 if (lib.isNative()){
@@ -149,13 +155,7 @@ public class GameLauncher {
         }
         console.printInfo("Preparing game args.");
         File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
-        libraries += verPath.getAbsolutePath() + separator;
-        try {
-            File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            libraries += launchPath.getAbsolutePath();
-        } catch (URISyntaxException ex) {
-            console.printError("Failed to load GameStarter.");
-        }
+        libraries += verPath.getAbsolutePath();
         String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
