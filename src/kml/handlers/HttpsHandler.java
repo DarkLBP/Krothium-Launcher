@@ -5,6 +5,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import kml.matchers.JoinMatcher;
+import kml.matchers.MojangAPIMatcher;
 import kml.matchers.ProfileMatcher;
 import kml.matchers.URLMatcher;
 
@@ -22,7 +23,7 @@ public class HttpsHandler extends sun.net.www.protocol.https.Handler{
     @Override
     protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url.toString());
-        URLMatcher[] matchers = new URLMatcher[]{new ProfileMatcher(url), new JoinMatcher(url)};
+        URLMatcher[] matchers = new URLMatcher[]{new ProfileMatcher(url), new JoinMatcher(url), new MojangAPIMatcher(url)};
         for (URLMatcher m : matchers){
             if (m.match()){
                 return new ConnectionHandler(url, m);
