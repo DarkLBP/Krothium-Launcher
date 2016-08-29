@@ -53,8 +53,6 @@ public class WebLauncherThread extends Thread{
             int contentLength = 0;
             String contentType = null;
             String contentExtra = null;
-            ByteArrayOutputStream binary = new ByteArrayOutputStream();
-            boolean isBinary = false;
             b.append(line).append("\n");
             while (!(line = in.readLine()).equals("")) {
                 b.append(line).append("\n");
@@ -72,20 +70,10 @@ public class WebLauncherThread extends Thread{
                 }
             }
             if (isPost && contentLength > 0 && contentType != null){
-                if (contentType.startsWith("text/")){
-                    int read;
-                    for (int i = 0; i < contentLength; i++){
-                        read = in.read();
-                        b.append((char)read);
-                    }
-                } else {
-                    isBinary = true;
-                    int read;
-                    InputStream in2 = this.clientSocket.getInputStream();
-                    for (int i = 0; i < contentLength; i++){
-                        read = in2.read();
-                        binary.write(read);
-                    }
+                int read;
+                for (int i = 0; i < contentLength; i++){
+                    read = in.read();
+                    b.append((char)read);
                 }
             }
             request = b.toString();
@@ -486,23 +474,23 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "changeskin":
+                            
                             if (contentType == null){
                                 response = "Invalid content type.";
                                 break;
                             } else if (!contentType.equals("image/png")){
                                 response = "Invalid skin format. Must be a valid PNG file.";
                                 break;
-                            } else if (!isBinary){
-                                response = "No binary data.";
-                                break;
-                            } else if (contentLength == 0){
-                                response = "File has 0 bytes.";
-                                break;
                             } else if (contentExtra == null){
                                 response = "Skin type not specified.";
                                 break;
                             } else if (!contentExtra.equals("alex") && !contentExtra.equals("steve")){
                                 response = "Invalid skin type.";
+                                break;
+                            }
+                            byte[] skinData = Utils.fromBase64Binary(parameters.split(",")[1]);
+                            if (skinData.length == 0){
+                                response = "File has 0 bytes.";
                                 break;
                             }
                             params = new HashMap();
@@ -513,7 +501,7 @@ public class WebLauncherThread extends Thread{
                             params.put("Content-Type", "image/png");
                             params.put("Content-Length", "" + contentLength);
                             try{
-                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params);
+                                response = Utils.sendPost(Constants.CHANGESKIN_URL, skinData, params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -525,10 +513,9 @@ public class WebLauncherThread extends Thread{
                             } else if (!contentType.equals("image/png")){
                                 response = "Invalid cape format. Must be a valid PNG file.";
                                 break;
-                            } else if (!isBinary){
-                                response = "No binary data.";
-                                break;
-                            } else if (contentLength == 0){
+                            }
+                            byte[] capeData = Utils.fromBase64Binary(parameters.split(",")[1]);
+                            if (capeData.length == 0){
                                 response = "File has 0 bytes.";
                                 break;
                             }
@@ -539,7 +526,7 @@ public class WebLauncherThread extends Thread{
                             params.put("Content-Type", "image/png");
                             params.put("Content-Length", "" + contentLength);
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params);
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, capeData, params);
                             } catch (Exception ex){
                                 response = "Failed to change cape. (NETWORK_ERROR)";
                             }
@@ -569,7 +556,7 @@ public class WebLauncherThread extends Thread{
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGESKIN_URL, binary.toByteArray(), params);
+                                response = Utils.sendPost(Constants.CHANGESKIN_URL, new byte[0], params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -581,7 +568,7 @@ public class WebLauncherThread extends Thread{
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, binary.toByteArray(), params);
+                                response = Utils.sendPost(Constants.CHANGECAPE_URL, new byte[0], params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -599,7 +586,7 @@ public class WebLauncherThread extends Thread{
                             if (!Constants.UPDATE_CHECKED){
                                 params = new HashMap();
                                 try{ 
-                                    String r = Utils.sendPost(Constants.GETLATEST_URL, binary.toByteArray(), params);
+                                    String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], params);
                                     String[] data = r.split(":");
                                     int version = Integer.parseInt(Utils.fromBase64(data[0]));
                                     if (version > Constants.KERNEL_BUILD){
@@ -616,7 +603,7 @@ public class WebLauncherThread extends Thread{
                         case "getupdateurl":
                             params = new HashMap();
                             try{ 
-                                String r = Utils.sendPost(Constants.GETLATEST_URL, binary.toByteArray(), params);
+                                String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], params);
                                 String[] data = r.split(":");
                                 response = data[1];
                             } catch (Exception ex){

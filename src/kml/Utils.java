@@ -253,4 +253,16 @@ public class Utils {
         }
         return conversion;
     }
+    public static byte[] fromBase64Binary(String st){
+        if (st == null || st.isEmpty()){
+            return new byte[0];
+        }
+        byte[] data;
+        try{
+            data = Base64.getDecoder().decode(st);
+            return data;
+        } catch (Exception ex){
+            return new byte[0];
+        }
+    }
 }

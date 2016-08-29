@@ -450,49 +450,60 @@ function deleteProfile(base64name){
 }
 function updateSkin(){
     if (document.getElementById("skinFile").files.length > 0){
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                var response = xhr.responseText;
-                if (response !== "OK"){
-                    swal("{%s}", response, "error");
-                } else {
-                    swal({title: "{%s}", text: "{%s}", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+        var reader = new FileReader();
+        reader.onloadend = function(e) {
+            var content = this.result;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = xhr.responseText;
+                    if (response !== "OK"){
+                        swal("{%s}", response, "error");
+                    } else {
+                        swal({title: "{%s}", text: "{%s}", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+                    }
                 }
-            }
+            };
+            xhr.onerror = function(){
+                swal("{%s}", "{%s}", "error");
+            };
+            xhr.open("POST", "/action/changeskin", true);
+            xhr.setRequestHeader("Content-Type", document.getElementById("skinFile").files[0].type);
+            xhr.setRequestHeader("Content-Length", content.length);
+            xhr.setRequestHeader("Content-Extra", document.getElementById("skinFormat").value);
+            xhr.send(content);
         };
-        xhr.onerror = function(){
-            swal("{%s}", "{%s}", "error");
-        };
-        xhr.open("POST", "/action/changeskin", true);
-        xhr.setRequestHeader("Content-Type", document.getElementById("skinFile").files[0].type);
-        xhr.setRequestHeader("Content-Length", document.getElementById("skinFile").files[0].length);
-        xhr.setRequestHeader("Content-Extra", document.getElementById("skinFormat").value);
-        xhr.send(document.getElementById("skinFile").files[0]);
+        reader.readAsDataURL(document.getElementById("skinFile").files[0]);
     } else {
         swal("{%s}", "{%s}", "warning");
     }
 }
 function updateCape(){
     if (document.getElementById("capeFile").files.length > 0){
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                var response = xhr.responseText;
-                if (response !== "OK"){
-                    swal("{%s}", response, "error");
-                } else {
-                    swal({title: "{%s}", text: "{%s}", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+        var reader = new FileReader();
+        var reader = new FileReader();
+        reader.onloadend = function(e) {
+            var content = this.result;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = xhr.responseText;
+                    if (response !== "OK"){
+                        swal("{%s}", response, "error");
+                    } else {
+                        swal({title: "{%s}", text: "{%s}", type: "success", closeOnConfirm: false}, function(){redirect("/account.html");});
+                    }
                 }
-            }
+            };
+            xhr.onerror = function(){
+                swal("{%s}", "{%s}", "error");
+            };
+            xhr.open("POST", "/action/changecape", true);
+            xhr.setRequestHeader("Content-Type", document.getElementById("capeFile").files[0].type);
+            xhr.setRequestHeader("Content-Length", document.getElementById("capeFile").files[0].length);
+            xhr.send(content);
         };
-        xhr.onerror = function(){
-            swal("{%s}", "{%s}", "error");
-        };
-        xhr.open("POST", "/action/changecape", true);
-        xhr.setRequestHeader("Content-Type", document.getElementById("capeFile").files[0].type);
-        xhr.setRequestHeader("Content-Length", document.getElementById("capeFile").files[0].length);
-        xhr.send(document.getElementById("capeFile").files[0]);
+        reader.readAsDataURL(document.getElementById("capeFile").files[0]);
     } else {
         swal("{%s}", "{%s}", "warning");
     }
