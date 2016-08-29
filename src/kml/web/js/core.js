@@ -296,6 +296,12 @@ function keepAlive(){
             clearInterval(keepAlive_interval);
             swal("{%s}", "{%s}\n{%s}", "error");  
         };
+        xhr.ontimeout = function (e) {
+            clearInterval(status_interval);
+            clearInterval(keepAlive_interval);
+            swal("{%s}", "{%s}\n{%s}", "error");
+        };
+        xhr.timeout = 5000;
         xhr.open("POST", "/action/keepalive", true);
         xhr.send();
         keepAlive_requested = true;
