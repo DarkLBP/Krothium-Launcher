@@ -42,7 +42,7 @@ public class ServerLauncher{
                     File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                     libraries += launchPath.getAbsolutePath() + separator;
                 } catch (URISyntaxException ex) {
-                    System.out.println("Failed to load GameStarter.");
+                    System.out.println("Failed to load ServerStarter.");
                 }
                 libraries += f.getAbsolutePath();
                 serverArgs.add(libraries);
