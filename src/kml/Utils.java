@@ -75,8 +75,7 @@ public class Utils {
         }
         return(directory.delete());
     }
-    public static void openWebsite(String url) throws IOException
-    {
+    public static void openWebsite(String url) throws IOException{
         String os = System.getProperty("os.name").toLowerCase();
         Runtime rt = Runtime.getRuntime();
         if (os.contains("win")) {

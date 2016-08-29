@@ -298,5 +298,4 @@ public class GameLauncher {
     }
     public InputStream getInputStream(){return this.process.getInputStream();}
     public InputStream getErrorStream(){return this.process.getErrorStream();}
-    public void forceQuit(){this.process.destroyForcibly();}
 }

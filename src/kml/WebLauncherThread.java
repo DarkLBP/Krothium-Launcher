@@ -82,7 +82,6 @@ public class WebLauncherThread extends Thread{
             }
             String[] requestChunks = request.split(" ");
             String path = requestChunks[1];
-            boolean closeWhenFinished = false;
             if (request.startsWith("GET")){
                 if (path.equals("/")){
                     if (!kernel.isAuthenticated()){
@@ -474,7 +473,6 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "changeskin":
-                            
                             if (contentType == null){
                                 response = "Invalid content type.";
                                 break;
@@ -620,9 +618,6 @@ public class WebLauncherThread extends Thread{
             }
             out.close();
             in.close();
-            if (closeWhenFinished){
-                System.exit(0);
-            }
         } catch (IOException | WebLauncherException  ex) {
             console.printError(ex.getMessage());
         }

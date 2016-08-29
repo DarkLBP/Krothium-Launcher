@@ -29,7 +29,7 @@ import javax.net.ssl.TrustManagerFactory;
 public class WebLauncher {
     
     public static long lastKeepAlive;
-    public static void main(String[] args) throws IOException, AuthenticationException{
+    public static void load(){
         final Kernel kernel = new Kernel();
         final Console console = kernel.getConsole();
         console.includeTimestamps(true);
@@ -68,10 +68,19 @@ public class WebLauncher {
         int portStart = 24000;
         int portEnd = 25000;
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        ServerSocket ss = new ServerSocket(port, 100, InetAddress.getLoopbackAddress());
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(port, 100, InetAddress.getLoopbackAddress());
+        } catch (IOException ex) {
+            console.printError("Failed to initialize bundled server.\n" + ex.getMessage());
+        }
         boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
-        Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);
+        try{
+            Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);
+        } catch (Exception ex){
+            console.printError("Failed to open web browser.\n" + ex.getMessage());
+        }
         WebLauncher.lastKeepAlive = System.nanoTime();
         Thread keepAlive = new Thread(){
             @Override
@@ -112,9 +121,14 @@ public class WebLauncher {
         };
         keepAlive.start();
         while (status){
-            Socket s = ss.accept();
-            WebLauncherThread thread = new WebLauncherThread(s, kernel);
-            thread.start();
+            Socket s;
+            try {
+                s = ss.accept();
+                WebLauncherThread thread = new WebLauncherThread(s, kernel);
+                thread.start();
+            } catch (IOException ex) {
+                console.printError("Failed to accept connection.\n" + ex.getMessage());
+            }
         }
     }
 }
