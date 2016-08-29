@@ -23,7 +23,7 @@ public class JoinServerMatcher implements URLMatcher{
     @Override
     public HttpURLConnection handle(){
         if ((this.url.toString().contains(joinURL) && this.url.getQuery() != null)){
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/server/joinserver?" + this.url.getQuery());
+            URL remoteURL = Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + this.url.getQuery());
             try{
                 HttpURLConnection con = (HttpURLConnection)remoteURL.openConnection();
                 return con;
