@@ -21,7 +21,7 @@
 .red-button {
   background: #7f8c8d;
 }
-.red-button:hover, .red-button:visited, .red-button:active {
+.red-button:hover {
   background: #95a5a6;
 }
 .white-box {
