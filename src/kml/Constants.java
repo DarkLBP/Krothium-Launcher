@@ -1,6 +1,5 @@
 package kml;
 
-import java.io.File;
 import java.net.URL;
 
 /**
@@ -23,5 +22,4 @@ public class Constants {
     public static final int KEEPALIVE_TIMEOUT = 15000;
     public static String LANG_CODE = "en";
     public static boolean UPDATE_CHECKED = false;
-    public static File WORKING_DIR = Utils.getWorkingDirectory();
 }
