@@ -1,6 +1,7 @@
 package kml;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,63 +17,61 @@ public class Console {
     private boolean enabled = true;
     private boolean timestamps = false;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    private final ByteArrayOutputStream data = new ByteArrayOutputStream();
+    private FileOutputStream data;
     private GZIPOutputStream cdata;
-    private boolean compressed;
     private Date date = new Date();
-    public Console(){
-        cdata = null;
+    private final Kernel kernel;
+    public Console(Kernel instance){
+        this.kernel = instance;
+        this.cdata = null;
+        this.data = null;
         try {
-            cdata = new GZIPOutputStream(data);
-            compressed = true;
+            File log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log.gz");
+            this.data = new FileOutputStream(log);
+            this.cdata = new GZIPOutputStream(data);
         } catch (IOException ex) {
-            compressed = false;
+            this.enabled = false;
         }
     }
-    public void setEnabled(boolean value){this.enabled = value;}
+    public boolean isEnabled(){return this.enabled;}
+    public void setEnabled(boolean value){
+        if (this.cdata == null || this.data == null){
+            this.enabled = false;
+        } else {
+            this.enabled = value;
+        }
+    }
     public void includeTimestamps(boolean value){this.timestamps = value;}
     public void printInfo(Object info){
-        if (enabled){
+        if (this.enabled){
             date = new Date();
             Object inf = (timestamps) ? ("[" + dateFormat.format(date) + "] " + info) : info;
             try {
                 byte[] raw = (inf.toString() + System.lineSeparator()).getBytes();
-                if (compressed){
-                    cdata.write(raw);
-                } else {
-                    data.write(raw);
-                }
+                cdata.write(raw);
             } catch (IOException ex) {}
             System.out.println(inf);
             System.out.flush();
         }
     }
     public void printError(Object error){
-        if (enabled){
+        if (this.enabled){
             date = new Date();
             Object err = (timestamps) ? ("[" + dateFormat.format(date) + "] " + error) : error;
             try {
                 byte[] raw = (err.toString() + System.lineSeparator()).getBytes();
-                if (compressed){
-                    cdata.write(raw);
-                } else {
-                    data.write(raw);
-                }
+                cdata.write(raw);
             } catch (IOException ex) {}
             System.err.println(err);
             System.err.flush();
         }
     }
-    public void stopCompressing(){
-        if (compressed){
-            try{
-                cdata.close();
-                compressed = false;
-            } catch (Exception ex){}
+    public boolean close(){
+        try{
+            this.cdata.close();
+            return true;
+        } catch (Exception ex){
+            return false;
         }
     }
-    public byte[] getData(){
-        return data.toByteArray();
-    }
-    public boolean usesCompression(){return this.compressed;}
 }

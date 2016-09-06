@@ -1,8 +1,6 @@
 package kml;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import kml.exceptions.AuthenticationException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,27 +94,8 @@ public class WebLauncher {
                     diff = (System.nanoTime() - lastKeepAlive);
                     result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
                 }
-                console.printInfo("KeepAlive timeout exceeded. Saving logs and closing launcher...");
-                try {
-                    File log;
-                    console.setEnabled(false);
-                    if (console.usesCompression()){
-                        console.stopCompressing();
-                        log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log.gz");
-                    } else {
-                        log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log");
-                    }
-                    if (log.exists()){
-                        log.delete();
-                    }
-                    if (!log.getParentFile().exists()){
-                        log.getParentFile().mkdirs();
-                    }
-                    FileOutputStream out = new FileOutputStream(log);
-                    out.write(console.getData());
-                    out.close();
-                } catch (Exception ex) {}
-                System.exit(0);
+                console.printInfo("KeepAlive timeout exceeded. Launcher closed.");
+                kernel.exitSafely();
             }
         };
         keepAlive.start();

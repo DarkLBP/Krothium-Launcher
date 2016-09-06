@@ -30,8 +30,11 @@ public final class Kernel {
     public final Authentication authentication;
     public final GameLauncher gameLauncher;
     public Kernel(){
-        this.workingDir = Utils.getWorkingDirectory();
-        this.console = new Console();
+        this(Utils.getWorkingDirectory());
+    }
+    public Kernel(File workDir){
+        this.workingDir = workDir;
+        this.console = new Console(this);
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
         this.downloader = new Downloader(this);
@@ -46,12 +49,6 @@ public final class Kernel {
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
     }
     public Console getConsole(){return this.console;}
-    public void setWorkingDir(File dir){
-        if (!dir.exists() || !dir.isDirectory()){
-            dir.mkdirs();
-        }
-        this.workingDir = dir;
-    }
     public File getWorkingDir(){return this.workingDir;}
     public User getSelectedUser(){return this.authentication.getSelectedUser();}
     public String getSelectedProfile(){return this.profiles.getSelectedProfile();}
@@ -104,4 +101,8 @@ public final class Kernel {
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){return new File(this.getWorkingDir() + File.separator + "launcher_profiles.json");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
+    public void exitSafely(){
+        this.console.close();
+        System.exit(0);
+    }
 }
