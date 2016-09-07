@@ -71,7 +71,7 @@ public class Console {
             this.cdata.close();
             return true;
         } catch (Exception ex){
-            return false;
+            return !this.isEnabled();
         }
     }
 }
