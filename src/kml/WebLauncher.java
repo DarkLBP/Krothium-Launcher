@@ -15,6 +15,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -80,25 +82,18 @@ public class WebLauncher {
             console.printError("Failed to open web browser.\n" + ex.getMessage());
         }
         WebLauncher.lastKeepAlive = System.nanoTime();
-        Thread keepAlive = new Thread(){
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
             @Override
-            public void run(){
+            public void run() {
                 long diff = (System.nanoTime() - lastKeepAlive);
                 long result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
-                while (result < Constants.KEEPALIVE_TIMEOUT){
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException ex) {
-                        console.printError("Error in KeepAlive thread.");
-                    }
-                    diff = (System.nanoTime() - lastKeepAlive);
-                    result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
+                if (result >= Constants.KEEPALIVE_TIMEOUT){
+                    console.printInfo("KeepAlive timeout exceeded. Launcher closed.");
+                    kernel.exitSafely();
                 }
-                console.printInfo("KeepAlive timeout exceeded. Launcher closed.");
-                kernel.exitSafely();
             }
-        };
-        keepAlive.start();
+        }, 0, 1000);
         while (status){
             Socket s;
             try {
