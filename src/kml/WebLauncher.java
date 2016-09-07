@@ -10,8 +10,12 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Random;
@@ -49,7 +53,7 @@ public class WebLauncher {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, tmf.getTrustManagers(), null);
             SSLContext.setDefault(sslContext);
-        } catch (Exception e) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException e) {
             console.printError("Failed to trust mc.krothium.com certificate.\n" + e.getMessage());
         }
         kernel.loadVersions();
@@ -99,10 +103,8 @@ public class WebLauncher {
                 Socket s = ss.accept();
                 WebLauncherThread thread = new WebLauncherThread(s, kernel);
                 thread.start();
-            } catch (IOException ex) {
+            } catch (IOException | NullPointerException ex) {
                 console.printError("Failed to accept connection.\n" + ex.getMessage());
-            } catch (NullPointerException ex){
-                console.printError("Null socket connection recieved.\n" + ex.getMessage());
             }
         }
     }
