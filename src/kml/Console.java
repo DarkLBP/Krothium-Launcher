@@ -19,14 +19,15 @@ public class Console {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private FileOutputStream data;
     private GZIPOutputStream cdata;
-    private Date date = new Date();
+    private Date date;
     private final Kernel kernel;
+    private File log;
     public Console(Kernel instance){
         this.kernel = instance;
         this.cdata = null;
         this.data = null;
         try {
-            File log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher.log.gz");
+            log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
             this.data = new FileOutputStream(log);
             this.cdata = new GZIPOutputStream(data);
         } catch (IOException ex) {
@@ -67,11 +68,22 @@ public class Console {
         }
     }
     public boolean close(){
-        try{
-            this.cdata.close();
+        if (this.isEnabled()){
+            try{
+                this.cdata.close();
+                this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
+                return true;
+            } catch (Exception ex){
+                return false;
+            }
+        } else {
+            try{
+                this.cdata.close();
+                this.log.delete();
+            } catch (Exception ex){
+                //
+            }
             return true;
-        } catch (Exception ex){
-            return !this.isEnabled();
         }
     }
 }
