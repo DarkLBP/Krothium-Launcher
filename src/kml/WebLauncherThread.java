@@ -186,6 +186,7 @@ public class WebLauncherThread extends Thread{
                     String profile;
                     Map<String, String> params;
                     User user;
+                    Profile prof;
                     switch (function){
                         case "authenticate":
                             if (contentLength > 0){
@@ -269,9 +270,9 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "selectedversion":
-                            Profile sprof = kernel.getProfile(kernel.getSelectedProfile());
-                            if (sprof.hasVersion()){
-                                response = Utils.toBase64(Utils.toBase64(sprof.getVersionID())) + ":" + Utils.toBase64(sprof.getVersionID());
+                            prof = kernel.getProfile(kernel.getSelectedProfile());
+                            if (prof.hasVersion()){
+                                response = Utils.toBase64(Utils.toBase64(prof.getVersionID())) + ":" + Utils.toBase64(prof.getVersionID());
                             } else {
                                 response = Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion());
                             }
@@ -316,7 +317,7 @@ public class WebLauncherThread extends Thread{
                                     }
                                 }
                             } else {
-                                Profile prof = kernel.getProfile(kernel.getSelectedProfile());
+                                prof = kernel.getProfile(kernel.getSelectedProfile());
                                 allowedTypes = prof.getAllowedVersionTypes();
                                 response = "latest";
                                 while (vi.hasNext()){
@@ -354,45 +355,44 @@ public class WebLauncherThread extends Thread{
                                 if (!kernel.existsProfile(profileName) && !profileArray[0].equals("noset")){
                                     response = "Profile " + profileName + " is specified but does not exist.";
                                 } else {
-                                    Profile up;
                                     if (profileArray[0].equals("noset")){
-                                        up = new Profile(profileNameNew);
+                                        prof = new Profile(profileNameNew);
                                     } else {
-                                        up = kernel.getProfile(profileName);
+                                        prof = kernel.getProfile(profileName);
                                     }
                                     boolean error = false;
                                     if (profileVersion == null){
-                                        up.setVersionID(null);
+                                        prof.setVersionID(null);
                                     } else if (!kernel.existsVersion(profileVersion)){
                                         error = true;
                                         response += "Selected version " + profileVersion + " does not exist." + "\n";
                                     } else {
-                                        up.setVersionID(profileVersion);
+                                        prof.setVersionID(profileVersion);
                                     }
                                     if (!gameDir.isEmpty()){
                                         File dir = new File(gameDir);
-                                        up.setGameDir(dir);
+                                        prof.setGameDir(dir);
                                     } else {
-                                        up.setGameDir(null);
+                                        prof.setGameDir(null);
                                     }
                                     if (!resolution.isEmpty()){
                                         try{
                                             int x = Integer.parseInt(resolution.split("x")[0]);
                                             int y = Integer.parseInt(resolution.split("x")[1]);
-                                            up.setResolution(x, y);
+                                            prof.setResolution(x, y);
                                         } catch (Exception ex){
                                             error = true;
                                             response += "Invalid resolution values." + "\n";
                                         }
                                     }
                                     else{
-                                        up.setResolution(-1, -1);
+                                        prof.setResolution(-1, -1);
                                     }
                                     if (!javaExec.isEmpty()){
                                         File file = new File(javaExec);
                                         if (file.exists()){
                                             if (file.isFile()){
-                                                up.setJavaDir(file); 
+                                                prof.setJavaDir(file); 
                                             }
                                             else {
                                                 error = true;
@@ -404,27 +404,27 @@ public class WebLauncherThread extends Thread{
                                             response += "Java executable does not exist." + "\n";
                                         }
                                     } else {
-                                        up.setJavaDir(null);
+                                        prof.setJavaDir(null);
                                     }
                                     if (!javaArgs.isEmpty()){
-                                        up.setJavaArgs(javaArgs);
+                                        prof.setJavaArgs(javaArgs);
                                     } else {
-                                        up.setJavaArgs(null);
+                                        prof.setJavaArgs(null);
                                     }
                                     if (snapshot){
-                                        up.allowVersionType(VersionType.SNAPSHOT);
+                                        prof.allowVersionType(VersionType.SNAPSHOT);
                                     } else {
-                                        up.removeVersionType(VersionType.SNAPSHOT);
+                                        prof.removeVersionType(VersionType.SNAPSHOT);
                                     }
                                     if (oldBeta){
-                                        up.allowVersionType(VersionType.OLD_BETA);
+                                        prof.allowVersionType(VersionType.OLD_BETA);
                                     } else {
-                                        up.removeVersionType(VersionType.OLD_BETA);
+                                        prof.removeVersionType(VersionType.OLD_BETA);
                                     }
                                     if (oldAlpha){
-                                        up.allowVersionType(VersionType.OLD_ALPHA);
+                                        prof.allowVersionType(VersionType.OLD_ALPHA);
                                     } else {
-                                        up.removeVersionType(VersionType.OLD_ALPHA);
+                                        prof.removeVersionType(VersionType.OLD_ALPHA);
                                     }
                                     if (!profileArray[0].equals("noset")){
                                         if (!profileName.equals(profileNameNew) && !profileArray[0].equals("noset")){
@@ -437,7 +437,7 @@ public class WebLauncherThread extends Thread{
                                     } else {
                                         if (!error){
                                             if (!kernel.existsProfile(profileNameNew)){
-                                                kernel.addProfile(up);
+                                                kernel.addProfile(prof);
                                                 response = "OK";
                                                 kernel.saveProfiles();
                                             } else {
@@ -452,24 +452,24 @@ public class WebLauncherThread extends Thread{
                         case "profiledata":
                             profile = Utils.fromBase64(parameters);
                             if (kernel.existsProfile(profile)){
-                                Profile rp = kernel.getProfile(profile);
-                                response += Utils.toBase64(rp.getName());
+                                prof = kernel.getProfile(profile);
+                                response += Utils.toBase64(prof.getName());
                                 response += ":";
-                                response += (rp.hasVersion() ? Utils.toBase64(rp.getVersionID()) : "latest");
+                                response += (prof.hasVersion() ? Utils.toBase64(prof.getVersionID()) : "latest");
                                 response += ":";
-                                response += Utils.toBase64((String.valueOf(rp.isAllowedVersionType(VersionType.SNAPSHOT))));
+                                response += Utils.toBase64((String.valueOf(prof.isAllowedVersionType(VersionType.SNAPSHOT))));
                                 response += ":";
-                                response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_BETA)));
+                                response += Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_BETA)));
                                 response += ":";
-                                response += Utils.toBase64(String.valueOf(rp.isAllowedVersionType(VersionType.OLD_ALPHA)));
+                                response += Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_ALPHA)));
                                 response += ":";
-                                response += (rp.hasGameDir() ? Utils.toBase64(rp.getGameDir().getAbsolutePath()) : "noset");
+                                response += (prof.hasGameDir() ? Utils.toBase64(prof.getGameDir().getAbsolutePath()) : "noset");
                                 response += ":";
-                                response += (rp.hasResolution() ? Utils.toBase64(String.valueOf(rp.getResolutionWidth()) + "x" + String.valueOf(rp.getResolutionHeight())) : "noset");
+                                response += (prof.hasResolution() ? Utils.toBase64(String.valueOf(prof.getResolutionWidth()) + "x" + String.valueOf(prof.getResolutionHeight())) : "noset");
                                 response += ":";
-                                response += (rp.hasJavaDir() ? Utils.toBase64(rp.getJavaDir().getAbsolutePath()) : "noset");
+                                response += (prof.hasJavaDir() ? Utils.toBase64(prof.getJavaDir().getAbsolutePath()) : "noset");
                                 response += ":";
-                                response += (rp.hasJavaArgs() ? Utils.toBase64(rp.getJavaArgs()) : "noset");
+                                response += (prof.hasJavaArgs() ? Utils.toBase64(prof.getJavaArgs()) : "noset");
                             }
                             break;
                         case "changeskin":
