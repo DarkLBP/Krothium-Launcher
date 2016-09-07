@@ -95,13 +95,14 @@ public class WebLauncher {
             }
         }, 0, 1000);
         while (status){
-            Socket s;
             try {
-                s = ss.accept();
+                Socket s = ss.accept();
                 WebLauncherThread thread = new WebLauncherThread(s, kernel);
                 thread.start();
             } catch (IOException ex) {
                 console.printError("Failed to accept connection.\n" + ex.getMessage());
+            } catch (NullPointerException ex){
+                console.printError("Null socket connection recieved.\n" + ex.getMessage());
             }
         }
     }
