@@ -26,6 +26,19 @@ public class Console {
         this.kernel = instance;
         this.cdata = null;
         this.data = null;
+        try{
+            File logFolder = new File(this.kernel.getWorkingDir() + File.separator + "logs");
+            if (logFolder.exists() && logFolder.isDirectory()){
+                File[] logFiles = logFolder.listFiles();
+                for (File f : logFiles){
+                    if (f.isFile() && f.getName().startsWith("weblauncher")){
+                        f.delete();
+                    }
+                }
+            }
+        } catch (Exception ex){
+            //
+        }
         try {
             log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
             this.data = new FileOutputStream(log);
