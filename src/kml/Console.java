@@ -38,8 +38,8 @@ public class Console {
                         count++;
                     }
                 }
-                if (count > 2){
-                    int toDelete = count - 2;
+                if (count > Constants.KEEP_OLD_LOGS){
+                    int toDelete = count - Constants.KEEP_OLD_LOGS;
                     for (int i = 0; i < toDelete; i++){
                         for (File f : logFiles){
                             if (f.isFile() && f.getName().startsWith("weblauncher")){
