@@ -55,6 +55,9 @@ public class Console {
         }
         try {
             log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
+            if (!log.getParentFile().exists()){
+                log.getParentFile().mkdirs();
+            }
             this.data = new FileOutputStream(log);
             this.cdata = new GZIPOutputStream(data);
         } catch (IOException ex) {

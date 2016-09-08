@@ -34,6 +34,9 @@ public final class Kernel {
     }
     public Kernel(File workDir){
         this.workingDir = workDir;
+        if (!this.workingDir.exists()){
+            this.workingDir.mkdirs();
+        }
         this.console = new Console(this);
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
