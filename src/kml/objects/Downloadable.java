@@ -20,6 +20,7 @@ public class Downloadable {
         this.hash = hash;
     }
     public long getSize(){return this.size;}
+    public boolean hasURL(){return (this.url != null);}
     public URL getURL(){return this.url;}
     public File getRelativePath(){return this.relPath;}
     public String getHash(){return this.hash;}

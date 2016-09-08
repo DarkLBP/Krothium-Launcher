@@ -124,43 +124,51 @@ public class Downloader {
         }
         console.printInfo("Fetching version urls..");
         Downloadable d = v.getClientDownload();
-        long jarSize = d.getSize();
-        String jarSHA1 = d.getHash();
-        total += d.getSize();
-        File destPath = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJar());
-        boolean localValid = false;
-        File jsonFile = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJSON());
-        boolean JSONValid = false;
-        if (jsonFile.exists() && jsonFile.isFile()){
-            try {
-                if (jsonFile.length() == jsonFile.toURI().toURL().openConnection().getContentLength()){
-                    JSONValid = true;
+        if (d != null){
+            if (d.hasURL()){
+                long jarSize = d.getSize();
+                String jarSHA1 = d.getHash();
+                total += d.getSize();
+                File destPath = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJar());
+                boolean localValid = false;
+                File jsonFile = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJSON());
+                boolean JSONValid = false;
+                if (jsonFile.exists() && jsonFile.isFile()){
+                    try {
+                        if (jsonFile.length() == jsonFile.toURI().toURL().openConnection().getContentLength()){
+                            JSONValid = true;
+                        }
+                    } catch (IOException ex) {
+                        console.printError("Falied to verify existing JSON integrity.");
+                    }
                 }
-            } catch (IOException ex) {
-                console.printError("Falied to verify existing JSON integrity.");
+                if (!JSONValid){
+                    int tries = 0;
+                    while (!Utils.downloadFile(v.getJSONURL(), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
+                        tries++;
+                    }
+                    if (tries == Constants.DOWNLOAD_TRIES){
+                        console.printError("Failed to download version index " + destPath.getName());
+                    }
+                }else{
+                    console.printInfo("Version " + v.getID() + " JSON file found locally and it is valid.");
+                }
+                if (destPath.exists() && destPath.isFile()){
+                    if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)){
+                        localValid = true;
+                    }
+                }
+                if (!localValid){
+                    urls.add(d);
+                }else{
+                    console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
+                    validated += jarSize;
+                }
+            } else {
+                console.printInfo("Incompatible version dowloadable.");
             }
-        }
-        if (!JSONValid){
-            int tries = 0;
-            while (!Utils.downloadFile(v.getJSONURL(), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
-                tries++;
-            }
-            if (tries == Constants.DOWNLOAD_TRIES){
-                console.printError("Failed to download version index " + destPath.getName());
-            }
-        }else{
-            console.printInfo("Version " + v.getID() + " JSON file found locally and it is valid.");
-        }
-        if (destPath.exists() && destPath.isFile()){
-            if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)){
-                localValid = true;
-            }
-        }
-        if (!localValid){
-            urls.add(d);
-        }else{
-            console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
-            validated += jarSize;
+        } else {
+            console.printInfo("Version file from " + v.getID() + " has no compatible downloadable objects.");
         }
         console.printInfo("Fetching library and native urls..");
         List<Library> libs = v.getLibraries();
