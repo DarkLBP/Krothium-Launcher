@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
@@ -30,9 +31,22 @@ public class Console {
             File logFolder = new File(this.kernel.getWorkingDir() + File.separator + "logs");
             if (logFolder.exists() && logFolder.isDirectory()){
                 File[] logFiles = logFolder.listFiles();
+                Arrays.sort(logFiles);
+                int count = 0;
                 for (File f : logFiles){
                     if (f.isFile() && f.getName().startsWith("weblauncher")){
-                        f.delete();
+                        count++;
+                    }
+                }
+                if (count > 2){
+                    int toDelete = count - 2;
+                    for (int i = 0; i < toDelete; i++){
+                        for (File f : logFiles){
+                            if (f.isFile() && f.getName().startsWith("weblauncher")){
+                                f.delete();
+                                break;
+                            }
+                        }
                     }
                 }
             }
