@@ -4,7 +4,7 @@ Error
 Error
 Fallo al enviar la consulta authentication.
 Error
-¡consulta de perfil inválida!
+¡Consulta de perfil inválida!
 Perfil:
 Usar Última Versión
 Error
@@ -12,9 +12,9 @@ No se pudo cargar la lista de versiones.
 Error
 Fallo al enviar la consulta versions.
 Error
-El servidor a respondido con una cantidad de datos inválida.
+El servidor ha respondido con una cantidad de datos inválida.
 Error
-No se puedo cargar los datos del perfil.
+No se pudo cargar los datos del perfil.
 Error
 Fallo al enviar la consulta profiledata.
 Nuevo Perfil
@@ -31,7 +31,7 @@ Fallo al enviar la consulta selectedversion.
 Error
 Fallo al enviar la consulta versions.
 Error
-¡consulta de perfil inválida!
+¡Consulta de perfil inválida!
 Error
 Éxito
 Perfil
@@ -67,7 +67,7 @@ EDITAR
 ELIMINAR
 CREAR NUEVO
 Error
-No se puedo cargar la lista de versiones.
+No se pudo cargar la lista de versiones.
 Error
 Fallo al enviar la consulta profiles.
 Error
@@ -87,14 +87,14 @@ Skin guardada exitosamente.
 Error
 Fallo al enviar la consulta changeskin.
 Advertencia
-Selecciona una skin primero.
+Selecciona primero una skin.
 Error
 Éxito
 Capa guardada exitosamente.
 Error
 Fallo al enviar la consulta changecape.
 Advertencia
-Selecciona una capa primero.
+Selecciona primero una capa.
 Ninguna
 Error
 Fallo al enviar la consulta hascape.

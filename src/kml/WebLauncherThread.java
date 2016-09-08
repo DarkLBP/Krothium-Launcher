@@ -573,7 +573,7 @@ public class WebLauncherThread extends Thread{
                             break;
                         case "switchlanguage":
                             String lang = Utils.fromBase64(parameters);
-                            if (lang.equals("es") || lang.equals("en")){
+                            if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
                                 Constants.LANG_CODE = lang;
                                 response = "OK";
                                 break;
