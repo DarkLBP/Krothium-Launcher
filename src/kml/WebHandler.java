@@ -1,15 +1,16 @@
 package kml;
 
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import kml.exceptions.WebLauncherException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import kml.enums.VersionType;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
+import kml.exceptions.WebLauncherException;
 import kml.objects.Profile;
 import kml.objects.User;
 import kml.objects.VersionMeta;
@@ -30,158 +32,98 @@ import kml.objects.VersionMeta;
  * @website https://krothium.com
  * @author DarkLBP
  */
-
-public class WebLauncherThread extends Thread{
-    private final Socket clientSocket;
+public class WebHandler implements HttpHandler {
     private final Kernel kernel;
     private final Console console;
-    public WebLauncherThread(Socket cl, Kernel k){
-        this.clientSocket = cl;
+    
+    public WebHandler(Kernel k){
         this.kernel = k;
-        this.console = kernel.getConsole();
+        this.console = k.getConsole();
     }
     @Override
-    public void run() {
+    public void handle(HttpExchange he) throws IOException {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-            OutputStream out = this.clientSocket.getOutputStream();
-            String request;
-            StringBuilder b = new StringBuilder();
-            String line = in.readLine();
-            console.printInfo("Request inbound: " + line);
-            boolean isPost = line.startsWith("POST");
-            int contentLength = 0;
-            String contentType = null;
-            String contentExtra = null;
-            b.append(line).append("\n");
-            while (!(line = in.readLine()).equals("")) {
-                b.append(line).append("\n");
-                if (isPost){
-                    final String contentHeader = "Content-Length: ";
-                    final String typeHeader = "Content-Type: ";
-                    final String extraHeader = "Content-Extra: ";
-                    if (line.startsWith(contentHeader)){
-                        contentLength = Integer.parseInt(line.substring(contentHeader.length()));
-                    } else if (line.startsWith(typeHeader)){
-                        contentType = line.substring(typeHeader.length());
-                    } else if (line.startsWith(extraHeader)){
-                        contentExtra = line.substring(extraHeader.length());
-                    }
-                }
-            }
-            if (isPost && contentLength > 0 && contentType != null){
-                int read;
-                for (int i = 0; i < contentLength; i++){
-                    read = in.read();
-                    b.append((char)read);
-                }
-            }
-            request = b.toString();
-            if (request.isEmpty()){
-                throw new WebLauncherException(null, 400, out);
-            }
-            String[] requestChunks = request.split(" ");
-            String path = requestChunks[1];
-            if (request.startsWith("GET")){
+            String path = he.getRequestURI().toString();
+            String method = he.getRequestMethod();
+            console.printInfo("Inbound request " + path + " with method " + method);
+            ByteArrayOutputStream responseData = new ByteArrayOutputStream();
+            int responseCode = 200;
+            OutputStream out = he.getResponseBody();
+            Map<String, List<String>> responseHeaders = new HashMap();
+            if (method.equalsIgnoreCase("GET")){
                 if (path.equals("/")){
                     if (!kernel.isAuthenticated()){
-                        out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
-                        out.write("Location: /bootstrap.html?login\r\n".getBytes());
-                        out.write("\r\n".getBytes());
+                        responseCode = 301;
+                        List<String> locationValues = new ArrayList();
+                        locationValues.add("/bootstrap.html?login");
+                        responseHeaders.put("Location", locationValues);
                     }else{
-                        out.write("HTTP/1.1 301 Moved Permanently\r\n".getBytes());
-                        out.write("Location: /bootstrap.html?play\r\n".getBytes());
-                        out.write("\r\n".getBytes());
+                        responseCode = 301;
+                        List<String> locationValues = new ArrayList();
+                        locationValues.add("/bootstrap.html?play");
+                        responseHeaders.put("Location", locationValues);
                     }
                 }else{
                     String finalPath = (path.contains("?") ? path.split("\\?")[0] : path);
                     File abstractFile = new File(finalPath);
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
-                    String contentTag = "";
-                    switch (extension){
-                        case "css":
-                            contentTag = "text/css";
-                            break;
-                        case "png":
-                            contentTag = "image/png";
-                            break;
-                        case "js":
-                            contentTag = "application/javascript";
-                            break;
-                        case "html":
-                            contentTag = "text/html";
-                            break;
-                        case "gif":
-                            contentTag = "image/gif";
-                            break;
-                        case "jpg":
-                            contentTag = "image/jpeg";
-                            break;
-                        case "woff":
-                            contentTag = "application/font-woff";
-                            break;
-                        case "woff2":
-                            contentTag = "application/font-woff2";
-                            break;
-                        case "svg":
-                            contentTag = "image/svg+xml";
-                            break;
-                        case "eot":
-                            contentTag = "application/vnd.ms-fontobject";
-                            break;
-                        case "ttf":
-                            contentTag = "application/x-font-ttf";
-                            break;
-                    }
-                    if (contentTag.isEmpty()){
-                        throw new WebLauncherException(path, 404, out);
-                    }
                     InputStream s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
                     if (s == null){
-                        throw new WebLauncherException(path, 404, out);
-                    }
-                    InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""));
-                    try{
-                        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                        int i;
-                        byte[] buffer = new byte[4096];
-                        while((i=s.read(buffer))!=-1){
-                           bout.write(buffer, 0, i);
-                        }
-                        s.close();
-                        if (l == null){
-                            out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                            out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
-                            out.write("\r\n".getBytes());
-                            out.write(bout.toByteArray());
-                        } else {
-                            String dataRaw = new String(bout.toByteArray(), "UTF-8");
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
-                            while ((line = reader.readLine()) != null){
-                                dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                        responseCode = 400;
+                    } else {
+                        InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""));
+                        try{
+                            int i;
+                            byte[] buffer = new byte[4096];
+                            while((i=s.read(buffer))!=-1){
+                               responseData.write(buffer, 0, i);
                             }
-                            reader.close();
-                            out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                            out.write(("Content-Type: " + contentTag + "\r\n").getBytes());
-                            out.write("\r\n".getBytes());
-                            out.write(dataRaw.getBytes("UTF-8"));
+                            s.close();
+                            if (l != null) {
+                                String dataRaw = new String(responseData.toByteArray(), "UTF-8");
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
+                                String line;
+                                while ((line = reader.readLine()) != null){
+                                    dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                                }
+                                reader.close();
+                                responseData.reset();
+                                responseData.write(dataRaw.getBytes("UTF-8"));
+                            }
+                        }catch (Exception ex){
+                            responseCode = 500;
                         }
-                    }catch (Exception ex){
-                        throw new WebLauncherException(path, 500, out);
                     }
                 }                
-            } else if (request.startsWith("POST")){
-                String response = "";
+            } else if (method.equalsIgnoreCase("POST")){
                 if (path.startsWith("/action/")){
+                    String response = "";
                     String function = path.replace("/action/", "");
-                    String[] requestData = request.split("\n");
-                    String parameters = "";
-                    if (contentLength > 0){
-                        parameters = requestData[requestData.length - 1];
-                        if (parameters.isEmpty()){
-                            throw new WebLauncherException(path, 400, out);
+                    String requestBody = "";
+                    Headers hs = he.getRequestHeaders();
+                    int contentLength = -1;
+                    if (hs.containsKey("Content-Length")){
+                        List<String> clh = hs.get("Content-Length");
+                        contentLength = Integer.parseInt(clh.get(0));
+                        if (contentLength > 0){
+                            InputStream in = he.getRequestBody();
+                            ByteArrayOutputStream raw = new ByteArrayOutputStream();
+                            for (int i = 0; i < contentLength; i++){
+                                raw.write(in.read());
+                            }
+                            requestBody = new String(raw.toByteArray());
                         }
+                    }
+                    String contentType = null;
+                    if (hs.containsKey("Content-Type")){
+                        List<String> cth = hs.get("Content-Type");
+                        contentType = cth.get(0);
+                    }
+                    String contentExtra = null;
+                    if (hs.containsKey("Content-Extra")){
+                        List<String> ceh = hs.get("Content-Extra");
+                        contentExtra = ceh.get(0);
                     }
                     String profile;
                     Map<String, String> params;
@@ -190,7 +132,7 @@ public class WebLauncherThread extends Thread{
                     switch (function){
                         case "authenticate":
                             if (contentLength > 0){
-                                String[] userArray = parameters.split(":");
+                                String[] userArray = requestBody.split(":");
                                 if (userArray.length != 2){
                                     throw new WebLauncherException(path, 400, out);
                                 }
@@ -259,7 +201,7 @@ public class WebLauncherThread extends Thread{
                             response = Utils.toBase64(kernel.getSelectedProfile());
                             break;
                         case "setselectedprofile":
-                            profile = Utils.fromBase64(parameters);
+                            profile = Utils.fromBase64(requestBody);
                             if (profile != null){
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
@@ -278,7 +220,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "deleteprofile":
-                            profile = Utils.fromBase64(parameters);
+                            profile = Utils.fromBase64(requestBody);
                             if (kernel.existsProfile(profile)){
                                 if (kernel.deleteProfile(profile)){
                                     response = "OK";
@@ -291,7 +233,7 @@ public class WebLauncherThread extends Thread{
                             Iterator vi = v.iterator();
                             List<VersionType> allowedTypes = new ArrayList();
                             if (contentLength > 0){
-                                String[] types = parameters.split(":");
+                                String[] types = requestBody.split(":");
                                 if (types.length != 3){
                                     throw new WebLauncherException(path, 400, out);
                                 }
@@ -330,7 +272,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "saveprofile":
-                            String[] profileArray = parameters.split(":");
+                            String[] profileArray = requestBody.split(":");
                             if (profileArray.length != 10){
                                 throw new WebLauncherException(path, 400, out);
                             }
@@ -445,12 +387,11 @@ public class WebLauncherThread extends Thread{
                                             }
                                         }
                                     }
-                                    
                                 }
                             }
                             break;
                         case "profiledata":
-                            profile = Utils.fromBase64(parameters);
+                            profile = Utils.fromBase64(requestBody);
                             if (kernel.existsProfile(profile)){
                                 prof = kernel.getProfile(profile);
                                 response += Utils.toBase64(prof.getName());
@@ -486,7 +427,7 @@ public class WebLauncherThread extends Thread{
                                 response = "Invalid skin type.";
                                 break;
                             }
-                            byte[] skinData = Utils.fromBase64Binary(parameters.split(",")[1]);
+                            byte[] skinData = Utils.fromBase64Binary(requestBody.split(",")[1]);
                             if (skinData.length == 0){
                                 response = "File has 0 bytes.";
                                 break;
@@ -512,7 +453,7 @@ public class WebLauncherThread extends Thread{
                                 response = "Invalid cape format. Must be a valid PNG file.";
                                 break;
                             }
-                            byte[] capeData = Utils.fromBase64Binary(parameters.split(",")[1]);
+                            byte[] capeData = Utils.fromBase64Binary(requestBody.split(",")[1]);
                             if (capeData.length == 0){
                                 response = "File has 0 bytes.";
                                 break;
@@ -533,8 +474,8 @@ public class WebLauncherThread extends Thread{
                             user = kernel.getSelectedUser();
                             URL skinURL = Utils.stringToURL("http://mc.krothium.com/skins/" + user.getDisplayName() + ".png");
                             HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
-                            int responseCode = con.getResponseCode();
-                            if (responseCode == 200){
+                            int rc = con.getResponseCode();
+                            if (rc == 200){
                                 response = skinURL.toString();
                             }
                             break;
@@ -572,7 +513,7 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                         case "switchlanguage":
-                            String lang = Utils.fromBase64(parameters);
+                            String lang = Utils.fromBase64(requestBody);
                             if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
                                 Constants.LANG_CODE = lang;
                                 response = "OK";
@@ -609,15 +550,18 @@ public class WebLauncherThread extends Thread{
                             }
                             break;
                     }
+                    responseData.write(response.getBytes());
+                } else {
+                    responseCode = 404;
                 }
-                out.write("HTTP/1.1 200 OK\r\n".getBytes());
-                out.write("Content-Type: text/plain\r\n".getBytes());
-                out.write(("Content-Length: " + response.length() + "\r\n").getBytes());
-                out.write("\r\n".getBytes());
-                out.write(response.getBytes());
             }
+            console.printInfo(path + " replied with response code " + responseCode);
+            if (responseHeaders.size() > 0){
+                he.getResponseHeaders().putAll(responseHeaders);
+            }
+            he.sendResponseHeaders(responseCode, responseData.size());
+            out.write(responseData.toByteArray());
             out.close();
-            in.close();
         } catch (IOException | WebLauncherException  ex) {
             console.printError(ex.getMessage());
         }

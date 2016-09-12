@@ -1,12 +1,11 @@
 package kml;
 
+import com.sun.net.httpserver.HttpServer;
 import java.io.BufferedInputStream;
 import kml.exceptions.AuthenticationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +21,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -72,13 +73,16 @@ public class WebLauncher {
         int portStart = 24000;
         int portEnd = 25000;
         int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        ServerSocket ss = null;
+        InetSocketAddress add = new InetSocketAddress("localhost", port);
+        HttpServer server;
         try {
-            ss = new ServerSocket(port, 100, InetAddress.getLoopbackAddress());
+            server = HttpServer.create(add, 0);
+            server.createContext("/", new WebHandler(kernel));
+            server.setExecutor(null);
+            server.start();
         } catch (IOException ex) {
-            console.printError("Failed to initialize bundled server.\n" + ex.getMessage());
+            Logger.getLogger(WebLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
-        boolean status = true;
         console.printInfo("Started bundled web server in port " + port);
         try{
             Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);
@@ -98,14 +102,5 @@ public class WebLauncher {
                 }
             }
         }, 0, 1000);
-        while (status){
-            try {
-                Socket s = ss.accept();
-                WebLauncherThread thread = new WebLauncherThread(s, kernel);
-                thread.start();
-            } catch (IOException | NullPointerException ex) {
-                console.printError("Failed to accept connection.\n" + ex.getMessage());
-            }
-        }
     }
 }
