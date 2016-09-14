@@ -36,7 +36,6 @@ public class GameLauncher {
     private final Console console;
     private Process process = null;
     private final Kernel kernel;
-    private boolean started = false;
     
     public GameLauncher(Kernel k){
         this.kernel = k;
