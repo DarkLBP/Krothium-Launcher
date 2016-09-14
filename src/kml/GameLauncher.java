@@ -34,8 +34,9 @@ import org.json.JSONObject;
 public class GameLauncher {
     
     private final Console console;
-    private Process process;
+    private Process process = null;
     private final Kernel kernel;
+    private boolean started = false;
     
     public GameLauncher(Kernel k){
         this.kernel = k;
@@ -291,10 +292,15 @@ public class GameLauncher {
         }
     }
     public boolean isStarted(){
-        if (this.process != null){
-            return this.process.isAlive();
+        try {
+            if (this.process != null){
+                this.process.exitValue();
+                this.process = null;
+            }
+            return false;
+        } catch (Exception ex){
+            return true;
         }
-        return false;
     }
     public InputStream getInputStream(){return this.process.getInputStream();}
     public InputStream getErrorStream(){return this.process.getErrorStream();}

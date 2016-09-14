@@ -58,13 +58,21 @@ public class ServerLauncher{
                             BufferedReader br = new BufferedReader(isr);
                             String lineRead;
                             try{
-                                while (process.isAlive()){
+                                while (this.isStarted()){
                                     if ((lineRead = br.readLine()) != null){
                                         System.out.println(lineRead);
                                     }
                                 }
                             } catch (Exception ex){
                                 System.out.println("Server stopped unexpectedly.");
+                            }
+                        }
+                        public boolean isStarted(){
+                            try {
+                                process.exitValue();
+                                return true;
+                            } catch (Exception ex){
+                                return false;
                             }
                         }
                     };
@@ -76,12 +84,20 @@ public class ServerLauncher{
                             BufferedReader br = new BufferedReader(isr);
                             String lineRead;
                             try{
-                                while (process.isAlive()){
+                                while (isStarted()){
                                     if ((lineRead = br.readLine()) != null){
                                         System.out.println(lineRead);
                                     }
                                 }
                             } catch (Exception ex){}
+                        }
+                        public boolean isStarted(){
+                            try {
+                                process.exitValue();
+                                return true;
+                            } catch (Exception ex){
+                                return false;
+                            }
                         }
                     };
                     log_error.start();

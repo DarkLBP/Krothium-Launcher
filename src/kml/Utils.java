@@ -1,5 +1,6 @@
 package kml;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import kml.enums.OSArch;
 import kml.enums.OS;
 import java.io.BufferedReader;
@@ -15,7 +16,6 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.security.MessageDigest;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -234,7 +234,7 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = Base64.getEncoder().encodeToString(st.getBytes());
+            conversion = Base64.encode(st.getBytes());
         } catch (Exception ex) {
             conversion = null;
         }
@@ -246,7 +246,7 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = new String(Base64.getDecoder().decode(st));
+            conversion = new String(Base64.decode(st));
         } catch (Exception ex) {
             conversion = null;
         }
@@ -258,7 +258,7 @@ public class Utils {
         }
         byte[] data;
         try{
-            data = Base64.getDecoder().decode(st);
+            data = Base64.decode(st);
             return data;
         } catch (Exception ex){
             return new byte[0];
