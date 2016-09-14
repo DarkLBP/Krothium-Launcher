@@ -69,10 +69,12 @@ public class ServerLauncher{
                         }
                         public boolean isStarted(){
                             try {
-                                process.exitValue();
-                                return true;
-                            } catch (Exception ex){
+                                if (process != null){
+                                    process.exitValue();
+                                }
                                 return false;
+                            } catch (Exception ex){
+                                return true;
                             }
                         }
                     };
@@ -93,10 +95,12 @@ public class ServerLauncher{
                         }
                         public boolean isStarted(){
                             try {
-                                process.exitValue();
-                                return true;
-                            } catch (Exception ex){
+                                if (process != null){
+                                    process.exitValue();
+                                }
                                 return false;
+                            } catch (Exception ex){
+                                return true;
                             }
                         }
                     };
