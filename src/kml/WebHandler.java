@@ -72,7 +72,6 @@ public class WebHandler implements HttpHandler {
                     if (s == null){
                         responseCode = 400;
                     } else {
-                        InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""));
                         try{
                             int i;
                             byte[] buffer = new byte[4096];
@@ -80,19 +79,23 @@ public class WebHandler implements HttpHandler {
                                responseData.write(buffer, 0, i);
                             }
                             s.close();
-                            if (l != null) {
-                                String dataRaw = new String(responseData.toByteArray(), "UTF-8");
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
-                                String line;
-                                while ((line = reader.readLine()) != null){
-                                    dataRaw = dataRaw.replaceFirst("\\{%s}", line);
-                                }
-                                reader.close();
-                                responseData.reset();
-                                responseData.write(dataRaw.getBytes("UTF-8"));
-                            }
-                        }catch (Exception ex){
+                        } catch (Exception ex){
                             responseCode = 500;
+                        }
+                        if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("js")){
+                            try (InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""))){
+                                if (l != null) {
+                                    String dataRaw = new String(responseData.toByteArray(), "UTF-8");
+                                    BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
+                                    String line;
+                                    while ((line = reader.readLine()) != null){
+                                        dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                                    }
+                                    reader.close();
+                                    responseData.reset();
+                                    responseData.write(dataRaw.getBytes("UTF-8"));
+                                }
+                            }
                         }
                     }
                 }                
