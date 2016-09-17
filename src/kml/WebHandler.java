@@ -52,48 +52,54 @@ public class WebHandler implements HttpHandler {
             Map<String, List<String>> responseHeaders = new HashMap();
             if (method.equalsIgnoreCase("GET")){
                 if (path.equals("/")){
-                    if (!kernel.isAuthenticated()){
-                        responseCode = 301;
-                        List<String> locationValues = new ArrayList();
-                        locationValues.add("/bootstrap.html?login");
-                        responseHeaders.put("Location", locationValues);
-                    }else{
-                        responseCode = 301;
-                        List<String> locationValues = new ArrayList();
-                        locationValues.add("/bootstrap.html?play");
-                        responseHeaders.put("Location", locationValues);
-                    }
+                    responseCode = 301;
+                    List<String> locationValues = new ArrayList();
+                    locationValues.add("/bootstrap.html");
+                    responseHeaders.put("Location", locationValues);
                 }else{
                     String finalPath = (path.contains("?") ? path.split("\\?")[0] : path);
                     File abstractFile = new File(finalPath);
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
-                    InputStream s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
-                    if (s == null){
-                        responseCode = 400;
+                    InputStream s;
+                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !kernel.isAuthenticated()){
+                        responseCode = 301;
+                        List<String> locationValues = new ArrayList();
+                        locationValues.add("/login.html");
+                        responseHeaders.put("Location", locationValues);
+                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && kernel.isAuthenticated()) {
+                        responseCode = 301;
+                        List<String> locationValues = new ArrayList();
+                        locationValues.add("/play.html");
+                        responseHeaders.put("Location", locationValues);
                     } else {
-                        try{
-                            int i;
-                            byte[] buffer = new byte[4096];
-                            while((i=s.read(buffer))!=-1){
-                               responseData.write(buffer, 0, i);
+                        s = WebLauncher.class.getResourceAsStream("/kml/web" + finalPath);
+                        if (s == null){
+                            responseCode = 400;
+                        } else {
+                            try{
+                                int i;
+                                byte[] buffer = new byte[4096];
+                                while((i=s.read(buffer))!=-1){
+                                   responseData.write(buffer, 0, i);
+                                }
+                                s.close();
+                            } catch (Exception ex){
+                                responseCode = 500;
                             }
-                            s.close();
-                        } catch (Exception ex){
-                            responseCode = 500;
-                        }
-                        if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("js")){
-                            try (InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""))){
-                                if (l != null) {
-                                    String dataRaw = new String(responseData.toByteArray(), "UTF-8");
-                                    BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
-                                    String line;
-                                    while ((line = reader.readLine()) != null){
-                                        dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                            if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("js")){
+                                try (InputStream l = WebLauncher.class.getResourceAsStream("/kml/web/lang/" + Constants.LANG_CODE + "/" + fileName.replace("." + extension, ""))){
+                                    if (l != null) {
+                                        String dataRaw = new String(responseData.toByteArray(), "UTF-8");
+                                        BufferedReader reader = new BufferedReader(new InputStreamReader(l, "UTF-8"));
+                                        String line;
+                                        while ((line = reader.readLine()) != null){
+                                            dataRaw = dataRaw.replaceFirst("\\{%s}", line);
+                                        }
+                                        reader.close();
+                                        responseData.reset();
+                                        responseData.write(dataRaw.getBytes("UTF-8"));
                                     }
-                                    reader.close();
-                                    responseData.reset();
-                                    responseData.write(dataRaw.getBytes("UTF-8"));
                                 }
                             }
                         }

@@ -662,7 +662,6 @@ function redirect(url){
 }
 function bootstrap(){
     var l = readCookie("lang");
-    var after = location.href.split("?")[1];
     if (l !== null){
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -672,55 +671,30 @@ function bootstrap(){
                     if (xhr2.readyState === XMLHttpRequest.DONE) {
                         var response = xhr2.responseText;
                         if (response === "YES"){
-                            if (after === "play"){
-                                redirect("/update.html?play");
-                            } else {
-                                redirect("/update.html?login");
-                            }
+                            redirect("/update.html");
                         } else {
-                            if (after === "play"){
-                                redirect("/play.html");
-                            } else {
-                                redirect("/login.html");
-                            }
+                            redirect("/login.html");
                         }
                     }
                 };
                 xhr2.onerror = function(){
-                    if (after === "play"){
-                        redirect("/play.html");
-                    } else {
-                        redirect("/login.html");
-                    }
+                    redirect("/login.html");
                 };
                 xhr2.open("POST", "/action/getlatestversion", true);
                 xhr2.send();
             }
         };
         xhr.onerror = function(){
-            if (after === "play"){
-                redirect("/play.html");
-            } else {
-                redirect("/login.html");
-            }
+            redirect("/login.html");
         };
         xhr.open("POST", "/action/switchlanguage", true);
         xhr.send(toBase64(l));
     } else {
-        if (after === "play"){
-            redirect("/play.html");
-        } else {
-            redirect("/login.html");
-        }
+        redirect("/login.html");
     }
 }
 function cancelUpdate(){
-    var after = location.href.split("?")[1];
-    if (after === "play"){
-        redirect("/play.html");
-    } else {
-        redirect("/login.html");
-    }
+    redirect("/login.html");
 }
 function loadUpdate(){
     var xhr = new XMLHttpRequest();
