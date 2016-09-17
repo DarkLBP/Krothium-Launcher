@@ -4,8 +4,6 @@ var status_interval = setInterval(function(){status();}, 1000);
 var progress_value = 0;
 var play_value = "";
 var profile_value = "";
-var keepAlive_interval = setInterval(function(){keepAlive();}, 1000);
-var keepAlive_requested = false;
 var authenticate_requested = false;
 function authenticate(){
     if (!authenticate_requested){
@@ -258,23 +256,27 @@ function status(){
                 if (data.length === 2){
                     var status = data[0];
                     var progress = data[1];
-                    if (progress !== progress_value){
-                        document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>';
-                        progress_value = progress;
-                    }
-                    if (status !== play_value){
-                        switch (status){
-                            case "0":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                break;
-                            case "1":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                break;
-                            case "2":
-                                document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                break;
+                    if (document.getElementById("progress") !== null){
+                        if (progress !== progress_value){
+                            document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>';
+                            progress_value = progress;
                         }
-                        play_value = status;
+                    }
+                    if (document.getElementById("play") !== null){
+                        if (status !== play_value){
+                            switch (status){
+                                case "0":
+                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                    break;
+                                case "1":
+                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                    break;
+                                case "2":
+                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                    break;
+                            }
+                            play_value = status;
+                        }
                     }
                 }
             }
@@ -282,30 +284,6 @@ function status(){
     };
     xhr.open("POST", "/action/status", true);
     xhr.send();
-}
-function keepAlive(){
-    if (!keepAlive_requested){
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                keepAlive_requested = false;
-            }
-        };
-        xhr.onerror = function(){
-            clearInterval(status_interval);
-            clearInterval(keepAlive_interval);
-            swal("{%s}", "{%s}\n{%s}", "error");  
-        };
-        xhr.ontimeout = function (e) {
-            clearInterval(status_interval);
-            clearInterval(keepAlive_interval);
-            swal("{%s}", "{%s}\n{%s}", "error");
-        };
-        xhr.timeout = 5000;
-        xhr.open("POST", "/action/keepalive", true);
-        xhr.send();
-        keepAlive_requested = true;
-    }
 }
 function loadSignature(){
     var xhr = new XMLHttpRequest();

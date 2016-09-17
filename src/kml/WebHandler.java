@@ -106,6 +106,9 @@ public class WebHandler implements HttpHandler {
                     }
                 }                
             } else if (method.equalsIgnoreCase("POST")){
+                List<String> ctv = new ArrayList();
+                ctv.add("text/plain");
+                responseHeaders.put("Content-Type", ctv);
                 if (path.startsWith("/action/")){
                     String response = "";
                     String function = path.replace("/action/", "");
@@ -173,6 +176,7 @@ public class WebHandler implements HttpHandler {
                             t.start();
                             break;
                         case "status":
+                            WebLauncher.lastKeepAlive = System.nanoTime();
                             if (kernel.isDownloading()){
                                 response = "1";
                             } else if (kernel.isGameStarted()){
@@ -182,9 +186,6 @@ public class WebHandler implements HttpHandler {
                             }
                             response += ":";
                             response += String.valueOf(kernel.getDownloadProgress());
-                            break;
-                        case "keepalive":
-                            WebLauncher.lastKeepAlive = System.nanoTime();
                             break;
                         case "signature":
                             response = "Krothium Minecraft Launcher v" + Constants.KERNEL_BUILD_NAME;
