@@ -34,7 +34,9 @@ public class Console {
                 Arrays.sort(logFiles);
                 int count = 0;
                 for (File f : logFiles){
-                    if (f.isFile() && f.getName().startsWith("weblauncher")){
+                    if (f.isFile() && f.getName().startsWith("weblauncher-unclosed")){
+                        f.delete();
+                    } else if (f.isFile() && f.getName().startsWith("weblauncher")) {
                         count++;
                     }
                 }
@@ -42,7 +44,7 @@ public class Console {
                     int toDelete = count - Constants.KEEP_OLD_LOGS;
                     for (int i = 0; i < toDelete; i++){
                         for (File f : logFiles){
-                            if (f.isFile() && f.getName().startsWith("weblauncher")){
+                            if (f.isFile() && f.getName().startsWith("weblauncher") && !f.getName().contains("-unclosed-")){
                                 f.delete();
                                 break;
                             }
