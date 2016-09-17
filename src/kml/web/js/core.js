@@ -1,6 +1,9 @@
 //Core javascript functions for KMLK inner functionality
 //Created by DarkLBP (https://krothium.com)
 var status_interval = setInterval(function(){status();}, 1000);
+var status_errors = 0;
+var status_errors_limit = 5;
+var status_requested = false;
 var progress_value = 0;
 var play_value = "";
 var profile_value = "";
@@ -247,43 +250,55 @@ function playGame(){
     xhr.send();
 }
 function status(){
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            var response = xhr.responseText;
-            var data = response.split(":");
-            if (data.constructor === Array){
-                if (data.length === 2){
-                    var status = data[0];
-                    var progress = data[1];
-                    if (document.getElementById("progress") !== null){
-                        if (progress !== progress_value){
-                            document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>';
-                            progress_value = progress;
+    if (!status_requested){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.responseText !== ""){
+                    var response = xhr.responseText;
+                    var data = response.split(":");
+                    if (data.constructor === Array){
+                        if (data.length === 2){
+                            var status = data[0];
+                            var progress = data[1];
+                            if (document.getElementById("progress") !== null){
+                                if (progress !== progress_value){
+                                    document.getElementById("progress").innerHTML = '<progress value="' + progress + '" max="100"></progress>';
+                                    progress_value = progress;
+                                }
+                            }
+                            if (document.getElementById("play") !== null){
+                                if (status !== play_value){
+                                    switch (status){
+                                        case "0":
+                                            document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                            break;
+                                        case "1":
+                                            document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                            break;
+                                        case "2":
+                                            document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                            break;
+                                    }
+                                    play_value = status;
+                                }
+                            }
                         }
                     }
-                    if (document.getElementById("play") !== null){
-                        if (status !== play_value){
-                            switch (status){
-                                case "0":
-                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                    break;
-                                case "1":
-                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                    break;
-                                case "2":
-                                    document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
-                                    break;
-                            }
-                            play_value = status;
-                        }
+                } else {
+                    if (++status_errors > status_errors_limit){
+                        clearInterval(status_interval);
+                        swal("{%s}", "{%s}\n{%s}", "error");
                     }
                 }
+                status_requested = false;
             }
-        }
-    };
-    xhr.open("POST", "/action/status", true);
-    xhr.send();
+        };
+        xhr.timeout = 1000;
+        xhr.open("POST", "/action/status", true);
+        xhr.send();
+        status_requested = true;
+    }
 }
 function loadSignature(){
     var xhr = new XMLHttpRequest();
