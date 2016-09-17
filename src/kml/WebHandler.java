@@ -62,12 +62,12 @@ public class WebHandler implements HttpHandler {
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
                     InputStream s;
-                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !kernel.isAuthenticated()){
+                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("bootstrap.html") && !kernel.isAuthenticated()){
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/login.html");
                         responseHeaders.put("Location", locationValues);
-                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && kernel.isAuthenticated()) {
+                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("bootstrap.html") && kernel.isAuthenticated()) {
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/play.html");
