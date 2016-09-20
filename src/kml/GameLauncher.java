@@ -97,7 +97,7 @@ public class GameLauncher {
                 gameArgs.add(arg);
             }
         }
-        gameArgs.add("-Djava.library.path=\"" + nativesDir.getAbsolutePath() + "\"");
+        gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
         gameArgs.add("-cp");
         String libraries = "\"";
         List<Library> libs = ver.getLibraries();
