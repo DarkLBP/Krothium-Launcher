@@ -97,7 +97,7 @@ public class GameLauncher {
                 gameArgs.add(arg);
             }
         }
-        gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
+        gameArgs.add("-Djava.library.path=\"" + nativesDir.getAbsolutePath() + "\"");
         gameArgs.add("-cp");
         String libraries = "\"";
         List<Library> libs = ver.getLibraries();
@@ -214,12 +214,12 @@ public class GameLauncher {
             if (!gameDir.exists() || !gameDir.isDirectory()){
                 gameDir.mkdirs();
             }
-            versionArgs = versionArgs.replace("${game_directory}", gameDir.getAbsolutePath());
+            versionArgs = versionArgs.replace("${game_directory}", "\"" + gameDir.getAbsolutePath() + "\"");
         }else{
-            versionArgs = versionArgs.replace("${game_directory}", workingDir.getAbsolutePath());
+            versionArgs = versionArgs.replace("${game_directory}", "\"" + workingDir.getAbsolutePath() + "\"");
         }
-        versionArgs = versionArgs.replace("${assets_root}", assetsDir.getAbsolutePath());
-        versionArgs = versionArgs.replace("${game_assets}", assetsDir.getAbsolutePath());
+        versionArgs = versionArgs.replace("${assets_root}", "\"" + assetsDir.getAbsolutePath() + "\"");
+        versionArgs = versionArgs.replace("${game_assets}", "\"" + assetsDir.getAbsolutePath() + "\"");
         versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
         versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
         versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
