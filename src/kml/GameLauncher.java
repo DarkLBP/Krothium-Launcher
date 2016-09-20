@@ -99,7 +99,7 @@ public class GameLauncher {
         }
         gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
         gameArgs.add("-cp");
-        String libraries = "";
+        String libraries = "\"";
         List<Library> libs = ver.getLibraries();
         String separator = System.getProperty("path.separator");
         try {
@@ -155,7 +155,7 @@ public class GameLauncher {
         }
         console.printInfo("Preparing game args.");
         File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
-        libraries += verPath.getAbsolutePath();
+        libraries += verPath.getAbsolutePath() + "\"";
         String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
@@ -200,6 +200,10 @@ public class GameLauncher {
         gameArgs.add(libraries);
         gameArgs.add("kml.GameStarter");
         gameArgs.add(ver.getMainClass());
+        console.printInfo("Full game launcher parameters: ");
+        for (String arg : gameArgs){
+            console.printInfo(arg);
+        }
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         String versionArgs = ver.getMinecraftArguments();
