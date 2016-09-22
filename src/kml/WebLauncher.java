@@ -1,30 +1,16 @@
 package kml;
 
 import com.sun.net.httpserver.HttpServer;
-import java.io.BufferedInputStream;
 import kml.exceptions.AuthenticationException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * @website https://krothium.com
@@ -38,6 +24,14 @@ public class WebLauncher {
         final Kernel kernel = new Kernel();
         final Console console = kernel.getConsole();
         console.includeTimestamps(true);
+        try {
+            HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
+            int responseCode = con.getResponseCode();
+            Constants.USE_HTTPS = (responseCode == 204);
+        } catch (Exception ex) {
+            Constants.USE_HTTPS = false;
+        }
+        console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
         kernel.loadVersions();
         kernel.loadProfiles();
         kernel.loadUsers();

@@ -2,7 +2,8 @@ package kml.matchers;
 
 import java.io.IOException;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
+import java.net.URLConnection;
+import kml.Constants;
 import kml.Utils;
 
 /**
@@ -21,12 +22,16 @@ public class BlockedServersMatcher implements URLMatcher{
         return this.url.toString().equalsIgnoreCase(blockURL);
     }
     @Override
-    public HttpsURLConnection handle(){
+    public URLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(blockURL)){
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
+            URL remoteURL;
+            if (Constants.USE_HTTPS){
+                remoteURL = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
+            } else {
+                remoteURL = Utils.stringToURL("http://mc.krothium.com/server/blockedservers");
+            }
             try{
-                HttpsURLConnection con = (HttpsURLConnection)remoteURL.openConnection();
-                return con;
+                return remoteURL.openConnection();
             } catch (IOException ex) {
                 return null;
             }

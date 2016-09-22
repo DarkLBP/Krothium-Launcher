@@ -1,9 +1,9 @@
 package kml.matchers;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
+import java.net.URLConnection;
+import kml.Constants;
 import kml.Utils;
 
 /**
@@ -22,12 +22,16 @@ public class HasJoinedMatcher implements URLMatcher{
         return (this.url.toString().contains(hasURL) && this.url.getQuery() != null);
     }
     @Override
-    public HttpURLConnection handle(){
+    public URLConnection handle(){
         if ((this.url.toString().contains(hasURL) && this.url.getQuery() != null)){
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/server/hasJoined?" + this.url.getQuery());
+            URL remoteURL;
+            if (Constants.USE_HTTPS){
+                remoteURL = Utils.stringToURL("https://mc.krothium.com/server/hasJoined?" + this.url.getQuery());
+            } else {
+                remoteURL = Utils.stringToURL("http://mc.krothium.com/server/hasJoined?" + this.url.getQuery());
+            }
             try{
-                HttpsURLConnection con = (HttpsURLConnection)remoteURL.openConnection();
-                return con;
+                return remoteURL.openConnection();
             } catch (IOException ex) {
                 return null;
             }

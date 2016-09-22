@@ -1,6 +1,6 @@
 package kml.matchers;
 
-import java.net.HttpURLConnection;
+import java.net.URLConnection;
 
 /**
  * @website https://krothium.com
@@ -8,5 +8,5 @@ import java.net.HttpURLConnection;
  */
 public interface URLMatcher {
     public boolean match();
-    public HttpURLConnection handle();
+    public URLConnection handle();
 }

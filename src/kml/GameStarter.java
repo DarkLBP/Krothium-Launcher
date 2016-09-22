@@ -1,23 +1,8 @@
 package kml;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.HttpsURLConnection;
 import kml.handlers.URLHandler;
 
 /**
@@ -27,6 +12,14 @@ import kml.handlers.URLHandler;
 public class GameStarter {
     public static void main(String[] args){
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
+        try {
+            HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
+            int responseCode = con.getResponseCode();
+            Constants.USE_HTTPS = (responseCode == 204);
+        } catch (Exception ex) {
+            Constants.USE_HTTPS = false;
+        }
+        System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
         URL.setURLStreamHandlerFactory(new URLHandler());
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];

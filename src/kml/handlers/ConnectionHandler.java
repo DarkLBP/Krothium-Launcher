@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import kml.matchers.URLMatcher;
 
 /**
@@ -14,7 +16,7 @@ import kml.matchers.URLMatcher;
 public class ConnectionHandler extends HttpURLConnection{
     
     private final URLMatcher matcher;
-    private final HttpURLConnection relay;
+    private final URLConnection relay;
     
     public ConnectionHandler(URL url, URLMatcher m){
         super(url);
@@ -25,7 +27,12 @@ public class ConnectionHandler extends HttpURLConnection{
     @Override
     public int getResponseCode(){
         try {
-            return relay.getResponseCode();
+            if (relay instanceof HttpsURLConnection){
+                return ((HttpsURLConnection)relay).getResponseCode();
+            } else if (relay instanceof HttpURLConnection){
+                return ((HttpURLConnection)relay).getResponseCode();
+            }
+            return -1;
         } catch (IOException ex) {
             return -1;
         }

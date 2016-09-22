@@ -1,8 +1,8 @@
 package kml.matchers;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import kml.Utils;
 
 /**
@@ -21,12 +21,11 @@ public class CheckServerMatcher implements URLMatcher{
         return (this.url.toString().contains(checkURL) && this.url.getQuery() != null);
     }
     @Override
-    public HttpURLConnection handle(){
+    public URLConnection handle(){
         if ((this.url.toString().contains(checkURL) && this.url.getQuery() != null)){
             URL remoteURL = Utils.stringToURL("http://mc.krothium.com/server/checkserver?" + this.url.getQuery());
             try{
-                HttpURLConnection con = (HttpURLConnection)remoteURL.openConnection();
-                return con;
+                return remoteURL.openConnection();
             } catch (IOException ex) {
                 return null;
             }

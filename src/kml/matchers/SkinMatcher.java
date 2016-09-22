@@ -1,8 +1,8 @@
 package kml.matchers;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import kml.Utils;
@@ -28,14 +28,13 @@ public class SkinMatcher implements URLMatcher{
         return false;
     }
     @Override
-    public HttpURLConnection handle(){
+    public URLConnection handle(){
         Matcher m = skinRegex.matcher(this.url.getPath());
         if (m.matches()){
             String name = m.group(1);
             URL remoteURL = Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png");
             try {
-                HttpURLConnection con = (HttpURLConnection)remoteURL.openConnection();
-                return con;
+                return remoteURL.openConnection();
             } catch (IOException ex) {
                 return null;
             }
