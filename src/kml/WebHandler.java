@@ -450,7 +450,11 @@ public class WebHandler implements HttpHandler {
                             params.put("Content-Type", "image/png");
                             params.put("Content-Length", "" + contentLength);
                             try{
-                                response = Utils.sendPost(Constants.CHANGESKIN_URL, skinData, params);
+                                URL url = Constants.CHANGESKIN_URL;
+                                if (!Constants.USE_HTTPS){
+                                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                }
+                                response = Utils.sendPost(url, skinData, params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -475,7 +479,11 @@ public class WebHandler implements HttpHandler {
                             params.put("Content-Type", "image/png");
                             params.put("Content-Length", "" + contentLength);
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, capeData, params);
+                                URL url = Constants.CHANGECAPE_URL;
+                                if (!Constants.USE_HTTPS){
+                                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                }
+                                response = Utils.sendPost(url, capeData, params);
                             } catch (Exception ex){
                                 response = "Failed to change cape. (NETWORK_ERROR)";
                             }
@@ -505,7 +513,11 @@ public class WebHandler implements HttpHandler {
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGESKIN_URL, new byte[0], params);
+                                URL url = Constants.CHANGESKIN_URL;
+                                if (!Constants.USE_HTTPS){
+                                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                }
+                                response = Utils.sendPost(url, new byte[0], params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -517,7 +529,11 @@ public class WebHandler implements HttpHandler {
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Content-Length", "0");
                             try{
-                                response = Utils.sendPost(Constants.CHANGECAPE_URL, new byte[0], params);
+                                URL url = Constants.CHANGECAPE_URL;
+                                if (!Constants.USE_HTTPS){
+                                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                }
+                                response = Utils.sendPost(url, new byte[0], params);
                             } catch (Exception ex){
                                 response = "Failed to change skin. (NETWORK_ERROR)";
                             }
@@ -535,7 +551,11 @@ public class WebHandler implements HttpHandler {
                             if (!Constants.UPDATE_CHECKED){
                                 params = new HashMap();
                                 try{ 
-                                    String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], params);
+                                    URL url = Constants.GETLATEST_URL;
+                                    if (!Constants.USE_HTTPS){
+                                        url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                    }
+                                    String r = Utils.sendPost(url, new byte[0], params);
                                     String[] data = r.split(":");
                                     int version = Integer.parseInt(Utils.fromBase64(data[0]));
                                     if (version > Constants.KERNEL_BUILD){
@@ -552,7 +572,11 @@ public class WebHandler implements HttpHandler {
                         case "getupdateurl":
                             params = new HashMap();
                             try{ 
-                                String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], params);
+                                URL url = Constants.GETLATEST_URL;
+                                if (!Constants.USE_HTTPS){
+                                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                                }
+                                String r = Utils.sendPost(url, new byte[0], params);
                                 String[] data = r.split(":");
                                 response = data[1];
                             } catch (Exception ex){

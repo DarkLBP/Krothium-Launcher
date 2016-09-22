@@ -3,6 +3,7 @@ package kml;
 import kml.exceptions.AuthenticationException;
 import kml.objects.User;
 import java.io.File;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.HashMap;
@@ -77,7 +78,11 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            URL url = Constants.AUTHENTICATE_URL;
+            if (!Constants.USE_HTTPS){
+                url = Utils.stringToURL(url.toString().replace("https", "http"));
+            }
+            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
@@ -136,7 +141,11 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.REFRESH_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            URL url = Constants.REFRESH_URL;
+            if (!Constants.USE_HTTPS){
+                url = Utils.stringToURL(url.toString().replace("https", "http"));
+            }
+            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
@@ -175,7 +184,11 @@ public class Authentication {
         postParams.put("Content-Length", "" + request.toString().length());
         String response = null;
         try {
-            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            URL url = Constants.VALIDATE_URL;
+            if (!Constants.USE_HTTPS){
+                url = Utils.stringToURL(url.toString().replace("https", "http"));
+            }
+            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
