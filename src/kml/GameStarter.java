@@ -27,6 +27,25 @@ import kml.handlers.URLHandler;
 public class GameStarter {
     public static void main(String[] args){
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            Path ksPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");
+            keyStore.load(Files.newInputStream(ksPath), "changeit".toCharArray());
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            try (InputStream caInput = new BufferedInputStream(
+                WebLauncher.class.getResourceAsStream("/mc_server_cert.der"))) {
+                Certificate crt = cf.generateCertificate(caInput);
+                System.out.println("Added certificate for " + ((X509Certificate) crt).getSubjectDN());
+                keyStore.setCertificateEntry("DSTRootCAX3", crt);
+            }
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keyStore);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+            SSLContext.setDefault(sslContext);
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException e) {
+            System.out.println("Failed to trust mc.krothium.com certificate.\n" + e.getMessage());
+        }
         URL.setURLStreamHandlerFactory(new URLHandler());
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];
