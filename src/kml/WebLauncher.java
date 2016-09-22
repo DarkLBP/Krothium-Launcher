@@ -38,25 +38,6 @@ public class WebLauncher {
         final Kernel kernel = new Kernel();
         final Console console = kernel.getConsole();
         console.includeTimestamps(true);
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            Path ksPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");
-            keyStore.load(Files.newInputStream(ksPath), "changeit".toCharArray());
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            try (InputStream caInput = new BufferedInputStream(
-                WebLauncher.class.getResourceAsStream("/mc_server_cert.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                console.printInfo("Added certificate for " + ((X509Certificate) crt).getSubjectDN());
-                keyStore.setCertificateEntry("DSTRootCAX3", crt);
-            }
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-            SSLContext.setDefault(sslContext);
-        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException e) {
-            console.printError("Failed to trust mc.krothium.com certificate.\n" + e.getMessage());
-        }
         kernel.loadVersions();
         kernel.loadProfiles();
         kernel.loadUsers();

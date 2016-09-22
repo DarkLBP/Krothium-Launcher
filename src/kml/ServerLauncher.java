@@ -31,25 +31,6 @@ import javax.net.ssl.TrustManagerFactory;
 public class ServerLauncher{
     public static void load(File f, String[] args){
         System.out.println("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            Path ksPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");
-            keyStore.load(Files.newInputStream(ksPath), "changeit".toCharArray());
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            try (InputStream caInput = new BufferedInputStream(
-                WebLauncher.class.getResourceAsStream("/mc_server_cert.der"))) {
-                Certificate crt = cf.generateCertificate(caInput);
-                System.out.println("Added certificate for " + ((X509Certificate) crt).getSubjectDN());
-                keyStore.setCertificateEntry("DSTRootCAX3", crt);
-            }
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-            SSLContext.setDefault(sslContext);
-        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException e) {
-            System.out.println("Failed to trust mc.krothium.com certificate.\n" + e.getMessage());
-        }
         try{ 
             String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap());
             String[] data = r.split(":");
