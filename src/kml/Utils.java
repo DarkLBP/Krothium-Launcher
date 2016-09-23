@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -179,9 +180,18 @@ public class Utils {
         return null;
     }
     public static String sendPost(URL url, byte[] data, Map<String, String> params) throws Exception {
-        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        URLConnection con;
+        if (url.getProtocol().equalsIgnoreCase("https")){
+            con = (HttpsURLConnection)url.openConnection();
+        } else {
+            con = (HttpURLConnection)url.openConnection();
+        }
         con.setDoOutput(true);
-        con.setRequestMethod("POST");
+        if (con instanceof HttpsURLConnection){
+            ((HttpsURLConnection)con).setRequestMethod("POST");
+        } else {
+            ((HttpURLConnection)con).setRequestMethod("POST");
+        }
         if (params.size() > 0){
             Set keys = params.keySet();
             Iterator it = keys.iterator();
@@ -206,7 +216,11 @@ public class Utils {
             in.close();
             i.close();
         }catch (Exception ex){
-            i = con.getErrorStream();
+            if (con instanceof HttpsURLConnection){
+                i = ((HttpsURLConnection)con).getErrorStream();
+            } else {
+                i = ((HttpURLConnection)con).getErrorStream();
+            }
             if (i != null){
                 BufferedReader in = new BufferedReader(new InputStreamReader(i));
                 String inputLine;
