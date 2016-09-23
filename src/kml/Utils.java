@@ -180,12 +180,7 @@ public class Utils {
         return null;
     }
     public static String sendPost(URL url, byte[] data, Map<String, String> params) throws Exception {
-        URLConnection con;
-        if (url.getProtocol().equalsIgnoreCase("https")){
-            con = (HttpsURLConnection)url.openConnection();
-        } else {
-            con = (HttpURLConnection)url.openConnection();
-        }
+        URLConnection con = url.openConnection();
         con.setDoOutput(true);
         if (con instanceof HttpsURLConnection){
             ((HttpsURLConnection)con).setRequestMethod("POST");
@@ -203,7 +198,7 @@ public class Utils {
         OutputStream out = con.getOutputStream();
         out.write(data);
         out.close();
-        InputStream i = null;
+        InputStream i;
         StringBuilder response = new StringBuilder();
         try{
             i = con.getInputStream();
