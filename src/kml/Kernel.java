@@ -1,19 +1,20 @@
 package kml;
 
+import kml.exceptions.AuthenticationException;
+import kml.exceptions.DownloaderException;
+import kml.exceptions.GameLauncherException;
 import kml.objects.Profile;
 import kml.objects.User;
+import kml.objects.Version;
+import kml.objects.VersionMeta;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import kml.exceptions.AuthenticationException;
-import kml.exceptions.DownloaderException;
-import kml.exceptions.GameLauncherException;
-import kml.objects.Version;
-import kml.objects.VersionMeta;
-import org.json.JSONObject;
 
 
 /**

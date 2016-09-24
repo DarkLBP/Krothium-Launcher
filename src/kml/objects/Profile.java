@@ -1,12 +1,13 @@
 package kml.objects;
 
+import kml.enums.LauncherVisibility;
+import kml.enums.VersionType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kml.enums.LauncherVisibility;
-import kml.enums.VersionType;
 
 /**
  * @website https://krothium.com

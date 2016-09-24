@@ -1,7 +1,8 @@
 package kml.objects;
 
-import java.net.URL;
 import kml.enums.VersionType;
+
+import java.net.URL;
 
 /**
  * @website https://krothium.com

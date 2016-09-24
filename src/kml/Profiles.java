@@ -3,15 +3,11 @@ package kml;
 import kml.enums.LauncherVisibility;
 import kml.enums.VersionType;
 import kml.objects.Profile;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * @website https://krothium.com

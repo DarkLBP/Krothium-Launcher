@@ -2,6 +2,8 @@ package kml;
 
 import com.sun.net.httpserver.HttpServer;
 import kml.exceptions.AuthenticationException;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Random;
@@ -10,7 +12,6 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * @website https://krothium.com

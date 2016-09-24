@@ -1,11 +1,12 @@
 package kml.matchers;
 
+import kml.Utils;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import kml.Utils;
 
 /**
  * @website https://krothium.com

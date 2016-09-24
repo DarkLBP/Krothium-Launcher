@@ -1,15 +1,11 @@
 package kml.handlers;
 
+import kml.matchers.*;
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import kml.matchers.CapeMatcher;
-import kml.matchers.CheckServerMatcher;
-import kml.matchers.JoinServerMatcher;
-import kml.matchers.SkinMatcher;
-import kml.matchers.TextureMatcher;
-import kml.matchers.URLMatcher;
 
 /**
  * @website https://krothium.com

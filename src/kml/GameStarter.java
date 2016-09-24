@@ -1,9 +1,10 @@
 package kml;
 
+import kml.handlers.URLHandler;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.lang.reflect.Method;
 import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
-import kml.handlers.URLHandler;
 
 /**
  * @website https://krothium.com

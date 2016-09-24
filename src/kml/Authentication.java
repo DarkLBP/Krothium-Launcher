@@ -2,16 +2,13 @@ package kml;
 
 import kml.exceptions.AuthenticationException;
 import kml.objects.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.UUID;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.util.*;
 
 /**
  * @website https://krothium.com

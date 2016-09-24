@@ -1,19 +1,15 @@
 package kml;
 
 import kml.enums.VersionType;
-import kml.objects.Version;
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 import kml.exceptions.ObjectException;
+import kml.objects.Version;
 import kml.objects.VersionMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 /**
  * @website https://krothium.com

@@ -1,16 +1,11 @@
 package kml;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import kml.enums.OSArch;
 import kml.enums.OS;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import kml.enums.OSArch;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -21,7 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * @website https://krothium.com
