@@ -10,9 +10,9 @@ import java.net.URL;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class ServerStarter {
+public class StubStarter {
     public static void main(String[] args){
-        System.out.println("ServerStarter launcher with " + args.length + " arguments.");
+        System.out.println("StubStarter launcher with " + args.length + " arguments.");
         try {
             HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
             int responseCode = con.getResponseCode();
@@ -23,9 +23,13 @@ public class ServerStarter {
         System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
         URL.setURLStreamHandlerFactory(new URLHandler());
         try{
-            Class<?> gameClass = Class.forName("net.minecraft.server.MinecraftServer");
-            Method method = gameClass.getMethod("main", String[].class);
-            method.invoke(null, (Object)args);
+            if (args.length > 0){
+                Class<?> gameClass = Class.forName(args[0]);
+                Method method = gameClass.getMethod("main", String[].class);
+                method.invoke(null, (Object)args);
+            } else {
+                System.out.println("No main class specified!");
+            }
         } catch (Exception ex){
             System.out.println("Failed to start the server.");
             ex.printStackTrace();
