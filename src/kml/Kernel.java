@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 
 public final class Kernel {
-    public File workingDir;
+    public final File workingDir;
     public final Console console;
     public final Profiles profiles;
     public final Versions versions;
@@ -102,7 +102,8 @@ public final class Kernel {
     public Profiles getProfiles(){return this.profiles;}
     public Downloader getDownloader(){return this.downloader;}
     public Authentication getAuthentication(){return this.authentication;}
-    public File getConfigFile(){return new File(this.getWorkingDir() + File.separator + "launcher_profiles.json");}
+    public File getConfigFile(){
+        return new File(this.workingDir + File.separator + "launcher_profiles.json");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
     public void exitSafely(){
         this.console.close();

@@ -29,8 +29,8 @@ public final class Version {
     private final VersionType type;
     private String assets;
     private AssetIndex assetIndex;
-    private Map<String, Downloadable> downloads = new HashMap();
-    private List<Library> libraries = new ArrayList();
+    private final Map<String, Downloadable> downloads = new HashMap();
+    private final List<Library> libraries = new ArrayList();
     private String inheritsFrom;
     private String jar;
     private File relativeJar;
@@ -158,14 +158,14 @@ public final class Version {
             String inheritsFrom = version.getString("inheritsFrom");
             Version ver = kernel.getVersion(inheritsFrom);
             if (ver.hasLibraries()){
-                for (Library lib : ver.getLibraries()){
+                for (Library lib : ver.libraries){
                     if (!this.libraries.contains(lib)){
                         this.libraries.add(lib);
                     }
                 }
             }
             if (ver.hasDownloads()){
-                Map<String, Downloadable> downloads = ver.getDownloads();
+                Map<String, Downloadable> downloads = ver.downloads;
                 if (!this.downloads.containsKey("client")){
                     this.downloads.put("client", downloads.get("client"));
                 }
@@ -178,33 +178,33 @@ public final class Version {
             }
             if (ver.hasJar()){
                 if (!this.hasJar()){
-                   this.jar = ver.getJar(); 
+                    this.jar = ver.jar;
                 }
             }
             if (ver.hasAssets()){
                 if (!this.hasAssets()){
-                    this.assets = ver.getAssets();
+                    this.assets = ver.assets;
                 }
             }
             if (ver.hasAssetIndex()){
                 if (!this.hasAssetIndex()){
-                    this.assetIndex = ver.getAssetIndex();
+                    this.assetIndex = ver.assetIndex;
                 }
             }
             if (ver.hasMainClass()){
                 if (!this.hasMainClass()){
-                    this.mainClass = ver.getMainClass();
+                    this.mainClass = ver.mainClass;
                 }
             }
             if (ver.hasMinecraftArguments()){
                 if (!this.hasMinecraftArguments()){
-                    this.minecraftArguments = ver.getMinecraftArguments();
+                    this.minecraftArguments = ver.minecraftArguments;
                 }
             }
         }
         String idToUse = this.id;
         if (this.hasJar()){
-            idToUse = this.getJar();
+            idToUse = this.jar;
         }
         this.relativeJar = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".jar");
         this.relativeJSON = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".json");
@@ -240,9 +240,9 @@ public final class Version {
         if (!this.hasDownloads()){
             return false;
         }
-        return this.getDownloads().containsKey("client");
+        return this.downloads.containsKey("client");
     }
     public Downloadable getClientDownload(){
-        return this.getDownloads().get("client");
+        return this.downloads.get("client");
     }
 }

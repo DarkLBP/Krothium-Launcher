@@ -247,7 +247,7 @@ public class Downloader {
         this.downloading = false;
     }
     public int getProgress(){
-        if (!isDownloading()){
+        if (!this.downloading){
             return 0;
         }
         long sum = this.downloaded + this.validated;

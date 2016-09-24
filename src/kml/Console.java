@@ -100,7 +100,7 @@ public class Console {
         }
     }
     public boolean close(){
-        if (this.isEnabled()){
+        if (this.enabled){
             try{
                 this.cdata.close();
                 this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));

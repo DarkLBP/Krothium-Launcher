@@ -23,9 +23,7 @@ public class GameStarter {
         URL.setURLStreamHandlerFactory(new URLHandler());
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];
-        for (int i = 1; i < args.length; i++){
-            gameArgs[i - 1] = args[i];
-        }
+        System.arraycopy(args, 1, gameArgs, 0, args.length - 1);
         try{
             Class<?> gameClass = Class.forName(mainClass);
             Method method = gameClass.getMethod("main", String[].class);

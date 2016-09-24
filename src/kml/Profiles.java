@@ -59,17 +59,19 @@ public class Profiles {
         console.printError("Profile " + p + " doesn't exist.");
         return false;
     }
-    public boolean duplicateProfile(Profile p)
-    {
+    public boolean duplicateProfile(Profile p) {
         if (this.existsProfile(p)){
-            String modifiedName = p.getName() + "_";
-            p.setName(modifiedName);
+            StringBuilder modifiedName = new StringBuilder();
+            modifiedName.append(p.getName() + "_");
+            p.setName(modifiedName.toString());
             while (this.existsProfile(p)){
-                modifiedName += "_";
-                p.setName(modifiedName);
+                modifiedName.append("_");
+                p.setName(modifiedName.toString());
             }
-            this.addProfile(p);
-            console.printError("Profile " + p.getName() + " duplicated with this name " + modifiedName);
+            if (this.addProfile(p)){
+                console.printError("Profile " + p.getName() + " duplicated with this name " + modifiedName);
+                return true;
+            }
         }
         console.printError("Profile " + p.getName() + " doesn't exist.");
         return false;

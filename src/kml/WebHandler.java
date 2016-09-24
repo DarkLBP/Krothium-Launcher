@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +46,6 @@ public class WebHandler implements HttpHandler {
         try {
             String path = he.getRequestURI().toString();
             String method = he.getRequestMethod();
-            console.printInfo("Inbound request " + path + " with method " + method);
             ByteArrayOutputStream responseData = new ByteArrayOutputStream();
             int responseCode = 200;
             OutputStream out = he.getResponseBody();
@@ -110,7 +110,7 @@ public class WebHandler implements HttpHandler {
                 ctv.add("text/plain");
                 responseHeaders.put("Content-Type", ctv);
                 if (path.startsWith("/action/")){
-                    String response = "";
+                    StringBuilder response = new StringBuilder();
                     String function = path.replace("/action/", "");
                     String requestBody = "";
                     Headers hs = he.getRequestHeaders();
@@ -153,9 +153,9 @@ public class WebHandler implements HttpHandler {
                                 try{
                                     kernel.authenticate(userName, password);
                                     kernel.saveProfiles();
-                                    response = "OK";
+                                    response.append("OK");
                                 }catch (AuthenticationException ex){
-                                    response = ex.getMessage();
+                                    response.append(ex.getMessage());
                                 }
                             } else {
                                 throw new WebLauncherException(path, 400, out);
@@ -178,22 +178,22 @@ public class WebHandler implements HttpHandler {
                         case "status":
                             WebLauncher.lastKeepAlive = System.nanoTime();
                             if (kernel.isDownloading()){
-                                response = "1";
+                                response.append("1");
                             } else if (kernel.isGameStarted()){
-                                response = "2";
+                                response.append("2");
                             } else {
-                                response = "0";
+                                response.append("0");
                             }
-                            response += ":";
-                            response += String.valueOf(kernel.getDownloadProgress());
+                            response.append(":");
+                            response.append(String.valueOf(kernel.getDownloadProgress()));
                             break;
                         case "signature":
-                            response = "Krothium Minecraft Launcher v" + Constants.KERNEL_BUILD_NAME;
+                            response.append("Krothium Minecraft Launcher v" + Constants.KERNEL_BUILD_NAME);
                             break;
                         case "logout":
                             if (kernel.logOut()){
-                               kernel.saveProfiles();
-                               response = "OK"; 
+                                kernel.saveProfiles();
+                                response.append("OK");
                             }
                             break;
                         case "profiles":
@@ -201,21 +201,21 @@ public class WebHandler implements HttpHandler {
                             Set keys = p.keySet();
                             Iterator i = keys.iterator();
                             while (i.hasNext()){
-                                response += Utils.toBase64(i.next().toString());
+                                response.append(Utils.toBase64(i.next().toString()));
                                 if (i.hasNext()){
-                                    response += ":";
+                                    response.append(":");
                                 }
                             }
                             break;
                         case "selectedprofile":
-                            response = Utils.toBase64(kernel.getSelectedProfile());
+                            response.append(Utils.toBase64(kernel.getSelectedProfile()));
                             break;
                         case "setselectedprofile":
                             profile = Utils.fromBase64(requestBody);
                             if (profile != null){
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
-                                        response = "OK";
+                                        response.append("OK");
                                         kernel.saveProfiles();
                                     }
                                 }
@@ -224,16 +224,16 @@ public class WebHandler implements HttpHandler {
                         case "selectedversion":
                             prof = kernel.getProfile(kernel.getSelectedProfile());
                             if (prof.hasVersion()){
-                                response = Utils.toBase64(Utils.toBase64(prof.getVersionID())) + ":" + Utils.toBase64(prof.getVersionID());
+                                response.append(Utils.toBase64(Utils.toBase64(prof.getVersionID())) + ":" + Utils.toBase64(prof.getVersionID()));
                             } else {
-                                response = Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion());
+                                response.append(Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion()));
                             }
                             break;
                         case "deleteprofile":
                             profile = Utils.fromBase64(requestBody);
                             if (kernel.existsProfile(profile)){
                                 if (kernel.deleteProfile(profile)){
-                                    response = "OK";
+                                    response.append("OK");
                                     kernel.saveProfiles();
                                 }
                             }
@@ -260,24 +260,16 @@ public class WebHandler implements HttpHandler {
                                 if (oldAlpha){
                                     allowedTypes.add(VersionType.OLD_ALPHA);
                                 }
-                                response = "latest";
-                                while (vi.hasNext()){
-                                    String index = vi.next().toString();
-                                    VersionMeta version = kernel.getVersionMeta(index);
-                                    if (allowedTypes.contains(version.getType())){
-                                        response += ":" + Utils.toBase64(version.getID());
-                                    }
-                                }
                             } else {
                                 prof = kernel.getProfile(kernel.getSelectedProfile());
                                 allowedTypes = prof.getAllowedVersionTypes();
-                                response = "latest";
-                                while (vi.hasNext()){
-                                    String index = vi.next().toString();
-                                    VersionMeta version = kernel.getVersionMeta(index);
-                                    if (allowedTypes.contains(version.getType())){
-                                        response += ":" + Utils.toBase64(version.getID());
-                                    }
+                            }
+                            response.append("latest");
+                            while (vi.hasNext()){
+                                String index = vi.next().toString();
+                                VersionMeta version = kernel.getVersionMeta(index);
+                                if (allowedTypes.contains(version.getType())){
+                                    response.append(":" + Utils.toBase64(version.getID()));
                                 }
                             }
                             break;
@@ -287,7 +279,7 @@ public class WebHandler implements HttpHandler {
                                 throw new WebLauncherException(path, 400, out);
                             }
                             if (profileArray[1].equals("noset")){
-                                response = "Profile name cannot be blank.";
+                                response.append("Profile name cannot be blank.");
                             } else {
                                 String profileName = Utils.fromBase64(profileArray[0]);
                                 String profileNameNew = Utils.fromBase64(profileArray[1]);
@@ -305,7 +297,7 @@ public class WebHandler implements HttpHandler {
                                 String javaExec = (profileArray[8].equals("noset") ? "" : Utils.fromBase64(profileArray[8]));
                                 String javaArgs = (profileArray[9].equals("noset") ? "" : Utils.fromBase64(profileArray[9]));
                                 if (!kernel.existsProfile(profileName) && !profileArray[0].equals("noset")){
-                                    response = "Profile " + profileName + " is specified but does not exist.";
+                                    response.append("Profile " + profileName + " is specified but does not exist.");
                                 } else {
                                     if (profileArray[0].equals("noset")){
                                         prof = new Profile(profileNameNew);
@@ -317,7 +309,7 @@ public class WebHandler implements HttpHandler {
                                         prof.setVersionID(null);
                                     } else if (!kernel.existsVersion(profileVersion)){
                                         error = true;
-                                        response += "Selected version " + profileVersion + " does not exist." + "\n";
+                                        response.append("Selected version " + profileVersion + " does not exist." + "\n");
                                     } else {
                                         prof.setVersionID(profileVersion);
                                     }
@@ -334,7 +326,7 @@ public class WebHandler implements HttpHandler {
                                             prof.setResolution(x, y);
                                         } catch (Exception ex){
                                             error = true;
-                                            response += "Invalid resolution values." + "\n";
+                                            response.append("Invalid resolution values." + "\n");
                                         }
                                     }
                                     else{
@@ -348,12 +340,11 @@ public class WebHandler implements HttpHandler {
                                             }
                                             else {
                                                 error = true;
-                                                response += "Invalid java executable file." + "\n";
+                                                response.append("Invalid java executable file." + "\n");
                                             }
-
                                         } else {
                                             error = true;
-                                            response += "Java executable does not exist." + "\n";
+                                            response.append("Java executable does not exist." + "\n");
                                         }
                                     } else {
                                         prof.setJavaDir(null);
@@ -383,17 +374,17 @@ public class WebHandler implements HttpHandler {
                                             kernel.renameProfile(profileName, profileNameNew);
                                         }
                                         if (!error){
-                                            response = "OK";
+                                            response.append("OK");
                                             kernel.saveProfiles();
                                         }
                                     } else {
                                         if (!error){
                                             if (!kernel.existsProfile(profileNameNew)){
                                                 kernel.addProfile(prof);
-                                                response = "OK";
+                                                response.append("OK");
                                                 kernel.saveProfiles();
                                             } else {
-                                                response += "Profile " + profileNameNew + " already exists.";
+                                                response.append("Profile " + profileNameNew + " already exists.");
                                             }
                                         }
                                     }
@@ -404,42 +395,34 @@ public class WebHandler implements HttpHandler {
                             profile = Utils.fromBase64(requestBody);
                             if (kernel.existsProfile(profile)){
                                 prof = kernel.getProfile(profile);
-                                response += Utils.toBase64(prof.getName());
-                                response += ":";
-                                response += (prof.hasVersion() ? Utils.toBase64(prof.getVersionID()) : "latest");
-                                response += ":";
-                                response += Utils.toBase64((String.valueOf(prof.isAllowedVersionType(VersionType.SNAPSHOT))));
-                                response += ":";
-                                response += Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_BETA)));
-                                response += ":";
-                                response += Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_ALPHA)));
-                                response += ":";
-                                response += (prof.hasGameDir() ? Utils.toBase64(prof.getGameDir().getAbsolutePath()) : "noset");
-                                response += ":";
-                                response += (prof.hasResolution() ? Utils.toBase64(String.valueOf(prof.getResolutionWidth()) + "x" + String.valueOf(prof.getResolutionHeight())) : "noset");
-                                response += ":";
-                                response += (prof.hasJavaDir() ? Utils.toBase64(prof.getJavaDir().getAbsolutePath()) : "noset");
-                                response += ":";
-                                response += (prof.hasJavaArgs() ? Utils.toBase64(prof.getJavaArgs()) : "noset");
+                                response.append(Utils.toBase64(prof.getName()) + ":");
+                                response.append((prof.hasVersion() ? Utils.toBase64(prof.getVersionID()) : "latest") + ":");
+                                response.append(Utils.toBase64((String.valueOf(prof.isAllowedVersionType(VersionType.SNAPSHOT)))) + ":");
+                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_BETA))) + ":");
+                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_ALPHA))) + ":");
+                                response.append((prof.hasGameDir() ? Utils.toBase64(prof.getGameDir().getAbsolutePath()) : "noset") + ":");
+                                response.append((prof.hasResolution() ? Utils.toBase64(String.valueOf(prof.getResolutionWidth()) + "x" + String.valueOf(prof.getResolutionHeight())) : "noset") + ":");
+                                response.append((prof.hasJavaDir() ? Utils.toBase64(prof.getJavaDir().getAbsolutePath()) : "noset") + ":");
+                                response.append((prof.hasJavaArgs() ? Utils.toBase64(prof.getJavaArgs()) : "noset"));
                             }
                             break;
                         case "changeskin":
                             if (contentType == null){
-                                response = "Invalid content type.";
+                                response.append("Content type has not been set.");
                                 break;
                             } else if (!contentType.equals("image/png")){
-                                response = "Invalid skin format. Must be a valid PNG file.";
+                                response.append("Invalid skin format. Must be a valid skin PNG file.");
                                 break;
                             } else if (contentExtra == null){
-                                response = "Skin type not specified.";
+                                response.append("Skin type not specified.");
                                 break;
                             } else if (!contentExtra.equals("alex") && !contentExtra.equals("steve")){
-                                response = "Invalid skin type.";
+                                response.append("Invalid skin type.");
                                 break;
                             }
                             byte[] skinData = Utils.fromBase64Binary(requestBody.split(",")[1]);
                             if (skinData.length == 0){
-                                response = "File has 0 bytes.";
+                                response.append("Skin file has 0 bytes.");
                                 break;
                             }
                             params = new HashMap();
@@ -448,28 +431,28 @@ public class WebHandler implements HttpHandler {
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Skin-Type", contentExtra);
                             params.put("Content-Type", "image/png");
-                            params.put("Content-Length", "" + contentLength);
+                            params.put("Content-Length", String.valueOf(contentLength));
                             try{
                                 URL url = Constants.CHANGESKIN_URL;
                                 if (!Constants.USE_HTTPS){
                                     url = Utils.stringToURL(url.toString().replace("https", "http"));
                                 }
-                                response = Utils.sendPost(url, skinData, params);
+                                response.append(Utils.sendPost(url, skinData, params));
                             } catch (Exception ex){
-                                response = "Failed to change skin. (NETWORK_ERROR)";
+                                response.append("Failed to change the skin. " + ex.getMessage());
                             }
                             break;
                         case "changecape":
                             if (contentType == null){
-                                response = "Invalid content type.";
+                                response.append("Content type has not been set.");
                                 break;
                             } else if (!contentType.equals("image/png")){
-                                response = "Invalid cape format. Must be a valid PNG file.";
+                                response.append("Invalid cape format. Must be a valid cape PNG file");
                                 break;
                             }
                             byte[] capeData = Utils.fromBase64Binary(requestBody.split(",")[1]);
                             if (capeData.length == 0){
-                                response = "File has 0 bytes.";
+                                response.append("Cape file has 0 bytes.");
                                 break;
                             }
                             params = new HashMap();
@@ -477,15 +460,15 @@ public class WebHandler implements HttpHandler {
                             params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
                             params.put("Content-Type", "image/png");
-                            params.put("Content-Length", "" + contentLength);
+                            params.put("Content-Length", String.valueOf(contentLength));
                             try{
                                 URL url = Constants.CHANGECAPE_URL;
                                 if (!Constants.USE_HTTPS){
                                     url = Utils.stringToURL(url.toString().replace("https", "http"));
                                 }
-                                response = Utils.sendPost(url, capeData, params);
+                                response.append(Utils.sendPost(url, capeData, params));
                             } catch (Exception ex){
-                                response = "Failed to change cape. (NETWORK_ERROR)";
+                                response.append("Failed to change the cape. " + ex.getMessage());
                             }
                             break;
                         case "getskin":
@@ -494,7 +477,7 @@ public class WebHandler implements HttpHandler {
                             HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
                             int rc = con.getResponseCode();
                             if (rc == 200){
-                                response = skinURL.toString();
+                                response.append(skinURL.toString());
                             }
                             break;
                         case "getcape":
@@ -503,7 +486,7 @@ public class WebHandler implements HttpHandler {
                             HttpURLConnection con2 = (HttpURLConnection)capeURL.openConnection();
                             int responseCode2 = con2.getResponseCode();
                             if (responseCode2 == 200){
-                                response = capeURL.toString();
+                                response.append(capeURL.toString());
                             }
                             break;
                         case "deleteskin":
@@ -517,9 +500,9 @@ public class WebHandler implements HttpHandler {
                                 if (!Constants.USE_HTTPS){
                                     url = Utils.stringToURL(url.toString().replace("https", "http"));
                                 }
-                                response = Utils.sendPost(url, new byte[0], params);
+                                response.append(Utils.sendPost(url, new byte[0], params));
                             } catch (Exception ex){
-                                response = "Failed to change skin. (NETWORK_ERROR)";
+                                response.append("Failed to delete the skin. " + ex.getMessage());
                             }
                             break;
                         case "deletecape":
@@ -533,19 +516,19 @@ public class WebHandler implements HttpHandler {
                                 if (!Constants.USE_HTTPS){
                                     url = Utils.stringToURL(url.toString().replace("https", "http"));
                                 }
-                                response = Utils.sendPost(url, new byte[0], params);
+                                response.append(Utils.sendPost(url, new byte[0], params));
                             } catch (Exception ex){
-                                response = "Failed to change skin. (NETWORK_ERROR)";
+                                response.append("Failed to delete the cape. " + ex.getMessage());
                             }
                             break;
                         case "switchlanguage":
                             String lang = Utils.fromBase64(requestBody);
                             if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
                                 Constants.LANG_CODE = lang;
-                                response = "OK";
+                                response.append("OK");
                                 break;
                             }
-                            response = "Unsupported lang code.";
+                            response.append("Unnsupported lang code.");
                             break;
                         case "getlatestversion":
                             if (!Constants.UPDATE_CHECKED){
@@ -559,13 +542,13 @@ public class WebHandler implements HttpHandler {
                                     String[] data = r.split(":");
                                     int version = Integer.parseInt(Utils.fromBase64(data[0]));
                                     if (version > Constants.KERNEL_BUILD){
-                                        response = "YES";
+                                        response.append("YES");
                                     } else {
-                                        response = "NO";
+                                        response.append("NO");
                                     }
                                     Constants.UPDATE_CHECKED = true;
                                 } catch (Exception ex){
-                                    response = "Failed to get latest version. (NETWORK_ERROR)";
+                                    response.append("Failed to get latest version. " + ex.getMessage());
                                 }
                             }
                             break;
@@ -578,13 +561,13 @@ public class WebHandler implements HttpHandler {
                                 }
                                 String r = Utils.sendPost(url, new byte[0], params);
                                 String[] data = r.split(":");
-                                response = data[1];
+                                response.append(data[1]);
                             } catch (Exception ex){
-                                response = "Failed to get latest version. (NETWORK_ERROR)";
+                                response.append("Failed to get latest version url. " + ex.getMessage());
                             }
                             break;
                     }
-                    responseData.write(response.getBytes());
+                    responseData.write(response.toString().getBytes(StandardCharsets.UTF_8));
                 } else {
                     responseCode = 404;
                 }

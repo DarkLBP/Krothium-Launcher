@@ -16,9 +16,7 @@ public class Starter {
                     File f = new File(args[1]);
                     if (args.length > 2){
                         String[] serverArgs = new String[args.length - 2];
-                        for (int i = 2; i < args.length; i++){
-                            serverArgs[i] = args[i + 2];
-                        }
+                        System.arraycopy(args, 4, serverArgs, 2, args.length - 2);
                         ServerLauncher.load(f, serverArgs);
                     }
                     ServerLauncher.load(f, new String[0]);

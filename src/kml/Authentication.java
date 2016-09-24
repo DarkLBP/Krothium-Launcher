@@ -22,7 +22,7 @@ public class Authentication {
     private boolean authenticated = false;
     private final Console console;
     protected String clientToken = UUID.randomUUID().toString();
-    protected Map<String, User> userDatabase = new HashMap();
+    protected final Map<String, User> userDatabase = new HashMap();
     private String selectedProfile;
     private final Kernel kernel;
     
@@ -75,7 +75,7 @@ public class Authentication {
         request.put("requestUser", true);
         Map<String, String> postParams = new HashMap();
         postParams.put("Content-Type", "application/json; charset=utf-8");
-        postParams.put("Content-Length", "" + request.toString().length());
+        postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response = null;
         try {
             URL url = Constants.AUTHENTICATE_URL;
@@ -138,7 +138,7 @@ public class Authentication {
         request.put("requestUser", true);
         Map<String, String> postParams = new HashMap();
         postParams.put("Content-Type", "application/json; charset=utf-8");
-        postParams.put("Content-Length", "" + request.toString().length());
+        postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response = null;
         try {
             URL url = Constants.REFRESH_URL;
@@ -181,7 +181,7 @@ public class Authentication {
         request.put("clientToken", this.clientToken);
         Map<String, String> postParams = new HashMap();
         postParams.put("Content-Type", "application/json; charset=utf-8");
-        postParams.put("Content-Length", "" + request.toString().length());
+        postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response = null;
         try {
             URL url = Constants.VALIDATE_URL;

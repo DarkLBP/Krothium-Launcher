@@ -15,12 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import kml.exceptions.GameLauncherException;
@@ -93,18 +88,17 @@ public class GameLauncher {
         }else{
             String javaArgs = p.getJavaArgs();
             String[] args = javaArgs.split(" ");
-            for (String arg : args){
-                gameArgs.add(arg);
-            }
+            Collections.addAll(gameArgs, args);
         }
         gameArgs.add("-Djava.library.path=" + nativesDir.getAbsolutePath());
         gameArgs.add("-cp");
-        String libraries = "\"";
+        StringBuilder libraries = new StringBuilder();
+        libraries.append("\"");
         List<Library> libs = ver.getLibraries();
         String separator = System.getProperty("path.separator");
         try {
             File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            libraries += launchPath.getAbsolutePath() + separator;
+            libraries.append(launchPath.getAbsolutePath() + separator);
         } catch (URISyntaxException ex) {
             console.printError("Failed to load GameStarter.");
         }
@@ -149,13 +143,13 @@ public class GameLauncher {
                     }
                 } else {
                     File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativePath());
-                    libraries += completePath.getAbsolutePath() + separator;
+                    libraries.append(completePath.getAbsolutePath() + separator);
                 }
             }
         }
         console.printInfo("Preparing game args.");
         File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
-        libraries += verPath.getAbsolutePath() + "\"";
+        libraries.append(verPath.getAbsolutePath() + "\"");
         String assetsID = ver.getAssets();
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
@@ -197,7 +191,7 @@ public class GameLauncher {
         }else{
             assetsDir = assetsRoot;
         }
-        gameArgs.add(libraries);
+        gameArgs.add(libraries.toString());
         gameArgs.add("kml.GameStarter");
         gameArgs.add(ver.getMainClass());
         console.printInfo("Full game launcher parameters: ");
@@ -241,9 +235,7 @@ public class GameLauncher {
         versionArgs = versionArgs.replace("${user_type}", "mojang");
         versionArgs = versionArgs.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
         String[] argsSplit = versionArgs.split(" ");
-        for (String arg : argsSplit){
-            gameArgs.add(arg);
-        }
+        Collections.addAll(gameArgs, argsSplit);
         if (p.hasResolution()){
             gameArgs.add("--width");
             gameArgs.add(String.valueOf(p.getResolutionWidth()));
