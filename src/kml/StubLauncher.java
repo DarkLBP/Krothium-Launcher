@@ -44,10 +44,9 @@ public class StubLauncher {
                 if (atrb.containsKey(Attributes.Name.MAIN_CLASS)){
                     if (RSAProtection){
                         System.out.println("JAR IS PROTECTED!");
-                        File outJar = new File("tmp.jar");
+                        File outJar = new File(Utils.getWorkingDirectory() + File.separator + "stub_unprotected.jar");
                         JarInputStream in = new JarInputStream(new FileInputStream(f));
                         JarOutputStream out = new JarOutputStream(new FileOutputStream(outJar));
-                        entries = jar.entries();
                         JarEntry entry;
                         while ((entry = in.getNextJarEntry()) != null){
                             if (entry.getName().contains("META-INF") && entry.getName().contains(".RSA")){
