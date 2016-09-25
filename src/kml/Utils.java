@@ -91,9 +91,15 @@ public class Utils {
             if (!parent.exists()){
                 parent.mkdirs();
             }
-            ReadableByteChannel rb = Channels.newChannel(url.openStream());
+            InputStream in = url.openStream();
             FileOutputStream fo = new FileOutputStream(output);
-            fo.getChannel().transferFrom(rb, 0, Long.MAX_VALUE);
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1){
+                fo.write(buffer, 0, read);
+            }
+            in.close();
+            fo.close();
             return true;
         }catch (Exception ex){
             return false;
