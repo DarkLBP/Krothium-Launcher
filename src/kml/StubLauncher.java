@@ -1,12 +1,9 @@
 package kml;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
+import java.util.jar.*;
 
 /**
  * @website https://krothium.com
@@ -15,6 +12,7 @@ import java.util.jar.JarFile;
 public class StubLauncher {
     public static void load(File f, String[] args){
         System.out.println("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
+        File usingFile = f;
         try{ 
             String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap());
             String[] data = r.split(":");
@@ -28,34 +26,66 @@ public class StubLauncher {
         } catch (Exception ex){
             System.out.println("Failed to get latest version. " + ex.getMessage());
         }
-        if (!f.exists()){
-            System.out.println("Specified file " + f.getAbsolutePath() + " does not exist!");
+        if (!usingFile.exists()){
+            System.out.println("Specified file " + usingFile.getAbsolutePath() + " does not exist!");
         } else {
-            System.out.println("Launching: " + f.getAbsolutePath());
+            System.out.println("Launching: " + usingFile.getAbsolutePath());
             try{
-                List<String> serverArgs = new ArrayList();
-                serverArgs.add(Utils.getJavaDir());
-                serverArgs.add("-cp");
-                StringBuilder libraries = new StringBuilder();
-                libraries.append("\"");
-                String separator = System.getProperty("path.separator");
-                try {
-                    File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                    libraries.append(launchPath.getAbsolutePath() + separator);
-                } catch (URISyntaxException ex) {
-                    System.out.println("Failed to load StubStarter.");
+                JarFile jar = new JarFile(usingFile);
+                Enumeration<JarEntry> entries = jar.entries();
+                boolean RSAProtection = false;
+                while (entries.hasMoreElements()){
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().contains("META-INF") && entry.getName().contains(".RSA")){
+                        RSAProtection = true;
+                    }
                 }
-                libraries.append(f.getAbsolutePath());
-                libraries.append("\"");
-                serverArgs.add(libraries.toString());
-                serverArgs.add("kml.StubStarter");
-                JarFile jar = new JarFile(f);
                 Attributes atrb = jar.getManifest().getMainAttributes();
                 if (atrb.containsKey(Attributes.Name.MAIN_CLASS)){
+                    if (RSAProtection){
+                        System.out.println("JAR IS PROTECTED!");
+                        File outJar = new File("tmp.jar");
+                        JarInputStream in = new JarInputStream(new FileInputStream(f));
+                        JarOutputStream out = new JarOutputStream(new FileOutputStream(outJar));
+                        entries = jar.entries();
+                        JarEntry entry;
+                        while ((entry = in.getNextJarEntry()) != null){
+                            if (entry.getName().contains("META-INF") && entry.getName().contains(".RSA")){
+                                continue;
+                            }
+                            out.putNextEntry(entry);
+                            byte[] buffer = new byte[4096];
+                            int read;
+                            while ((read = in.read(buffer)) != -1){
+                                out.write(buffer, 0, read);
+                            }
+                            in.closeEntry();
+                            out.closeEntry();
+                        }
+                        in.close();
+                        out.close();
+                        usingFile = outJar;
+                    }
+                    List<String> serverArgs = new ArrayList();
+                    serverArgs.add(Utils.getJavaDir());
+                    serverArgs.add("-cp");
+                    StringBuilder libraries = new StringBuilder();
+                    libraries.append("\"");
+                    String separator = System.getProperty("path.separator");
+                    try {
+                        File launchPath = new File(StubLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                        libraries.append(launchPath.getAbsolutePath() + separator);
+                    } catch (URISyntaxException ex) {
+                        System.out.println("Failed to load StubStarter.");
+                    }
+                    libraries.append(usingFile.getAbsolutePath());
+                    libraries.append("\"");
+                    serverArgs.add(libraries.toString());
+                    serverArgs.add("kml.StubStarter");
                     serverArgs.add(atrb.getValue(Attributes.Name.MAIN_CLASS));
                     Collections.addAll(serverArgs, args);
                     ProcessBuilder pb = new ProcessBuilder(serverArgs);
-                    pb.directory(f.getParentFile());
+                    pb.directory(usingFile.getParentFile());
                     try{
                         final Process process = pb.start();
                         Thread log_info = new Thread(){
@@ -71,7 +101,7 @@ public class StubLauncher {
                                         }
                                     }
                                 } catch (Exception ex){
-                                    System.out.println("Server stopped unexpectedly.");
+                                    System.out.println("Stub stopped unexpectedly.");
                                 }
                             }
                             public boolean isStarted(){
@@ -113,13 +143,13 @@ public class StubLauncher {
                         };
                         log_error.start();
                     }catch (Exception ex){
-                        System.out.println("Server returned an error code.");
+                        System.out.println("Stub returned an error code.");
                     }
                 } else {
                     System.out.println(f.getAbsolutePath() + " does not have a Main Class!");
                 }
             } catch (Exception ex){
-                System.out.println("Failed to start the server.");
+                System.out.println("Failed to start the stub.");
                 ex.printStackTrace();
             }
         }
