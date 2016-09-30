@@ -19,7 +19,6 @@ public class Browser extends Region {
     public Browser() {
         webEngine.setJavaScriptEnabled(true);
         webEngine.load("http://localhost:" + Constants.USED_PORT);
-        webEngine.
         getChildren().add(browser);
     }
 
