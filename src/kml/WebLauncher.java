@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import kml.exceptions.AuthenticationException;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Random;
@@ -29,8 +30,10 @@ public class WebLauncher {
             HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
             int responseCode = con.getResponseCode();
             Constants.USE_HTTPS = (responseCode == 204);
-        } catch (Exception ex) {
+        } catch (SSLHandshakeException ex) {
             Constants.USE_HTTPS = false;
+        } catch (IOException ex){
+            //
         }
         console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
         kernel.loadVersions();
