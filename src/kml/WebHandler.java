@@ -91,6 +91,11 @@ public class WebHandler implements HttpHandler {
                                     }
                                 }
                             }
+                            if (extension.equalsIgnoreCase("html")){
+                                List<String> ctv = new ArrayList();
+                                ctv.add("text/html");
+                                responseHeaders.put("Content-Type", ctv);
+                            }
                         }
                     }
                 }                

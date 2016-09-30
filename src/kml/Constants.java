@@ -1,6 +1,7 @@
 package kml;
 
 import java.net.URL;
+import java.util.Random;
 
 /**
  * @website https://krothium.com
@@ -25,4 +26,5 @@ public class Constants {
     public static boolean UPDATE_CHECKED = false;
     public static final int KEEP_OLD_LOGS = 2;
     public static boolean USE_HTTPS = false;
+    public static final int USED_PORT = new Random().nextInt((25000 - 24000) + 1) + 24000;
 }

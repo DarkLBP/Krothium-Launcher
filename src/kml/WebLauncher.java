@@ -1,13 +1,13 @@
 package kml;
 
 import com.sun.net.httpserver.HttpServer;
+import javafx.application.Application;
 import kml.exceptions.AuthenticationException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -48,11 +48,7 @@ public class WebLauncher {
             }
             kernel.saveProfiles();
         }
-        Random rand = new Random();
-        int portStart = 24000;
-        int portEnd = 25000;
-        int port = rand.nextInt((portEnd - portStart) + 1) + portStart;
-        InetSocketAddress add = new InetSocketAddress("localhost", port);
+        InetSocketAddress add = new InetSocketAddress("localhost", Constants.USED_PORT);
         HttpServer server;
         try {
             server = HttpServer.create(add, 0);
@@ -62,9 +58,9 @@ public class WebLauncher {
         } catch (IOException ex) {
             Logger.getLogger(WebLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
-        console.printInfo("Started bundled web server in port " + port);
+        console.printInfo("Started bundled web server in port " + Constants.USED_PORT);
         try{
-            Utils.openWebsite("http://mc.krothium.com/launcher/?p=" + port);
+            Application.launch(WebBrowser.class);
         } catch (Exception ex){
             console.printError("Failed to open web browser.\n" + ex.getMessage());
         }
