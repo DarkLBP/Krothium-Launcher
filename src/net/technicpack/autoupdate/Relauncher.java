@@ -5,7 +5,15 @@
 
 package net.technicpack.autoupdate;
 
-import java.awt.Component;
+import kml.StubLauncher;
+import net.technicpack.launcher.LauncherMain;
+import net.technicpack.launchercore.install.InstallTasksQueue;
+import net.technicpack.launchercore.install.LauncherDirectories;
+import net.technicpack.utilslib.OperatingSystem;
+import net.technicpack.utilslib.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -14,14 +22,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
-
-import kml.StubLauncher;
-import net.technicpack.launcher.LauncherMain;
-import net.technicpack.launchercore.install.InstallTasksQueue;
-import net.technicpack.launchercore.install.LauncherDirectories;
-import net.technicpack.utilslib.OperatingSystem;
-import net.technicpack.utilslib.Utils;
 
 public abstract class Relauncher {
     private String stream;

@@ -5,14 +5,6 @@
 
 package net.technicpack.minecraftcore.launch;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import kml.StubLauncher;
 import net.technicpack.launchercore.auth.UserModel;
 import net.technicpack.launchercore.install.LauncherDirectories;
@@ -21,7 +13,6 @@ import net.technicpack.launchercore.launch.ProcessExitListener;
 import net.technicpack.launchercore.launch.java.JavaVersionRepository;
 import net.technicpack.launchercore.modpacks.ModpackModel;
 import net.technicpack.launchercore.modpacks.RunData;
-import net.technicpack.minecraftcore.launch.LaunchOptions;
 import net.technicpack.minecraftcore.mojang.auth.MojangUser;
 import net.technicpack.minecraftcore.mojang.version.MojangVersion;
 import net.technicpack.minecraftcore.mojang.version.io.CompleteVersion;
@@ -30,6 +21,10 @@ import net.technicpack.platform.IPlatformApi;
 import net.technicpack.utilslib.OperatingSystem;
 import net.technicpack.utilslib.Utils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class MinecraftLauncher {
     private final LauncherDirectories directories;
