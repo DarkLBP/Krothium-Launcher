@@ -117,3 +117,9 @@ Fallo al cambiar el idioma.
 Error:
 Error
 Fallo al enviar la consulta switchlanguage.
+Error
+Fallo al enviar la consulta getlang.
+Error
+Fallo al enviar la consulta getstyle.
+Error
+Fallo al enviar la consulta switchstyle.

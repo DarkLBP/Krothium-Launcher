@@ -117,3 +117,9 @@ Fallada al canviar el idioma.
 Error:
 Error
 No s'ha pogut enviar la consulta switchlanguage.
+Error
+No s'ha pogut enviar la consulta getlang.
+Error
+No s'ha pogut enviar la consulta getstyle.
+Error
+No s'ha pogut enviar la consulta switchstyle.

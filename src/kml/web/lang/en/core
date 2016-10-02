@@ -117,3 +117,9 @@ Failed to change language.
 Error:
 Error
 Failed to send switchlanguage query.
+Error
+Failed to send getlang query.
+Error
+Failed to send getstyle query.
+Error
+Failed to send switchstyle query.
