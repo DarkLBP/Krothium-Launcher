@@ -45,7 +45,9 @@ public class WebHandler implements HttpHandler {
                 if (path.equals("/")){
                     responseCode = 301;
                     List<String> locationValues = new ArrayList();
-                    if (kernel.isAuthenticated()){
+                    if (kernel.checkForUpdates()){
+                        locationValues.add("/update.html");
+                    } else if (kernel.isAuthenticated()){
                         locationValues.add("/play.html");
                     } else {
                         locationValues.add("/login.html");
@@ -57,12 +59,12 @@ public class WebHandler implements HttpHandler {
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
                     InputStream s;
-                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !kernel.isAuthenticated()){
+                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("update.html") && !kernel.isAuthenticated()){
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/login.html");
                         responseHeaders.put("Location", locationValues);
-                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && kernel.isAuthenticated()) {
+                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("update.html") && kernel.isAuthenticated()) {
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/play.html");
