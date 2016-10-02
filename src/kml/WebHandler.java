@@ -45,7 +45,11 @@ public class WebHandler implements HttpHandler {
                 if (path.equals("/")){
                     responseCode = 301;
                     List<String> locationValues = new ArrayList();
-                    locationValues.add("/bootstrap.html");
+                    if (kernel.isAuthenticated()){
+                        locationValues.add("/play.html");
+                    } else {
+                        locationValues.add("/login.html");
+                    }
                     responseHeaders.put("Location", locationValues);
                 }else{
                     String finalPath = (path.contains("?") ? path.split("\\?")[0] : path);
@@ -53,12 +57,12 @@ public class WebHandler implements HttpHandler {
                     String fileName = abstractFile.getName();
                     String extension = Utils.getExtension(fileName);
                     InputStream s;
-                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("bootstrap.html") && !kernel.isAuthenticated()){
+                    if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !kernel.isAuthenticated()){
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/login.html");
                         responseHeaders.put("Location", locationValues);
-                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("bootstrap.html") && kernel.isAuthenticated()) {
+                    } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && kernel.isAuthenticated()) {
                         responseCode = 301;
                         List<String> locationValues = new ArrayList();
                         locationValues.add("/play.html");
@@ -134,7 +138,7 @@ public class WebHandler implements HttpHandler {
                         contentExtra = ceh.get(0);
                     }
                     String profile;
-                    Map<String, String> params;
+                    Map<String, String> params = new HashMap();
                     User user;
                     Profile prof;
                     switch (function){
@@ -526,30 +530,7 @@ public class WebHandler implements HttpHandler {
                             }
                             response.append("Unnsupported lang code.");
                             break;
-                        case "getlatestversion":
-                            if (!Constants.UPDATE_CHECKED){
-                                params = new HashMap();
-                                try{ 
-                                    URL url = Constants.GETLATEST_URL;
-                                    if (!Constants.USE_HTTPS){
-                                        url = Utils.stringToURL(url.toString().replace("https", "http"));
-                                    }
-                                    String r = Utils.sendPost(url, new byte[0], params);
-                                    String[] data = r.split(":");
-                                    int version = Integer.parseInt(Utils.fromBase64(data[0]));
-                                    if (version > Constants.KERNEL_BUILD){
-                                        response.append("YES");
-                                    } else {
-                                        response.append("NO");
-                                    }
-                                    Constants.UPDATE_CHECKED = true;
-                                } catch (Exception ex){
-                                    response.append("Failed to get latest version. " + ex.getMessage());
-                                }
-                            }
-                            break;
                         case "getupdateurl":
-                            params = new HashMap();
                             try{ 
                                 URL url = Constants.GETLATEST_URL;
                                 if (!Constants.USE_HTTPS){
@@ -561,6 +542,16 @@ public class WebHandler implements HttpHandler {
                             } catch (Exception ex){
                                 response.append("Failed to get latest version url. " + ex.getMessage());
                             }
+                            break;
+                        case "getlang":
+                            response.append(Constants.LANG_CODE);
+                            break;
+                        case "getstyle":
+                            response.append(Constants.STYLE_ID);
+                            break;
+                        case "switchstyle":
+                            String styleID = Utils.fromBase64(requestBody.getString());
+                            Constants.STYLE_ID = styleID;
                             break;
                     }
                     responseData.write(response.toString().getBytes(StandardCharsets.UTF_8));

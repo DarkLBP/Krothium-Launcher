@@ -23,6 +23,7 @@ public class Constants {
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEPALIVE_TIMEOUT = 20000;
     public static String LANG_CODE = "en";
+    public static String STYLE_ID = "blue";
     public static boolean UPDATE_CHECKED = false;
     public static final int KEEP_OLD_LOGS = 2;
     public static boolean USE_HTTPS = false;

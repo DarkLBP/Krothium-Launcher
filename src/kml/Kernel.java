@@ -11,10 +11,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.net.URL;
+import java.util.*;
 
 
 /**
@@ -109,5 +107,27 @@ public final class Kernel {
     public void exitSafely(){
         this.console.close();
         System.exit(0);
+    }
+    public boolean checkForUpdates(){
+        if (!Constants.UPDATE_CHECKED){
+            Constants.UPDATE_CHECKED = true;
+            try{
+                URL url = Constants.GETLATEST_URL;
+                if (!Constants.USE_HTTPS){
+                    url = Utils.stringToURL(url.toString().replace("https", "http"));
+                }
+                String r = Utils.sendPost(url, new byte[0], new HashMap());
+                String[] data = r.split(":");
+                int version = Integer.parseInt(Utils.fromBase64(data[0]));
+                if (version > Constants.KERNEL_BUILD){
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception ex){
+                return false;
+            }
+        }
+        return false;
     }
 }

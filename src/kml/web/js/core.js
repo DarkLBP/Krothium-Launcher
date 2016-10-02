@@ -360,7 +360,6 @@ function loadProfiles(){
             };
             xhr2.open("POST", "/action/selectedprofile", true);
             xhr2.send();
-            
             var xhr3 = new XMLHttpRequest();
             xhr3.onreadystatechange = function() {
                 if (xhr3.readyState === XMLHttpRequest.DONE) {
@@ -579,7 +578,6 @@ function switchLanguage(){
             if (response !== "OK"){
                 swal("{%s}", "{%s}\n{%s} " + response, "error");
             } else {
-                createCookie("lang", document.getElementById("langSelect").value, 365);
                 location.reload();
             }
         }
@@ -589,43 +587,6 @@ function switchLanguage(){
     };
     xhr.open("POST", "/action/switchlanguage", true);
     xhr.send(l);
-}
-function createCookie(name,value,days){
-    if (days){
-        var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
-    }
-    else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-function readCookie(name){
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++){
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-function eraseCookie(name){
-    createCookie(name,"",-1);
-}
-function loadTheme(){
-    var c = readCookie('style');
-    var fileref=document.createElement("link");
-    fileref.setAttribute("rel", "stylesheet");
-    fileref.setAttribute("type", "text/css");
-    fileref.setAttribute("href", "styles/themes/" + ((c !== null) ? c : "blue") + ".css");
-    document.getElementsByTagName("head")[0].appendChild(fileref);
-    if (document.getElementById("style") !== null){
-        document.getElementById("style").value = ((c !== null) ? c : "blue");
-    }
-}
-function switchStyle(){
-    createCookie("style", document.getElementById("style").value, 365);
-    loadTheme();
 }
 function toBase64(string){
     if (string === null){
@@ -641,39 +602,6 @@ function fromBase64(string){
 }
 function redirect(url){
     location.href = url;
-}
-function bootstrap(){
-    var l = readCookie("lang");
-    if (l !== null){
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                var xhr2 = new XMLHttpRequest();
-                xhr2.onreadystatechange = function() {
-                    if (xhr2.readyState === XMLHttpRequest.DONE) {
-                        var response = xhr2.responseText;
-                        if (response === "YES"){
-                            redirect("/update.html");
-                        } else {
-                            redirect("/login.html");
-                        }
-                    }
-                };
-                xhr2.onerror = function(){
-                    redirect("/login.html");
-                };
-                xhr2.open("POST", "/action/getlatestversion", true);
-                xhr2.send();
-            }
-        };
-        xhr.onerror = function(){
-            redirect("/login.html");
-        };
-        xhr.open("POST", "/action/switchlanguage", true);
-        xhr.send(toBase64(l));
-    } else {
-        redirect("/login.html");
-    }
 }
 function cancelUpdate(){
     redirect("/login.html");
@@ -696,8 +624,50 @@ function loadUpdate(){
     xhr.send();
 }
 function loadLang(){
-    var l = readCookie('lang');
-    if (l !== null){
-        document.getElementById("langSelect").value = l;
-    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            document.getElementById("langSelect").value = response;
+        }
+    };
+    xhr.onerror = function(){
+        swal("{%s}", "{%s}", "error");
+    };
+    xhr.open("POST", "/action/getlang", true);
+    xhr.send();
+}
+function loadTheme(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = xhr.responseText;
+            var fileref=document.createElement("link");
+            fileref.setAttribute("rel", "stylesheet");
+            fileref.setAttribute("type", "text/css");
+            fileref.setAttribute("href", "styles/themes/" + ((response !== null) ? response : "blue") + ".css");
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+            if (document.getElementById("style") !== null){
+                document.getElementById("style").value = ((response !== null) ? response : "blue");
+            }
+        }
+    };
+    xhr.onerror = function(){
+        swal("{%s}", "{%s}", "error");
+    };
+    xhr.open("POST", "/action/getstyle", true);
+    xhr.send();
+}
+function switchStyle(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            location.reload();
+        }
+    };
+    xhr.onerror = function(){
+        swal("{%s}", "{%s}", "error");
+    };
+    xhr.open("POST", "/action/switchstyle", true);
+    xhr.send(toBase64(document.getElementById("style").value));
 }
