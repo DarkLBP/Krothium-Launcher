@@ -9,8 +9,7 @@ import kml.objects.Version;
 import kml.objects.VersionMeta;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -28,6 +27,7 @@ public final class Kernel {
     public final Downloader downloader;
     public final Authentication authentication;
     public final GameLauncher gameLauncher;
+    public final Properties properties;
     public Kernel(){
         this(Utils.getWorkingDirectory());
     }
@@ -42,6 +42,7 @@ public final class Kernel {
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
+        this.properties = new Properties();
         this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("OS: " + System.getProperty("os.name"));
         this.console.printInfo("OS Version: " + System.getProperty("os.version"));
@@ -49,6 +50,26 @@ public final class Kernel {
         this.console.printInfo("Java Version: " + System.getProperty("java.version"));
         this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        this.console.printInfo("Loading properties...");
+        try {
+            FileInputStream in = new FileInputStream(this.getPropertiesFile());
+            properties.load(in);
+            in.close();
+            String lang = properties.getProperty("lang");
+            String style = properties.getProperty("style");
+            if (lang != null){
+                if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
+                    Constants.LANG_CODE = lang;
+                } else {
+                    this.console.printInfo("Lang code is invalid using default.");
+                }
+            }
+            if (style != null){
+                Constants.STYLE_ID = style;
+            }
+        } catch (IOException ex){
+            this.console.printInfo("Failed to load properties. Using defaults.");
+        }
     }
     public Console getConsole(){return this.console;}
     public File getWorkingDir(){return this.workingDir;}
@@ -97,14 +118,27 @@ public final class Kernel {
     public void loadProfiles(){profiles.fetchProfiles();}
     public void loadVersions(){versions.fetchVersions();}
     public void loadUsers(){authentication.fetchUsers();}
+    public void setProperty(String index, String value){this.properties.setProperty(index, value);}
+    public String getProperty(String index){return this.properties.getProperty(index);}
     public Versions getVersions(){return this.versions;}
     public Profiles getProfiles(){return this.profiles;}
     public Downloader getDownloader(){return this.downloader;}
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){
         return new File(this.workingDir + File.separator + "launcher_profiles.json");}
+    public File getPropertiesFile(){
+        return new File(this.workingDir + File.separator + "krothium.ini");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
     public void exitSafely(){
+        try {
+            properties.setProperty("lang", Constants.LANG_CODE);
+            properties.setProperty("style", Constants.STYLE_ID);
+            FileOutputStream out = new FileOutputStream(this.getPropertiesFile());
+            properties.store(out, null);
+            out.close();
+        } catch (IOException ex){
+            this.console.printError("Failed to save kernel properties.");
+        }
         this.console.close();
         System.exit(0);
     }
