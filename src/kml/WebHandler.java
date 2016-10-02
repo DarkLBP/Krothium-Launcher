@@ -9,6 +9,7 @@ import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.exceptions.WebLauncherException;
 import kml.objects.Profile;
+import kml.objects.RequestBody;
 import kml.objects.User;
 import kml.objects.VersionMeta;
 
@@ -35,6 +36,7 @@ public class WebHandler implements HttpHandler {
         try {
             String path = he.getRequestURI().toString();
             String method = he.getRequestMethod();
+
             ByteArrayOutputStream responseData = new ByteArrayOutputStream();
             int responseCode = 200;
             OutputStream out = he.getResponseBody();
@@ -106,7 +108,7 @@ public class WebHandler implements HttpHandler {
                 if (path.startsWith("/action/")){
                     StringBuilder response = new StringBuilder();
                     String function = path.replace("/action/", "");
-                    String requestBody = "";
+                    RequestBody requestBody = new RequestBody();
                     Headers hs = he.getRequestHeaders();
                     int contentLength = -1;
                     if (hs.containsKey("Content-Length")){
@@ -118,7 +120,7 @@ public class WebHandler implements HttpHandler {
                             for (int i = 0; i < contentLength; i++){
                                 raw.write(in.read());
                             }
-                            requestBody = new String(raw.toByteArray());
+                            requestBody = new RequestBody(raw.toByteArray());
                         }
                     }
                     String contentType = null;
@@ -138,7 +140,7 @@ public class WebHandler implements HttpHandler {
                     switch (function){
                         case "authenticate":
                             if (contentLength > 0){
-                                String[] userArray = requestBody.split(":");
+                                String[] userArray = requestBody.getString().split(":");
                                 if (userArray.length != 2){
                                     throw new WebLauncherException(path, 400, out);
                                 }
@@ -205,7 +207,7 @@ public class WebHandler implements HttpHandler {
                             response.append(Utils.toBase64(kernel.getSelectedProfile()));
                             break;
                         case "setselectedprofile":
-                            profile = Utils.fromBase64(requestBody);
+                            profile = Utils.fromBase64(requestBody.getString());
                             if (profile != null){
                                 if (kernel.existsProfile(profile)){
                                     if (kernel.setSelectedProfile(profile)){
@@ -224,7 +226,7 @@ public class WebHandler implements HttpHandler {
                             }
                             break;
                         case "deleteprofile":
-                            profile = Utils.fromBase64(requestBody);
+                            profile = Utils.fromBase64(requestBody.getString());
                             if (kernel.existsProfile(profile)){
                                 if (kernel.deleteProfile(profile)){
                                     response.append("OK");
@@ -237,7 +239,7 @@ public class WebHandler implements HttpHandler {
                             Iterator vi = v.iterator();
                             List<VersionType> allowedTypes = new ArrayList();
                             if (contentLength > 0){
-                                String[] types = requestBody.split(":");
+                                String[] types = requestBody.getString().split(":");
                                 if (types.length != 3){
                                     throw new WebLauncherException(path, 400, out);
                                 }
@@ -268,7 +270,7 @@ public class WebHandler implements HttpHandler {
                             }
                             break;
                         case "saveprofile":
-                            String[] profileArray = requestBody.split(":");
+                            String[] profileArray = requestBody.getString().split(":");
                             if (profileArray.length != 10){
                                 throw new WebLauncherException(path, 400, out);
                             }
@@ -386,7 +388,7 @@ public class WebHandler implements HttpHandler {
                             }
                             break;
                         case "profiledata":
-                            profile = Utils.fromBase64(requestBody);
+                            profile = Utils.fromBase64(requestBody.getString());
                             if (kernel.existsProfile(profile)){
                                 prof = kernel.getProfile(profile);
                                 response.append(Utils.toBase64(prof.getName()) + ":");
@@ -414,7 +416,7 @@ public class WebHandler implements HttpHandler {
                                 response.append("Invalid skin type.");
                                 break;
                             }
-                            byte[] skinData = Utils.fromBase64Binary(requestBody.split(",")[1]);
+                            byte[] skinData = requestBody.getBytes();
                             if (skinData.length == 0){
                                 response.append("Skin file has 0 bytes.");
                                 break;
@@ -444,7 +446,7 @@ public class WebHandler implements HttpHandler {
                                 response.append("Invalid cape format. Must be a valid cape PNG file");
                                 break;
                             }
-                            byte[] capeData = Utils.fromBase64Binary(requestBody.split(",")[1]);
+                            byte[] capeData = requestBody.getBytes();
                             if (capeData.length == 0){
                                 response.append("Cape file has 0 bytes.");
                                 break;
@@ -516,7 +518,7 @@ public class WebHandler implements HttpHandler {
                             }
                             break;
                         case "switchlanguage":
-                            String lang = Utils.fromBase64(requestBody);
+                            String lang = Utils.fromBase64(requestBody.getString());
                             if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
                                 Constants.LANG_CODE = lang;
                                 response.append("OK");
