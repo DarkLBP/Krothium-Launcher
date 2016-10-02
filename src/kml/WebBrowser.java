@@ -24,4 +24,8 @@ public class WebBrowser extends Application {
         stage.setScene(scene);
         stage.show();
     }
+    @Override
+    public void stop(){
+        WebLauncher.kernel.exitSafely();
+    }
 }

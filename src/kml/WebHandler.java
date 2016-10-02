@@ -178,7 +178,6 @@ public class WebHandler implements HttpHandler {
                             t.start();
                             break;
                         case "status":
-                            WebLauncher.lastKeepAlive = System.nanoTime();
                             if (kernel.isDownloading()){
                                 response.append("1");
                             } else if (kernel.isGameStarted()){

@@ -20,10 +20,9 @@ import java.util.logging.Logger;
  */
 
 public class WebLauncher {
-    
-    public static long lastKeepAlive;
+
+    public static final Kernel kernel = new Kernel();
     public static void load(){
-        final Kernel kernel = new Kernel();
         final Console console = kernel.getConsole();
         console.includeTimestamps(true);
         try {
@@ -64,18 +63,5 @@ public class WebLauncher {
         } catch (Exception ex){
             console.printError("Failed to open web browser.\n" + ex.getMessage());
         }
-        WebLauncher.lastKeepAlive = System.nanoTime();
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                long diff = (System.nanoTime() - lastKeepAlive);
-                long result = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
-                if (result >= Constants.KEEPALIVE_TIMEOUT){
-                    console.printInfo("KeepAlive timeout exceeded. Launcher closed.");
-                    kernel.exitSafely();
-                }
-            }
-        }, 0, 1000);
     }
 }
