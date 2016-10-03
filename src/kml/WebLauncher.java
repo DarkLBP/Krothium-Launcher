@@ -32,7 +32,7 @@ public class WebLauncher {
         } catch (SSLHandshakeException ex) {
             Constants.USE_HTTPS = false;
         } catch (IOException ex){
-            //
+            Constants.USE_LOCAL = true;
         }
         console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
         kernel.loadVersions();

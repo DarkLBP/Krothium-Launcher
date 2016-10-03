@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -125,6 +126,9 @@ public class Authentication {
         }
     }
     public void refresh() throws AuthenticationException{
+        if (this.selectedProfile == null){
+            throw new AuthenticationException("No user is selected.");
+        }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         User u = this.getUser(this.selectedProfile);
@@ -143,7 +147,10 @@ public class Authentication {
                 url = Utils.stringToURL(url.toString().replace("https", "http"));
             }
             response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
+            if (Constants.USE_LOCAL){
+                this.authenticated = true;
+            }
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
         if (response == null || response.isEmpty()){
@@ -169,6 +176,9 @@ public class Authentication {
         }
     }
     public void validate() throws AuthenticationException{
+        if (this.selectedProfile == null){
+            throw new AuthenticationException("No user is selected.");
+        }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
         User u = this.getUser(this.selectedProfile);
@@ -186,7 +196,10 @@ public class Authentication {
                 url = Utils.stringToURL(url.toString().replace("https", "http"));
             }
             response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
+            if (Constants.USE_LOCAL){
+                this.authenticated = true;
+            }
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
         if (response == null){

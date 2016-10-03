@@ -126,6 +126,7 @@ public class Versions {
         }
         console.printInfo("Fetching local version list versions.");
         try{
+            boolean last_rel = (this.latestRel != null);
             File versionsDir = new File(kernel.getWorkingDir() + File.separator + "versions");
             if (versionsDir.exists()){
                 if (versionsDir.isDirectory()){
@@ -146,6 +147,12 @@ public class Versions {
                                 }
                                 VersionMeta vm = new VersionMeta(id, url, type);
                                 if (!this.versions.containsKey(id)){
+                                    if (Constants.USE_LOCAL){
+                                        if (!last_rel){
+                                            this.latestRel = id;
+                                            last_rel = true;
+                                        }
+                                    }
                                     this.add(id, vm);
                                 }
                             }

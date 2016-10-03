@@ -3,6 +3,8 @@ package kml;
 import kml.handlers.URLHandler;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
@@ -17,11 +19,15 @@ public class GameStarter {
             HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
             int responseCode = con.getResponseCode();
             Constants.USE_HTTPS = (responseCode == 204);
-        } catch (Exception ex) {
+        } catch (SSLHandshakeException ex) {
             Constants.USE_HTTPS = false;
+        } catch (IOException ex){
+            Constants.USE_LOCAL = true;
         }
         System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
-        URL.setURLStreamHandlerFactory(new URLHandler());
+        if (!Constants.USE_LOCAL){
+            URL.setURLStreamHandlerFactory(new URLHandler());
+        }
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];
         System.arraycopy(args, 1, gameArgs, 0, args.length - 1);

@@ -34,6 +34,16 @@ public class Browser extends Region {
             @Override
             public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newValue) {
                 if (newValue == Worker.State.SUCCEEDED){
+                    if (!webEngine.getLocation().contains("localhost") && !webEngine.getLocation().contains("adf.ly") && !webEngine.getLocation().contains("krothium")){
+                        if (Constants.USE_LOCAL){
+                            webEngine.load("http://localhost:" + Constants.USED_PORT);
+                        } else {
+                            if (System.getProperty("java.version").startsWith("1.8.")){
+                                webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0");
+                            }
+                            webEngine.load("http://mc.krothium.com/launcher/?p=" + Constants.USED_PORT);
+                        }
+                    }
                     EventListener listener = new EventListener() {
                         @Override
                         public void handleEvent(final Event event) {
@@ -62,7 +72,14 @@ public class Browser extends Region {
                 }
             }
         });
-        webEngine.load("http://localhost:" + Constants.USED_PORT);
+        if (Constants.USE_LOCAL){
+            webEngine.load("http://localhost:" + Constants.USED_PORT);
+        } else {
+            if (System.getProperty("java.version").startsWith("1.8.")){
+                webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:49.0) Gecko/20100101 Firefox/49.0");
+            }
+            webEngine.load("http://mc.krothium.com/launcher/?p=" + Constants.USED_PORT);
+        }
         getChildren().add(browser);
     }
 
