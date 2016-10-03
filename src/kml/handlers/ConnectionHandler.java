@@ -3,10 +3,9 @@ package kml.handlers;
 import kml.matchers.URLMatcher;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -18,20 +17,23 @@ public class ConnectionHandler extends HttpURLConnection{
     
     private final URLMatcher matcher;
     private final URLConnection relay;
+    private boolean relayReliable = false;
     
     public ConnectionHandler(URL url, URLMatcher m){
         super(url);
         this.matcher = m;
         this.relay = this.matcher.handle();
-        System.out.println("URL handled: " + super.url.toString() + " | " + (this.relay == null));
+        System.out.println("URL handled: " + super.url.toString() + " | " + (this.relay != null));
     }
     @Override
     public int getResponseCode(){
         try {
-            if (relay instanceof HttpsURLConnection){
-                return ((HttpsURLConnection)relay).getResponseCode();
-            } else if (relay instanceof HttpURLConnection){
-                return ((HttpURLConnection)relay).getResponseCode();
+            if (this.relayReliable) {
+                if (relay instanceof HttpsURLConnection){
+                    return ((HttpsURLConnection)relay).getResponseCode();
+                } else if (relay instanceof HttpURLConnection){
+                    return ((HttpURLConnection)relay).getResponseCode();
+                }
             }
             return -1;
         } catch (IOException ex) {
@@ -40,10 +42,10 @@ public class ConnectionHandler extends HttpURLConnection{
     }
     @Override
     public String getContentType(){
-        if (relay == null){
-            return null;
-        } else {
+        if (this.relayReliable){
             return this.relay.getContentType();
+        } else {
+            return null;
         }
     }
     @Override
@@ -54,8 +56,8 @@ public class ConnectionHandler extends HttpURLConnection{
     public InputStream getInputStream(){
         try{
             return this.relay.getInputStream();
-        } catch (IOException ex) { 
-            return null;
+        } catch (IOException ex) {
+            return new ByteArrayInputStream(new byte[0]);
         }
     }
     @Override
@@ -63,9 +65,9 @@ public class ConnectionHandler extends HttpURLConnection{
        try{
             this.relay.setDoOutput(true);
             return this.relay.getOutputStream();
-        } catch (IOException ex) { 
-            return null;
-        } 
+        } catch (IOException ex) {
+            return new ByteArrayOutputStream();
+        }
     }
     @Override
     public void disconnect() {

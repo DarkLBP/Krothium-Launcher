@@ -25,9 +25,9 @@ public class GameStarter {
             Constants.USE_LOCAL = true;
         }
         System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
-        if (!Constants.USE_LOCAL){
+        //if (!Constants.USE_LOCAL){
             URL.setURLStreamHandlerFactory(new URLHandler());
-        }
+        //}
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];
         System.arraycopy(args, 1, gameArgs, 0, args.length - 1);
