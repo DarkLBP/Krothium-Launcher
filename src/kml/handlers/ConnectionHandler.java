@@ -17,7 +17,6 @@ public class ConnectionHandler extends HttpURLConnection{
     
     private final URLMatcher matcher;
     private final URLConnection relay;
-    private boolean relayReliable = false;
     
     public ConnectionHandler(URL url, URLMatcher m){
         super(url);
@@ -28,12 +27,10 @@ public class ConnectionHandler extends HttpURLConnection{
     @Override
     public int getResponseCode(){
         try {
-            if (this.relayReliable) {
-                if (relay instanceof HttpsURLConnection){
-                    return ((HttpsURLConnection)relay).getResponseCode();
-                } else if (relay instanceof HttpURLConnection){
-                    return ((HttpURLConnection)relay).getResponseCode();
-                }
+            if (relay instanceof HttpsURLConnection){
+                return ((HttpsURLConnection)relay).getResponseCode();
+            } else if (relay instanceof HttpURLConnection){
+                return ((HttpURLConnection)relay).getResponseCode();
             }
             return -1;
         } catch (IOException ex) {
@@ -42,11 +39,7 @@ public class ConnectionHandler extends HttpURLConnection{
     }
     @Override
     public String getContentType(){
-        if (this.relayReliable){
-            return this.relay.getContentType();
-        } else {
-            return null;
-        }
+        return this.relay.getContentType();
     }
     @Override
     public void connect() throws IOException {
