@@ -1,6 +1,6 @@
 package kml;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import com.google.common.base.Charsets;
 import kml.enums.OS;
 import kml.enums.OSArch;
 
@@ -10,10 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @website https://krothium.com
@@ -241,7 +238,7 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = Base64.encode(st.getBytes());
+            conversion = Base64.getEncoder().encodeToString(st.getBytes());
         } catch (Exception ex) {
             conversion = null;
         }
@@ -253,22 +250,10 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = new String(Base64.decode(st));
+            conversion = new String(Base64.getDecoder().decode(st), Charsets.UTF_8);
         } catch (Exception ex) {
             conversion = null;
         }
         return conversion;
-    }
-    public static byte[] fromBase64Binary(String st){
-        if (st == null || st.isEmpty()){
-            return new byte[0];
-        }
-        byte[] data;
-        try{
-            data = Base64.decode(st);
-            return data;
-        } catch (Exception ex){
-            return new byte[0];
-        }
     }
 }

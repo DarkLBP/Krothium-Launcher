@@ -23,9 +23,8 @@ import java.util.zip.ZipFile;
 public class GameLauncher {
     
     private final Console console;
-    private Process process = null;
+    private Process process;
     private final Kernel kernel;
-    private int exitValue = 0;
     private boolean error = false;
     
     public GameLauncher(Kernel k){
@@ -34,7 +33,6 @@ public class GameLauncher {
     }
     public void launch() throws GameLauncherException{
         error = false;
-        exitValue = 0;
         Profile p = kernel.getProfile(kernel.getSelectedProfile());
         if (this.isStarted()){
             throw new GameLauncherException("Game is already started!");
@@ -256,7 +254,7 @@ public class GameLauncher {
                                 console.printInfo(lineRead);
                             }
                         }
-                        if (exitValue != 0){
+                        if (process.exitValue() != 0){
                             error = true;
                             console.printError("Game stopped unexpectedly.");
                         }
@@ -291,14 +289,10 @@ public class GameLauncher {
         }
     }
     public boolean isStarted(){
-        try {
-            if (this.process != null){
-                this.exitValue = this.process.exitValue();
-                this.process = null;
-            }
+        if (this.process != null){
+            return this.process.isAlive();
+        } else {
             return false;
-        } catch (Exception ex){
-            return true;
         }
     }
     public boolean hasError(){
