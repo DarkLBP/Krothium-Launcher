@@ -46,6 +46,10 @@ Fallada al enviar la consulta play.
 JUGAR
 DESCARREGANT
 JUGANT
+ERROR
+Error
+El teu joc a crashejat! Per a més informació comprova els logs del llançador.
+JUGAR OFFLINE
 Error
 Conexió perduda amb el launcher.
 Pots tancar esta pàgina de forma segura.

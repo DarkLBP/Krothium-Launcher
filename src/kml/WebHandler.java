@@ -182,6 +182,10 @@ public class WebHandler implements HttpHandler {
                                 response.append("1");
                             } else if (kernel.isGameStarted()){
                                 response.append("2");
+                            } else if (kernel.hasGameCrashed()){
+                                response.append("3");
+                            } else if (Constants.USE_LOCAL) {
+                                response.append("4");
                             } else {
                                 response.append("0");
                             }

@@ -25,12 +25,16 @@ public class GameLauncher {
     private final Console console;
     private Process process = null;
     private final Kernel kernel;
+    private int exitValue = 0;
+    private boolean error = false;
     
     public GameLauncher(Kernel k){
         this.kernel = k;
         this.console = k.getConsole();
     }
     public void launch() throws GameLauncherException{
+        error = false;
+        exitValue = 0;
         Profile p = kernel.getProfile(kernel.getSelectedProfile());
         if (this.isStarted()){
             throw new GameLauncherException("Game is already started!");
@@ -252,7 +256,12 @@ public class GameLauncher {
                                 console.printInfo(lineRead);
                             }
                         }
+                        if (exitValue != 0){
+                            error = true;
+                            console.printError("Game stopped unexpectedly.");
+                        }
                     } catch (Exception ex){
+                        error = true;
                         console.printError("Game stopped unexpectedly.");
                     }
                     console.printInfo("Deleteting natives dir.");
@@ -277,13 +286,14 @@ public class GameLauncher {
             };
             log_error.start();
         }catch (Exception ex){
+            error = true;
             console.printError("Game returned an error code.");
         }
     }
     public boolean isStarted(){
         try {
             if (this.process != null){
-                this.process.exitValue();
+                this.exitValue = this.process.exitValue();
                 this.process = null;
             }
             return false;
@@ -291,6 +301,7 @@ public class GameLauncher {
             return true;
         }
     }
+    public boolean hasError(){return this.error;}
     public InputStream getInputStream(){return this.process.getInputStream();}
     public InputStream getErrorStream(){return this.process.getErrorStream();}
 }

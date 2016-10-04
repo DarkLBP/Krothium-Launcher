@@ -79,11 +79,12 @@ public final class Kernel {
     public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
     public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
     public void launchGame() throws GameLauncherException{this.gameLauncher.launch();}
-    public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);};
+    public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);}
     public boolean logOut(){return this.authentication.logOut();}
     public int getDownloadProgress(){return this.downloader.getProgress();}
-    public boolean isGameStarted(){return this.gameLauncher.isStarted();};
-    public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();};
+    public boolean isGameStarted(){return this.gameLauncher.isStarted();}
+    public boolean hasGameCrashed(){return this.gameLauncher.hasError();}
+    public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();}
     public void download() throws DownloaderException{this.downloader.download();}
     public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
     public boolean existsVersion(String v){return (this.versions.getVersion(v) != null);}

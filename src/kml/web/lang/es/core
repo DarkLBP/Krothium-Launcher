@@ -46,6 +46,10 @@ Fallo al enviar la consulta play.
 JUGAR
 DESCARGANDO
 JUGANDO
+ERROR
+Error
+¡Tu juego ha crasheado! Para más información comprueba los logs del lanzador.
+JUGAR OFFLINE
 Error
 Conexión perdida con el launcher.
 Puedes cerrar esta página de forma segura.

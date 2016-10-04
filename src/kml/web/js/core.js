@@ -1,5 +1,6 @@
 //Core javascript functions for KMLK inner functionality
 //Created by DarkLBP (https://krothium.com)
+status();
 var status_interval = setInterval(function(){status();}, 1000);
 var status_errors = 0;
 var status_errors_limit = 5;
@@ -277,6 +278,13 @@ function status(){
                                             document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
                                             break;
                                         case "2":
+                                            document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                            break;
+                                        case "3":
+                                            document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
+                                            swal("{%s}", "{%s}", "error");
+                                            break;
+                                        case "4":
                                             document.getElementById("play").innerHTML = '<a class="red-button wide playButton" onclick="playGame()" href="#">{%s}</a>';
                                             break;
                                     }

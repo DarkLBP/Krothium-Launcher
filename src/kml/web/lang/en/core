@@ -46,6 +46,10 @@ Failed to send play query.
 PLAY
 DOWNLOADING
 PLAYING
+ERROR
+Error
+Your game has crashed! Check your log files for more information.
+PLAY OFFLINE
 Error
 Connection lost with the launcher.
 You can close this page safely.
