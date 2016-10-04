@@ -301,7 +301,11 @@ public class GameLauncher {
             return true;
         }
     }
-    public boolean hasError(){return this.error;}
+    public boolean hasError(){
+        boolean current = this.error;
+        this.error = false;
+        return current;
+    }
     public InputStream getInputStream(){return this.process.getInputStream();}
     public InputStream getErrorStream(){return this.process.getErrorStream();}
 }
