@@ -155,15 +155,16 @@ public final class Library {
                         String urlRaw = url.toString();
                         int responseCode = -1;
                         int contentLength = -1;
+                        System.out.println(url);
                         if (urlRaw.startsWith("https")){
                             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                            con.setConnectTimeout(5000);
+                            con.setConnectTimeout(2500);
                             con.connect();
                             responseCode = con.getResponseCode();
                             contentLength = con.getContentLength();
                         }else if (urlRaw.startsWith("http")){
                             HttpURLConnection con = (HttpURLConnection)url.openConnection();
-                            con.setConnectTimeout(5000);
+                            con.setConnectTimeout(2500);
                             con.connect();
                             responseCode = con.getResponseCode();
                             contentLength = con.getContentLength();
