@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
@@ -24,8 +25,17 @@ public class Console {
     private File log;
     public Console(Kernel instance){
         final Kernel kernel = instance;
-        this.cdata = null;
-        this.data = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
+            if (!log.getParentFile().exists()){
+                log.getParentFile().mkdirs();
+            }
+            this.data = new FileOutputStream(log);
+            this.cdata = new GZIPOutputStream(data);
+        } catch (IOException ex) {
+            this.enabled = false;
+        }
         File logFolder = new File(kernel.getWorkingDir() + File.separator + "logs");
         if (logFolder.exists() && logFolder.isDirectory()){
             File[] logFiles = logFolder.listFiles();
@@ -52,7 +62,7 @@ public class Console {
                         for (File f : logFiles){
                             if (f.isFile()){
                                 String name = f.getName();
-                                if (name.startsWith("weblauncher") && name.contains("-unclosed-")){
+                                if (name.startsWith("weblauncher") && !name.contains("-unclosed-")){
                                     if (f.delete()){
                                         this.printInfo("Successfully deleted old log file: " + name);
                                     } else {
@@ -65,16 +75,6 @@ public class Console {
                     }
                 }
             }
-        }
-        try {
-            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
-            if (!log.getParentFile().exists()){
-                log.getParentFile().mkdirs();
-            }
-            this.data = new FileOutputStream(log);
-            this.cdata = new GZIPOutputStream(data);
-        } catch (IOException ex) {
-            this.enabled = false;
         }
     }
     public boolean isEnabled(){return this.enabled;}
