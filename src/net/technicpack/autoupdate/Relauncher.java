@@ -123,7 +123,7 @@ public abstract class Relauncher {
     }
 
     public void relaunch() {
-        this.launch((String)null, this.getLaunchArgs());
+        this.launch(null, this.getLaunchArgs());
     }
 
     public File getTempLauncher() {
@@ -154,8 +154,8 @@ public abstract class Relauncher {
                 return;
             }
         }
-        ProcessBuilder processBuilder = new ProcessBuilder(new String[0]);
-        ArrayList commands = new ArrayList();
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        ArrayList<String> commands = new ArrayList<>();
         if(!launchPath.endsWith(".exe")) {
             commands.add(OperatingSystem.getJavaDir());
             commands.add("-Xmx256m");
@@ -193,7 +193,7 @@ public abstract class Relauncher {
         try {
             processBuilder.start();
         } catch (IOException var8) {
-            JOptionPane.showMessageDialog((Component)null, "Your OS has prevented this relaunch from completing.  You may need to add an exception in your security software.", "Relaunch Failed", 0);
+            JOptionPane.showMessageDialog(null, "Your OS has prevented this relaunch from completing.  You may need to add an exception in your security software.", "Relaunch Failed", 0);
             var8.printStackTrace();
         } catch (Exception var9) {
             var9.printStackTrace();
@@ -203,7 +203,7 @@ public abstract class Relauncher {
     }
 
     public String[] buildMoverArgs() throws UnsupportedEncodingException {
-        ArrayList outArgs = new ArrayList();
+        ArrayList<String> outArgs = new ArrayList<>();
         outArgs.add("-movetarget");
         outArgs.add(this.getRunningPath());
         outArgs.add("-moveronly");
@@ -212,7 +212,7 @@ public abstract class Relauncher {
     }
 
     public String[] buildLauncherArgs(boolean isLegacy) {
-        ArrayList outArgs = new ArrayList();
+        ArrayList<String> outArgs = new ArrayList<>();
         if(!isLegacy) {
             outArgs.add("-launcheronly");
         } else {

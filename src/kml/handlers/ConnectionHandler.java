@@ -12,15 +12,13 @@ import java.net.URLConnection;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class ConnectionHandler extends HttpURLConnection{
-    
-    private final URLMatcher matcher;
+class ConnectionHandler extends HttpURLConnection{
+
     private final URLConnection relay;
     
     public ConnectionHandler(URL url, URLMatcher m){
         super(url);
-        this.matcher = m;
-        this.relay = this.matcher.handle();
+        this.relay = m.handle();
         System.out.println("URL handled: " + super.url.toString() + " | " + (this.relay != null));
     }
     @Override

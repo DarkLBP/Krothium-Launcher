@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * @author DarkLBP
  */
 public class MojangAPIMatcher implements URLMatcher{
-    private final String apiHost = "api.mojang.com";
     private final Pattern apiRegex = Pattern.compile("/(.+?)");
     private final URL url;
     
@@ -23,6 +22,7 @@ public class MojangAPIMatcher implements URLMatcher{
     }
     @Override
     public boolean match(){
+        final String apiHost = "api.mojang.com";
         if (this.url.getHost().equalsIgnoreCase(apiHost)){
             Matcher m = apiRegex.matcher(this.url.getPath());
             if (m.matches()){
@@ -46,7 +46,7 @@ public class MojangAPIMatcher implements URLMatcher{
                 remoteURL = Utils.stringToURL("http://mc.krothium.com/api/" + path);
             }
             try{
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

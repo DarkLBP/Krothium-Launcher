@@ -21,8 +21,8 @@ import java.io.IOException;
  */
 public class Browser extends Region {
 
-    final WebView browser = new WebView();
-    final WebEngine webEngine = browser.getEngine();
+    private final WebView browser = new WebView();
+    private final WebEngine webEngine = browser.getEngine();
 
     public Browser() {
         webEngine.setJavaScriptEnabled(true);

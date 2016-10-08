@@ -12,7 +12,7 @@ import java.net.URL;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class GameStarter {
+class GameStarter {
     public static void main(String[] args){
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
         try {

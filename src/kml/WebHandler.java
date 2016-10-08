@@ -23,7 +23,7 @@ import java.util.*;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class WebHandler implements HttpHandler {
+class WebHandler implements HttpHandler {
     private final Kernel kernel;
     private final Console console;
     
@@ -40,11 +40,11 @@ public class WebHandler implements HttpHandler {
             ByteArrayOutputStream responseData = new ByteArrayOutputStream();
             int responseCode = 200;
             OutputStream out = he.getResponseBody();
-            Map<String, List<String>> responseHeaders = new HashMap();
+            Map<String, List<String>> responseHeaders = new HashMap<>();
             if (method.equalsIgnoreCase("GET")){
                 if (path.equals("/")){
                     responseCode = 301;
-                    List<String> locationValues = new ArrayList();
+                    List<String> locationValues = new ArrayList<>();
                     if (kernel.checkForUpdates()){
                         locationValues.add("/update.html");
                     } else if (kernel.isAuthenticated()){
@@ -61,12 +61,12 @@ public class WebHandler implements HttpHandler {
                     InputStream s;
                     if (extension.equalsIgnoreCase("html") && !fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("update.html") && !kernel.isAuthenticated()){
                         responseCode = 301;
-                        List<String> locationValues = new ArrayList();
+                        List<String> locationValues = new ArrayList<>();
                         locationValues.add("/login.html");
                         responseHeaders.put("Location", locationValues);
                     } else if (extension.equalsIgnoreCase("html") && fileName.equalsIgnoreCase("login.html") && !fileName.equalsIgnoreCase("update.html") && kernel.isAuthenticated()) {
                         responseCode = 301;
-                        List<String> locationValues = new ArrayList();
+                        List<String> locationValues = new ArrayList<>();
                         locationValues.add("/play.html");
                         responseHeaders.put("Location", locationValues);
                     } else {
@@ -100,7 +100,7 @@ public class WebHandler implements HttpHandler {
                                 }
                             }
                             if (extension.equalsIgnoreCase("html")){
-                                List<String> ctv = new ArrayList();
+                                List<String> ctv = new ArrayList<>();
                                 ctv.add("text/html");
                                 responseHeaders.put("Content-Type", ctv);
                             }
@@ -108,7 +108,7 @@ public class WebHandler implements HttpHandler {
                     }
                 }                
             } else if (method.equalsIgnoreCase("POST")){
-                List<String> ctv = new ArrayList();
+                List<String> ctv = new ArrayList<>();
                 ctv.add("text/plain");
                 responseHeaders.put("Content-Type", ctv);
                 if (path.startsWith("/action/")){
@@ -140,7 +140,7 @@ public class WebHandler implements HttpHandler {
                         contentExtra = ceh.get(0);
                     }
                     String profile;
-                    Map<String, String> params = new HashMap();
+                    Map<String, String> params = new HashMap<>();
                     User user;
                     Profile prof;
                     switch (function){
@@ -229,9 +229,9 @@ public class WebHandler implements HttpHandler {
                         case "selectedversion":
                             prof = kernel.getProfile(kernel.getSelectedProfile());
                             if (prof.hasVersion()){
-                                response.append(Utils.toBase64(Utils.toBase64(prof.getVersionID())) + ":" + Utils.toBase64(prof.getVersionID()));
+                                response.append(Utils.toBase64(Utils.toBase64(prof.getVersionID()))).append(":").append(Utils.toBase64(prof.getVersionID()));
                             } else {
-                                response.append(Utils.toBase64("latest") + ":" + Utils.toBase64(kernel.getLatestVersion()));
+                                response.append(Utils.toBase64("latest")).append(":").append(Utils.toBase64(kernel.getLatestVersion()));
                             }
                             break;
                         case "deleteprofile":
@@ -246,7 +246,7 @@ public class WebHandler implements HttpHandler {
                         case "versions":
                             LinkedHashSet<String> v = kernel.getVersionDB();
                             Iterator vi = v.iterator();
-                            List<VersionType> allowedTypes = new ArrayList();
+                            List<VersionType> allowedTypes = new ArrayList<>();
                             if (contentLength > 0){
                                 String[] types = requestBody.getString().split(":");
                                 if (types.length != 3){
@@ -274,7 +274,7 @@ public class WebHandler implements HttpHandler {
                                 String index = vi.next().toString();
                                 VersionMeta version = kernel.getVersionMeta(index);
                                 if (allowedTypes.contains(version.getType())){
-                                    response.append(":" + Utils.toBase64(version.getID()));
+                                    response.append(":").append(Utils.toBase64(version.getID()));
                                 }
                             }
                             break;
@@ -302,7 +302,7 @@ public class WebHandler implements HttpHandler {
                                 String javaExec = (profileArray[8].equals("noset") ? "" : Utils.fromBase64(profileArray[8]));
                                 String javaArgs = (profileArray[9].equals("noset") ? "" : Utils.fromBase64(profileArray[9]));
                                 if (!kernel.existsProfile(profileName) && !profileArray[0].equals("noset")){
-                                    response.append("Profile " + profileName + " is specified but does not exist.");
+                                    response.append("Profile ").append(profileName).append(" is specified but does not exist.");
                                 } else {
                                     if (profileArray[0].equals("noset")){
                                         prof = new Profile(profileNameNew);
@@ -314,7 +314,7 @@ public class WebHandler implements HttpHandler {
                                         prof.setVersionID(null);
                                     } else if (!kernel.existsVersion(profileVersion)){
                                         error = true;
-                                        response.append("Selected version " + profileVersion + " does not exist." + "\n");
+                                        response.append("Selected version ").append(profileVersion).append(" does not exist.").append("\n");
                                     } else {
                                         prof.setVersionID(profileVersion);
                                     }
@@ -389,7 +389,7 @@ public class WebHandler implements HttpHandler {
                                                 response.append("OK");
                                                 kernel.saveProfiles();
                                             } else {
-                                                response.append("Profile " + profileNameNew + " already exists.");
+                                                response.append("Profile ").append(profileNameNew).append(" already exists.");
                                             }
                                         }
                                     }
@@ -400,14 +400,14 @@ public class WebHandler implements HttpHandler {
                             profile = Utils.fromBase64(requestBody.getString());
                             if (kernel.existsProfile(profile)){
                                 prof = kernel.getProfile(profile);
-                                response.append(Utils.toBase64(prof.getName()) + ":");
-                                response.append((prof.hasVersion() ? Utils.toBase64(prof.getVersionID()) : "latest") + ":");
-                                response.append(Utils.toBase64((String.valueOf(prof.isAllowedVersionType(VersionType.SNAPSHOT)))) + ":");
-                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_BETA))) + ":");
-                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_ALPHA))) + ":");
-                                response.append((prof.hasGameDir() ? Utils.toBase64(prof.getGameDir().getAbsolutePath()) : "noset") + ":");
-                                response.append((prof.hasResolution() ? Utils.toBase64(String.valueOf(prof.getResolutionWidth()) + "x" + String.valueOf(prof.getResolutionHeight())) : "noset") + ":");
-                                response.append((prof.hasJavaDir() ? Utils.toBase64(prof.getJavaDir().getAbsolutePath()) : "noset") + ":");
+                                response.append(Utils.toBase64(prof.getName())).append(":");
+                                response.append(prof.hasVersion() ? Utils.toBase64(prof.getVersionID()) : "latest").append(":");
+                                response.append(Utils.toBase64((String.valueOf(prof.isAllowedVersionType(VersionType.SNAPSHOT))))).append(":");
+                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_BETA)))).append(":");
+                                response.append(Utils.toBase64(String.valueOf(prof.isAllowedVersionType(VersionType.OLD_ALPHA)))).append(":");
+                                response.append(prof.hasGameDir() ? Utils.toBase64(prof.getGameDir().getAbsolutePath()) : "noset").append(":");
+                                response.append(prof.hasResolution() ? Utils.toBase64(String.valueOf(prof.getResolutionWidth()) + "x" + String.valueOf(prof.getResolutionHeight())) : "noset").append(":");
+                                response.append(prof.hasJavaDir() ? Utils.toBase64(prof.getJavaDir().getAbsolutePath()) : "noset").append(":");
                                 response.append((prof.hasJavaArgs() ? Utils.toBase64(prof.getJavaArgs()) : "noset"));
                             }
                             break;
@@ -430,7 +430,7 @@ public class WebHandler implements HttpHandler {
                                 response.append("Skin file has 0 bytes.");
                                 break;
                             }
-                            params = new HashMap();
+                            params = new HashMap<>();
                             user = kernel.getSelectedUser();
                             params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
@@ -444,7 +444,7 @@ public class WebHandler implements HttpHandler {
                                 }
                                 response.append(Utils.sendPost(url, skinData, params));
                             } catch (Exception ex){
-                                response.append("Failed to change the skin. " + ex.getMessage());
+                                response.append("Failed to change the skin. ").append(ex.getMessage());
                             }
                             break;
                         case "changecape":
@@ -460,7 +460,7 @@ public class WebHandler implements HttpHandler {
                                 response.append("Cape file has 0 bytes.");
                                 break;
                             }
-                            params = new HashMap();
+                            params = new HashMap<>();
                             user = kernel.getSelectedUser();
                             params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
@@ -473,29 +473,33 @@ public class WebHandler implements HttpHandler {
                                 }
                                 response.append(Utils.sendPost(url, capeData, params));
                             } catch (Exception ex){
-                                response.append("Failed to change the cape. " + ex.getMessage());
+                                response.append("Failed to change the cape. ").append(ex.getMessage());
                             }
                             break;
                         case "getskin":
                             user = kernel.getSelectedUser();
                             URL skinURL = Utils.stringToURL("http://mc.krothium.com/skins/" + user.getDisplayName() + ".png");
-                            HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
-                            int rc = con.getResponseCode();
-                            if (rc == 200){
-                                response.append(skinURL.toString());
+                            if (skinURL != null){
+                                HttpURLConnection con = (HttpURLConnection)skinURL.openConnection();
+                                int rc = con.getResponseCode();
+                                if (rc == 200){
+                                    response.append(skinURL.toString());
+                                }
                             }
                             break;
                         case "getcape":
                             user = kernel.getSelectedUser();
                             URL capeURL = Utils.stringToURL("http://mc.krothium.com/capes/" + user.getDisplayName() + ".png");
-                            HttpURLConnection con2 = (HttpURLConnection)capeURL.openConnection();
-                            int responseCode2 = con2.getResponseCode();
-                            if (responseCode2 == 200){
-                                response.append(capeURL.toString());
+                            if (capeURL != null){
+                                HttpURLConnection con2 = (HttpURLConnection)capeURL.openConnection();
+                                int responseCode2 = con2.getResponseCode();
+                                if (responseCode2 == 200){
+                                    response.append(capeURL.toString());
+                                }
                             }
                             break;
                         case "deleteskin":
-                            params = new HashMap();
+                            params = new HashMap<>();
                             user = kernel.getSelectedUser();
                             params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
@@ -507,11 +511,11 @@ public class WebHandler implements HttpHandler {
                                 }
                                 response.append(Utils.sendPost(url, new byte[0], params));
                             } catch (Exception ex){
-                                response.append("Failed to delete the skin. " + ex.getMessage());
+                                response.append("Failed to delete the skin. ").append(ex.getMessage());
                             }
                             break;
                         case "deletecape":
-                            params = new HashMap();
+                            params = new HashMap<>();
                             user = kernel.getSelectedUser();
                             params.put("Access-Token", user.getAccessToken());
                             params.put("Client-Token", kernel.getClientToken());
@@ -523,7 +527,7 @@ public class WebHandler implements HttpHandler {
                                 }
                                 response.append(Utils.sendPost(url, new byte[0], params));
                             } catch (Exception ex){
-                                response.append("Failed to delete the cape. " + ex.getMessage());
+                                response.append("Failed to delete the cape. ").append(ex.getMessage());
                             }
                             break;
                         case "switchlanguage":
@@ -545,7 +549,7 @@ public class WebHandler implements HttpHandler {
                                 String[] data = r.split(":");
                                 response.append(data[1]);
                             } catch (Exception ex){
-                                response.append("Failed to get latest version url. " + ex.getMessage());
+                                response.append("Failed to get latest version url. ").append(ex.getMessage());
                             }
                             break;
                         case "getlang":
@@ -555,8 +559,7 @@ public class WebHandler implements HttpHandler {
                             response.append(Constants.STYLE_ID);
                             break;
                         case "switchstyle":
-                            String styleID = Utils.fromBase64(requestBody.getString());
-                            Constants.STYLE_ID = styleID;
+                            Constants.STYLE_ID = Utils.fromBase64(requestBody.getString());
                             break;
                     }
                     responseData.write(response.toString().getBytes(StandardCharsets.UTF_8));

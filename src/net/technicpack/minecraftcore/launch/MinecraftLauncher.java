@@ -44,11 +44,11 @@ public class MinecraftLauncher {
     }
 
     public GameProcess launch(ModpackModel pack, int memory, LaunchOptions options, CompleteVersion version) throws IOException {
-        return this.launch(pack, (long)memory, options, (ProcessExitListener)null, version);
+        return this.launch(pack, (long)memory, options, null, version);
     }
 
     public GameProcess launch(ModpackModel pack, long memory, LaunchOptions options, ProcessExitListener exitListener, MojangVersion version) throws IOException {
-        List commands = this.buildCommands(pack, memory, version, options);
+        List<String> commands = this.buildCommands(pack, memory, version, options);
         StringBuilder full = new StringBuilder();
         boolean first = true;
 
@@ -77,7 +77,7 @@ public class MinecraftLauncher {
     }
 
     private List<String> buildCommands(ModpackModel pack, long memory, MojangVersion version, LaunchOptions options) {
-        ArrayList commands = new ArrayList();
+        ArrayList<String> commands = new ArrayList<>();
         commands.add(this.javaVersions.getSelectedPath());
         OperatingSystem operatingSystem = OperatingSystem.getOperatingSystem();
         if(operatingSystem.equals(OperatingSystem.OSX)) {
@@ -133,13 +133,13 @@ public class MinecraftLauncher {
             commands.add(this.buildClassPath(pack, version));
             commands.add(version.getMainClass());
         }
-        commands.addAll(Arrays.asList(this.getMinecraftArguments(version, pack.getInstalledDirectory(), (MojangUser)this.userModel.getCurrentUser())));
+        commands.addAll(Arrays.asList(this.getMinecraftArguments(version, pack.getInstalledDirectory(), this.userModel.getCurrentUser())));
         options.appendToCommands(commands);
         return commands;
     }
 
     private String[] getMinecraftArguments(MojangVersion version, File gameDirectory, MojangUser mojangUser) {
-        HashMap map = new HashMap();
+        HashMap<String, String> map = new HashMap<>();
         StrSubstitutor substitutor = new StrSubstitutor(map);
         String[] split = version.getMinecraftArguments().split(" ");
         map.put("auth_username", mojangUser.getUsername());

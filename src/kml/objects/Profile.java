@@ -20,13 +20,13 @@ public class Profile {
     private File gameDir = null;
     private File javaDir = null;
     private String javaArgs = null;
-    private Map<String, Integer> resolution = new HashMap();
+    private Map<String, Integer> resolution = new HashMap<>();
     private LauncherVisibility visibility = null;
     private final List<VersionType> allowedVersionTypes;
     
     public Profile(String name){
         this.name = name;
-        this.allowedVersionTypes = new ArrayList();
+        this.allowedVersionTypes = new ArrayList<>();
         this.allowedVersionTypes.add(VersionType.RELEASE);
     }
     public Profile(String name, String lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v, List<VersionType> types){
@@ -78,7 +78,7 @@ public class Profile {
             resolution = null;
         } else {
             if (resolution == null){
-                resolution = new HashMap();
+                resolution = new HashMap<>();
             }
             resolution.put("width", w);
             resolution.put("height", h);

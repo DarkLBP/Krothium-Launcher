@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * @author DarkLBP
  */
 public class ProfileMatcher implements URLMatcher{
-    private final String profileHost = "sessionserver.mojang.com";
     private final Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");
     private final URL url;
     
@@ -23,6 +22,7 @@ public class ProfileMatcher implements URLMatcher{
     }
     @Override
     public boolean match(){
+        final String profileHost = "sessionserver.mojang.com";
         if (this.url.getHost().equalsIgnoreCase(profileHost)){
             Matcher m = profileRegex.matcher(this.url.getPath());
             return m.matches();
@@ -41,7 +41,7 @@ public class ProfileMatcher implements URLMatcher{
                 remoteURL = Utils.stringToURL("http://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
             }
             try{
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

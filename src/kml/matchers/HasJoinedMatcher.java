@@ -32,7 +32,7 @@ public class HasJoinedMatcher implements URLMatcher{
                 remoteURL = Utils.stringToURL("http://mc.krothium.com/server/hasJoined?" + this.url.getQuery());
             }
             try{
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

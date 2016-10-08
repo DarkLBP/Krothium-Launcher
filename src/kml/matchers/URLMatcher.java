@@ -7,6 +7,6 @@ import java.net.URLConnection;
  * @author DarkLBP
  */
 public interface URLMatcher {
-    public boolean match();
-    public URLConnection handle();
+    boolean match();
+    URLConnection handle();
 }

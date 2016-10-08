@@ -635,8 +635,7 @@ function loadLang(){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
-            var response = xhr.responseText;
-            document.getElementById("langSelect").value = response;
+            document.getElementById("langSelect").value = xhr.responseText;
         }
     };
     xhr.onerror = function(){

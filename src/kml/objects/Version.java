@@ -21,17 +21,15 @@ import java.util.Map;
  */
 
 public final class Version {
-    
-    private final Kernel kernel;
-    private final Console console;
+
     private final String id;
-    public String mainClass;
-    public String minecraftArguments;
+    private String mainClass;
+    private String minecraftArguments;
     private final VersionType type;
     private String assets;
     private AssetIndex assetIndex;
-    private final Map<String, Downloadable> downloads = new HashMap();
-    private final List<Library> libraries = new ArrayList();
+    private final Map<String, Downloadable> downloads = new HashMap<>();
+    private final List<Library> libraries = new ArrayList<>();
     private String inheritsFrom;
     private String jar;
     private File relativeJar;
@@ -39,8 +37,8 @@ public final class Version {
     private final URL jsonURL;
     
     public Version(URL durl, Kernel k) throws ObjectException{
-        this.kernel = k;
-        this.console = k.getConsole();
+        final Kernel kernel = k;
+        final Console console = k.getConsole();
         this.jsonURL = durl;
         JSONObject version = new JSONObject(Utils.readURL(durl));
         if (version.has("id")){
@@ -88,8 +86,7 @@ public final class Version {
             if (aIndex.has("sha1")){
                 sha1 = aIndex.getString("sha1");
             }
-            AssetIndex index = new AssetIndex(id, size, totalSize, url, sha1);
-            this.assetIndex = index;
+            this.assetIndex = new AssetIndex(id, size, totalSize, url, sha1);
         }
         if (version.has("downloads")){
             JSONObject downloads = version.getJSONObject("downloads");
@@ -151,7 +148,7 @@ public final class Version {
         if (version.has("libraries")){
             JSONArray libraries = version.getJSONArray("libraries");
             for (int i = 0; i < libraries.length(); i++){
-                Library lib = new Library(libraries.getJSONObject(i), this.kernel);
+                Library lib = new Library(libraries.getJSONObject(i), kernel);
                 this.libraries.add(lib);
             }
         }
@@ -221,23 +218,23 @@ public final class Version {
     public URL getJSONURL(){return this.jsonURL;}
     public String getID(){return this.id;}
     public VersionType getType(){return this.type;}
-    public boolean hasMinecraftArguments(){return (this.minecraftArguments != null);}
-    public boolean hasMainClass(){return (this.mainClass != null);}
+    private boolean hasMinecraftArguments(){return (this.minecraftArguments != null);}
+    private boolean hasMainClass(){return (this.mainClass != null);}
     public String getMinecraftArguments(){return this.minecraftArguments;}
     public String getMainClass(){return this.mainClass;}
     public String getInheritedVersion(){return this.inheritsFrom;}
     public boolean hasInheritedVersion(){return (this.inheritsFrom != null);}
-    public boolean hasLibraries(){return (this.libraries.size() > 0);}
+    private boolean hasLibraries(){return (this.libraries.size() > 0);}
     public List<Library> getLibraries(){return this.libraries;}
     public boolean hasAssetIndex(){return (this.assetIndex != null);}
-    public boolean hasAssets(){return (this.assets != null);}
+    private boolean hasAssets(){return (this.assets != null);}
     public String getAssets(){return this.assets;}
     public AssetIndex getAssetIndex(){return this.assetIndex;}
-    public boolean hasDownloads(){return (this.downloads.size() > 0);}
+    private boolean hasDownloads(){return (this.downloads.size() > 0);}
     public Map<String, Downloadable> getDownloads(){return this.downloads;}
-    public boolean hasJar(){return (this.jar != null);}
+    private boolean hasJar(){return (this.jar != null);}
     public String getJar(){return this.jar;}
-    public boolean hasClientDownload(){
+    private boolean hasClientDownload(){
         if (!this.hasDownloads()){
             return false;
         }

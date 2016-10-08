@@ -11,7 +11,7 @@ import java.net.URLConnection;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class HttpHandler extends sun.net.www.protocol.http.Handler{
+class HttpHandler extends sun.net.www.protocol.http.Handler{
 
     @Override
     protected URLConnection openConnection(URL url) throws IOException {

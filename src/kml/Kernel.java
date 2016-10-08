@@ -20,18 +20,18 @@ import java.util.*;
  */
 
 public final class Kernel {
-    public final File workingDir;
-    public final Console console;
-    public final Profiles profiles;
-    public final Versions versions;
-    public final Downloader downloader;
-    public final Authentication authentication;
-    public final GameLauncher gameLauncher;
-    public final Properties properties;
+    private final File workingDir;
+    private final Console console;
+    private final Profiles profiles;
+    private final Versions versions;
+    private final Downloader downloader;
+    private final Authentication authentication;
+    private final GameLauncher gameLauncher;
+    private final Properties properties;
     public Kernel(){
         this(Utils.getWorkingDirectory());
     }
-    public Kernel(File workDir){
+    private Kernel(File workDir){
         this.workingDir = workDir;
         if (!this.workingDir.exists()){
             this.workingDir.mkdirs();
@@ -127,7 +127,7 @@ public final class Kernel {
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){
         return new File(this.workingDir + File.separator + "launcher_profiles.json");}
-    public File getPropertiesFile(){
+    private File getPropertiesFile(){
         return new File(this.workingDir + File.separator + "krothium.ini");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
     public void exitSafely(){
@@ -151,7 +151,7 @@ public final class Kernel {
                 if (!Constants.USE_HTTPS){
                     url = Utils.stringToURL(url.toString().replace("https", "http"));
                 }
-                String r = Utils.sendPost(url, new byte[0], new HashMap());
+                String r = Utils.sendPost(url, new byte[0], new HashMap<>());
                 String[] data = r.split(":");
                 int version = Integer.parseInt(Utils.fromBase64(data[0]));
                 if (version > Constants.KERNEL_BUILD){

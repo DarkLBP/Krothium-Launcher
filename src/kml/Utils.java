@@ -171,8 +171,9 @@ public class Utils {
         try{
             return new URL(url);
         }
-        catch(Exception ex){}
-        return null;
+        catch(Exception ex){
+            return null;
+        }
     }
     public static String sendPost(URL url, byte[] data, Map<String, String> params) throws IOException {
         URLConnection con = url.openConnection();

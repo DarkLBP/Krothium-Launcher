@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
  * @author DarkLBP
  */
 public class SkinMatcher implements URLMatcher{
-    private final String skinHost = "skins.minecraft.net";
     private final Pattern skinRegex = Pattern.compile("/MinecraftSkins/(.+?)\\.png");
     private final URL url;
     
@@ -22,6 +21,7 @@ public class SkinMatcher implements URLMatcher{
     }
     @Override
     public boolean match(){
+        final String skinHost = "skins.minecraft.net";
         if (this.url.getHost().equalsIgnoreCase(skinHost)){
             Matcher m = skinRegex.matcher(this.url.getPath());
             return m.matches();
@@ -35,7 +35,7 @@ public class SkinMatcher implements URLMatcher{
             String name = m.group(1);
             URL remoteURL = Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png");
             try {
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
  * @author DarkLBP
  */
 public class CapeMatcher implements URLMatcher{
-    private final String capeHost = "skins.minecraft.net";
-    private final String capeHostLegacy = "s3.amazonaws.com";
     private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
     private final URL url;
     
@@ -23,6 +21,8 @@ public class CapeMatcher implements URLMatcher{
     }
     @Override
     public boolean match(){
+        final String capeHost = "skins.minecraft.net";
+        final String capeHostLegacy = "s3.amazonaws.com";
         if (this.url.getHost().equalsIgnoreCase(capeHost) || this.url.getHost().equalsIgnoreCase(capeHostLegacy)){
             Matcher m = capeRegex.matcher(this.url.getPath());
             return m.matches();
@@ -36,7 +36,7 @@ public class CapeMatcher implements URLMatcher{
             String name = m.group(1);
             URL remoteURL = Utils.stringToURL("http://mc.krothium.com/capes/" + name + ".png");
             try {
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

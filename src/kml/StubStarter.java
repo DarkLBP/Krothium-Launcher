@@ -10,7 +10,7 @@ import java.net.URL;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class StubStarter {
+class StubStarter {
     public static void main(String[] args){
         System.out.println("StubStarter launcher with " + args.length + " arguments.");
         try {

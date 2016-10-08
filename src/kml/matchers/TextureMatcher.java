@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
  * @author DarkLBP
  */
 public class TextureMatcher implements URLMatcher{
-    private final String textureHost = "textures.minecraft.net";
     private final Pattern textureRegex = Pattern.compile("/texture/([0-9a-fA-F]+)");
     private final URL url;
     
@@ -22,6 +21,7 @@ public class TextureMatcher implements URLMatcher{
     }
     @Override
     public boolean match(){
+        final String textureHost = "textures.minecraft.net";
         if (this.url.getHost().equalsIgnoreCase(textureHost)){
             Matcher m = textureRegex.matcher(this.url.getPath());
             return m.matches();
@@ -35,7 +35,7 @@ public class TextureMatcher implements URLMatcher{
             String textureID = m.group(1);
             URL remoteURL = Utils.stringToURL("http://mc.krothium.com/textures/" + textureID);
             try {
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

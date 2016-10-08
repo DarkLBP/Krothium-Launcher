@@ -40,7 +40,7 @@ public class Downloader {
         String verID = (p.hasVersion() ? p.getVersionID() : kernel.getLatestVersion());
         Version v = kernel.getVersion(verID);
         ExecutorService pool = Executors.newFixedThreadPool(5);
-        List<Downloadable> urls = new ArrayList();
+        List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;
         this.validated = 0;
         this.total = 0;
@@ -86,7 +86,7 @@ public class Downloader {
             JSONObject objects = root.getJSONObject("objects");
             Set keys = objects.keySet();
             Iterator it2 = keys.iterator();
-            List<String> processedHashes = new ArrayList();
+            List<String> processedHashes = new ArrayList<>();
             while (it2.hasNext()){
                 String object = it2.next().toString();
                 JSONObject o = objects.getJSONObject(object);

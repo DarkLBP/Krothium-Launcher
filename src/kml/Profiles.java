@@ -15,7 +15,7 @@ import java.util.*;
  */
 
 public class Profiles {
-    private final Map<String, Profile> profiles = new HashMap();
+    private final Map<String, Profile> profiles = new HashMap<>();
     private final Console console;
     private String selected;
     private final Kernel kernel;
@@ -55,10 +55,10 @@ public class Profiles {
         console.printError("Profile " + p + " doesn't exist.");
         return false;
     }
-    public boolean duplicateProfile(Profile p) {
+    private boolean duplicateProfile(Profile p) {
         if (this.existsProfile(p)){
             StringBuilder modifiedName = new StringBuilder();
-            modifiedName.append(p.getName() + "_");
+            modifiedName.append(p.getName()).append("_");
             p.setName(modifiedName.toString());
             while (this.existsProfile(p)){
                 modifiedName.append("_");
@@ -86,8 +86,8 @@ public class Profiles {
         }
         return false;
     }
-    public boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
-    public boolean existsProfile(String p){return this.profiles.containsKey(p);}
+    private boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
+    private boolean existsProfile(String p){return this.profiles.containsKey(p);}
     public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
         File launcherProfiles = kernel.getConfigFile();
@@ -106,9 +106,9 @@ public class Profiles {
                     File gameDir = null;
                     File javaDir = null;
                     String javaArgs = null;
-                    Map<String, Integer> resolution = new HashMap();
+                    Map<String, Integer> resolution = new HashMap<>();
                     LauncherVisibility visibility = null;
-                    List<VersionType> types = new ArrayList();
+                    List<VersionType> types = new ArrayList<>();
                     if (o.has("name")){
                         name = o.getString("name");
                     }
@@ -217,11 +217,10 @@ public class Profiles {
         }
         return null;
     }
-    public int profileCount(){return profiles.size();}
+    private int profileCount(){return profiles.size();}
     public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
-            Profile prof = this.getProfileByName(p);
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;
@@ -277,9 +276,7 @@ public class Profiles {
                         output = "keep the launcher open";
                         break;
                 }
-                if (output != null){
-                    prof.put("launcherVisibilityOnGameClose", output);
-                }
+                prof.put("launcherVisibilityOnGameClose", output);
             }
             profiles.put(p.getName(), prof);
         }

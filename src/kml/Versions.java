@@ -17,8 +17,8 @@ import java.util.*;
  */
 
 public class Versions {
-    private final Map<String, VersionMeta> versions = new LinkedHashMap();
-    private final Map<String, Version> version_cache = new HashMap();
+    private final Map<String, VersionMeta> versions = new LinkedHashMap<>();
+    private final Map<String, Version> version_cache = new HashMap<>();
     private final Console console;
     private String latestSnap;
     private String latestRel;
@@ -29,7 +29,7 @@ public class Versions {
         this.kernel = k;
         this.console = k.getConsole();
     }
-    public void add(String name, VersionMeta m){
+    private void add(String name, VersionMeta m){
         if (!versions.containsKey(name)){
             versions.put(name, m);
             console.printInfo("Version " + name + " loaded.");
@@ -84,7 +84,7 @@ public class Versions {
             for (int i = 0; i < vers.length(); i++){
                 JSONObject ver = vers.getJSONObject(i);
                 String id = null;
-                VersionType type = null;
+                VersionType type;
                 URL url = null;
                 if (ver.has("id")){
                     id = ver.getString("id");
@@ -166,7 +166,7 @@ public class Versions {
         }
     }
     public LinkedHashSet<String> getVersionsByType(VersionType t){
-        LinkedHashSet<String> vers = new LinkedHashSet();
+        LinkedHashSet<String> vers = new LinkedHashSet<>();
         Set keys = this.versions.keySet();
         Iterator it = keys.iterator();
         while (it.hasNext()){
@@ -182,7 +182,7 @@ public class Versions {
         return vers;
     }
     public LinkedHashSet<String> getVersions(){
-       LinkedHashSet<String> vers = new LinkedHashSet();
+       LinkedHashSet<String> vers = new LinkedHashSet<>();
         Set keys = this.versions.keySet();
         Iterator it = keys.iterator();
         while (it.hasNext()){

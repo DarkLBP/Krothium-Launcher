@@ -19,8 +19,8 @@ import java.util.*;
 public class Authentication {
     private boolean authenticated = false;
     private final Console console;
-    protected String clientToken = UUID.randomUUID().toString();
-    protected final Map<String, User> userDatabase = new HashMap();
+    private String clientToken = UUID.randomUUID().toString();
+    private final Map<String, User> userDatabase = new HashMap<>();
     private String selectedProfile;
     private final Kernel kernel;
     
@@ -28,11 +28,11 @@ public class Authentication {
         this.kernel = k;
         this.console = k.getConsole();
     }
-    public void addUser(String profileID, User u){
+    private void addUser(String profileID, User u){
         console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(profileID)) ? " updated." : " loaded."));
         this.userDatabase.put(profileID, u);   
     }
-    public boolean removeUser(String profileID){
+    private boolean removeUser(String profileID){
         if (this.userDatabase.containsKey(profileID)){
             console.printInfo("User " + this.userDatabase.get(profileID).getDisplayName() + " deleted.");
             this.userDatabase.remove(profileID);
@@ -42,7 +42,7 @@ public class Authentication {
             return false;
         }
     }
-    public User getUser(String profileID) {
+    private User getUser(String profileID) {
         if (this.userDatabase.containsKey(profileID)){
             return this.userDatabase.get(profileID);
         }else{
@@ -71,10 +71,10 @@ public class Authentication {
             request.put("clientToken", this.clientToken);
         }
         request.put("requestUser", true);
-        Map<String, String> postParams = new HashMap();
+        Map<String, String> postParams = new HashMap<>();
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
-        String response = null;
+        String response;
         try {
             URL url = Constants.AUTHENTICATE_URL;
             if (!Constants.USE_HTTPS){
@@ -84,7 +84,7 @@ public class Authentication {
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
-        if (response == null || response.isEmpty()){
+        if (response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
         }
         JSONObject r = new JSONObject(response);
@@ -95,7 +95,7 @@ public class Authentication {
             String profileName = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("name") : null;
             String userID = (r.has("user")) ? r.getJSONObject("user").getString("id") : null;
             JSONObject user = r.getJSONObject("user");
-            Map<String, String> properties = new HashMap();
+            Map<String, String> properties = new HashMap<>();
             if (user.has("userProperties")){
                 JSONArray props = user.getJSONArray("userProperties");
                 if (props.length() > 0){
@@ -134,13 +134,13 @@ public class Authentication {
         User u = this.getUser(this.selectedProfile);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
-        request.put("accessToken", u.getAccessToken());
+        request.put("accessToken", u != null ? u.getAccessToken() : null);
         request.put("clientToken", this.clientToken);
         request.put("requestUser", true);
-        Map<String, String> postParams = new HashMap();
+        Map<String, String> postParams = new HashMap<>();
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
-        String response = null;
+        String response;
         try {
             URL url = Constants.REFRESH_URL;
             if (!Constants.USE_HTTPS){
@@ -153,7 +153,7 @@ public class Authentication {
             }
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
-        if (response == null || response.isEmpty()){
+        if (response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
         }
         JSONObject r = new JSONObject(response);
@@ -184,12 +184,12 @@ public class Authentication {
         User u = this.getUser(this.selectedProfile);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
-        request.put("accessToken", u.getAccessToken());
+        request.put("accessToken", u != null ? u.getAccessToken() : null);
         request.put("clientToken", this.clientToken);
-        Map<String, String> postParams = new HashMap();
+        Map<String, String> postParams = new HashMap<>();
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
-        String response = null;
+        String response;
         try {
             URL url = Constants.VALIDATE_URL;
             if (!Constants.USE_HTTPS){
@@ -201,9 +201,6 @@ public class Authentication {
                 this.authenticated = true;
             }
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
-        }
-        if (response == null){
-            throw new AuthenticationException("Authentication server does not respond.");
         }
         if (response.isEmpty()){
             this.authenticated = true;
@@ -247,7 +244,7 @@ public class Authentication {
                                 String userID = user.getString("userid");
                                 UUID uuid = UUID.fromString(user.getString("uuid"));
                                 String username = user.getString("username");
-                                Map<String, String> properties = new HashMap();
+                                Map<String, String> properties = new HashMap<>();
                                 if (user.has("userProperties")) {
                                     JSONArray props = user.getJSONArray("userProperties");
                                     if (props.length() > 0) {

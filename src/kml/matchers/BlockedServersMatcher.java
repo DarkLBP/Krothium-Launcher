@@ -32,7 +32,7 @@ public class BlockedServersMatcher implements URLMatcher{
                 remoteURL = Utils.stringToURL("http://mc.krothium.com/server/blockedservers");
             }
             try{
-                return remoteURL.openConnection();
+                return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
                 return null;
             }

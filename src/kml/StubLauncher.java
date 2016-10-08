@@ -14,7 +14,7 @@ public class StubLauncher {
         System.out.println("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         File usingFile = f;
         try{ 
-            String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap());
+            String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap<>());
             String[] data = r.split(":");
             int version = Integer.parseInt(Utils.fromBase64(data[0]));
             if (version > Constants.KERNEL_BUILD){
@@ -65,14 +65,14 @@ public class StubLauncher {
                         out.close();
                         usingFile = outJar;
                     }
-                    List<String> serverArgs = new ArrayList();
+                    List<String> serverArgs = new ArrayList<>();
                     serverArgs.add(Utils.getJavaDir());
                     serverArgs.add("-cp");
                     StringBuilder libraries = new StringBuilder();
                     String separator = System.getProperty("path.separator");
                     try {
                         File launchPath = new File(StubLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                        libraries.append(launchPath.getAbsolutePath() + separator);
+                        libraries.append(launchPath.getAbsolutePath()).append(separator);
                     } catch (URISyntaxException ex) {
                         System.out.println("Failed to load StubStarter.");
                     }
@@ -102,14 +102,7 @@ public class StubLauncher {
                                 }
                             }
                             public boolean isStarted(){
-                                try {
-                                    if (process != null){
-                                        process.exitValue();
-                                    }
-                                    return false;
-                                } catch (Exception ex){
-                                    return true;
-                                }
+                                return process.isAlive();
                             }
                         };
                         log_info.start();
@@ -125,17 +118,12 @@ public class StubLauncher {
                                             System.out.println(lineRead);
                                         }
                                     }
-                                } catch (Exception ex){}
+                                } catch (Exception ex){
+                                    System.out.println("Failed to read game error stream.");
+                                }
                             }
                             public boolean isStarted(){
-                                try {
-                                    if (process != null){
-                                        process.exitValue();
-                                    }
-                                    return false;
-                                } catch (Exception ex){
-                                    return true;
-                                }
+                                return process.isAlive();
                             }
                         };
                         log_error.start();

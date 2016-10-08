@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author DarkLBP
  */
 
-public class WebLauncher {
+class WebLauncher {
 
     public static final Kernel kernel = new Kernel();
     public static void load(){

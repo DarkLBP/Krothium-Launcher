@@ -24,20 +24,18 @@ import java.util.*;
  */
 
 public final class Library {
-    private final Kernel kernel;
-    private final Console console;
     private final String name;
     private final URL url;
-    private final Map<String, Downloadable> downloads = new HashMap();
-    private final Map<OS, LibraryRule> rules = new HashMap();
+    private final Map<String, Downloadable> downloads = new HashMap<>();
+    private final Map<OS, LibraryRule> rules = new HashMap<>();
     private final File relativePath;
     private final File relativeNativePath;
-    private final List<String> exclude = new ArrayList();
-    private final Map<OS, String> natives = new HashMap();
+    private final List<String> exclude = new ArrayList<>();
+    private final Map<OS, String> natives = new HashMap<>();
     
     public Library(JSONObject lib, Kernel k) throws ObjectException{
-        this.kernel = k;
-        this.console = k.getConsole();
+        final Kernel kernel = k;
+        final Console console = k.getConsole();
         if (lib.has("name")){
             this.name = lib.getString("name");
         } else {
@@ -182,12 +180,10 @@ public final class Library {
                 } else {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
-                        int responseCode = -1;
-                        int contentLength = -1;
                         HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
                         con.connect();
-                        responseCode = con.getResponseCode();
-                        contentLength = con.getContentLength();
+                        int responseCode = con.getResponseCode();
+                        int contentLength = con.getContentLength();
                         if (responseCode == 200){
                             Downloadable d = new Downloadable(url, contentLength, this.relativePath, null);
                             this.downloads.put("artifact", d);
@@ -202,12 +198,10 @@ public final class Library {
                     if (this.natives.containsKey(Utils.getPlatform())){
                         try{
                             URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
-                            int responseCode = -1;
-                            int contentLength = -1;
                             HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
                             con.connect();
-                            responseCode = con.getResponseCode();
-                            contentLength = con.getContentLength();
+                            int responseCode = con.getResponseCode();
+                            int contentLength = con.getContentLength();
                             if (responseCode == 200){
                                 Downloadable d = new Downloadable(url, contentLength, this.relativePath, null);
                                 this.downloads.put("classifier", d);
@@ -227,9 +221,9 @@ public final class Library {
     public File getRelativePath(){return this.relativePath;}
     public File getRelativeNativePath(){return this.relativeNativePath;}
     public String getName(){return this.name;}
-    public boolean hasURL(){return (this.url != null);}
+    private boolean hasURL(){return (this.url != null);}
     public URL getURL(){return this.url;}
-    public boolean hasDownloads(){return (this.downloads.size() > 0);}
+    private boolean hasDownloads(){return (this.downloads.size() > 0);}
     public boolean hasArtifactDownload(){
         if (!this.hasDownloads()){
             return false;
@@ -261,7 +255,7 @@ public final class Library {
         return true;
     }
     public boolean isNative(){return (this.natives.size() > 0);}
-    public String getNativeTag(){
+    private String getNativeTag(){
         if (this.natives.containsKey(Utils.getPlatform())){
             return this.natives.get(Utils.getPlatform());
         }

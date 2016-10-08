@@ -51,9 +51,11 @@ public class GameLauncher {
         if (nativesRoot.exists()){
             if (nativesRoot.isDirectory()){
                 File[] files = nativesRoot.listFiles();
-                for (File f : files){
-                    if (f.isDirectory() && f.getName().contains("natives")){
-                        Utils.deleteDirectory(f);
+                if (files != null){
+                    for (File f : files){
+                        if (f.isDirectory() && f.getName().contains("natives")){
+                            Utils.deleteDirectory(f);
+                        }
                     }
                 }
             }
@@ -65,7 +67,7 @@ public class GameLauncher {
         console.printInfo("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
         console.printInfo("Using natives dir: " + nativesDir);
         console.printInfo("Exctracting natives.");
-        List<String> gameArgs = new ArrayList();
+        List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()){
             gameArgs.add(p.getJavaDir().getAbsolutePath());
         } else {
@@ -93,7 +95,7 @@ public class GameLauncher {
         String separator = System.getProperty("path.separator");
         try {
             File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            libraries.append(launchPath.getAbsolutePath() + separator);
+            libraries.append(launchPath.getAbsolutePath()).append(separator);
         } catch (URISyntaxException ex) {
             console.printError("Failed to load GameStarter.");
         }
@@ -105,7 +107,7 @@ public class GameLauncher {
                         ZipFile zip = new ZipFile(completePath);
                         final Enumeration<? extends ZipEntry> entries = zip.entries();
                         while (entries.hasMoreElements()) {
-                            final ZipEntry entry = (ZipEntry)entries.nextElement();
+                            final ZipEntry entry = entries.nextElement();
                             if (entry.isDirectory()) {
                                 continue;
                             }
@@ -138,7 +140,7 @@ public class GameLauncher {
                     }
                 } else {
                     File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativePath());
-                    libraries.append(completePath.getAbsolutePath() + separator);
+                    libraries.append(completePath.getAbsolutePath()).append(separator);
                 }
             }
         }
@@ -278,7 +280,9 @@ public class GameLauncher {
                                 console.printInfo(lineRead);
                             }
                         }
-                    } catch (Exception ex){}
+                    } catch (Exception ignored){
+                        console.printError("Failed to read game error stream.");
+                    }
                 }
             };
             log_error.start();
@@ -300,5 +304,5 @@ public class GameLauncher {
         return current;
     }
     public InputStream getInputStream(){return this.process.getInputStream();}
-    public InputStream getErrorStream(){return this.process.getErrorStream();}
+    private InputStream getErrorStream(){return this.process.getErrorStream();}
 }

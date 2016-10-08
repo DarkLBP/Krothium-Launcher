@@ -21,42 +21,53 @@ public class Console {
     private FileOutputStream data;
     private GZIPOutputStream cdata;
     private Date date;
-    private final Kernel kernel;
     private File log;
     public Console(Kernel instance){
-        this.kernel = instance;
+        final Kernel kernel = instance;
         this.cdata = null;
         this.data = null;
-        try{
-            File logFolder = new File(this.kernel.getWorkingDir() + File.separator + "logs");
-            if (logFolder.exists() && logFolder.isDirectory()){
-                File[] logFiles = logFolder.listFiles();
+        File logFolder = new File(kernel.getWorkingDir() + File.separator + "logs");
+        if (logFolder.exists() && logFolder.isDirectory()){
+            File[] logFiles = logFolder.listFiles();
+            if (logFiles != null && logFiles.length > 0){
                 Arrays.sort(logFiles);
                 int count = 0;
                 for (File f : logFiles){
-                    if (f.isFile() && f.getName().startsWith("weblauncher-unclosed")){
-                        f.delete();
-                    } else if (f.isFile() && f.getName().startsWith("weblauncher")) {
-                        count++;
+                    if (f.isFile()){
+                        String name = f.getName();
+                        if (name.startsWith("weblauncher-unclosed")){
+                            if (f.delete()){
+                                this.printInfo("Successfully deleted unclosed log file: " + name);
+                            } else {
+                                this.printError("Failed to delete unclosed log file: " + name);
+                            }
+                        } else if (name.startsWith("weblauncher")){
+                            count++;
+                        }
                     }
                 }
                 if (count > Constants.KEEP_OLD_LOGS){
                     int toDelete = count - Constants.KEEP_OLD_LOGS;
                     for (int i = 0; i < toDelete; i++){
                         for (File f : logFiles){
-                            if (f.isFile() && f.getName().startsWith("weblauncher") && !f.getName().contains("-unclosed-")){
-                                f.delete();
-                                break;
+                            if (f.isFile()){
+                                String name = f.getName();
+                                if (name.startsWith("weblauncher") && name.contains("-unclosed-")){
+                                    if (f.delete()){
+                                        this.printInfo("Successfully deleted old log file: " + name);
+                                    } else {
+                                        this.printError("Failed to delete old log file: " + name);
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
-        } catch (Exception ex){
-            //
         }
         try {
-            log = new File(this.kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
+            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + String.valueOf(System.nanoTime()) + ".log.gz");
             if (!log.getParentFile().exists()){
                 log.getParentFile().mkdirs();
             }
@@ -82,9 +93,11 @@ public class Console {
             try {
                 byte[] raw = (inf.toString() + System.lineSeparator()).getBytes();
                 cdata.write(raw);
-            } catch (IOException ex) {}
+            } catch (IOException ignored){
+                System.out.println("Failed to write log data.");
+                this.enabled = false;
+            }
             System.out.println(inf);
-            System.out.flush();
         }
     }
     public void printError(Object error){
@@ -94,28 +107,28 @@ public class Console {
             try {
                 byte[] raw = (err.toString() + System.lineSeparator()).getBytes();
                 cdata.write(raw);
-            } catch (IOException ex) {}
+            } catch (IOException ignored) {
+                System.out.println("Failed to write log data.");
+                this.enabled = false;
+            }
             System.err.println(err);
-            System.err.flush();
         }
     }
     public boolean close(){
         if (this.enabled){
             try{
                 this.cdata.close();
-                this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
-                return true;
+                return this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
             } catch (Exception ex){
                 return false;
             }
         } else {
             try{
                 this.cdata.close();
-                this.log.delete();
+                return this.log.delete();
             } catch (Exception ex){
-                //
+                return false;
             }
-            return true;
         }
     }
 }
