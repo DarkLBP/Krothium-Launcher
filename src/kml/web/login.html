@@ -27,7 +27,7 @@
             <div class="white-box">
               <div class="boxInputs">
                 <label style="font-size: 20px">{%s}</label><br>
-                <input id="username" style="font-size: 18px" class="boxInput" type="text" name="username"/>
+                <input onkeypress="if (event.keyCode === 13) {authenticate();}" id="username" style="font-size: 18px" class="boxInput" type="text" name="username"/>
                 <br>
                 <label style="font-size: 20px">{%s}</label><br>
                 <input onkeypress="if (event.keyCode === 13) {authenticate();}" id="password" style="font-size: 18px" class="boxInput" type="password" name="password"/>

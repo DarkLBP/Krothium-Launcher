@@ -77,8 +77,7 @@ public class StubLauncher {
                     } catch (URISyntaxException ex) {
                         System.out.println("Failed to load StubStarter.");
                     }
-                    libraries.append(usingFile.getAbsolutePath());
-                    libraries.append("\"");
+                    libraries.append(usingFile.getAbsolutePath() + "\"");
                     serverArgs.add(libraries.toString());
                     serverArgs.add("kml.StubStarter");
                     serverArgs.add(atrb.getValue(Attributes.Name.MAIN_CLASS));
