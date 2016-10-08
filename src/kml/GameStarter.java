@@ -28,6 +28,9 @@ public class GameStarter {
         if (!Constants.USE_LOCAL){
             URL.setURLStreamHandlerFactory(new URLHandler());
         }
+        if (args.length == 0){
+            System.exit(-1);
+        }
         String mainClass = args[0];
         String[] gameArgs = new String[args.length - 1];
         System.arraycopy(args, 1, gameArgs, 0, args.length - 1);
