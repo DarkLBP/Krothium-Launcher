@@ -69,7 +69,6 @@ public class StubLauncher {
                     serverArgs.add(Utils.getJavaDir());
                     serverArgs.add("-cp");
                     StringBuilder libraries = new StringBuilder();
-                    libraries.append("\"");
                     String separator = System.getProperty("path.separator");
                     try {
                         File launchPath = new File(StubLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
@@ -77,7 +76,7 @@ public class StubLauncher {
                     } catch (URISyntaxException ex) {
                         System.out.println("Failed to load StubStarter.");
                     }
-                    libraries.append(usingFile.getAbsolutePath() + "\"");
+                    libraries.append(usingFile.getAbsolutePath());
                     serverArgs.add(libraries.toString());
                     serverArgs.add("kml.StubStarter");
                     serverArgs.add(atrb.getValue(Attributes.Name.MAIN_CLASS));
