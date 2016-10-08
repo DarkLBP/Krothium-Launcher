@@ -1,6 +1,5 @@
 package kml;
 
-import com.google.common.base.Charsets;
 import kml.enums.OS;
 import kml.enums.OSArch;
 
@@ -9,6 +8,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
 
@@ -250,7 +250,7 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = new String(Base64.getDecoder().decode(st), Charsets.UTF_8);
+            conversion = new String(Base64.getDecoder().decode(st), StandardCharsets.UTF_8);
         } catch (Exception ex) {
             conversion = null;
         }

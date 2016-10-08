@@ -1,6 +1,6 @@
 package kml.objects;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @website https://krothium.com
@@ -15,5 +15,5 @@ public class RequestBody {
         body = data;
     }
     public byte[] getBytes(){return this.body;}
-    public String getString(){return new String(body, Charsets.UTF_8);}
+    public String getString(){return new String(body, StandardCharsets.UTF_8);}
 }

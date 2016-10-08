@@ -1,7 +1,5 @@
 package kml.objects;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -10,7 +8,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import kml.Constants;
 import kml.Utils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
