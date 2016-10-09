@@ -17,7 +17,7 @@ public class WebBrowser extends Application {
     public void start(Stage stage) {
         stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         Browser browser = new Browser();
-        Scene scene = new Scene(browser, 1120, 880, Color.web("#666970"));
+        Scene scene = new Scene(browser, 1100, 750, Color.web("#666970"));
         stage.getIcons().add(new Image(WebBrowser.class.getResourceAsStream("/icon.png")));
         stage.setScene(scene);
         stage.show();
