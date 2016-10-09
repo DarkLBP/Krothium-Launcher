@@ -131,6 +131,7 @@ public final class Kernel {
         return new File(this.workingDir + File.separator + "krothium.ini");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
     public void exitSafely(){
+        this.console.printInfo("Shutting down launcher...");
         try {
             properties.setProperty("lang", Constants.LANG_CODE);
             properties.setProperty("style", Constants.STYLE_ID);
