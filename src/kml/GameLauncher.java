@@ -147,46 +147,51 @@ public class GameLauncher {
         console.printInfo("Preparing game args.");
         File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
-        String assetsID = ver.getAssets();
+        String assetsID = null;
         File assetsDir;
         File assetsRoot = new File(workingDir + File.separator + "assets");
-        if (assetsID.equals("legacy")){
-            assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
-            if (!assetsDir.exists() || !assetsDir.isDirectory()){
-                assetsDir.mkdirs();
-            }
-            console.printInfo("Building virtual asset folder.");
-            File indexJSON = new File(assetsRoot + File.separator + "indexes" + File.separator + assetsID + ".json");
-            try {
-                JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-                JSONObject objects = o.getJSONObject("objects");
-                Set s = objects.keySet();
-                Iterator it = s.iterator();
-                while (it.hasNext()){
-                    String name = it.next().toString();
-                    File assetFile = new File(assetsDir + File.separator + name);
-                    JSONObject asset = objects.getJSONObject(name);
-                    long size = asset.getLong("size");
-                    String sha = asset.getString("hash");
-                    boolean valid = false;
-                    if (assetFile.exists()){
-                        if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)){
-                            valid = true;
-                        }
-                    }
-                    if (!valid){
-                        File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0,2) + File.separator + sha);
-                        if (assetFile.getParentFile() != null){
-                            assetFile.getParentFile().mkdirs();
-                        }
-                        Files.copy(objectFile.toPath(), assetFile.toPath());
-                    }
+        if (ver.hasAssets()){
+            assetsID = ver.getAssets();
+            if (assetsID.equals("legacy")){
+                assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
+                if (!assetsDir.exists() || !assetsDir.isDirectory()){
+                    assetsDir.mkdirs();
                 }
-            } catch (Exception ex) {
-                console.printError("Failed to create virtual asset folder.");
+                console.printInfo("Building virtual asset folder.");
+                File indexJSON = new File(assetsRoot + File.separator + "indexes" + File.separator + assetsID + ".json");
+                try {
+                    JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
+                    JSONObject objects = o.getJSONObject("objects");
+                    Set s = objects.keySet();
+                    Iterator it = s.iterator();
+                    while (it.hasNext()){
+                        String name = it.next().toString();
+                        File assetFile = new File(assetsDir + File.separator + name);
+                        JSONObject asset = objects.getJSONObject(name);
+                        long size = asset.getLong("size");
+                        String sha = asset.getString("hash");
+                        boolean valid = false;
+                        if (assetFile.exists()){
+                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)){
+                                valid = true;
+                            }
+                        }
+                        if (!valid){
+                            File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0,2) + File.separator + sha);
+                            if (assetFile.getParentFile() != null){
+                                assetFile.getParentFile().mkdirs();
+                            }
+                            Files.copy(objectFile.toPath(), assetFile.toPath());
+                        }
+                    }
+                } catch (Exception ex) {
+                    console.printError("Failed to create virtual asset folder.");
+                }
+            }else{
+                assetsDir = assetsRoot;
             }
-        }else{
-            assetsDir = assetsRoot;
+        } else {
+            assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
         }
         gameArgs.add(libraries.toString());
         gameArgs.add("kml.GameStarter");
@@ -211,7 +216,9 @@ public class GameLauncher {
         }
         versionArgs = versionArgs.replace("${assets_root}", "\"" + assetsDir.getAbsolutePath() + "\"");
         versionArgs = versionArgs.replace("${game_assets}", "\"" + assetsDir.getAbsolutePath() + "\"");
-        versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
+        if (ver.hasAssetIndex()){
+            versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
+        }
         versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
         versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
         versionArgs = versionArgs.replace("${version_type}", ver.getType().name());

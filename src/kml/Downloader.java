@@ -116,8 +116,7 @@ public class Downloader {
                 }
             }
         } else {
-            this.downloading = false;
-            throw new DownloaderException("Version " + v.getID() + " does not have AssetIndex.");
+            System.out.println("Version " + v.getID() + " does not have AssetIndex.");
         }
         console.printInfo("Fetching version urls..");
         Downloadable d = v.getClientDownload();

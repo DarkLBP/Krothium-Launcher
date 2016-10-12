@@ -227,7 +227,7 @@ public final class Version {
     private boolean hasLibraries(){return (this.libraries.size() > 0);}
     public List<Library> getLibraries(){return this.libraries;}
     public boolean hasAssetIndex(){return (this.assetIndex != null);}
-    private boolean hasAssets(){return (this.assets != null);}
+    public boolean hasAssets(){return (this.assets != null);}
     public String getAssets(){return this.assets;}
     public AssetIndex getAssetIndex(){return this.assetIndex;}
     private boolean hasDownloads(){return (this.downloads.size() > 0);}
