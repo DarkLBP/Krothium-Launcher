@@ -150,28 +150,8 @@ public final class Library {
                 if (this.hasURL()){
                     try {
                         URL url = new URL(this.url + Utils.getArtifactPath(this.name, "jar"));
-                        String urlRaw = url.toString();
-                        int responseCode = -1;
-                        int contentLength = -1;
-                        if (urlRaw.startsWith("https")){
-                            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                            con.setConnectTimeout(2500);
-                            con.connect();
-                            responseCode = con.getResponseCode();
-                            contentLength = con.getContentLength();
-                        }else if (urlRaw.startsWith("http")){
-                            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-                            con.setConnectTimeout(2500);
-                            con.connect();
-                            responseCode = con.getResponseCode();
-                            contentLength = con.getContentLength();
-                        }else{
-                            console.printError("Unsupported protocol type in " + urlRaw);
-                        }
-                        if (responseCode == 200){
-                            Downloadable d = new Downloadable(url, contentLength, this.relativePath, null);
-                            this.downloads.put("artifact", d);
-                        }
+                        Downloadable d = new Downloadable(url, -1, this.relativePath, null);
+                        this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                        console.printError("Invalid " + this.name + " url.");
                     } catch (IOException ex) {
@@ -180,14 +160,8 @@ public final class Library {
                 } else {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
-                        HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                        con.connect();
-                        int responseCode = con.getResponseCode();
-                        int contentLength = con.getContentLength();
-                        if (responseCode == 200){
-                            Downloadable d = new Downloadable(url, contentLength, this.relativePath, null);
-                            this.downloads.put("artifact", d);
-                        }
+                        Downloadable d = new Downloadable(url, -1, this.relativePath, null);
+                        this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
                     } catch (IOException ex) {

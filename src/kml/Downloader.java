@@ -176,11 +176,15 @@ public class Downloader {
                     boolean valid = false;
                     if (completePath.exists()){
                         if (completePath.isFile()){
-                            if (completePath.length() == a.getSize()){
+                            if (a.hasSize()){
+                                if (completePath.length() == a.getSize()){
+                                    valid = true;
+                                }
+                                if (a.hasHash()){
+                                    valid = Utils.verifyChecksum(completePath, a.getHash());
+                                }
+                            } else {
                                 valid = true;
-                            }
-                            if (a.hasHash() && valid){
-                                valid = Utils.verifyChecksum(completePath, a.getHash());
                             }
                         }
                     }

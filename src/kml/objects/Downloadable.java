@@ -25,4 +25,5 @@ public class Downloadable {
     public File getRelativePath(){return this.relPath;}
     public String getHash(){return this.hash;}
     public boolean hasHash(){return (this.hash != null);}
+    public boolean hasSize(){return (this.size != -1);}
 }
