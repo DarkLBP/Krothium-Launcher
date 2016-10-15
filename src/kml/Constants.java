@@ -9,8 +9,8 @@ import java.util.Random;
  */
 
 public class Constants {
-    public static final int KERNEL_BUILD = 21;
-    public static final String KERNEL_BUILD_NAME = "1.4.1";
+    public static final int KERNEL_BUILD = 22;
+    public static final String KERNEL_BUILD_NAME = "1.4.2";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
     public static final URL VALIDATE_URL = Utils.stringToURL("https://mc.krothium.com/validate");
