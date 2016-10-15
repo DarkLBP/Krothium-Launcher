@@ -25,17 +25,6 @@ public class Console {
     private File log;
     public Console(Kernel instance){
         final Kernel kernel = instance;
-        try {
-            Calendar c = Calendar.getInstance();
-            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
-            if (!log.getParentFile().exists()){
-                log.getParentFile().mkdirs();
-            }
-            this.data = new FileOutputStream(log);
-            this.cdata = new GZIPOutputStream(data);
-        } catch (IOException ex) {
-            this.enabled = false;
-        }
         File logFolder = new File(kernel.getWorkingDir() + File.separator + "logs");
         if (logFolder.exists() && logFolder.isDirectory()){
             File[] logFiles = logFolder.listFiles();
@@ -47,9 +36,9 @@ public class Console {
                         String name = f.getName();
                         if (name.startsWith("weblauncher-unclosed")){
                             if (f.delete()){
-                                this.printInfo("Successfully deleted unclosed log file: " + name);
+                                System.out.println("Successfully deleted unclosed log file: " + name);
                             } else {
-                                this.printError("Failed to delete unclosed log file: " + name);
+                                System.out.println("Failed to delete unclosed log file: " + name);
                             }
                         } else if (name.startsWith("weblauncher")){
                             count++;
@@ -64,9 +53,9 @@ public class Console {
                                 String name = f.getName();
                                 if (name.startsWith("weblauncher") && !name.contains("-unclosed-")){
                                     if (f.delete()){
-                                        this.printInfo("Successfully deleted old log file: " + name);
+                                        System.out.println("Successfully deleted old log file: " + name);
                                     } else {
-                                        this.printError("Failed to delete old log file: " + name);
+                                        System.out.println("Failed to delete old log file: " + name);
                                     }
                                     break;
                                 }
@@ -75,6 +64,17 @@ public class Console {
                     }
                 }
             }
+        }
+        try {
+            Calendar c = Calendar.getInstance();
+            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
+            if (!log.getParentFile().exists()){
+                log.getParentFile().mkdirs();
+            }
+            this.data = new FileOutputStream(log);
+            this.cdata = new GZIPOutputStream(data);
+        } catch (IOException ex) {
+            this.enabled = false;
         }
     }
     public boolean isEnabled(){return this.enabled;}
