@@ -66,7 +66,7 @@ public class GameLauncher {
         }
         console.printInfo("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
         console.printInfo("Using natives dir: " + nativesDir);
-        console.printInfo("Exctracting natives.");
+        console.printInfo("Extracting natives.");
         List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()){
             gameArgs.add(p.getJavaDir().getAbsolutePath());
@@ -199,44 +199,73 @@ public class GameLauncher {
         console.printInfo("Full game launcher parameters: ");
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
-        String versionArgs = ver.getMinecraftArguments();
-        versionArgs = versionArgs.replace("${auth_player_name}", u.getDisplayName());
-        versionArgs = versionArgs.replace("${version_name}", ver.getID());
-        if (p.hasGameDir()){
-            File gameDir = p.getGameDir();
-            if (!gameDir.exists() || !gameDir.isDirectory()){
-                gameDir.mkdirs();
+        String[] versionArgs = ver.getMinecraftArguments().split(" ");
+        for (int i = 0; i < versionArgs.length; i++){
+            if (versionArgs[i].startsWith("$")){
+                switch (versionArgs[i]){
+                    case "${auth_player_name}":
+                        versionArgs[i] = versionArgs[i].replace("${auth_player_name}", u.getDisplayName());
+                        break;
+                    case "${version_name}":
+                        versionArgs[i] = versionArgs[i].replace("${version_name}", ver.getID());
+                        break;
+                    case "${game_directory}":
+                        if (p.hasGameDir()){
+                            File gameDir = p.getGameDir();
+                            if (!gameDir.exists() || !gameDir.isDirectory()){
+                                gameDir.mkdirs();
+                            }
+                            versionArgs[i] = versionArgs[i].replace("${game_directory}", gameDir.getAbsolutePath());
+                        }else{
+                            versionArgs[i] = versionArgs[i].replace("${game_directory}", workingDir.getAbsolutePath());
+                        }
+                        break;
+                    case "${assets_root}":
+                        versionArgs[i] = versionArgs[i].replace("${assets_root}", assetsDir.getAbsolutePath());
+                        break;
+                    case "${game_assets}":
+                        versionArgs[i] = versionArgs[i].replace("${game_assets}", assetsDir.getAbsolutePath());
+                        break;
+                    case "${assets_index_name}":
+                        if (ver.hasAssetIndex()){
+                            versionArgs[i] = versionArgs[i].replace("${assets_index_name}", assetsID);
+                        }
+                        break;
+                    case "${auth_uuid}":
+                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
+                        break;
+                    case "${auth_access_token}":
+                        versionArgs[i] = versionArgs[i].replace("${auth_access_token}", u.getAccessToken());
+                        break;
+                    case "${version_type}":
+                        versionArgs[i] = versionArgs[i].replace("${version_type}", ver.getType().name());
+                        break;
+                    case "${user_properties}":
+                        if (u.hasProperties()){
+                            Map<String, String> properties = u.getProperties();
+                            Set set = properties.keySet();
+                            Iterator it = set.iterator();
+                            JSONObject props = new JSONObject();
+                            while (it.hasNext()){
+                                String name = it.next().toString();
+                                String value = properties.get(name);
+                                props.put(name, value);
+                            }
+                            versionArgs[i] = versionArgs[i].replace("${user_properties}", props.toString());
+                        }else{
+                            versionArgs[i] = versionArgs[i].replace("${user_properties}", "{}");
+                        }
+                        break;
+                    case "${user_type}":
+                        versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");
+                        break;
+                    case "${auth_session}":
+                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
+                        break;
+                }
             }
-            versionArgs = versionArgs.replace("${game_directory}", "\"" + gameDir.getAbsolutePath() + "\"");
-        }else{
-            versionArgs = versionArgs.replace("${game_directory}", "\"" + workingDir.getAbsolutePath() + "\"");
         }
-        versionArgs = versionArgs.replace("${assets_root}", "\"" + assetsDir.getAbsolutePath() + "\"");
-        versionArgs = versionArgs.replace("${game_assets}", "\"" + assetsDir.getAbsolutePath() + "\"");
-        if (ver.hasAssetIndex()){
-            versionArgs = versionArgs.replace("${assets_index_name}", assetsID);
-        }
-        versionArgs = versionArgs.replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
-        versionArgs = versionArgs.replace("${auth_access_token}", u.getAccessToken());
-        versionArgs = versionArgs.replace("${version_type}", ver.getType().name());
-        if (u.hasProperties()){
-            Map<String, String> properties = u.getProperties();
-            Set set = properties.keySet();
-            Iterator it = set.iterator();
-            JSONObject props = new JSONObject();
-            while (it.hasNext()){
-                String name = it.next().toString();
-                String value = properties.get(name);
-                props.put(name, value);
-            }
-            versionArgs = versionArgs.replace("${user_properties}", props.toString());
-        }else{
-            versionArgs = versionArgs.replace("${user_properties}", "{}");
-        }
-        versionArgs = versionArgs.replace("${user_type}", "mojang");
-        versionArgs = versionArgs.replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
-        String[] argsSplit = versionArgs.split(" ");
-        Collections.addAll(gameArgs, argsSplit);
+        Collections.addAll(gameArgs, versionArgs);
         if (p.hasResolution()){
             gameArgs.add("--width");
             gameArgs.add(String.valueOf(p.getResolutionWidth()));
