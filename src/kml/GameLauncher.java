@@ -197,9 +197,6 @@ public class GameLauncher {
         gameArgs.add("kml.GameStarter");
         gameArgs.add(ver.getMainClass());
         console.printInfo("Full game launcher parameters: ");
-        for (String arg : gameArgs){
-            console.printInfo(arg);
-        }
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         String versionArgs = ver.getMinecraftArguments();
@@ -246,6 +243,7 @@ public class GameLauncher {
             gameArgs.add("--height");
             gameArgs.add(String.valueOf(p.getResolutionHeight()));
         }
+        gameArgs.forEach(console::printInfo);
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
         try{
