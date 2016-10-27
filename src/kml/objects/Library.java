@@ -154,8 +154,6 @@ public final class Library {
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                        console.printError("Invalid " + this.name + " url.");
-                    } catch (IOException ex) {
-                        console.printError("Failed to establish connection in library " + this.name);
                     }
                 } else {
                     try {
@@ -164,8 +162,6 @@ public final class Library {
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
-                    } catch (IOException ex) {
-                        console.printError("Failed to establish connection in library " + this.name);
                     }
                 }
                 if (this.isNative()){
