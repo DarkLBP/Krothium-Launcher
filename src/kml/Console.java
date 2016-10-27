@@ -67,7 +67,7 @@ public class Console {
         }
         try {
             Calendar c = Calendar.getInstance();
-            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
+            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH + 1) + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
             if (!log.getParentFile().exists()){
                 log.getParentFile().mkdirs();
             }
