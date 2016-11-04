@@ -1,9 +1,9 @@
 package kml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import kml.gui.Login;
+
+import java.awt.*;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -11,7 +11,11 @@ import java.util.Properties;
  * @author DarkLBP
  */
 class Starter {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException, FontFormatException {
+        Font font = Font.createFont(Font.TRUETYPE_FONT, Starter.class.getResourceAsStream("/kml/gui/fonts/Minecraftia-Regular.ttf"));
+        GraphicsEnvironment ge =
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
+        ge.registerFont(font);
         if (args.length == 0){
             if (existsResource()){
                 bootFromResource(args);
