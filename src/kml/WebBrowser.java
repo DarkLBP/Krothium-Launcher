@@ -35,7 +35,7 @@ public class WebBrowser extends Application {
             }
         }
         scene = new Scene(new Browser(), w, h, Color.web("#666970"));
-        stage.getIcons().add(new Image(WebBrowser.class.getResourceAsStream("/icon.png")));
+        stage.getIcons().add(new Image(WebBrowser.class.getResourceAsStream("/kml/gui/textures/icon.png")));
         stage.setScene(scene);
         stage.show();
     }

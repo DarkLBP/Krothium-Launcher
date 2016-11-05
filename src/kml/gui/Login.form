@@ -3,9 +3,12 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="20" left="20" bottom="20" right="20"/>
     <constraints>
-      <xy x="170" y="80" width="574" height="428"/>
+      <xy x="170" y="80" width="742" height="428"/>
     </constraints>
-    <properties/>
+    <properties>
+      <opaque value="false"/>
+      <requestFocusEnabled value="true"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="e52c4" class="javax.swing.JLabel">
@@ -22,67 +25,87 @@
           <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia"/>
+          <font name="Minecraftia" size="15" style="1"/>
+          <foreground color="-1"/>
           <text value="Krothium Username or Email:"/>
         </properties>
       </component>
       <component id="5291c" class="javax.swing.JTextField" binding="username">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <font name="Minecraftia" size="14"/>
+          <foreground color="-16776283"/>
+        </properties>
       </component>
       <component id="2d475" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia"/>
+          <font name="Minecraftia" size="15" style="1"/>
+          <foreground color="-1"/>
           <text value="Password:"/>
         </properties>
       </component>
       <component id="7b25b" class="javax.swing.JPasswordField" binding="password">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
-      </component>
-      <component id="b6c3e" class="javax.swing.JButton" binding="login">
-        <constraints>
-          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="200" height="-1"/>
-          </grid>
-        </constraints>
         <properties>
-          <text value="LOGIN"/>
-        </properties>
-      </component>
-      <component id="fa95f" class="javax.swing.JButton" binding="register">
-        <constraints>
-          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="REGISTER"/>
+          <font name="Minecraftia" size="14"/>
+          <foreground color="-16776283"/>
         </properties>
       </component>
       <hspacer id="7edd4">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="25"/>
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="30"/>
           </grid>
         </constraints>
       </hspacer>
       <hspacer id="ed68f">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="25"/>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="10"/>
           </grid>
         </constraints>
       </hspacer>
+      <component id="fa95f" class="javax.swing.JButton" binding="register">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="240" height="40"/>
+            <preferred-size width="240" height="40"/>
+            <maximum-size width="240" height="40"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16" style="1"/>
+          <foreground color="-1"/>
+          <horizontalTextPosition value="0"/>
+          <text value="REGISTER"/>
+        </properties>
+      </component>
+      <component id="b6c3e" class="javax.swing.JButton" binding="login">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="240" height="40"/>
+            <preferred-size width="240" height="40"/>
+            <maximum-size width="240" height="40"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16" style="1"/>
+          <foreground color="-1"/>
+          <horizontalTextPosition value="0"/>
+          <text value="LOGIN"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
