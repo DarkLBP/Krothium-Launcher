@@ -176,14 +176,21 @@ public class Profiles {
                     }
                 }
                 if (this.profileCount() > 0){
-                    String selProfile = root.getString("selectedProfile");
-                    if (this.profiles.containsKey(selProfile)){
-                        console.printInfo("Profile " + selProfile + " marked as selected.");
-                        if (!this.setSelectedProfile(selProfile)){
-                            this.createDefaultProfile();
+                    if (root.has("selectedProfile")){
+                        String selProfile = root.getString("selectedProfile");
+                        if (this.profiles.containsKey(selProfile)){
+                            console.printInfo("Profile " + selProfile + " marked as selected.");
+                            if (!this.setSelectedProfile(selProfile)){
+                                this.createDefaultProfile();
+                            }
+                        }else{
+                            console.printError("Invalid profile selected! Using first loaded (" + first + ")");
+                            if (this.setSelectedProfile(first)){
+                                this.createDefaultProfile();
+                            }
                         }
-                    }else{
-                        console.printError("Invalid profile selected! Using first loaded (" + first + ")");
+                    } else {
+                        console.printInfo("No profile is selected! Using first loaded (" + first + ")");
                         if (this.setSelectedProfile(first)){
                             this.createDefaultProfile();
                         }
