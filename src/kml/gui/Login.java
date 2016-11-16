@@ -42,8 +42,8 @@ public class Login extends JFrame{
         this.background.setLayout(new GridLayout());
         this.background.add(this.mainPanel);
         setContentPane(this.background);
-        setLocationRelativeTo(null);
         setMinimumSize(new Dimension(550, 400));
+        setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
