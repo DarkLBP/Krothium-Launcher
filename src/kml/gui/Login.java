@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 public class Login extends JFrame{
 
     private JPanel background = new JPanel(){
-        private Image image = new ImageIcon(Login.class.getResource("/kml/gui/textures/background.png")).getImage();
+        private Image image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
         @Override
         public void paintComponent(Graphics g){
             int height = image.getHeight(null);
@@ -53,56 +53,48 @@ public class Login extends JFrame{
             @Override
             public void mouseEntered(MouseEvent e) {
                 login.setIcon(button_hover);
-                login.setForeground(Color.YELLOW);
             }
         });
         login.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 login.setIcon(button_normal);
-                login.setForeground(Color.WHITE);
             }
         });
         login.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 login.setIcon(button_hover);
-                login.setForeground(Color.YELLOW);
             }
         });
         login.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 login.setIcon(button_normal);
-                login.setForeground(Color.WHITE);
             }
         });
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 register.setIcon(button_hover);
-                register.setForeground(Color.YELLOW);
             }
         });
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 register.setIcon(button_normal);
-                register.setForeground(Color.WHITE);
             }
         });
         register.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 register.setIcon(button_hover);
-                register.setForeground(Color.YELLOW);
             }
         });
         register.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 register.setIcon(button_normal);
-                register.setForeground(Color.WHITE);
             }
         });
     }
