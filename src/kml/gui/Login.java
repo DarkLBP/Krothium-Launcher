@@ -106,10 +106,4 @@ public class Login extends JFrame{
             }
         });
     }
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        Login l = new Login();
-        l.setVisible(true);
-    }
-
 }

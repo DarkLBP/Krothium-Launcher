@@ -1,7 +1,11 @@
 package kml;
 
+import kml.exceptions.AuthenticationException;
 import kml.gui.Login;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.Properties;
@@ -11,16 +15,46 @@ import java.util.Properties;
  * @author DarkLBP
  */
 class Starter {
-    public static void main(String[] args) throws IOException, FontFormatException {
+    public static void main(String[] args) throws IOException, FontFormatException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         Font font = Font.createFont(Font.TRUETYPE_FONT, Starter.class.getResourceAsStream("/kml/gui/fonts/Minecraftia-Regular.ttf"));
-        GraphicsEnvironment ge =
-                GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(font);
         if (args.length == 0){
             if (existsResource()){
                 bootFromResource(args);
             } else {
-                WebLauncher.load();
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                Kernel kernel = new Kernel();
+                Console console = kernel.getConsole();
+                console.includeTimestamps(true);
+                try {
+                    HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
+                    int responseCode = con.getResponseCode();
+                    Constants.USE_HTTPS = (responseCode == 204);
+                } catch (SSLHandshakeException ex) {
+                    Constants.USE_HTTPS = false;
+                } catch (IOException ex){
+                    Constants.USE_LOCAL = true;
+                }
+                console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
+                kernel.loadVersions();
+                kernel.loadProfiles();
+                kernel.loadUsers();
+                Authentication a = kernel.getAuthentication();
+                if (a.hasSelectedUser()){
+                    try{
+                        a.refresh();
+                    }catch(AuthenticationException ex){
+                        console.printError(ex.getMessage());
+                    }
+                    kernel.saveProfiles();
+                }
+                if (!kernel.isAuthenticated()){
+                    Login l = new Login();
+                    l.setVisible(true);
+                } else {
+                    //TO BE IMPLEMENTED
+                }
             }
         } else if (args.length >= 1){
             String[] stubArgs = new String[args.length - 1];
