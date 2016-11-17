@@ -1,6 +1,7 @@
 package kml.gui;
 
 import kml.Constants;
+import kml.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 /**
  * @website https://krothium.com
@@ -17,9 +19,9 @@ import java.awt.event.MouseEvent;
 public class Login extends JFrame{
 
     private JPanel background = new JPanel(){
-        private Image image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
         @Override
         public void paintComponent(Graphics g){
+            super.paintComponent(g);
             int height = image.getHeight(null);
             int width = image.getWidth(null);
             for (int x = 0; x < getWidth(); x += width) {
@@ -34,15 +36,18 @@ public class Login extends JFrame{
     private JPasswordField password;
     private JButton login;
     private JButton register;
+    private JPanel usernamePanel;
+    private JPanel passwordPanel;
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+    private Image image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
 
     public Login() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.background.setLayout(new GridLayout());
         this.background.add(this.mainPanel);
         setContentPane(this.background);
-        setMinimumSize(new Dimension(550, 400));
+        setMinimumSize(new Dimension(550, 420));
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
@@ -95,6 +100,16 @@ public class Login extends JFrame{
             @Override
             public void focusLost(FocusEvent e) {
                 register.setIcon(button_normal);
+            }
+        });
+        register.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Utils.openWebsite("https://krothium.com/register");
+                } catch (IOException e1) {
+                    //
+                }
             }
         });
     }
