@@ -18,41 +18,31 @@ import java.io.IOException;
 
 public class Login extends JFrame{
 
-    private JPanel background = new JPanel(){
-        @Override
-        public void paintComponent(Graphics g){
-            super.paintComponent(g);
-            int height = image.getHeight(null);
-            int width = image.getWidth(null);
-            for (int x = 0; x < getWidth(); x += width) {
-                for (int y = 0; y < getHeight(); y += height) {
-                    g.drawImage( image, x, y, null, null );
-                }
-            }
-        }
-    };
     private JPanel mainPanel;
-    private JTextField username;
-    private JPasswordField password;
     private JButton login;
     private JButton register;
+    private BackgroundPanel background;
     private JPanel usernamePanel;
+    private JTextField username;
     private JPanel passwordPanel;
+    private JPasswordField password;
+    private JPanel content;
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-    private Image image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
+    private Image background_image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
 
     public Login() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.background.setLayout(new GridLayout());
-        this.background.add(this.mainPanel);
+        this.background.setImage(background_image);
         setContentPane(this.background);
         setMinimumSize(new Dimension(550, 420));
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
+        login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         login.setIcon(button_normal);
+        register.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         register.setIcon(button_normal);
         login.addMouseListener(new MouseAdapter() {
             @Override
@@ -64,6 +54,7 @@ public class Login extends JFrame{
             @Override
             public void mouseExited(MouseEvent e) {
                 login.setIcon(button_normal);
+                login.setForeground(Color.WHITE);
             }
         });
         login.addFocusListener(new FocusAdapter() {
@@ -78,6 +69,18 @@ public class Login extends JFrame{
                 login.setIcon(button_normal);
             }
         });
+        login.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                login.setForeground(Color.WHITE);
+            }
+        });
+        login.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                login.setForeground(Color.YELLOW);
+            }
+        });
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -87,6 +90,7 @@ public class Login extends JFrame{
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
+                register.setForeground(Color.WHITE);
                 register.setIcon(button_normal);
             }
         });
@@ -105,11 +109,18 @@ public class Login extends JFrame{
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    Utils.openWebsite("https://krothium.com/register");
-                } catch (IOException e1) {
-                    //
-                }
+            register.setForeground(Color.WHITE);
+            try {
+                Utils.openWebsite("https://krothium.com/register");
+            } catch (IOException e1) {
+                //
+            }
+            }
+        });
+        register.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                register.setForeground(Color.YELLOW);
             }
         });
     }
