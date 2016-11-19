@@ -51,7 +51,7 @@ class Starter {
                     kernel.saveProfiles();
                 }
                 if (!kernel.isAuthenticated()){
-                    Login l = new Login();
+                    Main l = new Main();
                     l.setVisible(true);
                 } else {
                     //TO BE IMPLEMENTED
