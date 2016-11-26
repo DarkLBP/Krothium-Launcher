@@ -137,7 +137,7 @@ public class Login extends JFrame{
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                kernel.saveProfiles();
+                kernel.exitSafely();
             }
         });
     }
