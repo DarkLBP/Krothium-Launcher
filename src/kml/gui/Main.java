@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Created by darkl on 18/11/2016.
@@ -24,7 +26,10 @@ public class Main extends JFrame{
     private JLabel selected;
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+    private final Kernel kernel;
+
     public Main(Kernel k){
+        this.kernel = k;
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -120,6 +125,12 @@ public class Main extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 setSelected(options);
                 options.setForeground(Color.WHITE);
+            }
+        });
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                kernel.saveProfiles();
             }
         });
     }
