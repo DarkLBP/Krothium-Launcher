@@ -8,10 +8,7 @@ import kml.exceptions.AuthenticationException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 
 /**
@@ -33,8 +30,10 @@ public class Login extends JFrame{
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private Image background_image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
+    private final Kernel kernel;
 
     public Login(Kernel k) {
+        this.kernel = k;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.background.setImage(background_image);
         setContentPane(this.background);
@@ -76,21 +75,7 @@ public class Login extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 login.setForeground(Color.WHITE);
-                Authentication a = k.getAuthentication();
-                try {
-                    a.authenticate(username.getText(), new String(password.getPassword()));
-                    if (a.isAuthenticated()){
-                        Main main = k.getMainForm();
-                        main.setVisible(true);
-                        setVisible(false);
-                    } else {
-                        JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
-                        clearFields();
-                    }
-                } catch (AuthenticationException e1) {
-                    JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
-                    clearFields();
-                }
+                authenticate();
             }
         });
         login.addMouseListener(new MouseAdapter() {
@@ -141,9 +126,30 @@ public class Login extends JFrame{
                 register.setForeground(Color.YELLOW);
             }
         });
+        password.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    authenticate();
+                }
+            }
+        });
     }
-    public void clearFields(){
-        username.setText("");
-        password.setText("");
+    public void authenticate(){
+        Authentication a = kernel.getAuthentication();
+        try {
+            a.authenticate(username.getText(), new String(password.getPassword()));
+            if (a.isAuthenticated()){
+                Main main = kernel.getMainForm();
+                main.setVisible(true);
+                setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
+                password.setText("");
+            }
+        } catch (AuthenticationException e1) {
+            JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+            password.setText("");
+        }
     }
 }
