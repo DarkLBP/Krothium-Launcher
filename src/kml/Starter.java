@@ -50,11 +50,13 @@ class Starter {
                     }
                     kernel.saveProfiles();
                 }
+
                 if (!kernel.isAuthenticated()){
-                    Main l = new Main();
-                    l.setVisible(true);
+                    Login login = kernel.getLoginForm();
+                    login.setVisible(true);
                 } else {
-                    //TO BE IMPLEMENTED
+                    Main main = kernel.getMainForm();
+                    main.setVisible(true);
                 }
             }
         } else if (args.length >= 1){

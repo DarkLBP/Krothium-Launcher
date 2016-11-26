@@ -3,6 +3,8 @@ package kml;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
+import kml.gui.Login;
+import kml.gui.Main;
 import kml.objects.Profile;
 import kml.objects.User;
 import kml.objects.Version;
@@ -28,6 +30,8 @@ public final class Kernel {
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
     private final Properties properties;
+    private final Login loginForm;
+    private final Main mainForm;
     public Kernel(){
         this(Utils.getWorkingDirectory());
     }
@@ -36,6 +40,8 @@ public final class Kernel {
         if (!this.workingDir.exists()){
             this.workingDir.mkdirs();
         }
+        this.loginForm = new Login(this);
+        this.mainForm = new Main(this);
         this.console = new Console(this);
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
@@ -166,4 +172,6 @@ public final class Kernel {
         }
         return false;
     }
+    public Login getLoginForm(){return this.loginForm;}
+    public Main getMainForm(){return this.mainForm;}
 }

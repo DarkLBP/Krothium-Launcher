@@ -1,6 +1,7 @@
 package kml.gui;
 
 import kml.Constants;
+import kml.Kernel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class Main extends JFrame{
     private JLabel selected;
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-    public Main(){
+    public Main(Kernel k){
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,7 +34,6 @@ public class Main extends JFrame{
         backgroundPanel1.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         backgroundPanel2.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         setContentPane(panel1);
-        setVisible(true);
         news.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

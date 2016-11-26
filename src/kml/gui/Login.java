@@ -1,7 +1,10 @@
 package kml.gui;
 
+import kml.Authentication;
 import kml.Constants;
+import kml.Kernel;
 import kml.Utils;
+import kml.exceptions.AuthenticationException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +34,7 @@ public class Login extends JFrame{
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private Image background_image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
 
-    public Login() {
+    public Login(Kernel k) {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.background.setImage(background_image);
         setContentPane(this.background);
@@ -73,6 +76,21 @@ public class Login extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 login.setForeground(Color.WHITE);
+                Authentication a = k.getAuthentication();
+                try {
+                    a.authenticate(username.getText(), new String(password.getPassword()));
+                    if (a.isAuthenticated()){
+                        Main main = k.getMainForm();
+                        main.setVisible(true);
+                        setVisible(false);
+                    } else {
+                        JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
+                        clearFields();
+                    }
+                } catch (AuthenticationException e1) {
+                    JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+                    clearFields();
+                }
             }
         });
         login.addMouseListener(new MouseAdapter() {
@@ -123,5 +141,9 @@ public class Login extends JFrame{
                 register.setForeground(Color.YELLOW);
             }
         });
+    }
+    public void clearFields(){
+        username.setText("");
+        password.setText("");
     }
 }
