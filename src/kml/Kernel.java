@@ -30,7 +30,6 @@ public final class Kernel {
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
     private final Properties properties;
-    private final Login loginForm;
     private final Main mainForm;
     public Kernel(){
         this(Utils.getWorkingDirectory());
@@ -40,7 +39,6 @@ public final class Kernel {
         if (!this.workingDir.exists()){
             this.workingDir.mkdirs();
         }
-        this.loginForm = new Login(this);
         this.mainForm = new Main(this);
         this.console = new Console(this);
         this.profiles = new Profiles(this);
@@ -62,16 +60,12 @@ public final class Kernel {
             properties.load(in);
             in.close();
             String lang = properties.getProperty("lang");
-            String style = properties.getProperty("style");
             if (lang != null){
                 if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
                     Constants.LANG_CODE = lang;
                 } else {
                     this.console.printInfo("Lang code is invalid using default.");
                 }
-            }
-            if (style != null){
-                Constants.STYLE_ID = style;
             }
         } catch (IOException ex){
             this.console.printInfo("Failed to load properties. Using defaults.");
@@ -141,7 +135,6 @@ public final class Kernel {
         this.console.printInfo("Shutting down launcher...");
         try {
             properties.setProperty("lang", Constants.LANG_CODE);
-            properties.setProperty("style", Constants.STYLE_ID);
             FileOutputStream out = new FileOutputStream(this.getPropertiesFile());
             properties.store(out, null);
             out.close();
@@ -173,6 +166,5 @@ public final class Kernel {
         }
         return false;
     }
-    public Login getLoginForm(){return this.loginForm;}
-    public Main getMainForm(){return this.mainForm;}
+    public Main getGUI(){return this.mainForm;}
 }

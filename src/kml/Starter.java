@@ -50,14 +50,8 @@ class Starter {
                     }
                     kernel.saveProfiles();
                 }
-
-                if (!kernel.isAuthenticated()){
-                    Login login = kernel.getLoginForm();
-                    login.setVisible(true);
-                } else {
-                    Main main = kernel.getMainForm();
-                    main.setVisible(true);
-                }
+                Main main = kernel.getGUI();
+                main.setVisible(true);
             }
         } else if (args.length >= 1){
             String[] stubArgs = new String[args.length - 1];

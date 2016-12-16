@@ -5,10 +5,7 @@ import kml.Kernel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 /**
  * Created by darkl on 18/11/2016.
@@ -16,9 +13,9 @@ import java.awt.event.WindowEvent;
 public class Main extends JFrame{
     private JPanel panel1;
     private JButton button1;
-    private BackgroundPanel backgroundPanel1;
-    private BackgroundPanel backgroundPanel2;
-    private BackgroundPanel test;
+    private BackgroundPanel footerPanel;
+    private BackgroundPanel headPanel;
+    private BackgroundPanel contentPanel;
     private JLabel news;
     private JLabel skins;
     private JLabel settings;
@@ -27,17 +24,21 @@ public class Main extends JFrame{
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private final Kernel kernel;
+    private final Login loginPanel;
+    private boolean componentsDisabled = false;
 
     public Main(Kernel k){
         this.kernel = k;
+        this.loginPanel = new Login(k);
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
-        test.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/background.png")).getImage());
-        backgroundPanel1.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
-        backgroundPanel2.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
+        contentPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/background.png")).getImage());
+        contentPanel.setLayout(new BorderLayout());
+        footerPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
+        headPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         setContentPane(panel1);
         news.addMouseListener(new MouseAdapter() {
             @Override
@@ -127,26 +128,45 @@ public class Main extends JFrame{
                 options.setForeground(Color.WHITE);
             }
         });
+
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 kernel.exitSafely();
             }
         });
+
     }
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
         setSelected(news);
+        if (!kernel.isAuthenticated()){
+            this.contentPanel.add(loginPanel.getPanel());
+            this.disableComponents();
+        }
     }
     private void setSelected(JLabel l){
-        if (selected == null ){
-            selected = l;
-            selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
-        } else if (l != selected) {
-            selected.setIcon(null);
-            selected = l;
-            selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+        if (!componentsDisabled){
+            if (selected == null ){
+                selected = l;
+                selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+            } else if (l != selected) {
+                selected.setIcon(null);
+                selected = l;
+                selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+            }
         }
+    }
+    private void disableComponents(){
+        this.news.setEnabled(false);
+        this.settings.setEnabled(false);
+        this.options.setEnabled(false);
+        this.skins.setEnabled(false);
+        componentsDisabled = true;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }

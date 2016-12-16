@@ -16,32 +16,22 @@ import java.io.IOException;
  * @author DarkLBP
  */
 
-public class Login extends JFrame{
+public class Login{
 
     private JPanel mainPanel;
     private JButton login;
     private JButton register;
-    private BackgroundPanel background;
-    private JPanel usernamePanel;
     private JTextField username;
-    private JPanel passwordPanel;
     private JPasswordField password;
     private JPanel content;
-    private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-    private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-    private Image background_image = new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage();
+    private final ImageIcon button_normal;
+    private final ImageIcon button_hover;
     private final Kernel kernel;
 
     public Login(Kernel k) {
         this.kernel = k;
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.background.setImage(background_image);
-        setContentPane(this.background);
-        setMinimumSize(new Dimension(550, 420));
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-        setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
+        button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+        button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         login.setIcon(button_normal);
         register.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -112,12 +102,12 @@ public class Login extends JFrame{
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-            register.setForeground(Color.WHITE);
-            try {
-                Utils.openWebsite("https://krothium.com/register");
-            } catch (IOException e1) {
-                //
-            }
+                register.setForeground(Color.WHITE);
+                try {
+                    Utils.openWebsite("https://krothium.com/register");
+                } catch (IOException e1) {
+                    //
+                }
             }
         });
         register.addMouseListener(new MouseAdapter() {
@@ -134,22 +124,13 @@ public class Login extends JFrame{
                 }
             }
         });
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                kernel.exitSafely();
-            }
-        });
+
     }
     public void authenticate(){
         Authentication a = kernel.getAuthentication();
         try {
             a.authenticate(username.getText(), new String(password.getPassword()));
-            if (a.isAuthenticated()){
-                Main main = kernel.getMainForm();
-                main.setVisible(true);
-                setVisible(false);
-            } else {
+            if (!a.isAuthenticated()){
                 JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
                 password.setText("");
             }
@@ -157,5 +138,13 @@ public class Login extends JFrame{
             JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
             password.setText("");
         }
+    }
+    public JPanel getPanel(){
+        return this.mainPanel;
+    }
+
+    private void createUIComponents() {
+
+        // TODO: place custom component creation code here
     }
 }
