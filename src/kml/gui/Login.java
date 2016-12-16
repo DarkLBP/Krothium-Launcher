@@ -133,6 +133,8 @@ public class Login{
             if (!a.isAuthenticated()){
                 JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
                 password.setText("");
+            } else {
+                kernel.getGUI().setDisable(false);
             }
         } catch (AuthenticationException e1) {
             JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);

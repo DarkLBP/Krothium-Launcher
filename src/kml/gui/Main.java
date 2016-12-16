@@ -2,6 +2,7 @@ package kml.gui;
 
 import kml.Constants;
 import kml.Kernel;
+import kml.objects.Browser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,11 +26,13 @@ public class Main extends JFrame{
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private final Kernel kernel;
     private final Login loginPanel;
+    private final Browser browser;
     private boolean componentsDisabled = false;
 
     public Main(Kernel k){
         this.kernel = k;
         this.loginPanel = new Login(k);
+        this.browser = new Browser();
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -143,11 +146,12 @@ public class Main extends JFrame{
         setSelected(news);
         if (!kernel.isAuthenticated()){
             this.contentPanel.add(loginPanel.getPanel());
-            this.disableComponents();
+            this.setDisable(true);
         }
     }
     private void setSelected(JLabel l){
         if (!componentsDisabled){
+            this.contentPanel.removeAll();
             if (selected == null ){
                 selected = l;
                 selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
@@ -156,17 +160,20 @@ public class Main extends JFrame{
                 selected = l;
                 selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
             }
+            if (l.equals(news)){
+                System.out.println("PASA");
+                this.contentPanel.add(this.browser.getPanel());
+                this.browser.loadURL("https://google.es");
+            }
         }
     }
-    private void disableComponents(){
-        this.news.setEnabled(false);
-        this.settings.setEnabled(false);
-        this.options.setEnabled(false);
-        this.skins.setEnabled(false);
-        componentsDisabled = true;
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    public void setDisable(boolean b){
+        if (b != componentsDisabled){
+            this.news.setEnabled(!b);
+            this.settings.setEnabled(!b);
+            this.options.setEnabled(!b);
+            this.skins.setEnabled(!b);
+            componentsDisabled = b;
+        }
     }
 }
