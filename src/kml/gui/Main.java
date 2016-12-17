@@ -131,7 +131,16 @@ public class Main extends JFrame{
                 options.setForeground(Color.WHITE);
             }
         });
-
+        contentPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (selected != null){
+                    if (selected.equals(news)){
+                        browser.resizeBrowser(e.getComponent().getSize());
+                    }
+                }
+            }
+        });
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -161,10 +170,10 @@ public class Main extends JFrame{
                 selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
             }
             if (l.equals(news)){
-                System.out.println("PASA");
                 this.contentPanel.add(this.browser.getPanel());
-                this.browser.loadURL("https://google.es");
+                browser.loadURL("https://google.es");
             }
+            this.contentPanel.updateUI();
         }
     }
     public void setDisable(boolean b){
