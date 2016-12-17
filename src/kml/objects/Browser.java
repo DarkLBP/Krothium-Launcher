@@ -13,6 +13,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
@@ -20,20 +21,21 @@ import java.io.IOException;
  * @website https://krothium.com
  * @author DarkLBP
  */
-public class Browser {
+public class Browser{
 
+    private final JFXPanel panel = new JFXPanel();
     private final Object lock = new Object();
     private WebView browser;
     private WebEngine webEngine;
-    private final JFXPanel panel = new JFXPanel();
+    final Group root = new Group();
+    final Scene scene = new Scene(root);
     public Browser() {
-        synchronized (lock){
-            Platform.runLater(() -> {
+        Platform.setImplicitExit(false);
+        Platform.runLater(() -> {
+            panel.setScene(scene);
+            synchronized (this.lock) {
                 browser = new WebView();
                 webEngine = browser.getEngine();
-                final Group root = new Group();
-                final Scene scene = new Scene(root);
-                panel.setScene(scene);
                 webEngine.setJavaScriptEnabled(true);
                 webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue == Worker.State.SUCCEEDED){
@@ -65,9 +67,10 @@ public class Browser {
                     }
                 });
                 webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
-                root.getChildren().add(browser);
-            });
-        }
+            }
+            root.getChildren().add(browser);
+        });
+
     }
     public void resizeBrowser(Dimension d){
         synchronized (this.lock){
@@ -81,7 +84,7 @@ public class Browser {
             Platform.runLater(() -> webEngine.load(url));
         }
     }
-    public Component getPanel(){
+    public JComponent getPanel(){
         return this.panel;
     }
 }

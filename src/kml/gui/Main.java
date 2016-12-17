@@ -25,15 +25,15 @@ public class Main extends JFrame{
     private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private final Kernel kernel;
-    private final Login loginPanel;
-    private final Browser browser;
+    private final Login login;
+    private Browser browser;
     private boolean componentsDisabled = false;
 
     public Main(Kernel k){
         this.kernel = k;
-        this.loginPanel = new Login(k);
+        this.login = new Login(k);
         this.browser = new Browser();
-        setSize(600, 600);
+        setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
@@ -153,27 +153,29 @@ public class Main extends JFrame{
     public void setVisible(boolean b){
         super.setVisible(b);
         setSelected(news);
-        if (!kernel.isAuthenticated()){
-            this.contentPanel.add(loginPanel.getPanel());
-            this.setDisable(true);
-        }
     }
     private void setSelected(JLabel l){
         if (!componentsDisabled){
             this.contentPanel.removeAll();
-            if (selected == null ){
-                selected = l;
-                selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
-            } else if (l != selected) {
-                selected.setIcon(null);
-                selected = l;
-                selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+            if (!kernel.isAuthenticated()){
+                this.contentPanel.add(login.getPanel());
+                this.setDisable(true);
+            } else {
+                if (selected == null ){
+                    selected = l;
+                    selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                } else if (l != selected) {
+                    selected.setIcon(null);
+                    selected = l;
+                    selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                }
+                if (l.equals(news)){
+                    this.contentPanel.add(this.browser.getPanel());
+                    browser.loadURL("http://mcupdate.tumblr.com/");
+                }
             }
-            if (l.equals(news)){
-                this.contentPanel.add(this.browser.getPanel());
-                browser.loadURL("https://google.es");
-            }
-            this.contentPanel.updateUI();
+            this.contentPanel.revalidate();
+            this.contentPanel.repaint();
         }
     }
     public void setDisable(boolean b){
@@ -183,6 +185,9 @@ public class Main extends JFrame{
             this.options.setEnabled(!b);
             this.skins.setEnabled(!b);
             componentsDisabled = b;
+            if (!b){
+                this.setSelected(news);
+            }
         }
     }
 }
