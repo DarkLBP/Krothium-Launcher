@@ -3,7 +3,6 @@ package kml;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
-import kml.gui.Login;
 import kml.gui.Main;
 import kml.objects.Profile;
 import kml.objects.User;
@@ -26,10 +25,10 @@ public final class Kernel {
     private final Console console;
     private final Profiles profiles;
     private final Versions versions;
+    private final Settings settings;
     private final Downloader downloader;
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
-    private final Properties properties;
     private final Main mainForm;
     public Kernel(){
         this(Utils.getWorkingDirectory());
@@ -43,10 +42,10 @@ public final class Kernel {
         this.console = new Console(this);
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
+        this.settings = new Settings(this);
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
-        this.properties = new Properties();
         this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("OS: " + System.getProperty("os.name"));
         this.console.printInfo("OS Version: " + System.getProperty("os.version"));
@@ -54,22 +53,6 @@ public final class Kernel {
         this.console.printInfo("Java Version: " + System.getProperty("java.version"));
         this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
-        this.console.printInfo("Loading properties...");
-        try {
-            FileInputStream in = new FileInputStream(this.getPropertiesFile());
-            properties.load(in);
-            in.close();
-            String lang = properties.getProperty("lang");
-            if (lang != null){
-                if (lang.equals("es") || lang.equals("en") || lang.equals("val")){
-                    Constants.LANG_CODE = lang;
-                } else {
-                    this.console.printInfo("Lang code is invalid using default.");
-                }
-            }
-        } catch (IOException ex){
-            this.console.printInfo("Failed to load properties. Using defaults.");
-        }
     }
     public Console getConsole(){return this.console;}
     public File getWorkingDir(){return this.workingDir;}
@@ -114,33 +97,23 @@ public final class Kernel {
             String name = ait.next().toString();
             output.put(name, authdata.get(name));
         }
+        output.put("settings", this.settings.toJSON());
         return Utils.writeToFile(output.toString(), this.getConfigFile());
     }
     public void loadProfiles(){profiles.fetchProfiles();}
     public void loadVersions(){versions.fetchVersions();}
     public void loadUsers(){authentication.fetchUsers();}
-    public void setProperty(String index, String value){this.properties.setProperty(index, value);}
-    public String getProperty(String index){return this.properties.getProperty(index);}
+    public void loadSettings(){settings.loadSettings();}
     public Versions getVersions(){return this.versions;}
     public Profiles getProfiles(){return this.profiles;}
     public Downloader getDownloader(){return this.downloader;}
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){
         return new File(this.workingDir + File.separator + "launcher_profiles.json");}
-    private File getPropertiesFile(){
-        return new File(this.workingDir + File.separator + "krothium.ini");}
     public GameLauncher getGameLauncher(){return this.gameLauncher;}
     public void exitSafely(){
         this.saveProfiles();
         this.console.printInfo("Shutting down launcher...");
-        try {
-            properties.setProperty("lang", Constants.LANG_CODE);
-            FileOutputStream out = new FileOutputStream(this.getPropertiesFile());
-            properties.store(out, null);
-            out.close();
-        } catch (IOException ex){
-            this.console.printError("Failed to save kernel properties.");
-        }
         this.console.close();
         System.exit(0);
     }

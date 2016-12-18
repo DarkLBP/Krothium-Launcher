@@ -241,20 +241,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${version_type}", ver.getType().name());
                         break;
                     case "${user_properties}":
-                        if (u.hasProperties()){
-                            Map<String, String> properties = u.getProperties();
-                            Set set = properties.keySet();
-                            Iterator it = set.iterator();
-                            JSONObject props = new JSONObject();
-                            while (it.hasNext()){
-                                String name = it.next().toString();
-                                String value = properties.get(name);
-                                props.put(name, value);
-                            }
-                            versionArgs[i] = versionArgs[i].replace("${user_properties}", props.toString());
-                        }else{
-                            versionArgs[i] = versionArgs[i].replace("${user_properties}", "{}");
-                        }
+                        versionArgs[i] = versionArgs[i].replace("${user_properties}", "{}");
                         break;
                     case "${user_type}":
                         versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");

@@ -21,6 +21,7 @@ public class Authentication {
     private final Console console;
     private String clientToken = UUID.randomUUID().toString();
     private final Map<String, User> userDatabase = new HashMap<>();
+    private String selectedAccount;
     private String selectedProfile;
     private final Kernel kernel;
     
@@ -28,34 +29,38 @@ public class Authentication {
         this.kernel = k;
         this.console = k.getConsole();
     }
-    private void addUser(String profileID, User u){
-        console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(profileID)) ? " updated." : " loaded."));
-        this.userDatabase.put(profileID, u);   
+    private void addUser(String userID, User u){
+        this.userDatabase.put(userID, u);
+        console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(userID)) ? " updated." : " loaded."));
     }
-    private boolean removeUser(String profileID){
-        if (this.userDatabase.containsKey(profileID)){
-            console.printInfo("User " + this.userDatabase.get(profileID).getDisplayName() + " deleted.");
-            this.userDatabase.remove(profileID);
+    private boolean removeUser(String userID){
+        if (this.userDatabase.containsKey(userID)){
+            this.userDatabase.remove(userID);
+            if (this.selectedAccount == userID){
+                this.selectedAccount = null;
+                this.selectedProfile = null;
+            }
+            console.printInfo("User " + this.userDatabase.get(userID).getDisplayName() + " deleted.");
             return true;
         }else{
-            console.printError("Profile id " + profileID + " is not registered.");
+            console.printError("userID " + userID + " is not registered.");
             return false;
         }
     }
-    private User getUser(String profileID) {
-        if (this.userDatabase.containsKey(profileID)){
-            return this.userDatabase.get(profileID);
+    private User getUser(String userID) {
+        if (this.userDatabase.containsKey(userID)){
+            return this.userDatabase.get(userID);
         }else{
-            console.printError("Profile id " + profileID + " is not registered.");
+            console.printError("userID " + userID + " is not registered.");
             return null;
         }
     }
-    public User getSelectedUser(){return this.userDatabase.get(this.selectedProfile);}
-    public boolean hasSelectedUser(){return (this.selectedProfile != null);}
+    public User getSelectedUser(){return this.userDatabase.get(this.selectedAccount);}
+    public boolean hasSelectedUser(){return (this.selectedAccount != null);}
     public boolean logOut(){
         if (this.hasSelectedUser()){
             this.authenticated = false;
-            return this.removeUser(this.selectedProfile);
+            return this.removeUser(this.selectedAccount);
         }
         return false;
     }
@@ -94,21 +99,9 @@ public class Authentication {
             String profileID = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("id") : null;
             String profileName = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("name") : null;
             String userID = (r.has("user")) ? r.getJSONObject("user").getString("id") : null;
-            JSONObject user = r.getJSONObject("user");
-            Map<String, String> properties = new HashMap<>();
-            if (user.has("userProperties")){
-                JSONArray props = user.getJSONArray("userProperties");
-                if (props.length() > 0){
-                    for (int i = 0; i < props.length(); i++){
-                        JSONObject p = props.getJSONObject(i);
-                        if (p.has("name") && p.has("value")){
-                            properties.put(p.getString("name"), p.getString("value"));
-                        }
-                    }
-                }
-            }
-            User u = new User(profileName, accessToken, userID, username, Utils.stringToUUID(profileID), properties);
-            this.addUser(profileID, u);
+            User u = new User(profileName, accessToken, userID, username, profileID);
+            this.addUser(userID, u);
+            this.selectedAccount = userID;
             this.selectedProfile = profileID;
             if (kernel.getSelectedProfile().equals("(Default)")){
                 kernel.renameProfile("(Default)", profileName);
@@ -126,12 +119,12 @@ public class Authentication {
         }
     }
     public void refresh() throws AuthenticationException{
-        if (this.selectedProfile == null){
+        if (this.selectedAccount == null){
             throw new AuthenticationException("No user is selected.");
         }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.getUser(this.selectedProfile);
+        User u = this.getUser(this.selectedAccount);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("accessToken", u != null ? u.getAccessToken() : null);
@@ -165,7 +158,7 @@ public class Authentication {
             this.authenticated = true;
         }else{
             this.authenticated = false;
-            this.removeUser(this.selectedProfile);
+            this.removeUser(this.selectedAccount);
             if (r.has("errorMessage")){
                 throw new AuthenticationException(r.getString("errorMessage"));
             }else if (r.has("cause")){
@@ -176,12 +169,12 @@ public class Authentication {
         }
     }
     public void validate() throws AuthenticationException{
-        if (this.selectedProfile == null){
+        if (this.selectedAccount == null){
             throw new AuthenticationException("No user is selected.");
         }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.getUser(this.selectedProfile);
+        User u = this.getUser(this.selectedAccount);
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("accessToken", u != null ? u.getAccessToken() : null);
@@ -208,7 +201,7 @@ public class Authentication {
             this.authenticated = false;
             JSONObject o = new JSONObject(response);
             if (o.has("error")){
-                this.removeUser(this.selectedProfile);
+                this.removeUser(this.selectedAccount);
                 if (o.has("errorMessage")){
                     throw new AuthenticationException(o.getString("errorMessage"));
                 }else if (o.has("cause")){
@@ -236,52 +229,51 @@ public class Authentication {
                         Set s = users.keySet();
                         Iterator it = s.iterator();
                         while (it.hasNext()) {
-                            String profile = it.next().toString();
-                            JSONObject user = users.getJSONObject(profile); 
-                            if (user.has("displayName") && user.has("accessToken") && user.has("userid") && user.has("uuid") && user.has("username")) {
-                                String displayName = user.getString("displayName");
-                                String accessToken = user.getString("accessToken");
-                                String userID = user.getString("userid");
-                                UUID uuid = UUID.fromString(user.getString("uuid"));
-                                String username = user.getString("username");
-                                Map<String, String> properties = new HashMap<>();
-                                if (user.has("userProperties")) {
-                                    JSONArray props = user.getJSONArray("userProperties");
-                                    if (props.length() > 0) {
-                                        for (int i = 0; i < props.length(); i++) {
-                                            JSONObject p = props.getJSONObject(i);
-                                            if (p.has("name") && p.has("value")){
-                                                properties.put(p.getString("name"), p.getString("value"));
-                                            }
-                                        }
+                            String userID = it.next().toString();
+                            JSONObject user = users.getJSONObject(userID);
+                            if (user.has("accessToken") && user.has("username") && user.has("profiles")) {
+                                JSONObject profiles = user.getJSONObject("profiles");
+                                if (profiles.keySet().size() == 1){
+                                    String uuid = profiles.keySet().toArray()[0].toString();
+                                    JSONObject profile = profiles.getJSONObject(uuid);
+                                    if (profile.has("displayName")){
+                                        User u = new User(profile.getString("displayName"), user.getString("accessToken"), userID, user.getString("username"), uuid);
+                                        this.addUser(userID, u);
                                     }
                                 }
-                                User u = new User(displayName, accessToken, userID, username, uuid, properties);
-                                this.addUser(profile, u);
                             }
+
                         }
                     }
                 }
                 if (root.has("selectedUser")){
+                    this.selectedAccount = null;
                     this.selectedProfile = null;
-                    if (this.userDatabase.size() > 0){
-                        if (this.userDatabase.containsKey(root.getString("selectedUser"))){
-                            this.selectedProfile = root.getString("selectedUser");
-                        }else{
-                            Set s = this.userDatabase.keySet();
-                            Iterator i = s.iterator();
-                            while (this.selectedProfile == null){
-                                this.selectedProfile = i.next().toString();
+                    JSONObject selectedUser = root.getJSONObject("selectedUser");
+                    if (selectedUser.has("account") && selectedUser.has("profile")){
+                        if (this.userDatabase.size() > 0){
+                            if (this.userDatabase.containsKey(selectedUser.getString("account"))){
+                                this.selectedAccount = selectedUser.getString("account");
+                                this.selectedProfile = selectedUser.getString("profile");
+                            }else{
+                                Set s = this.userDatabase.keySet();
+                                Iterator i = s.iterator();
+                                while (this.selectedAccount == null){
+                                    this.selectedAccount = i.next().toString();
+                                    this.selectedProfile = this.userDatabase.get(this.selectedAccount).getProfileID();
+                                }
                             }
                         }
                     }
                 }else{
+                    this.selectedAccount = null;
                     this.selectedProfile = null;
                     if (this.userDatabase.size() > 0){
                         Set s = this.userDatabase.keySet();
                         Iterator i = s.iterator();
-                        while (this.selectedProfile == null){
-                            this.selectedProfile = i.next().toString();
+                        while (this.selectedAccount == null){
+                            this.selectedAccount = i.next().toString();
+                            this.selectedProfile = this.userDatabase.get(this.selectedAccount).getProfileID();
                         }
                     }
                 }
@@ -304,30 +296,21 @@ public class Authentication {
                 String key = it.next().toString();
                 JSONObject user = new JSONObject();
                 User u = this.userDatabase.get(key);
-                user.put("displayName", u.getDisplayName());
-                if (u.hasProperties()){
-                    JSONArray props = new JSONArray();
-                    Map<String, String> p = u.getProperties();
-                    Set s1 = p.keySet();
-                    Iterator it1 = s1.iterator();
-                    while(it1.hasNext()){
-                        String k = it1.next().toString();
-                        JSONObject jo = new JSONObject();
-                        jo.put("name", k);
-                        jo.put("value", p.get(k));
-                        props.put(jo);
-                    }
-                    user.put("userProperties", props);
-                }
                 user.put("accessToken", u.getAccessToken());
-                user.put("userid", u.getUserID());
-                user.put("uuid", u.getProfileID().toString());
                 user.put("username", u.getUsername());
+                JSONObject profile = new JSONObject();
+                JSONObject profileInfo = new JSONObject();
+                profileInfo.put("displayName", u.getDisplayName());
+                profile.put(u.getProfileID(), profileInfo);
+                user.put("profiles", profile);
                 db.put(key, user);
             }
             o.put("authenticationDatabase", db);
         }
-        o.put("selectedUser", this.selectedProfile);
+        JSONObject selectedUser = new JSONObject();
+        selectedUser.put("account", this.selectedAccount);
+        selectedUser.put("profile", this.selectedProfile);
+        o.put("selectedUser", selectedUser);
         return o;
     }
 }

@@ -11,7 +11,7 @@ public class Settings {
     private JPanel main;
     private JLabel keepOpen;
     private JLabel logOpen;
-    private final ImageIcon checkbox_enabled = new ImageIcon(Settings.class.getResource("/kml/gui/textures/checbox_enabled.png"));
+    private final ImageIcon checkbox_enabled = new ImageIcon(Settings.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(Settings.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
 
     public Settings() {

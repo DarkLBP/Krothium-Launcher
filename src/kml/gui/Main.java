@@ -162,7 +162,7 @@ public class Main extends JFrame{
     private void setSelected(JLabel l){
         if (!componentsDisabled){
             this.contentPanel.removeAll();
-            if (kernel.isAuthenticated()){
+            if (!kernel.isAuthenticated()){
                 this.contentPanel.setLayout(flowLayout);
                 this.contentPanel.add(login.getPanel());
                 this.setDisable(true);

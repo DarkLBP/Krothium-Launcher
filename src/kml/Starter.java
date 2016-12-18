@@ -41,6 +41,7 @@ class Starter {
                 kernel.loadVersions();
                 kernel.loadProfiles();
                 kernel.loadUsers();
+                kernel.loadSettings();
                 Authentication a = kernel.getAuthentication();
                 if (a.hasSelectedUser()){
                     try{
