@@ -107,24 +107,8 @@ public class Profiles {
                     File javaDir = null;
                     String javaArgs = null;
                     Map<String, Integer> resolution = new HashMap<>();
-                    LauncherVisibility visibility = null;
-                    List<VersionType> types = new ArrayList<>();
                     if (o.has("name")){
                         name = o.getString("name");
-                    }
-                    if (o.has("allowedReleaseTypes")){
-                        JSONArray a = o.getJSONArray("allowedReleaseTypes");
-                        for (int i = 0; i < a.length(); i++){
-                            try{
-                                types.add(VersionType.valueOf(a.getString(i).toUpperCase()));
-                                console.printInfo("Added version type " + VersionType.valueOf(a.getString(i).toUpperCase()));
-                            }catch (Exception ex){
-                                console.printError(a.get(i) + " version type does not exist.");
-                            }
-                        }
-                    }
-                    if (!types.contains(VersionType.RELEASE)){
-                        types.add(VersionType.RELEASE);
                     }
                     if (o.has("lastVersionId")){
                         ver = o.getString("lastVersionId");
@@ -147,22 +131,8 @@ public class Profiles {
                             console.printError("Profile " + ((name != null) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    if (o.has("launcherVisibilityOnGameClose")){
-                        String vis = o.getString("launcherVisibilityOnGameClose");
-                        if (vis != null){
-                            if (vis.length() >= 4){
-                                if (vis.startsWith("close")){
-                                    visibility = LauncherVisibility.CLOSE;
-                                }else if (vis.startsWith("hide")){
-                                    visibility = LauncherVisibility.HIDE;
-                                }else if (vis.startsWith("keep")){
-                                    visibility = LauncherVisibility.KEEP;
-                                }
-                            }
-                        }
-                    }
                     if (name != null){
-                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution, visibility, types);
+                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution);
                         if (first == null){
                             first = name;
                         }
@@ -261,29 +231,6 @@ public class Profiles {
                 res.put("width", p.getResolutionWidth());
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
-            }
-            List<VersionType> allowed = p.getAllowedVersionTypes();
-            if (allowed.size() > 0){
-                JSONArray at = new JSONArray();
-                for (VersionType t : allowed){
-                    at.put(t.name().toLowerCase());
-                }
-                prof.put("allowedReleaseTypes", at);
-            }
-            if (p.hasVisibility()){
-                String output = null;
-                switch (p.getVisibility()){
-                    case CLOSE:
-                       output = "close launcher when game starts";
-                       break;
-                    case HIDE:
-                        output = "hide launcher and re-open when game closes";
-                        break;
-                    case KEEP:
-                        output = "keep the launcher open";
-                        break;
-                }
-                prof.put("launcherVisibilityOnGameClose", output);
             }
             profiles.put(p.getName(), prof);
         }

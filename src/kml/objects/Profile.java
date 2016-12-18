@@ -21,23 +21,17 @@ public class Profile {
     private File javaDir = null;
     private String javaArgs = null;
     private Map<String, Integer> resolution = new HashMap<>();
-    private LauncherVisibility visibility = null;
-    private final List<VersionType> allowedVersionTypes;
     
     public Profile(String name){
         this.name = name;
-        this.allowedVersionTypes = new ArrayList<>();
-        this.allowedVersionTypes.add(VersionType.RELEASE);
     }
-    public Profile(String name, String lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution, LauncherVisibility v, List<VersionType> types){
+    public Profile(String name, String lastVersionId, File gameDir, File javaDir, String javaArgs, Map<String, Integer> resolution){
         this.name = name;
         this.versionID = lastVersionId;
         this.gameDir = gameDir;
         this.javaDir = javaDir;
         this.javaArgs = javaArgs;
         this.resolution = resolution;
-        this.visibility = v;
-        this.allowedVersionTypes = types;
     }
     public void setName(String newName){this.name = newName;}
     public void setVersionID(String ver){this.versionID = ver;}
@@ -84,18 +78,4 @@ public class Profile {
             resolution.put("height", h);
         }
     }
-    public void allowVersionType(VersionType t){
-        if (!this.allowedVersionTypes.contains(t)){
-            this.allowedVersionTypes.add(t);
-        }
-    }
-    public void removeVersionType(VersionType t){
-        if (this.allowedVersionTypes.contains(t)){
-            this.allowedVersionTypes.remove(t);
-        }
-    }
-    public boolean hasVisibility(){return (this.visibility != null);}
-    public LauncherVisibility getVisibility(){return this.visibility;}
-    public List<VersionType> getAllowedVersionTypes(){return this.allowedVersionTypes;}
-    public boolean isAllowedVersionType(VersionType t){return (this.allowedVersionTypes.contains(t));}
 }

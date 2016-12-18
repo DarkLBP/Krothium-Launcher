@@ -5,6 +5,7 @@ import kml.Kernel;
 import kml.objects.Browser;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -26,20 +27,24 @@ public class Main extends JFrame{
     private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private final Kernel kernel;
     private final Login login;
-    private Browser browser;
+    private final Browser browser;
+    private final Settings setting;
     private boolean componentsDisabled = false;
+    private final BorderLayout borderLayout = new BorderLayout();
+    private final FlowLayout flowLayout = new FlowLayout();
 
     public Main(Kernel k){
         this.kernel = k;
         this.login = new Login(k);
         this.browser = new Browser();
+        this.setting = new Settings();
         setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
         contentPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/background.png")).getImage());
-        contentPanel.setLayout(new BorderLayout());
+        contentPanel.setLayout(new FlowLayout());
         footerPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         headPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         setContentPane(panel1);
@@ -157,7 +162,8 @@ public class Main extends JFrame{
     private void setSelected(JLabel l){
         if (!componentsDisabled){
             this.contentPanel.removeAll();
-            if (!kernel.isAuthenticated()){
+            if (kernel.isAuthenticated()){
+                this.contentPanel.setLayout(flowLayout);
                 this.contentPanel.add(login.getPanel());
                 this.setDisable(true);
             } else {
@@ -170,12 +176,17 @@ public class Main extends JFrame{
                     selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
                 }
                 if (l.equals(news)){
+                    this.contentPanel.setLayout(borderLayout);
                     this.contentPanel.add(this.browser.getPanel());
                     browser.loadURL("http://mcupdate.tumblr.com/");
+                } else {
+                    this.contentPanel.setLayout(flowLayout);
+                    if (l.equals(settings)){
+                        this.contentPanel.add(this.setting.getPanel());
+                    }
                 }
             }
-            this.contentPanel.revalidate();
-            this.contentPanel.repaint();
+            this.contentPanel.updateUI();
         }
     }
     public void setDisable(boolean b){
