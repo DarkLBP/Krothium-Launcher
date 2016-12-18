@@ -1,7 +1,6 @@
 package kml.gui;
 
 import kml.Authentication;
-import kml.Constants;
 import kml.Kernel;
 import kml.Utils;
 import kml.exceptions.AuthenticationException;
@@ -16,7 +15,7 @@ import java.io.IOException;
  * @author DarkLBP
  */
 
-public class Login{
+public class LoginTab {
 
     private JPanel mainPanel;
     private JButton login;
@@ -28,10 +27,10 @@ public class Login{
     private final ImageIcon button_hover;
     private final Kernel kernel;
 
-    public Login(Kernel k) {
+    public LoginTab(Kernel k) {
         this.kernel = k;
-        button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-        button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+        button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+        button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         login.setIcon(button_normal);
         register.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

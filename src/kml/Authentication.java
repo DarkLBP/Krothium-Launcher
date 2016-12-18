@@ -35,12 +35,12 @@ public class Authentication {
     }
     private boolean removeUser(String userID){
         if (this.userDatabase.containsKey(userID)){
+            console.printInfo("User " + this.userDatabase.get(userID).getDisplayName() + " deleted.");
             this.userDatabase.remove(userID);
             if (this.selectedAccount == userID){
                 this.selectedAccount = null;
                 this.selectedProfile = null;
             }
-            console.printInfo("User " + this.userDatabase.get(userID).getDisplayName() + " deleted.");
             return true;
         }else{
             console.printError("userID " + userID + " is not registered.");

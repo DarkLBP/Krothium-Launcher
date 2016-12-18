@@ -34,18 +34,7 @@ public final class Kernel {
         this(Utils.getWorkingDirectory());
     }
     private Kernel(File workDir){
-        this.workingDir = workDir;
-        if (!this.workingDir.exists()){
-            this.workingDir.mkdirs();
-        }
-        this.mainForm = new Main(this);
         this.console = new Console(this);
-        this.profiles = new Profiles(this);
-        this.versions = new Versions(this);
-        this.settings = new Settings(this);
-        this.downloader = new Downloader(this);
-        this.authentication = new Authentication(this);
-        this.gameLauncher = new GameLauncher(this);
         this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("OS: " + System.getProperty("os.name"));
         this.console.printInfo("OS Version: " + System.getProperty("os.version"));
@@ -53,6 +42,21 @@ public final class Kernel {
         this.console.printInfo("Java Version: " + System.getProperty("java.version"));
         this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        this.workingDir = workDir;
+        if (!this.workingDir.exists()){
+            this.workingDir.mkdirs();
+        }
+        this.profiles = new Profiles(this);
+        this.versions = new Versions(this);
+        this.settings = new Settings(this);
+        this.downloader = new Downloader(this);
+        this.authentication = new Authentication(this);
+        this.gameLauncher = new GameLauncher(this);
+        this.loadVersions();
+        this.loadProfiles();
+        this.loadUsers();
+        this.loadSettings();
+        this.mainForm = new Main(this);
     }
     public Console getConsole(){return this.console;}
     public File getWorkingDir(){return this.workingDir;}
@@ -106,6 +110,7 @@ public final class Kernel {
     public void loadSettings(){settings.loadSettings();}
     public Versions getVersions(){return this.versions;}
     public Profiles getProfiles(){return this.profiles;}
+    public Settings getSettings(){return this.settings;}
     public Downloader getDownloader(){return this.downloader;}
     public Authentication getAuthentication(){return this.authentication;}
     public File getConfigFile(){

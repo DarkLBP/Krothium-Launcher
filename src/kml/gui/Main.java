@@ -5,7 +5,6 @@ import kml.Kernel;
 import kml.objects.Browser;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -23,38 +22,41 @@ public class Main extends JFrame{
     private JLabel settings;
     private JLabel options;
     private JLabel selected;
-    private ImageIcon button_normal = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
-    private ImageIcon button_hover = new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+    private ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
+    private ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
     private final Kernel kernel;
-    private final Login login;
+    private final LoginTab login;
     private final Browser browser;
-    private final Settings setting;
+    private final SettingsTab setting;
     private boolean componentsDisabled = false;
     private final BorderLayout borderLayout = new BorderLayout();
     private final FlowLayout flowLayout = new FlowLayout();
 
     public Main(Kernel k){
         this.kernel = k;
-        this.login = new Login(k);
+        this.login = new LoginTab(k);
         this.browser = new Browser();
-        this.setting = new Settings();
+        this.setting = new SettingsTab(k);
         setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-        setIconImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/icon.png")).getImage());
-        contentPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/background.png")).getImage());
+        setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
+        contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
         contentPanel.setLayout(new FlowLayout());
-        footerPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
-        headPanel.setImage(new ImageIcon(Login.class.getResource("/kml/gui/textures/login-background.png")).getImage());
+        footerPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
+        headPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         setContentPane(panel1);
+        news.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        skins.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        settings.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        options.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         news.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (news != selected){
                     news.setForeground(Color.GREEN);
                 }
-                news.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
         });
         news.addMouseListener(new MouseAdapter() {
@@ -76,7 +78,6 @@ public class Main extends JFrame{
                 if (skins != selected){
                     skins.setForeground(Color.GREEN);
                 }
-                skins.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
         });
         skins.addMouseListener(new MouseAdapter() {
@@ -98,7 +99,6 @@ public class Main extends JFrame{
                 if (settings != selected){
                     settings.setForeground(Color.GREEN);
                 }
-                settings.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
         });
         settings.addMouseListener(new MouseAdapter() {
@@ -120,7 +120,6 @@ public class Main extends JFrame{
                 if (options != selected){
                     options.setForeground(Color.GREEN);
                 }
-                options.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
         });
         options.addMouseListener(new MouseAdapter() {
@@ -169,11 +168,11 @@ public class Main extends JFrame{
             } else {
                 if (selected == null ){
                     selected = l;
-                    selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                    selected.setIcon(new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
                 } else if (l != selected) {
                     selected.setIcon(null);
                     selected = l;
-                    selected.setIcon(new ImageIcon(new ImageIcon(Login.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                    selected.setIcon(new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
                 }
                 if (l.equals(news)){
                     this.contentPanel.setLayout(borderLayout);

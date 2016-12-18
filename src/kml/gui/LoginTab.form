@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kml.gui.Login">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kml.gui.LoginTab">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="170" y="80" width="737" height="414"/>

@@ -1,7 +1,6 @@
 package kml;
 
 import kml.exceptions.AuthenticationException;
-import kml.gui.Login;
 import kml.gui.Main;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -38,10 +37,6 @@ class Starter {
                     Constants.USE_LOCAL = true;
                 }
                 console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
-                kernel.loadVersions();
-                kernel.loadProfiles();
-                kernel.loadUsers();
-                kernel.loadSettings();
                 Authentication a = kernel.getAuthentication();
                 if (a.hasSelectedUser()){
                     try{

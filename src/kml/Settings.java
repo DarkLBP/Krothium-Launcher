@@ -22,6 +22,7 @@ public class Settings {
 
     public void loadSettings(){
         try {
+            kernel.getConsole().printInfo("Loading settings...");
             File launcherProfiles = kernel.getConfigFile();
             JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
             if (root.has("settings")){
@@ -55,21 +56,26 @@ public class Settings {
             enableSnapshots = false;
         }
     }
-    public boolean keepLauncherOpen(){return this.keepLauncherOpen;}
+    public boolean getKeepLauncherOpen(){return this.keepLauncherOpen;}
     public String getLocale(){return this.locale;}
-    public boolean showGameLog(){return this.showGameLog;}
-    public boolean enableAdvanced(){return this.enableAdvanced;}
-    public boolean enableHistorical(){return this.enableHistorical;}
-    public boolean enableSnapshots(){return this.enableSnapshots;}
-
+    public boolean getShowGameLog(){return this.showGameLog;}
+    public boolean getEnableAdvanced(){return this.enableAdvanced;}
+    public boolean getEnableHistorical(){return this.enableHistorical;}
+    public boolean getEnableSnapshots(){return this.enableSnapshots;}
+    public void setKeepLauncherOpen(boolean b){this.keepLauncherOpen = b;}
+    public void setLocale(String s){this.locale = s;}
+    public void setShowGameLog(boolean b){this.showGameLog = b;}
+    public void setEnableAdvanced(boolean b){this.enableAdvanced = b;}
+    public void setEnableHistorical(boolean b){this.enableHistorical = b;}
+    public void setEnableSnapshots(boolean b){this.enableSnapshots = b;}
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         o.put("locale", getLocale());
-        o.put("keepLauncherOpen", keepLauncherOpen());
-        o.put("showGameLog", showGameLog());
-        o.put("enableAdvanced", enableAdvanced());
-        o.put("enableHistorical", enableHistorical());
-        o.put("enableSnapshots", enableSnapshots());
+        o.put("keepLauncherOpen", getKeepLauncherOpen());
+        o.put("showGameLog", getShowGameLog());
+        o.put("enableAdvanced", getEnableAdvanced());
+        o.put("enableHistorical", getEnableHistorical());
+        o.put("enableSnapshots", getEnableSnapshots());
         return o;
     }
 }
