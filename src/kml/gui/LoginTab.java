@@ -6,6 +6,7 @@ import kml.Utils;
 import kml.exceptions.AuthenticationException;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -26,9 +27,13 @@ public class LoginTab {
     private final ImageIcon button_normal;
     private final ImageIcon button_hover;
     private final Kernel kernel;
+    private final Border border;
 
     public LoginTab(Kernel k) {
         this.kernel = k;
+        this.border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
+        this.username.setBorder(border);
+        this.password.setBorder(border);
         button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
         button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 40, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -144,8 +149,4 @@ public class LoginTab {
         return this.mainPanel;
     }
 
-    private void createUIComponents() {
-
-        // TODO: place custom component creation code here
-    }
 }

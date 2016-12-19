@@ -174,8 +174,7 @@ public class Profiles {
             this.createDefaultProfile();
         }
     }
-    private boolean createDefaultProfile()
-    {
+    private boolean createDefaultProfile() {
         Profile p = new Profile("(Default)");
         if (this.existsProfile(p)){
             console.printError("Default profile already exists.");
