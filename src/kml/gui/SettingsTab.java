@@ -24,7 +24,7 @@ public class SettingsTab {
         logOpen.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         keepOpen.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 settings.setKeepLauncherOpen(!settings.getKeepLauncherOpen());
                 if (settings.getKeepLauncherOpen()){
                     keepOpen.setIcon(checkbox_enabled);
@@ -35,7 +35,7 @@ public class SettingsTab {
         });
         logOpen.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 settings.setShowGameLog(!settings.getShowGameLog());
                 if (settings.getShowGameLog()){
                     logOpen.setIcon(checkbox_enabled);

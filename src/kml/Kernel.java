@@ -34,6 +34,10 @@ public final class Kernel {
         this(Utils.getWorkingDirectory());
     }
     private Kernel(File workDir){
+        this.workingDir = workDir;
+        if (!this.workingDir.exists()){
+            this.workingDir.mkdirs();
+        }
         this.console = new Console(this);
         this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("OS: " + System.getProperty("os.name"));
@@ -42,10 +46,6 @@ public final class Kernel {
         this.console.printInfo("Java Version: " + System.getProperty("java.version"));
         this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
-        this.workingDir = workDir;
-        if (!this.workingDir.exists()){
-            this.workingDir.mkdirs();
-        }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
         this.settings = new Settings(this);
