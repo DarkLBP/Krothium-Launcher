@@ -1,13 +1,6 @@
 package kml;
 
-import kml.exceptions.AuthenticationException;
-import kml.exceptions.DownloaderException;
-import kml.exceptions.GameLauncherException;
 import kml.gui.Main;
-import kml.objects.Profile;
-import kml.objects.User;
-import kml.objects.Version;
-import kml.objects.VersionMeta;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -60,31 +53,6 @@ public final class Kernel {
     }
     public Console getConsole(){return this.console;}
     public File getWorkingDir(){return this.workingDir;}
-    public User getSelectedUser(){return this.authentication.getSelectedUser();}
-    public String getSelectedProfile(){return this.profiles.getSelectedProfile();}
-    public boolean setSelectedProfile(String p){return this.profiles.setSelectedProfile(p);}
-    public boolean addProfile(Profile p){return this.profiles.addProfile(p);}
-    public boolean renameProfile(String oldName, String newName){return this.profiles.renameProfile(oldName, newName);}
-    public void launchGame() throws GameLauncherException{this.gameLauncher.launch();}
-    public void authenticate(String user, String pass) throws AuthenticationException {this.authentication.authenticate(user, pass);}
-    public boolean logOut(){return this.authentication.logOut();}
-    public int getDownloadProgress(){return this.downloader.getProgress();}
-    public boolean isGameStarted(){return this.gameLauncher.isStarted();}
-    public boolean hasGameCrashed(){return this.gameLauncher.hasError();}
-    public InputStream getGameInputStream(){return this.gameLauncher.getInputStream();}
-    public void download() throws DownloaderException{this.downloader.download();}
-    public boolean existsProfile(String p){return (this.profiles.getProfileByName(p) != null);}
-    public boolean existsVersion(String v){return (this.versions.getVersion(v) != null);}
-    public Profile getProfile(String p){return this.profiles.getProfileByName(p);}
-    public Version getVersion(String v){return this.versions.getVersion(v);}
-    public VersionMeta getVersionMeta(String v){return this.versions.getVersionMeta(v);}
-    public Map<String, Profile> getProfileDB(){return this.profiles.getProfiles();}
-    public LinkedHashSet<String> getVersionDB(){return this.versions.getVersions();}
-    public boolean isDownloading(){return this.downloader.isDownloading();}
-    public boolean deleteProfile(String name){return this.profiles.deleteProfile(name);}
-    public String getLatestVersion(){return this.versions.getLatestRelease();}
-    public boolean isAuthenticated(){return this.authentication.isAuthenticated();}
-    public String getClientToken(){return this.authentication.getClientToken();}
     public boolean saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();

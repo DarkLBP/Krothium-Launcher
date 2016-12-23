@@ -103,9 +103,6 @@ public class Authentication {
             this.addUser(userID, u);
             this.selectedAccount = userID;
             this.selectedProfile = profileID;
-            if (kernel.getSelectedProfile().equals("(Default)")){
-                kernel.renameProfile("(Default)", profileName);
-            }
             this.authenticated = true;
         }else{
             this.authenticated = false;
@@ -306,11 +303,11 @@ public class Authentication {
                 db.put(key, user);
             }
             o.put("authenticationDatabase", db);
+            JSONObject selectedUser = new JSONObject();
+            selectedUser.put("account", this.selectedAccount);
+            selectedUser.put("profile", this.selectedProfile);
+            o.put("selectedUser", selectedUser);
         }
-        JSONObject selectedUser = new JSONObject();
-        selectedUser.put("account", this.selectedAccount);
-        selectedUser.put("profile", this.selectedProfile);
-        o.put("selectedUser", selectedUser);
         return o;
     }
 }

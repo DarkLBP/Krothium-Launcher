@@ -36,9 +36,9 @@ public class Downloader {
     }
     public void download() throws DownloaderException{
         this.downloading = true;
-        Profile p = this.kernel.getProfile(this.kernel.getSelectedProfile());
-        String verID = (p.hasVersion() ? p.getVersionID() : kernel.getLatestVersion());
-        Version v = kernel.getVersion(verID);
+        Profile p = this.kernel.getProfiles().getProfile(this.kernel.getProfiles().getSelectedProfile());
+        String verID = (p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease());
+        Version v = kernel.getVersions().getVersion(verID);
         ExecutorService pool = Executors.newFixedThreadPool(5);
         List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;

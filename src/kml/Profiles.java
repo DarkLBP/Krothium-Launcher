@@ -24,11 +24,11 @@ public class Profiles {
     public Map<String, Profile> getProfiles(){return this.profiles;}
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
-            profiles.put(p.getName(), p);
-            console.printInfo("Profile " + p.getName() + " added");
+            profiles.put(p.getID(), p);
+            console.printInfo("Profile " + p.getID() + " added");
             return true;
         }
-        console.printError("Profile " + p.getName() + " already exists!");
+        console.printError("Profile " + p.getID() + " already exists!");
         return false;
     }
     public boolean deleteProfile(String p){
@@ -41,7 +41,7 @@ public class Profiles {
                     Set keySet = this.profiles.keySet();
                     this.setSelectedProfile(keySet.toArray()[0].toString());
                 } else {
-                    this.createDefaultProfile();
+                    this.selected = null;
                 }
             } else {
                 profiles.remove(p);
@@ -50,37 +50,6 @@ public class Profiles {
             return true;
         }
         console.printError("Profile " + p + " doesn't exist.");
-        return false;
-    }
-    private boolean duplicateProfile(Profile p) {
-        if (this.existsProfile(p)){
-            StringBuilder modifiedName = new StringBuilder();
-            modifiedName.append(p.getName()).append("_");
-            p.setName(modifiedName.toString());
-            while (this.existsProfile(p)){
-                modifiedName.append("_");
-                p.setName(modifiedName.toString());
-            }
-            if (this.addProfile(p)){
-                console.printError("Profile " + p.getName() + " duplicated with this name " + modifiedName);
-                return true;
-            }
-        }
-        console.printError("Profile " + p.getName() + " doesn't exist.");
-        return false;
-    }
-    public boolean renameProfile(String oldName, String newName){
-        if (this.existsProfile(oldName)){
-            boolean sel = oldName.equals(this.selected);
-            Profile tmp = this.getProfileByName(oldName);
-            tmp.setName(newName);
-            this.addProfile(tmp);
-            if (sel){
-                this.setSelectedProfile(newName);
-            }
-            this.deleteProfile(oldName);
-            return true;
-        }
         return false;
     }
     private boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
@@ -98,23 +67,35 @@ public class Profiles {
                 while (it.hasNext()){
                     String key = it.next().toString();
                     JSONObject o = ples.getJSONObject(key);
+                    String type = null;
                     String name = null;
                     String ver = null;
-                    File gameDir = null;
-                    File javaDir = null;
+                    String created = null;
+                    String lastUsed = null;
+                    String gameDir = null;
+                    String javaDir = null;
                     String javaArgs = null;
                     Map<String, Integer> resolution = new HashMap<>();
                     if (o.has("name")){
                         name = o.getString("name");
                     }
+                    if (o.has("type")){
+                        type = o.getString("type");
+                    }
+                    if (o.has("created")){
+                        created = o.getString("created");
+                    }
+                    if (o.has("lastUsed")){
+                        lastUsed = o.getString("lastUsed");
+                    }
                     if (o.has("lastVersionId")){
                         ver = o.getString("lastVersionId");
                     }
                     if (o.has("gameDir")){
-                        gameDir = new File(o.getString("gameDir"));
+                        gameDir = o.getString("gameDir");
                     }
                     if (o.has("javaDir")){
-                        javaDir = new File(o.getString("javaDir"));
+                        javaDir = o.getString("javaDir");
                     }
                     if (o.has("javaArgs")){
                         javaArgs = o.getString("javaArgs");
@@ -128,42 +109,29 @@ public class Profiles {
                             console.printError("Profile " + ((name != null) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    if (name != null){
-                        Profile p = new Profile(name, ver, gameDir, javaDir, javaArgs, resolution);
-                        if (first == null){
-                            first = name;
-                        }
-                        if (!this.existsProfile(p)){
-                            this.addProfile(p);
-                        }else{
-                            this.duplicateProfile(p);
-                        }
-                    }else{
-                        console.printError("Invalid profile found: " + name);
+                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution);
+                    if (first == null){
+                        first = name;
+                    }
+                    if (!this.existsProfile(p)){
+                        this.addProfile(p);
                     }
                 }
                 if (this.profileCount() > 0){
+
                     if (root.has("selectedProfile")){
                         String selProfile = root.getString("selectedProfile");
                         if (this.profiles.containsKey(selProfile)){
                             console.printInfo("Profile " + selProfile + " marked as selected.");
-                            if (!this.setSelectedProfile(selProfile)){
-                                this.createDefaultProfile();
-                            }
+                            this.setSelectedProfile(selProfile);
                         }else{
                             console.printError("Invalid profile selected! Using first loaded (" + first + ")");
-                            if (this.setSelectedProfile(first)){
-                                this.createDefaultProfile();
-                            }
+                            this.setSelectedProfile(first);
                         }
                     } else {
                         console.printInfo("No profile is selected! Using first loaded (" + first + ")");
-                        if (this.setSelectedProfile(first)){
-                            this.createDefaultProfile();
-                        }
+                        this.setSelectedProfile(first);
                     }
-                }else{
-                    this.createDefaultProfile();
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
@@ -171,22 +139,11 @@ public class Profiles {
             }
         }else{
             console.printError("Launcher profiles file not found. Using defaults.");
-            this.createDefaultProfile();
         }
     }
-    private boolean createDefaultProfile() {
-        Profile p = new Profile("(Default)");
-        if (this.existsProfile(p)){
-            console.printError("Default profile already exists.");
-            return false;
-        }
-        this.addProfile(p);
-        this.setSelectedProfile("(Default)");
-        return true;   
-    }
-    public Profile getProfileByName(String pName){
-        if (profiles.containsKey(pName)){
-            return profiles.get(pName);
+    public Profile getProfile(String p){
+        if (profiles.containsKey(p)){
+            return profiles.get(p);
         }
         return null;
     }
@@ -194,6 +151,7 @@ public class Profiles {
     public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
+            this.getProfile(p).markLastUsed();
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;
@@ -209,7 +167,23 @@ public class Profiles {
             String key = it.next().toString();
             Profile p = this.profiles.get(key);
             JSONObject prof = new JSONObject();
-            prof.put("name", p.getName());
+            if (p.hasName()){
+                prof.put("name", p.getName());
+            }
+            switch (p.getType()){
+                case RELEASE:
+                    prof.put("type", "latest-release");
+                    break;
+                case SNAPSHOT:
+                    prof.put("type", "latest-snapshot");
+                    break;
+                default:
+                    prof.put("type", "custom");
+            }
+            if (p.hasCreated()){
+                prof.put("created", p.getCreated().toString());
+            }
+            prof.put("lastUsed", p.getLastUsed().toString());
             if (p.hasGameDir()){
                 prof.put("gameDir", p.getGameDir().toString());
             }
@@ -228,7 +202,7 @@ public class Profiles {
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
             }
-            profiles.put(p.getName(), prof);
+            profiles.put(p.getID(), prof);
         }
         o.put("profiles", profiles);
         o.put("selectedProfile", this.selected);

@@ -33,7 +33,7 @@ public class GameLauncher {
     }
     public void launch() throws GameLauncherException{
         error = false;
-        Profile p = kernel.getProfile(kernel.getSelectedProfile());
+        Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
         if (this.isStarted()){
             throw new GameLauncherException("Game is already started!");
         }
@@ -42,9 +42,9 @@ public class GameLauncher {
         if (p.hasVersion()){
             verID = p.getVersionID();
         } else {
-            verID = kernel.getLatestVersion();
+            verID = kernel.getVersions().getLatestRelease();
         }
-        ver = kernel.getVersion(verID);
+        ver = kernel.getVersions().getVersion(verID);
         File workingDir = kernel.getWorkingDir();
         console.printInfo("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());

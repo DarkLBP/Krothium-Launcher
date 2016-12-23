@@ -154,7 +154,7 @@ public final class Version {
         }
         if (version.has("inheritsFrom")){
             String inheritsFrom = version.getString("inheritsFrom");
-            Version ver = kernel.getVersion(inheritsFrom);
+            Version ver = kernel.getVersions().getVersion(inheritsFrom);
             if (ver.hasLibraries()){
                 for (Library lib : ver.libraries){
                     if (!this.libraries.contains(lib)){

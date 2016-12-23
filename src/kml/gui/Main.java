@@ -270,7 +270,7 @@ public class Main extends JFrame{
         });
         guiThread = new TimerTask() {
             public void run() {
-                if (kernel.isAuthenticated()){
+                if (kernel.getAuthentication().isAuthenticated()){
                     if (componentsDisabled){
                         setDisable(false);
                     }
@@ -345,7 +345,7 @@ public class Main extends JFrame{
         Set set = profs.keySet();
         Iterator it = set.iterator();
         while (it.hasNext()){
-            popupMenu.add(profs.get(it.next().toString()).getName());
+            popupMenu.add(profs.get(it.next().toString()).getMenuItem());
         }
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
