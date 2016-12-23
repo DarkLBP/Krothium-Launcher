@@ -143,6 +143,7 @@ public class LoginTab {
         } catch (AuthenticationException e1) {
             JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
             password.setText("");
+            password.requestFocus();
         }
     }
     public JPanel getPanel(){

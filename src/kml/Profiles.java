@@ -1,9 +1,11 @@
 package kml;
 
+import kml.enums.ProfileType;
 import kml.objects.Profile;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -16,6 +18,7 @@ public class Profiles {
     private final Console console;
     private String selected;
     private final Kernel kernel;
+    private boolean sessionProfile = false;
     
     public Profiles(Kernel k){
         this.kernel = k;
@@ -24,6 +27,9 @@ public class Profiles {
     public Map<String, Profile> getProfiles(){return this.profiles;}
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
+            if (p.getType() != ProfileType.CUSTOM){
+                sessionProfile = true;
+            }
             profiles.put(p.getID(), p);
             console.printInfo("Profile " + p.getID() + " added");
             return true;
@@ -33,7 +39,7 @@ public class Profiles {
     }
     public boolean deleteProfile(String p){
         if (this.existsProfile(p)){
-            if (this.selected.equals(p)){
+            if (this.selected != null && this.selected.equals(p)){
                 console.printInfo("Profile " + p + " is selected and is going to be removed.");
                 profiles.remove(p);
                 console.printInfo("Profile " + p + " deleted.");
@@ -147,11 +153,11 @@ public class Profiles {
         }
         return null;
     }
-    private int profileCount(){return profiles.size();}
+    public int profileCount(){return profiles.size();}
     public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
-            this.getProfile(p).markLastUsed();
+            this.getProfile(p).setLastUsed(Instant.now());
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;

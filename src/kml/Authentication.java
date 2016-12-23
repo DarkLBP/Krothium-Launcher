@@ -1,6 +1,8 @@
 package kml;
 
+import kml.enums.ProfileType;
 import kml.exceptions.AuthenticationException;
+import kml.objects.Profile;
 import kml.objects.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,7 +62,9 @@ public class Authentication {
     public boolean logOut(){
         if (this.hasSelectedUser()){
             this.authenticated = false;
-            return this.removeUser(this.selectedAccount);
+            if (this.removeUser(this.selectedAccount)){
+                return true;
+            }
         }
         return false;
     }

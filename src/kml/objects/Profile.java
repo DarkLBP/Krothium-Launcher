@@ -28,11 +28,10 @@ public class Profile {
     private Map<String, Integer> resolution = new HashMap<>();
     private JMenuItem menuItem;
     
-    public Profile(String name){
-        this.name = name;
-        this.type = ProfileType.RELEASE;
-        this.created = Instant.parse("1970-01-01T00:00:00.000");
-        this.lastUsed = Instant.parse("1970-01-01T00:00:00.000");
+    public Profile(ProfileType type){
+        this.id = UUID.randomUUID().toString().replaceAll("-", "");
+        this.type = type;
+        this.lastUsed = Instant.parse("1970-01-01T00:00:00.000Z");
     }
     public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution){
         if (id == null){
@@ -93,6 +92,7 @@ public class Profile {
     public void setVersionID(String ver){this.lastVersionId = ver;}
     public String getName(){return this.name;}
     public boolean hasName(){return this.name != null && !this.name.isEmpty();}
+    public void setType(ProfileType type){this.type = type;}
     public ProfileType getType(){return this.type;}
     public String getVersionID(){return this.lastVersionId;}
     public boolean hasVersion(){return this.lastVersionId != null;}
@@ -106,9 +106,10 @@ public class Profile {
     public String getJavaArgs(){return this.javaArgs;}
     public boolean hasJavaArgs(){return this.javaArgs != null;}
     public Instant getLastUsed(){return lastUsed;}
-    public void markLastUsed(){this.lastUsed = Instant.now();}
+    public void setLastUsed(Instant used){this.lastUsed = used;}
     public boolean hasCreated(){return this.created != null;}
     public Instant getCreated(){return this.created;}
+    public void setCreated(Instant created){this.created = created;}
     public boolean hasResolution(){
         if (this.resolution != null){
             return (this.resolution.size() == 2);

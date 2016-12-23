@@ -1,8 +1,12 @@
 package kml;
 
+import kml.enums.ProfileType;
+import kml.objects.Profile;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by darkl on 18/12/2016.
@@ -67,7 +71,9 @@ public class Settings {
     public void setShowGameLog(boolean b){this.showGameLog = b;}
     public void setEnableAdvanced(boolean b){this.enableAdvanced = b;}
     public void setEnableHistorical(boolean b){this.enableHistorical = b;}
-    public void setEnableSnapshots(boolean b){this.enableSnapshots = b;}
+    public void setEnableSnapshots(boolean b){
+        this.enableSnapshots = b;
+    }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         o.put("locale", getLocale());

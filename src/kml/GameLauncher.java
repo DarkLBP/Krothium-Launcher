@@ -262,54 +262,63 @@ public class GameLauncher {
         gameArgs.forEach(console::printInfo);
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
-        try{
-            this.process = pb.start();
-            Thread log_info = new Thread(){
-                @Override
-                public void run(){
-                    InputStreamReader isr = new InputStreamReader(getInputStream());
-                    BufferedReader br = new BufferedReader(isr);
-                    String lineRead;
-                    try{
-                        while (isStarted()){
-                            if ((lineRead = br.readLine()) != null){
-                                console.printInfo(lineRead);
+        if (!kernel.getSettings().getKeepLauncherOpen()){
+            try {
+                pb.start();
+                kernel.exitSafely();
+            } catch (IOException ex){
+
+            }
+        } else {
+            try{
+                this.process = pb.start();
+                Thread log_info = new Thread(){
+                    @Override
+                    public void run(){
+                        InputStreamReader isr = new InputStreamReader(getInputStream());
+                        BufferedReader br = new BufferedReader(isr);
+                        String lineRead;
+                        try{
+                            while (isStarted()){
+                                if ((lineRead = br.readLine()) != null){
+                                    console.printInfo(lineRead);
+                                }
                             }
-                        }
-                        if (process.exitValue() != 0){
+                            if (process.exitValue() != 0){
+                                error = true;
+                                console.printError("Game stopped unexpectedly.");
+                            }
+                        } catch (Exception ex){
                             error = true;
                             console.printError("Game stopped unexpectedly.");
                         }
-                    } catch (Exception ex){
-                        error = true;
-                        console.printError("Game stopped unexpectedly.");
+                        console.printInfo("Deleteting natives dir.");
+                        Utils.deleteDirectory(nativesDir);
                     }
-                    console.printInfo("Deleteting natives dir.");
-                    Utils.deleteDirectory(nativesDir);
-                }
-            };
-            log_info.start();
-            Thread log_error = new Thread(){
-                @Override
-                public void run(){
-                    InputStreamReader isr = new InputStreamReader(getErrorStream());
-                    BufferedReader br = new BufferedReader(isr);
-                    String lineRead;
-                    try{
-                        while (isStarted()){
-                            if ((lineRead = br.readLine()) != null){
-                                console.printInfo(lineRead);
+                };
+                log_info.start();
+                Thread log_error = new Thread(){
+                    @Override
+                    public void run(){
+                        InputStreamReader isr = new InputStreamReader(getErrorStream());
+                        BufferedReader br = new BufferedReader(isr);
+                        String lineRead;
+                        try{
+                            while (isStarted()){
+                                if ((lineRead = br.readLine()) != null){
+                                    console.printInfo(lineRead);
+                                }
                             }
+                        } catch (Exception ignored){
+                            console.printError("Failed to read game error stream.");
                         }
-                    } catch (Exception ignored){
-                        console.printError("Failed to read game error stream.");
                     }
-                }
-            };
-            log_error.start();
-        }catch (Exception ex){
-            error = true;
-            console.printError("Game returned an error code.");
+                };
+                log_error.start();
+            }catch (Exception ex){
+                error = true;
+                console.printError("Game returned an error code.");
+            }
         }
     }
     public boolean isStarted(){

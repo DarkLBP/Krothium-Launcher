@@ -22,8 +22,6 @@ public class Versions {
     private final Console console;
     private String latestSnap;
     private String latestRel;
-    private String latestBeta;
-    private String latestAlpha;
     private final Kernel kernel;
     public Versions(Kernel k){
         this.kernel = k;
@@ -53,6 +51,10 @@ public class Versions {
                 console.printError(ex.getMessage());
                 return null;
             }
+        } else if (id.equals("latest-release")) {
+            return this.getVersion(this.getLatestRelease());
+        } else if (id.equals("latest-snapshot")) {
+            return this.getVersion(this.getLatestSnapshot());
         }
         console.printError("Version id " + id + " not found.");
         return null;
@@ -79,8 +81,6 @@ public class Versions {
             JSONArray vers = root.getJSONArray("versions");
             boolean last_rel = (this.latestRel != null);
             boolean last_snap = (this.latestSnap != null);
-            boolean last_beta = false;
-            boolean last_alpha = false;
             for (int i = 0; i < vers.length(); i++){
                 JSONObject ver = vers.getJSONObject(i);
                 String id = null;
@@ -110,14 +110,6 @@ public class Versions {
                 if (!last_snap && type.equals(VersionType.SNAPSHOT)){
                     this.latestSnap = id;
                     last_snap = true;
-                }
-                if (!last_beta && type.equals(VersionType.OLD_BETA)){
-                    this.latestBeta = id;
-                    last_beta = true;
-                }
-                if (!last_alpha && type.equals(VersionType.OLD_ALPHA)){
-                    this.latestAlpha = id;
-                    last_alpha = true;
                 }
             }
             console.printInfo("Remote version list loaded.");
@@ -193,7 +185,5 @@ public class Versions {
     }
     public String getLatestRelease(){return latestRel;}
     public String getLatestSnapshot(){return latestSnap;}
-    public String getLatestBeta(){return latestBeta;}
-    public Version getLatestAlpha(){return this.getVersion(latestAlpha);}
     public int versionCount(){return versions.size();}
 }
