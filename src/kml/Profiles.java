@@ -183,6 +183,30 @@ public class Profiles {
     public boolean hasSnapshotProfile(){return this.snapshotProfile != null;}
     public String getReleaseProfile(){return this.releaseProfile;}
     public String getSnapshotProfile(){return this.snapshotProfile;}
+    public void updateSessionProfiles(){
+        if (kernel.getAuthentication().isAuthenticated()){
+            if (!hasReleaseProfile()){
+                Profile release = new Profile(ProfileType.RELEASE);
+                addProfile(release);
+                setSelectedProfile(release.getID());
+            }
+            if (!hasSnapshotProfile() && kernel.getSettings().getEnableSnapshots()){
+                Profile snapshot = new Profile(ProfileType.SNAPSHOT);
+                addProfile(snapshot);
+                setSelectedProfile(snapshot.getID());
+            }
+            if (hasSnapshotProfile() && !kernel.getSettings().getEnableSnapshots()){
+                deleteProfile(getSnapshotProfile());
+            }
+        } else {
+            if (hasReleaseProfile()){
+                deleteProfile(getReleaseProfile());
+            }
+            if (hasReleaseProfile()){
+                deleteProfile(getSnapshotProfile());
+            }
+        }
+    }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();

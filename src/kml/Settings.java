@@ -73,6 +73,7 @@ public class Settings {
     public void setEnableHistorical(boolean b){this.enableHistorical = b;}
     public void setEnableSnapshots(boolean b){
         this.enableSnapshots = b;
+        kernel.getProfiles().updateSessionProfiles();
     }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();

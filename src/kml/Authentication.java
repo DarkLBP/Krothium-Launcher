@@ -63,12 +63,7 @@ public class Authentication {
         if (this.hasSelectedUser()){
             this.authenticated = false;
             if (this.removeUser(this.selectedAccount)){
-                if (kernel.getProfiles().hasReleaseProfile()){
-                    kernel.getProfiles().deleteProfile(kernel.getProfiles().getReleaseProfile());
-                }
-                if (kernel.getProfiles().hasSnapshotProfile()){
-                    kernel.getProfiles().deleteProfile(kernel.getProfiles().getSnapshotProfile());
-                }
+                kernel.getProfiles().updateSessionProfiles();
                 return true;
             }
         }
@@ -124,7 +119,7 @@ public class Authentication {
                 throw new AuthenticationException(r.getString("error"));
             }
         }
-        this.updateSessionProfiles();
+        kernel.getProfiles().updateSessionProfiles();
     }
     public void refresh() throws AuthenticationException{
         if (this.selectedAccount == null){
@@ -175,7 +170,7 @@ public class Authentication {
                 throw new AuthenticationException(r.getString("error"));
             }
         }
-        this.updateSessionProfiles();
+        kernel.getProfiles().updateSessionProfiles();
     }
     public void validate() throws AuthenticationException{
         if (this.selectedAccount == null){
@@ -220,7 +215,7 @@ public class Authentication {
                 }
             }
         }
-        this.updateSessionProfiles();
+        kernel.getProfiles().updateSessionProfiles();
     }
     public boolean isAuthenticated() { return this.authenticated; }
     public String getClientToken() { return this.clientToken; }
@@ -295,27 +290,6 @@ public class Authentication {
         }
     }
     public void setClientToken(String clientToken){this.clientToken = clientToken;}
-    public void updateSessionProfiles(){
-        if (this.isAuthenticated()){
-            if (!kernel.getProfiles().hasReleaseProfile()){
-                Profile release = new Profile(ProfileType.RELEASE);
-                kernel.getProfiles().addProfile(release);
-                kernel.getProfiles().setSelectedProfile(release.getID());
-            }
-            if (!kernel.getProfiles().hasReleaseProfile() && kernel.getSettings().getEnableSnapshots()){
-                Profile snapshot = new Profile(ProfileType.SNAPSHOT);
-                kernel.getProfiles().addProfile(snapshot);
-                kernel.getProfiles().setSelectedProfile(snapshot.getID());
-            }
-        } else {
-            if (kernel.getProfiles().hasReleaseProfile()){
-                kernel.getProfiles().deleteProfile(kernel.getProfiles().getReleaseProfile());
-            }
-            if (kernel.getProfiles().hasReleaseProfile()){
-                kernel.getProfiles().deleteProfile(kernel.getProfiles().getSnapshotProfile());
-            }
-        }
-    }
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         o.put("clientToken", this.clientToken);
