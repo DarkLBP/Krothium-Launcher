@@ -315,6 +315,7 @@ public class Main extends JFrame{
                 this.contentPanel.setLayout(borderLayout);
                 this.contentPanel.add(this.browser.getPanel());
                 browser.loadURL("http://mcupdate.tumblr.com/");
+                browser.resizeBrowser(contentPanel.getSize());
             } else {
                 this.contentPanel.setLayout(flowLayout);
                 if (l.equals(settings)){
