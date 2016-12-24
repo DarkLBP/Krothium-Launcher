@@ -18,7 +18,8 @@ public class Profiles {
     private final Console console;
     private String selected;
     private final Kernel kernel;
-    private boolean sessionProfile = false;
+    private String releaseProfile = null;
+    private String snapshotProfile = null;
     
     public Profiles(Kernel k){
         this.kernel = k;
@@ -28,11 +29,25 @@ public class Profiles {
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
             if (p.getType() != ProfileType.CUSTOM){
-                sessionProfile = true;
+                if (releaseProfile == null && p.getType() == ProfileType.RELEASE){
+                    releaseProfile = p.getID();
+                    profiles.put(p.getID(), p);
+                    console.printInfo("Profile " + p.getID() + " added");
+                    return true;
+                } else if (snapshotProfile == null && p.getType() == ProfileType.SNAPSHOT){
+                    snapshotProfile = p.getID();
+                    profiles.put(p.getID(), p);
+                    console.printInfo("Profile " + p.getID() + " added");
+                    return true;
+                } else {
+                    console.printInfo("Profile " + p.getID() + " ignored.");
+                    return false;
+                }
+            } else {
+                profiles.put(p.getID(), p);
+                console.printInfo("Profile " + p.getID() + " added");
+                return true;
             }
-            profiles.put(p.getID(), p);
-            console.printInfo("Profile " + p.getID() + " added");
-            return true;
         }
         console.printError("Profile " + p.getID() + " already exists!");
         return false;
@@ -164,6 +179,10 @@ public class Profiles {
         }
         return false;
     }
+    public boolean hasReleaseProfile(){return this.releaseProfile != null;}
+    public boolean hasSnapshotProfile(){return this.snapshotProfile != null;}
+    public String getReleaseProfile(){return this.releaseProfile;}
+    public String getSnapshotProfile(){return this.snapshotProfile;}
     public JSONObject toJSON(){
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();

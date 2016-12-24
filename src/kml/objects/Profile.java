@@ -1,5 +1,6 @@
 package kml.objects;
 
+import kml.Kernel;
 import kml.enums.ProfileType;
 
 import javax.swing.*;
@@ -139,13 +140,20 @@ public class Profile {
             resolution.put("height", h);
         }
     }
-    public JMenuItem getMenuItem(){
+    public JMenuItem getMenuItem(Kernel kernel){
         if (this.menuItem == null){
             if (this.hasName()){
                 this.menuItem = new JMenuItem(this.getName());
             } else {
-                this.menuItem = new JMenuItem("Unnamed Profile");
+                if (this.getType() == ProfileType.RELEASE){
+                    this.menuItem = new JMenuItem("Latest Release");
+                } else if (this.getType() == ProfileType.SNAPSHOT){
+                    this.menuItem = new JMenuItem("Latest Snapshot");
+                } else {
+                    this.menuItem = new JMenuItem("Unnamed Profile");
+                }
             }
+            this.menuItem.addActionListener(e -> kernel.getProfiles().setSelectedProfile(getID()));
         } else if (this.hasName()){
             if (!this.menuItem.getName().equals(this.getName())){
                 this.menuItem.setName(this.getName());
