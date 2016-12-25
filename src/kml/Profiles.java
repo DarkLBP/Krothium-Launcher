@@ -78,6 +78,8 @@ public class Profiles {
     public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
         File launcherProfiles = kernel.getConfigFile();
+        String latestUsedID = null;
+        long latestUsedMillis = 0;
         if (launcherProfiles.exists()){
             try{
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
@@ -130,25 +132,21 @@ public class Profiles {
                             console.printError("Profile " + ((name != null) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution);
+                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, kernel);
                     if (first == null){
                         first = name;
                     }
                     if (!this.existsProfile(p)){
                         this.addProfile(p);
+                        if (p.getLastUsed().toEpochMilli() > latestUsedMillis){
+                            latestUsedMillis = p.getLastUsed().toEpochMilli();
+                            latestUsedID = p.getID();
+                        }
                     }
                 }
                 if (this.profileCount() > 0){
-
-                    if (root.has("selectedProfile")){
-                        String selProfile = root.getString("selectedProfile");
-                        if (this.profiles.containsKey(selProfile)){
-                            console.printInfo("Profile " + selProfile + " marked as selected.");
-                            this.setSelectedProfile(selProfile);
-                        }else{
-                            console.printError("Invalid profile selected! Using first loaded (" + first + ")");
-                            this.setSelectedProfile(first);
-                        }
+                    if (latestUsedID != null){
+                        this.setSelectedProfile(latestUsedID);
                     } else {
                         console.printInfo("No profile is selected! Using first loaded (" + first + ")");
                         this.setSelectedProfile(first);
@@ -186,14 +184,13 @@ public class Profiles {
     public void updateSessionProfiles(){
         if (kernel.getAuthentication().isAuthenticated()){
             if (!hasReleaseProfile()){
-                Profile release = new Profile(ProfileType.RELEASE);
+                Profile release = new Profile(ProfileType.RELEASE, kernel);
                 addProfile(release);
                 setSelectedProfile(release.getID());
             }
             if (!hasSnapshotProfile() && kernel.getSettings().getEnableSnapshots()){
-                Profile snapshot = new Profile(ProfileType.SNAPSHOT);
+                Profile snapshot = new Profile(ProfileType.SNAPSHOT, kernel);
                 addProfile(snapshot);
-                setSelectedProfile(snapshot.getID());
             }
             if (hasSnapshotProfile() && !kernel.getSettings().getEnableSnapshots()){
                 deleteProfile(getSnapshotProfile());

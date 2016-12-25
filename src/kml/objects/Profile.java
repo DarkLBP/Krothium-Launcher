@@ -28,13 +28,15 @@ public class Profile {
     private Instant lastUsed = null;
     private Map<String, Integer> resolution = new HashMap<>();
     private JMenuItem menuItem;
+    private final Kernel kernel;
     
-    public Profile(ProfileType type){
+    public Profile(ProfileType type, Kernel k){
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
-        this.lastUsed = Instant.parse("1970-01-01T00:00:00.000Z");
+        this.lastUsed = Instant.EPOCH;
+        this.kernel = k;
     }
-    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution){
+    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, Kernel k){
         if (id == null){
             this.id = UUID.randomUUID().toString().replaceAll("-", "");
         } else {
@@ -57,12 +59,12 @@ public class Profile {
         this.javaArgs = javaArgs;
         this.resolution = resolution;
         if (lastUsed == null) {
-            this.lastUsed = Instant.parse("1970-01-01T00:00:00.000Z");
+            this.lastUsed = Instant.EPOCH;
         } else {
             try {
                 this.lastUsed = Instant.parse(lastUsed);
             } catch (DateTimeParseException ex){
-                this.lastUsed = Instant.parse("1970-01-01T00:00:00.000Z");
+                this.lastUsed = Instant.EPOCH;
             }
         }
         type = type.toLowerCase();
@@ -78,25 +80,38 @@ public class Profile {
         }
         if (this.type == ProfileType.CUSTOM) {
             if (created == null) {
-                this.created = Instant.parse("1970-01-01T00:00:00.000Z");
+                this.created = Instant.EPOCH;
             } else {
                 try {
                     this.created = Instant.parse(created);
                 } catch (DateTimeParseException ex){
-                    this.created = Instant.parse("1970-01-01T00:00:00.000Z");
+                    this.created = Instant.EPOCH;
                 }
             }
         }
+        this.kernel = k;
     }
     public String getID(){return this.id;}
     public void setName(String newName){this.name = newName;}
     public void setVersionID(String ver){this.lastVersionId = ver;}
     public String getName(){return this.name;}
-    public boolean hasName(){return this.name != null && !this.name.isEmpty();}
+    public boolean hasName(){return this.name != null;}
     public void setType(ProfileType type){this.type = type;}
     public ProfileType getType(){return this.type;}
-    public String getVersionID(){return this.lastVersionId;}
-    public boolean hasVersion(){return this.lastVersionId != null;}
+    public String getVersionID(){
+        if (this.getType() == ProfileType.CUSTOM){
+            return this.lastVersionId;
+        } else if (this.getType() == ProfileType.SNAPSHOT){
+            return kernel.getVersions().getLatestSnapshot();
+        }
+        return kernel.getVersions().getLatestRelease();
+    }
+    public boolean hasVersion(){
+        if (this.getType() == ProfileType.CUSTOM){
+            return this.lastVersionId != null;
+        }
+        return true;
+    }
     public File getGameDir(){return this.gameDir;}
     public boolean hasGameDir(){return (this.gameDir != null);}
     public void setGameDir(File dir){this.gameDir = dir;}
@@ -140,7 +155,7 @@ public class Profile {
             resolution.put("height", h);
         }
     }
-    public JMenuItem getMenuItem(Kernel kernel){
+    public JMenuItem getMenuItem(){
         if (this.menuItem == null){
             if (this.hasName()){
                 this.menuItem = new JMenuItem(this.getName());
@@ -155,8 +170,8 @@ public class Profile {
             }
             this.menuItem.addActionListener(e -> kernel.getProfiles().setSelectedProfile(getID()));
         } else if (this.hasName()){
-            if (!this.menuItem.getName().equals(this.getName())){
-                this.menuItem.setName(this.getName());
+            if (!this.menuItem.getText().equals(this.getName())){
+                this.menuItem.setText(this.getName());
             }
         }
         return this.menuItem;

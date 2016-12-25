@@ -346,7 +346,7 @@ public class Main extends JFrame{
         Set set = profs.keySet();
         Iterator it = set.iterator();
         while (it.hasNext()){
-            popupMenu.add(profs.get(it.next().toString()).getMenuItem(kernel));
+            popupMenu.add(profs.get(it.next().toString()).getMenuItem());
         }
         popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
