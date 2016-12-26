@@ -6,11 +6,8 @@ import kml.exceptions.GameLauncherException;
 import kml.objects.Browser;
 import kml.objects.Profile;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Timer;
@@ -19,7 +16,7 @@ import java.util.Timer;
  * Created by darkl on 18/11/2016.
  */
 public class Main extends JFrame{
-    private JPanel panel1;
+    private JPanel main;
     private JButton playButton;
     private BackgroundPanel footerPanel;
     private BackgroundPanel headPanel;
@@ -34,6 +31,7 @@ public class Main extends JFrame{
     private final LoginTab login;
     private final Browser browser;
     private final SettingsTab setting;
+    private final LaunchOptionsTab launchOptions;
     private boolean componentsDisabled = false;
     private final BorderLayout borderLayout = new BorderLayout();
     private final FlowLayout flowLayout = new FlowLayout();
@@ -54,6 +52,7 @@ public class Main extends JFrame{
         this.login = new LoginTab(k);
         this.browser = new Browser();
         this.setting = new SettingsTab(k);
+        this.launchOptions = new LaunchOptionsTab(k);
         this.gameLauncher = kernel.getGameLauncher();
         this.downloader = kernel.getDownloader();
         this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(325,70, Image.SCALE_SMOOTH));
@@ -71,7 +70,7 @@ public class Main extends JFrame{
         contentPanel.setLayout(new FlowLayout());
         footerPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
         headPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
-        setContentPane(panel1);
+        setContentPane(main);
         news.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         skins.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         settings.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -299,6 +298,7 @@ public class Main extends JFrame{
     public void setVisible(boolean b){
         super.setVisible(b);
         timer.scheduleAtFixedRate(guiThread, 0, 1000);
+        kernel.getProfiles().updateSessionProfiles();
     }
     private void setSelected(JLabel l){
         if (!componentsDisabled){
@@ -320,6 +320,9 @@ public class Main extends JFrame{
                 this.contentPanel.setLayout(flowLayout);
                 if (l.equals(settings)){
                     this.contentPanel.add(this.setting.getPanel());
+                } else if (l.equals(options)){
+                    this.contentPanel.add(this.launchOptions.getPanel());
+                    this.launchOptions.populateList();
                 }
             }
             this.contentPanel.updateUI();

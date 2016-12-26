@@ -109,6 +109,7 @@ public class Authentication {
             this.selectedAccount = userID;
             this.selectedProfile = profileID;
             this.authenticated = true;
+            kernel.getProfiles().updateSessionProfiles();
         }else{
             this.authenticated = false;
             if (r.has("errorMessage")){
@@ -119,7 +120,6 @@ public class Authentication {
                 throw new AuthenticationException(r.getString("error"));
             }
         }
-        kernel.getProfiles().updateSessionProfiles();
     }
     public void refresh() throws AuthenticationException{
         if (this.selectedAccount == null){
@@ -170,7 +170,6 @@ public class Authentication {
                 throw new AuthenticationException(r.getString("error"));
             }
         }
-        kernel.getProfiles().updateSessionProfiles();
     }
     public void validate() throws AuthenticationException{
         if (this.selectedAccount == null){
@@ -215,7 +214,6 @@ public class Authentication {
                 }
             }
         }
-        kernel.getProfiles().updateSessionProfiles();
     }
     public boolean isAuthenticated() { return this.authenticated; }
     public String getClientToken() { return this.clientToken; }

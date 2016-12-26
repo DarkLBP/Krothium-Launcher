@@ -20,10 +20,10 @@ public class Constants {
     public static final URL VERSION_MANIFEST_FILE = Utils.stringToURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
     public static final URL HANDSHAKE_URL = Utils.stringToURL("https://mc.krothium.com/hello");
+    public static final URL PROFILE_ICONS = Constants.class.getResource("/kml/gui/textures/profile-icons.png");
     public static final int DOWNLOAD_TRIES = 5;
     public static boolean UPDATE_CHECKED = false;
     public static final int KEEP_OLD_LOGS = 2;
     public static boolean USE_HTTPS = false;
     public static boolean USE_LOCAL = false;
-    public static final int USED_PORT = new Random().nextInt((25000 - 24000) + 1) + 24000;
 }

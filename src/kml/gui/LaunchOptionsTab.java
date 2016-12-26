@@ -1,0 +1,136 @@
+package kml.gui;
+
+
+import kml.Kernel;
+import kml.Profiles;
+import kml.Settings;
+import kml.Utils;
+import kml.enums.ProfileIcon;
+import kml.enums.ProfileType;
+import kml.objects.Profile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Created by darkl on 26/12/2016.
+ */
+public class LaunchOptionsTab {
+    private JPanel main;
+    private JLabel snapshots;
+    private JLabel historical;
+    private JLabel advanced;
+    private JList profiles;
+    private final DefaultListModel listModel = new DefaultListModel();
+    private final Settings settings;
+    private final Kernel kernel;
+    private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
+    private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
+    private final Map<Integer, String> profileIDS = new HashMap<>();
+
+    public LaunchOptionsTab(Kernel k) {
+        kernel = k;
+        settings = k.getSettings();
+        snapshots.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        historical.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        advanced.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        profiles.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        snapshots.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                settings.setEnableSnapshots(!settings.getEnableSnapshots());
+                if (settings.getEnableSnapshots()){
+                    snapshots.setIcon(checkbox_enabled);
+                } else {
+                    snapshots.setIcon(checkbox_disabled);
+                }
+            }
+        });
+        historical.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                settings.setEnableHistorical(!settings.getEnableHistorical());
+                if (settings.getEnableHistorical()){
+                    historical.setIcon(checkbox_enabled);
+                } else {
+                    historical.setIcon(checkbox_disabled);
+                }
+            }
+        });
+        advanced.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                settings.setEnableAdvanced(!settings.getEnableAdvanced());
+                if (settings.getEnableAdvanced()){
+                    advanced.setIcon(checkbox_enabled);
+                } else {
+                    advanced.setIcon(checkbox_disabled);
+                }
+            }
+        });
+        if (settings.getEnableSnapshots()){
+            snapshots.setIcon(checkbox_enabled);
+        } else {
+            snapshots.setIcon(checkbox_disabled);
+        }
+        if (settings.getEnableHistorical()){
+            historical.setIcon(checkbox_enabled);
+        } else {
+            historical.setIcon(checkbox_disabled);
+        }
+        if (settings.getEnableAdvanced()){
+            advanced.setIcon(checkbox_enabled);
+        } else {
+            advanced.setIcon(checkbox_disabled);
+        }
+        profiles.setModel(this.listModel);
+        profiles.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
+                label.setFont(plain);
+                return label;
+            }
+        });
+    }
+    public JPanel getPanel(){
+        return this.main;
+    }
+    public void populateList(){
+        this.listModel.clear();
+        this.profileIDS.clear();
+        Profiles p = kernel.getProfiles();
+        Map<String, Profile> profs = p.getProfiles();
+        Set set = profs.keySet();
+        Iterator it = set.iterator();
+        int count = 0;
+        while (it.hasNext()){
+            Profile pf = profs.get(it.next().toString());
+            if (pf.hasName()){
+                this.listModel.add(count, pf.getName());
+            } else {
+                if (pf.getType() == ProfileType.CUSTOM){
+                    this.listModel.add(count, "Unnamed Profile");
+                } else {
+                    if (pf.getType() == ProfileType.SNAPSHOT){
+                        this.listModel.add(count, "Latest Snapshot");
+                    } else {
+                        this.listModel.add(count, "Latest Release");
+                    }
+                }
+            }
+            this.profileIDS.put(count++, pf.getID());
+        }
+        if (p.profileCount() > 0){
+            this.profiles.setSelectedIndex(0);
+        }
+    }
+}

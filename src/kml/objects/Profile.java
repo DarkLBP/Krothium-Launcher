@@ -1,12 +1,17 @@
 package kml.objects;
 
 import kml.Kernel;
+import kml.Utils;
+import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +34,8 @@ public class Profile {
     private Map<String, Integer> resolution = new HashMap<>();
     private JMenuItem menuItem;
     private final Kernel kernel;
+    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
     
     public Profile(ProfileType type, Kernel k){
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
@@ -169,10 +176,32 @@ public class Profile {
                 }
             }
             this.menuItem.addActionListener(e -> kernel.getProfiles().setSelectedProfile(getID()));
-        } else if (this.hasName()){
-            if (!this.menuItem.getText().equals(this.getName())){
-                this.menuItem.setText(this.getName());
+            this.menuItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
+        } else {
+            if (this.hasName()){
+                if (!this.menuItem.getText().equals(this.getName())){
+                    this.menuItem.setText(this.getName());
+                }
+            } else {
+                String fakeName;
+                if (this.getType() == ProfileType.RELEASE){
+                    fakeName = "Latest Release";
+                } else if (this.getType() == ProfileType.SNAPSHOT){
+                    fakeName = "Latest Snapshot";
+                } else {
+                    fakeName = "Unnamed Profile";
+                }
+                if (!this.menuItem.getText().equals(fakeName)){
+                    this.menuItem.setText(fakeName);
+                }
             }
+
+        }
+        if (kernel.getProfiles().getSelectedProfile().equals(this.getID())){
+            this.menuItem.setFont(bold);
+            this.menuItem.setText(this.menuItem.getText() + " (Selected)");
+        } else {
+            this.menuItem.setFont(plain);
         }
         return this.menuItem;
     }

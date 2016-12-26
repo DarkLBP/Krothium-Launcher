@@ -2,8 +2,13 @@ package kml;
 
 import kml.enums.OS;
 import kml.enums.OSArch;
+import kml.enums.ProfileIcon;
 
+import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -256,5 +261,24 @@ public class Utils {
             conversion = null;
         }
         return conversion;
+    }
+    public static ImageIcon getProfileIcon(ProfileIcon p){
+        BufferedImage bImg = new BufferedImage(32,32,BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = bImg.createGraphics();
+        int blockX = 0;
+        int blockY = 0;
+        try {
+            Image img = ImageIO.read(Constants.PROFILE_ICONS);
+            switch (p){
+                case GRASS:
+                    blockX = 4;
+                    blockY = 4;
+                    break;
+            }
+            g.drawImage(img, 0, 0, 32, 32, blockX*136, blockY*136, blockX*136+136, blockY*136+136, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ImageIcon(bImg);
     }
 }
