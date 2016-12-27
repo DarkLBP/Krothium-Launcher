@@ -29,12 +29,12 @@ public class Profiles {
     public boolean addProfile(Profile p){
         if (!this.existsProfile(p)){
             if (p.getType() != ProfileType.CUSTOM){
-                if (releaseProfile == null && p.getType() == ProfileType.RELEASE){
+                if (!hasReleaseProfile() && p.getType() == ProfileType.RELEASE){
                     releaseProfile = p.getID();
                     profiles.put(p.getID(), p);
                     console.printInfo("Profile " + p.getID() + " added");
                     return true;
-                } else if (snapshotProfile == null && p.getType() == ProfileType.SNAPSHOT){
+                } else if (!hasSnapshotProfile() && p.getType() == ProfileType.SNAPSHOT){
                     snapshotProfile = p.getID();
                     profiles.put(p.getID(), p);
                     console.printInfo("Profile " + p.getID() + " added");
@@ -67,6 +67,12 @@ public class Profiles {
             } else {
                 profiles.remove(p);
                 console.printInfo("Profile " + p + " deleted.");
+            }
+            if (this.hasReleaseProfile() && this.getReleaseProfile().equals(p)){
+                this.releaseProfile = null;
+            }
+            if (this.hasSnapshotProfile() && this.getSnapshotProfile().equals(p)){
+                this.snapshotProfile = null;
             }
             return true;
         }
@@ -199,7 +205,7 @@ public class Profiles {
             if (hasReleaseProfile()){
                 deleteProfile(getReleaseProfile());
             }
-            if (hasReleaseProfile()){
+            if (hasSnapshotProfile()){
                 deleteProfile(getSnapshotProfile());
             }
         }
