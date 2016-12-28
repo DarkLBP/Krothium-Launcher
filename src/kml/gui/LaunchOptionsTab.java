@@ -34,9 +34,12 @@ public class LaunchOptionsTab {
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
     private final Map<Integer, String> profileIDS = new HashMap<>();
+    private final ProfileEditor editor;
 
     public LaunchOptionsTab(Kernel k) {
         kernel = k;
+        editor = new ProfileEditor(k);
+        editor.setLocationRelativeTo(profiles);
         settings = k.getSettings();
         snapshots.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historical.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -51,6 +54,9 @@ public class LaunchOptionsTab {
                 } else {
                     snapshots.setIcon(checkbox_disabled);
                 }
+                if (editor.isVisible()){
+                    editor.updateConstraints();
+                }
             }
         });
         historical.addMouseListener(new MouseAdapter() {
@@ -62,6 +68,9 @@ public class LaunchOptionsTab {
                 } else {
                     historical.setIcon(checkbox_disabled);
                 }
+                if (editor.isVisible()){
+                    editor.updateConstraints();
+                }
             }
         });
         advanced.addMouseListener(new MouseAdapter() {
@@ -72,6 +81,9 @@ public class LaunchOptionsTab {
                     advanced.setIcon(checkbox_enabled);
                 } else {
                     advanced.setIcon(checkbox_disabled);
+                }
+                if (editor.isVisible()){
+                    editor.updateConstraints();
                 }
             }
         });
@@ -103,7 +115,9 @@ public class LaunchOptionsTab {
         profiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                profiles.clearSelection();
+                if (editor.setProfile(profileIDS.get(profiles.getSelectedIndex()))){
+                    editor.setVisible(true);
+                }
             }
         });
         profiles.addMouseListener(new MouseAdapter() {

@@ -80,7 +80,7 @@ public class Profiles {
         return false;
     }
     private boolean existsProfile(Profile p){return this.profiles.containsKey(p.getName());}
-    private boolean existsProfile(String p){return this.profiles.containsKey(p);}
+    public boolean existsProfile(String p){return this.profiles.containsKey(p);}
     public void fetchProfiles(){ 
         console.printInfo("Fetching profiles.");
         File launcherProfiles = kernel.getConfigFile();

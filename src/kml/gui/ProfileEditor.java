@@ -38,12 +38,17 @@ public class ProfileEditor extends JFrame{
 
     public ProfileEditor(Kernel k){
         setContentPane(main);
+        setSize(600, 400);
+        setResizable(false);
+        setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         this.kernel = k;
         contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
         resolutionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         gameDirLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         javaExecLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         javaArgsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        cancelButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         resolutionLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -58,6 +63,7 @@ public class ProfileEditor extends JFrame{
                 }
                 resX.setValue(854);
                 resY.setValue(480);
+                resolutionEnabled = !resolutionEnabled;
             }
         });
         gameDirLabel.addMouseListener(new MouseAdapter() {
@@ -71,6 +77,7 @@ public class ProfileEditor extends JFrame{
                     gameDirLabel.setIcon(checkbox_enabled);
                 }
                 gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
+                gameDirEnabled = !gameDirEnabled;
             }
         });
         javaExecLabel.addMouseListener(new MouseAdapter() {
@@ -86,11 +93,13 @@ public class ProfileEditor extends JFrame{
                     }
                 }
                 javaExec.setText(Utils.getJavaDir());
+                javaExecEnabled = !javaExecEnabled;
             }
         });
         javaArgsLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                System.out.println("PASA");
                 if (javaArgsEnabled){
                     javaArgs.setEnabled(false);
                     javaArgsLabel.setIcon(checkbox_disabled);
@@ -111,16 +120,37 @@ public class ProfileEditor extends JFrame{
                 builder.append(" -XX:-UseAdaptiveSizePolicy");
                 builder.append(" -Xmn128M");
                 javaArgs.setText(builder.toString());
+                javaArgsEnabled = !javaArgsEnabled;
             }
         });
-
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ProfileEditor.this.setVisible(false);
+            }
+        });
     }
     @Override
     public void setVisible(boolean b){
+        if (b){
+            refreshData();
+        }
+        super.setVisible(b);
+    }
+    public boolean setProfile(String p){
+        if (kernel.getProfiles().existsProfile(p)){
+            this.profile = kernel.getProfiles().getProfile(p);
+            return true;
+        }
+        return false;
+    }
+    public void refreshData(){
         name.setEnabled(true);
         versions.setEnabled(true);
         javaExec.setEnabled(true);
         javaArgs.setEnabled(true);
+        javaExecLabel.setEnabled(true);
+        javaArgsLabel.setEnabled(true);
         if (profile.hasName()){
             setTitle("Profile Editor: " + profile.getName());
             name.setText(profile.getName());
@@ -191,8 +221,19 @@ public class ProfileEditor extends JFrame{
             builder.append(" -Xmn128M");
             javaArgs.setText(builder.toString());
         }
+        updateConstraints();
     }
-    public void setProfile(Profile p){
-        this.profile = p;
+    public void updateConstraints(){
+        if (!kernel.getSettings().getEnableAdvanced()){
+            if (!javaExecEnabled) {
+                javaExecLabel.setEnabled(false);
+            }
+            if (!javaArgsEnabled){
+                javaArgsLabel.setEnabled(false);
+            }
+        } else {
+            javaExecLabel.setEnabled(true);
+            javaArgsLabel.setEnabled(true);
+        }
     }
 }
