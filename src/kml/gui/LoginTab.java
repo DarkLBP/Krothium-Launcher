@@ -19,11 +19,11 @@ import java.io.IOException;
 public class LoginTab {
 
     private JPanel mainPanel;
+    private JPanel content;
     private JButton login;
     private JButton register;
     private JTextField username;
     private JPasswordField password;
-    private JPanel content;
     private final ImageIcon button_normal;
     private final ImageIcon button_hover;
     private final Kernel kernel;

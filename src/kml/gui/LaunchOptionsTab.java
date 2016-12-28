@@ -100,6 +100,18 @@ public class LaunchOptionsTab {
                 return label;
             }
         });
+        profiles.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                profiles.clearSelection();
+            }
+        });
+        profiles.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                profiles.clearSelection();
+            }
+        });
     }
     public JPanel getPanel(){
         return this.main;
@@ -128,9 +140,6 @@ public class LaunchOptionsTab {
                 }
             }
             this.profileIDS.put(count++, pf.getID());
-        }
-        if (p.profileCount() > 0){
-            this.profiles.setSelectedIndex(0);
         }
     }
 }
