@@ -37,11 +37,13 @@ public class ProfileEditor extends JFrame{
     private Profile profile = null;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
+    private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
+    private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
     private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
 
     public ProfileEditor(Kernel k, LaunchOptionsTab tab){
         setContentPane(main);
-        setSize(600, 400);
+        setSize(650, 450);
         setResizable(false);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         this.kernel = k;
@@ -52,6 +54,8 @@ public class ProfileEditor extends JFrame{
         javaArgsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cancelButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        saveButton.setIcon(button_normal);
+        cancelButton.setIcon(button_normal);
         resolutionLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -112,8 +116,6 @@ public class ProfileEditor extends JFrame{
                     if (kernel.getSettings().getEnableAdvanced()){
                         javaArgs.setEnabled(true);
                         javaArgsLabel.setIcon(checkbox_enabled);
-                    } else {
-                        updateConstraints();
                     }
                 }
                 StringBuilder builder = new StringBuilder();
@@ -183,6 +185,54 @@ public class ProfileEditor extends JFrame{
                 }
                 tab.populateList();
                 setVisible(false);
+            }
+        });
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveButton.setIcon(button_hover);
+            }
+        });
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                saveButton.setIcon(button_normal);
+            }
+        });
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                saveButton.setForeground(Color.YELLOW);
+            }
+        });
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                saveButton.setForeground(Color.WHITE);
+            }
+        });
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelButton.setIcon(button_hover);
+            }
+        });
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelButton.setIcon(button_normal);
+            }
+        });
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cancelButton.setForeground(Color.YELLOW);
+            }
+        });
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                cancelButton.setForeground(Color.WHITE);
             }
         });
     }
