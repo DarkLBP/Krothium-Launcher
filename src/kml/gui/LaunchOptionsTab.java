@@ -38,7 +38,7 @@ public class LaunchOptionsTab {
 
     public LaunchOptionsTab(Kernel k) {
         kernel = k;
-        editor = new ProfileEditor(k);
+        editor = new ProfileEditor(k, this);
         editor.setLocationRelativeTo(profiles);
         settings = k.getSettings();
         snapshots.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

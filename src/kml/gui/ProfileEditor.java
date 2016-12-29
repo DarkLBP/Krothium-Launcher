@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
  * Created by darkl on 27/12/2016.
@@ -30,13 +31,15 @@ public class ProfileEditor extends JFrame{
     private JLabel javaArgsLabel;
     private JButton saveButton;
     private JButton cancelButton;
+    private JLabel nameLabel;
+    private JLabel versionsLabel;
     private final Kernel kernel;
     private Profile profile = null;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
-    private boolean resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
+    private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
 
-    public ProfileEditor(Kernel k){
+    public ProfileEditor(Kernel k, LaunchOptionsTab tab){
         setContentPane(main);
         setSize(600, 400);
         setResizable(false);
@@ -94,12 +97,14 @@ public class ProfileEditor extends JFrame{
                 }
                 javaExec.setText(Utils.getJavaDir());
                 javaExecEnabled = !javaExecEnabled;
+                if (!kernel.getSettings().getEnableAdvanced() && !javaExecEnabled){
+                    updateConstraints();
+                }
             }
         });
         javaArgsLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("PASA");
                 if (javaArgsEnabled){
                     javaArgs.setEnabled(false);
                     javaArgsLabel.setIcon(checkbox_disabled);
@@ -107,6 +112,8 @@ public class ProfileEditor extends JFrame{
                     if (kernel.getSettings().getEnableAdvanced()){
                         javaArgs.setEnabled(true);
                         javaArgsLabel.setIcon(checkbox_enabled);
+                    } else {
+                        updateConstraints();
                     }
                 }
                 StringBuilder builder = new StringBuilder();
@@ -121,12 +128,61 @@ public class ProfileEditor extends JFrame{
                 builder.append(" -Xmn128M");
                 javaArgs.setText(builder.toString());
                 javaArgsEnabled = !javaArgsEnabled;
+                if (!kernel.getSettings().getEnableAdvanced() && !javaArgsEnabled){
+                    updateConstraints();
+                }
             }
         });
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 ProfileEditor.this.setVisible(false);
+            }
+        });
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (nameEnabled){
+                    if (!name.getText().isEmpty()){
+                        profile.setName(name.getText());
+                    } else {
+                        profile.setName(null);
+                    }
+                } else {
+                    profile.setName(null);
+                }
+                if (resolutionEnabled){
+                    profile.setResolution((int)resX.getValue(), (int)resY.getValue());
+                } else {
+                    profile.setResolution(-1, -1);
+                }
+                if (gameDirEnabled && !gameDir.getText().isEmpty()){
+                    File gd = new File(gameDir.getText());
+                    if (gd.exists() && gd.isDirectory()){
+                        profile.setGameDir(gd);
+                    } else {
+                        profile.setGameDir(null);
+                    }
+                } else {
+                    profile.setGameDir(null);
+                }
+                if (javaExecEnabled && !javaExec.getText().isEmpty()){
+                    File jd = new File(javaExec.getText());
+                    if (jd.exists() && jd.isFile()){
+                        profile.setJavaDir(jd);
+                    } else {
+                        profile.setJavaDir(null);
+                    }
+                } else {
+                    profile.setJavaDir(null);
+                }
+                if (javaArgsEnabled && !javaArgs.getText().isEmpty()){
+                    profile.setJavaArgs(javaArgs.getText());
+                } else {
+                    profile.setJavaArgs(null);
+                }
+                tab.populateList();
+                setVisible(false);
             }
         });
     }
@@ -154,17 +210,23 @@ public class ProfileEditor extends JFrame{
         if (profile.hasName()){
             setTitle("Profile Editor: " + profile.getName());
             name.setText(profile.getName());
+            nameEnabled = true;
+            versionEnabled = true;
         } else {
             if (profile.getType() == ProfileType.RELEASE){
                 setTitle("Profile Editor: Latest Release");
                 name.setEnabled(false);
                 versions.setEnabled(false);
+                nameEnabled = false;
+                versionEnabled = false;
                 name.setText("Latest Release");
             } else if (profile.getType() == ProfileType.SNAPSHOT){
                 setTitle("Profile Editor: Latest Snapshot");
                 name.setEnabled(false);
                 versions.setEnabled(false);
-                name.setName("Latest Snapshot");
+                nameEnabled = false;
+                versionEnabled = false;
+                name.setText("Latest Snapshot");
             } else {
                 setTitle("Profile Editor: Unnamed Profile");
             }
@@ -177,6 +239,8 @@ public class ProfileEditor extends JFrame{
             resX.setEnabled(true);
             resY.setEnabled(true);
             resolutionLabel.setIcon(checkbox_enabled);
+            resX.setValue(profile.getResolutionWidth());
+            resY.setValue(profile.getResolutionHeight());
         } else {
             resX.setEnabled(false);
             resY.setEnabled(false);
@@ -234,6 +298,16 @@ public class ProfileEditor extends JFrame{
         } else {
             javaExecLabel.setEnabled(true);
             javaArgsLabel.setEnabled(true);
+        }
+        if (nameEnabled){
+            nameLabel.setEnabled(true);
+        } else {
+            nameLabel.setEnabled(false);
+        }
+        if (versionEnabled){
+            versionsLabel.setEnabled(true);
+        } else {
+            versionsLabel.setEnabled(false);
         }
     }
 }
