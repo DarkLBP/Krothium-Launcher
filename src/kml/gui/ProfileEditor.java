@@ -4,13 +4,18 @@ import kml.Kernel;
 import kml.Utils;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
+import kml.enums.VersionType;
 import kml.objects.Profile;
+import kml.objects.VersionMeta;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by darkl on 27/12/2016.
@@ -358,6 +363,16 @@ public class ProfileEditor extends JFrame{
             versionsLabel.setEnabled(true);
         } else {
             versionsLabel.setEnabled(false);
+        }
+        this.versions.removeAllItems();
+        Map<String, VersionMeta> versions = kernel.getVersions().getVersions();
+        Set keySet = versions.keySet();
+        Iterator it = keySet.iterator();
+        while (it.hasNext()){
+            VersionMeta vm = versions.get(it.next().toString());
+            if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())){
+                this.versions.addItem(vm.getID());
+            }
         }
     }
 }

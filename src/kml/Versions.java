@@ -173,15 +173,8 @@ public class Versions {
         }
         return vers;
     }
-    public LinkedHashSet<String> getVersions(){
-       LinkedHashSet<String> vers = new LinkedHashSet<>();
-        Set keys = this.versions.keySet();
-        Iterator it = keys.iterator();
-        while (it.hasNext()){
-            String verName = it.next().toString();
-            vers.add(verName);
-        }
-        return vers; 
+    public Map<String, VersionMeta> getVersions(){
+        return versions;
     }
     public String getLatestRelease(){return latestRel;}
     public String getLatestSnapshot(){return latestSnap;}

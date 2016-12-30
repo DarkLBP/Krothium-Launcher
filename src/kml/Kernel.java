@@ -45,10 +45,10 @@ public final class Kernel {
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
+        this.loadSettings();
         this.loadVersions();
         this.loadProfiles();
         this.loadUsers();
-        this.loadSettings();
         this.mainForm = new Main(this);
     }
     public Console getConsole(){return this.console;}

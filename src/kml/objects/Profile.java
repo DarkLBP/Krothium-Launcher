@@ -50,6 +50,7 @@ public class Profile {
             this.id = id;
         }
         this.name = name;
+
         this.lastVersionId = lastVersionId;
         if (gameDir != null){
             this.gameDir = new File(gameDir);
