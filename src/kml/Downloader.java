@@ -1,5 +1,6 @@
 package kml;
 
+import kml.enums.ProfileType;
 import kml.exceptions.DownloaderException;
 import kml.objects.*;
 import org.json.JSONObject;
@@ -37,7 +38,14 @@ public class Downloader {
     public void download() throws DownloaderException{
         this.downloading = true;
         Profile p = this.kernel.getProfiles().getProfile(this.kernel.getProfiles().getSelectedProfile());
-        String verID = (p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease());
+        String verID;
+        if (p.getType() == ProfileType.CUSTOM){
+            verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
+        } else if (p.getType() == ProfileType.RELEASE){
+            verID = kernel.getVersions().getLatestRelease();
+        } else {
+            verID = kernel.getVersions().getLatestSnapshot();
+        }
         Version v = kernel.getVersions().getVersion(verID);
         ExecutorService pool = Executors.newFixedThreadPool(5);
         List<Downloadable> urls = new ArrayList<>();

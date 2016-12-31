@@ -1,6 +1,7 @@
 package kml;
 
 import kml.enums.OSArch;
+import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Library;
 import kml.objects.Profile;
@@ -39,10 +40,12 @@ public class GameLauncher {
         }
         String verID;
         Version ver;
-        if (p.hasVersion()){
-            verID = p.getVersionID();
-        } else {
+        if (p.getType() == ProfileType.CUSTOM){
+            verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
+        } else if (p.getType() == ProfileType.RELEASE){
             verID = kernel.getVersions().getLatestRelease();
+        } else {
+            verID = kernel.getVersions().getLatestSnapshot();
         }
         ver = kernel.getVersions().getVersion(verID);
         File workingDir = kernel.getWorkingDir();
