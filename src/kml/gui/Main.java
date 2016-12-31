@@ -27,6 +27,7 @@ public class Main extends JFrame{
     private JLabel options;
     private JButton profileButton;
     private JLabel logout;
+    private JProgressBar progress;
     private JLabel selected;
     private final Kernel kernel;
     private final LoginTab login;
@@ -44,7 +45,7 @@ public class Main extends JFrame{
     private final ImageIcon profile_click;
     private final Timer timer = new Timer();
     private final TimerTask guiThread;
-    private final Downloader downloader;
+    public final Downloader downloader;
     private final GameLauncher gameLauncher;
     private final JPopupMenu popupMenu = new JPopupMenu();
 
@@ -82,6 +83,21 @@ public class Main extends JFrame{
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        Thread runThread = new Thread(){
+            @Override
+            public void run(){
+                if (!downloader.isDownloading() && !gameLauncher.isStarted()){
+                    try {
+                        downloader.download();
+                        gameLauncher.launch();
+                    } catch (GameLauncherException e1) {
+                        e1.printStackTrace();
+                    } catch (DownloaderException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        };
         MouseAdapter tabAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -123,15 +139,8 @@ public class Main extends JFrame{
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (playButton.isEnabled()){
-                    if (!downloader.isDownloading() && !gameLauncher.isStarted()){
-                        try {
-                            downloader.download();
-                            gameLauncher.launch();
-                        } catch (GameLauncherException e1) {
-                            e1.printStackTrace();
-                        } catch (DownloaderException e1) {
-                            e1.printStackTrace();
-                        }
+                    if (!runThread.isAlive()){
+                        runThread.start();
                     }
                 }
             }
@@ -221,11 +230,15 @@ public class Main extends JFrame{
                         setSelected(news);
                     }
                     if (downloader.isDownloading()){
-                        playButton.setText("DOWNLOADING");
+                        progress.setVisible(true);
+                        playButton.setText("DOWNLOADING " + kernel.getDownloader().getProgress() + "%");
+                        progress.setValue(kernel.getDownloader().getProgress());
                     } else if (gameLauncher.isStarted()){
                         playButton.setText("PLAYING");
+                        progress.setVisible(false);
                     } else {
                         playButton.setText("PLAY");
+                        progress.setVisible(false);
                     }
                 } else {
                     if (!componentsDisabled){
@@ -241,7 +254,7 @@ public class Main extends JFrame{
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
-        timer.scheduleAtFixedRate(guiThread, 0, 1000);
+        timer.scheduleAtFixedRate(guiThread, 0, 500);
         kernel.getProfiles().updateSessionProfiles();
     }
     private void setSelected(JLabel l){

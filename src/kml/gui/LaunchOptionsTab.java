@@ -138,8 +138,7 @@ public class LaunchOptionsTab {
         Set set = profs.keySet();
         Iterator it = set.iterator();
         while (it.hasNext()){
-            Profile pf = profs.get(it.next().toString());
-            this.listModel.addElement(pf.getID());
+            this.listModel.addElement(profs.get(it.next().toString()).getID());
         }
     }
 }
