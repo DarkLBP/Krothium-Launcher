@@ -45,8 +45,10 @@ public class ProfileEditor extends JFrame{
     private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
     private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
     private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
+    private final LaunchOptionsTab tab;
 
     public ProfileEditor(Kernel k, LaunchOptionsTab tab){
+        this.tab = tab;
         setContentPane(main);
         setSize(650, 450);
         setResizable(false);
@@ -143,53 +145,16 @@ public class ProfileEditor extends JFrame{
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                ProfileEditor.this.setVisible(false);
+                int response = JOptionPane.showConfirmDialog(null, "Are you sure? Any change won't be saved!", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    ProfileEditor.this.setVisible(false);
+                }
             }
         });
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (nameEnabled){
-                    if (!name.getText().isEmpty()){
-                        profile.setName(name.getText());
-                    } else {
-                        profile.setName(null);
-                    }
-                } else {
-                    profile.setName(null);
-                }
-                if (resolutionEnabled){
-                    profile.setResolution((int)resX.getValue(), (int)resY.getValue());
-                } else {
-                    profile.setResolution(-1, -1);
-                }
-                if (gameDirEnabled && !gameDir.getText().isEmpty()){
-                    File gd = new File(gameDir.getText());
-                    if (gd.exists() && gd.isDirectory()){
-                        profile.setGameDir(gd);
-                    } else {
-                        profile.setGameDir(null);
-                    }
-                } else {
-                    profile.setGameDir(null);
-                }
-                if (javaExecEnabled && !javaExec.getText().isEmpty()){
-                    File jd = new File(javaExec.getText());
-                    if (jd.exists() && jd.isFile()){
-                        profile.setJavaDir(jd);
-                    } else {
-                        profile.setJavaDir(null);
-                    }
-                } else {
-                    profile.setJavaDir(null);
-                }
-                if (javaArgsEnabled && !javaArgs.getText().isEmpty()){
-                    profile.setJavaArgs(javaArgs.getText());
-                } else {
-                    profile.setJavaArgs(null);
-                }
-                tab.populateList();
-                setVisible(false);
+                saveProfile();
             }
         });
         saveButton.addMouseListener(new MouseAdapter() {
@@ -342,6 +307,59 @@ public class ProfileEditor extends JFrame{
         }
         updateConstraints();
     }
+    public void saveProfile(){
+        if (nameEnabled){
+            if (!name.getText().isEmpty()){
+                profile.setName(name.getText());
+            } else {
+                profile.setName(null);
+            }
+        } else {
+            profile.setName(null);
+        }
+        if (versionEnabled){
+            if (versions.getSelectedIndex() == 0){
+                profile.setVersionID("latest-release");
+            } else if (versions.getSelectedIndex() == 1){
+                profile.setVersionID("latest-snapshot");
+            } else {
+                profile.setVersionID(versions.getSelectedItem().toString());
+            }
+        }
+        if (resolutionEnabled){
+            profile.setResolution((int)resX.getValue(), (int)resY.getValue());
+        } else {
+            profile.setResolution(-1, -1);
+        }
+        if (gameDirEnabled && !gameDir.getText().isEmpty()){
+            File gd = new File(gameDir.getText());
+            if (gd.exists() && gd.isDirectory()){
+                profile.setGameDir(gd);
+            } else {
+                profile.setGameDir(null);
+            }
+        } else {
+            profile.setGameDir(null);
+        }
+        if (javaExecEnabled && !javaExec.getText().isEmpty()){
+            File jd = new File(javaExec.getText());
+            if (jd.exists() && jd.isFile()){
+                profile.setJavaDir(jd);
+            } else {
+                profile.setJavaDir(null);
+            }
+        } else {
+            profile.setJavaDir(null);
+        }
+        if (javaArgsEnabled && !javaArgs.getText().isEmpty()){
+            profile.setJavaArgs(javaArgs.getText());
+        } else {
+            profile.setJavaArgs(null);
+        }
+        tab.populateList();
+        JOptionPane.showMessageDialog(null, "Profile saved successfully!", "Saved", JOptionPane.INFORMATION_MESSAGE);
+        setVisible(false);
+    }
     public void updateConstraints(){
         if (!kernel.getSettings().getEnableAdvanced()){
             if (!javaExecEnabled) {
@@ -365,6 +383,14 @@ public class ProfileEditor extends JFrame{
             versionsLabel.setEnabled(false);
         }
         this.versions.removeAllItems();
+        this.versions.addItem("Latest Version");
+        if (kernel.getSettings().getEnableSnapshots()){
+            this.versions.addItem("Latest Snapshot");
+        }
+        if ((profile.hasVersion() && profile.getVersionID().equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) || (!profile.hasVersion() && profile.getType() == ProfileType.SNAPSHOT)){
+            this.versions.setSelectedIndex(1);
+        }
+        int count = 2;
         Map<String, VersionMeta> versions = kernel.getVersions().getVersions();
         Set keySet = versions.keySet();
         Iterator it = keySet.iterator();
@@ -372,6 +398,10 @@ public class ProfileEditor extends JFrame{
             VersionMeta vm = versions.get(it.next().toString());
             if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())){
                 this.versions.addItem(vm.getID());
+                if (profile.hasVersion() && vm.getID().equalsIgnoreCase(profile.getVersionID())){
+                    this.versions.setSelectedIndex(count);
+                }
+                count++;
             }
         }
     }

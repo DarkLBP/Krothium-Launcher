@@ -106,20 +106,8 @@ public class Profile {
     public boolean hasName(){return this.name != null;}
     public void setType(ProfileType type){this.type = type;}
     public ProfileType getType(){return this.type;}
-    public String getVersionID(){
-        if (this.getType() == ProfileType.CUSTOM){
-            return this.lastVersionId;
-        } else if (this.getType() == ProfileType.SNAPSHOT){
-            return kernel.getVersions().getLatestSnapshot();
-        }
-        return kernel.getVersions().getLatestRelease();
-    }
-    public boolean hasVersion(){
-        if (this.getType() == ProfileType.CUSTOM){
-            return this.lastVersionId != null;
-        }
-        return true;
-    }
+    public String getVersionID(){return this.lastVersionId;}
+    public boolean hasVersion(){return this.lastVersionId != null;}
     public File getGameDir(){return this.gameDir;}
     public boolean hasGameDir(){return (this.gameDir != null);}
     public void setGameDir(File dir){this.gameDir = dir;}

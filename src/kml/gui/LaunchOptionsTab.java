@@ -115,8 +115,12 @@ public class LaunchOptionsTab {
         profiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (editor.setProfile(profileIDS.get(profiles.getSelectedIndex()))){
-                    editor.setVisible(true);
+                if (!editor.isVisible()){
+                    if (editor.setProfile(profileIDS.get(profiles.getSelectedIndex()))){
+                        editor.setVisible(true);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "A profile is already being edited!", "Profile editor busy", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
