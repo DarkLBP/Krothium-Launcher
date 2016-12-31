@@ -142,13 +142,6 @@ public class ProfileEditor{
         });
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure? Any change won't be saved!", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION){
-                    kernel.getGUI().setSelected(kernel.getGUI().options);
-                }
-            }
-            @Override
             public void mouseEntered(MouseEvent e) {
                 cancelButton.setIcon(button_hover);
             }
@@ -159,6 +152,10 @@ public class ProfileEditor{
             @Override
             public void mousePressed(MouseEvent e) {
                 cancelButton.setForeground(Color.YELLOW);
+                int response = JOptionPane.showConfirmDialog(null, "Are you sure? Any change won't be saved!", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    kernel.getGUI().setSelected(kernel.getGUI().options);
+                }
             }
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -166,10 +163,6 @@ public class ProfileEditor{
             }
         });
         saveButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                saveProfile();
-            }
             @Override
             public void mouseEntered(MouseEvent e) {
                 saveButton.setIcon(button_hover);
@@ -181,6 +174,7 @@ public class ProfileEditor{
             @Override
             public void mousePressed(MouseEvent e) {
                 saveButton.setForeground(Color.YELLOW);
+                saveProfile();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -188,14 +182,6 @@ public class ProfileEditor{
             }
         });
         deleteButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this profile?", "Profile deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (response == JOptionPane.YES_OPTION){
-                    kernel.getProfiles().deleteProfile(profile.getID());
-                    kernel.getGUI().setSelected(kernel.getGUI().options);
-                }
-            }
             @Override
             public void mouseEntered(MouseEvent e) {
                 deleteButton.setIcon(button_hover);
@@ -207,6 +193,11 @@ public class ProfileEditor{
             @Override
             public void mousePressed(MouseEvent e) {
                 deleteButton.setForeground(Color.YELLOW);
+                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this profile?", "Profile deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    kernel.getProfiles().deleteProfile(profile.getID());
+                    kernel.getGUI().setSelected(kernel.getGUI().options);
+                }
             }
             @Override
             public void mouseReleased(MouseEvent e) {

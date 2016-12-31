@@ -55,57 +55,44 @@ public class LoginTab {
             public void mouseEntered(MouseEvent e) {
                 login.setIcon(button_hover);
             }
-        });
-        login.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                login.setForeground(Color.YELLOW);
+                authenticate();
+            }
             @Override
             public void mouseExited(MouseEvent e) {
                 login.setIcon(button_normal);
                 login.setForeground(Color.WHITE);
             }
-        });
-        login.addFocusListener(focusButton);
-        login.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                login.setForeground(Color.WHITE);
-                authenticate();
-            }
-        });
-        login.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                login.setForeground(Color.YELLOW);
-            }
-        });
-        register.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                register.setIcon(button_hover);
-            }
-        });
-        register.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 register.setForeground(Color.WHITE);
-                register.setIcon(button_normal);
             }
         });
         register.addFocusListener(focusButton);
         register.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 register.setForeground(Color.WHITE);
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                register.setForeground(Color.YELLOW);
                 try {
                     Utils.openWebsite("https://krothium.com/register");
                 } catch (IOException e1) {
                     //
                 }
             }
-        });
-        register.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                register.setForeground(Color.YELLOW);
+            public void mouseExited(MouseEvent e) {
+                register.setForeground(Color.WHITE);
+                register.setIcon(button_normal);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                register.setIcon(button_hover);
             }
         });
         password.addKeyListener(new KeyAdapter() {

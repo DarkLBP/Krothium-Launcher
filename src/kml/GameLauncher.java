@@ -268,75 +268,72 @@ public class GameLauncher {
         gameArgs.forEach(console::printInfo);
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
-        if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()){
-            try {
-                pb.start();
-                kernel.exitSafely();
-            } catch (IOException ex){
-
+        try{
+            this.process = pb.start();
+            if (!kernel.getSettings().getKeepLauncherOpen()) {
+                kernel.getGUI().setVisible(false);
             }
-        } else {
-            try{
-                this.process = pb.start();
-                if (!kernel.getSettings().getKeepLauncherOpen()){
-                    kernel.getGUI().setVisible(false);
-                }
+            if (kernel.getSettings().getShowGameLog()){
                 gameLog.setVisible(true);
-                Thread log_info = new Thread(){
-                    @Override
-                    public void run(){
-                        InputStreamReader isr = new InputStreamReader(getInputStream());
-                        BufferedReader br = new BufferedReader(isr);
-                        String lineRead;
-                        try{
-                            while (isStarted()){
-                                if ((lineRead = br.readLine()) != null){
-                                    if (kernel.getSettings().getShowGameLog()){
-                                        gameLog.pushString(lineRead);
-                                    }
-                                    console.printInfo(lineRead);
+            }
+            Thread log_info = new Thread(){
+                @Override
+                public void run(){
+                    InputStreamReader isr = new InputStreamReader(getInputStream());
+                    BufferedReader br = new BufferedReader(isr);
+                    String lineRead;
+                    try{
+                        while (isStarted()){
+                            if ((lineRead = br.readLine()) != null){
+                                if (kernel.getSettings().getShowGameLog()){
+                                    gameLog.pushString(lineRead);
                                 }
+                                console.printInfo(lineRead);
                             }
-                            if (process.exitValue() != 0){
-                                error = true;
-                                console.printError("Game stopped unexpectedly.");
-                            }
-                        } catch (Exception ex){
+                        }
+                        if (process.exitValue() != 0){
                             error = true;
                             console.printError("Game stopped unexpectedly.");
                         }
-                        console.printInfo("Deleteting natives dir.");
-                        Utils.deleteDirectory(nativesDir);
+                    } catch (Exception ex){
+                        error = true;
+                        console.printError("Game stopped unexpectedly.");
                     }
-                };
-                log_info.start();
-                Thread log_error = new Thread(){
-                    @Override
-                    public void run(){
-                        InputStreamReader isr = new InputStreamReader(getErrorStream());
-                        BufferedReader br = new BufferedReader(isr);
-                        String lineRead;
-                        try{
-                            while (isStarted()){
-                                if ((lineRead = br.readLine()) != null){
-                                    if (kernel.getSettings().getShowGameLog()){
-                                        gameLog.pushString(lineRead);
-                                    }
-                                    console.printInfo(lineRead);
+                    console.printInfo("Deleteting natives dir.");
+                    Utils.deleteDirectory(nativesDir);
+                    if (!kernel.getSettings().getKeepLauncherOpen()){
+                        kernel.saveProfiles();
+                    }
+                }
+            };
+            log_info.start();
+            Thread log_error = new Thread(){
+                @Override
+                public void run(){
+                    InputStreamReader isr = new InputStreamReader(getErrorStream());
+                    BufferedReader br = new BufferedReader(isr);
+                    String lineRead;
+                    try{
+                        while (isStarted()){
+                            if ((lineRead = br.readLine()) != null){
+                                if (kernel.getSettings().getShowGameLog()){
+                                    gameLog.pushString(lineRead);
                                 }
+                                console.printInfo(lineRead);
                             }
-                        } catch (Exception ignored){
-                            console.printError("Failed to read game error stream.");
                         }
+                    } catch (Exception ignored){
+                        console.printError("Failed to read game error stream.");
                     }
-                };
-                log_error.start();
-            }catch (Exception ex){
-                error = true;
-                ex.printStackTrace();
-                console.printError("Game returned an error code.");
-            }
+                }
+            };
+            log_error.start();
+        }catch (Exception ex){
+            error = true;
+            ex.printStackTrace();
+            console.printError("Game returned an error code.");
         }
+
     }
     public boolean isStarted(){
         if (this.process != null){

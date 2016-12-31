@@ -85,21 +85,6 @@ public class Main extends JFrame{
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        Thread runThread = new Thread(){
-            @Override
-            public void run(){
-                if (!downloader.isDownloading() && !gameLauncher.isStarted()){
-                    try {
-                        downloader.download();
-                        gameLauncher.launch();
-                    } catch (GameLauncherException e1) {
-                        e1.printStackTrace();
-                    } catch (DownloaderException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        };
         MouseAdapter tabAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -136,14 +121,22 @@ public class Main extends JFrame{
             public void mousePressed(MouseEvent e) {
                 if (playButton.isEnabled()){
                     playButton.setIcon(playButton_click);
-                }
-            }
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (playButton.isEnabled()){
-                    if (!runThread.isAlive()){
-                        runThread.start();
-                    }
+                    Thread runThread = new Thread(){
+                        @Override
+                        public void run(){
+                            if (!downloader.isDownloading() && !gameLauncher.isStarted()){
+                                try {
+                                    downloader.download();
+                                    gameLauncher.launch();
+                                } catch (GameLauncherException e1) {
+                                    e1.printStackTrace();
+                                } catch (DownloaderException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        }
+                    };
+                    runThread.start();
                 }
             }
             @Override
@@ -182,6 +175,7 @@ public class Main extends JFrame{
             public void mousePressed(MouseEvent e) {
                 if (profileButton.isEnabled()){
                     profileButton.setIcon(profile_click);
+                    showPopupMenu(e);
                 }
             }
             @Override
@@ -190,16 +184,10 @@ public class Main extends JFrame{
                     profileButton.setIcon(profile_normal);
                 }
             }
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (profileButton.isEnabled()){
-                    showPopupMenu(e);
-                }
-            }
         });
         logout.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if (logout.isEnabled()){
                     int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION){
