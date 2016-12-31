@@ -34,6 +34,16 @@ public class LoginTab {
         this.border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
         this.username.setBorder(border);
         this.password.setBorder(border);
+        FocusAdapter focusButton = new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                ((JButton)e.getComponent()).setIcon(button_hover);
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                ((JButton)e.getComponent()).setIcon(button_normal);
+            }
+        };
         button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
         button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -53,18 +63,7 @@ public class LoginTab {
                 login.setForeground(Color.WHITE);
             }
         });
-        login.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                login.setIcon(button_hover);
-            }
-        });
-        login.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                login.setIcon(button_normal);
-            }
-        });
+        login.addFocusListener(focusButton);
         login.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -91,18 +90,7 @@ public class LoginTab {
                 register.setIcon(button_normal);
             }
         });
-        register.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                register.setIcon(button_hover);
-            }
-        });
-        register.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                register.setIcon(button_normal);
-            }
-        });
+        register.addFocusListener(focusButton);
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

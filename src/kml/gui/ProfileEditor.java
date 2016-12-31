@@ -150,59 +150,43 @@ public class ProfileEditor extends JFrame{
                     ProfileEditor.this.setVisible(false);
                 }
             }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelButton.setIcon(button_hover);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelButton.setIcon(button_normal);
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cancelButton.setForeground(Color.YELLOW);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                cancelButton.setForeground(Color.WHITE);
+            }
         });
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 saveProfile();
             }
-        });
-        saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 saveButton.setIcon(button_hover);
             }
-        });
-        saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 saveButton.setIcon(button_normal);
             }
-        });
-        saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 saveButton.setForeground(Color.YELLOW);
             }
-        });
-        saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 saveButton.setForeground(Color.WHITE);
-            }
-        });
-        cancelButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                cancelButton.setIcon(button_hover);
-            }
-        });
-        cancelButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
-                cancelButton.setIcon(button_normal);
-            }
-        });
-        cancelButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                cancelButton.setForeground(Color.YELLOW);
-            }
-        });
-        cancelButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                cancelButton.setForeground(Color.WHITE);
             }
         });
     }

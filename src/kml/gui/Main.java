@@ -82,90 +82,27 @@ public class Main extends JFrame{
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        news.addMouseListener(new MouseAdapter() {
+        MouseAdapter tabAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (news != selected){
-                    news.setForeground(Color.GREEN);
+                if (e.getComponent() != selected){
+                    e.getComponent().setForeground(Color.GREEN);
                 }
             }
-        });
-        news.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                news.setForeground(Color.WHITE);
+                e.getComponent().setForeground(Color.WHITE);
             }
-        });
-        news.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                setSelected(news);
-                news.setForeground(Color.WHITE);
+                setSelected((JLabel)e.getComponent());
+                e.getComponent().setForeground(Color.WHITE);
             }
-        });
-        skins.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (skins != selected){
-                    skins.setForeground(Color.GREEN);
-                }
-            }
-        });
-        skins.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
-                skins.setForeground(Color.WHITE);
-            }
-        });
-        skins.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                setSelected(skins);
-                skins.setForeground(Color.WHITE);
-            }
-        });
-        settings.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (settings != selected){
-                    settings.setForeground(Color.GREEN);
-                }
-            }
-        });
-        settings.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
-                settings.setForeground(Color.WHITE);
-            }
-        });
-        settings.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                setSelected(settings);
-                settings.setForeground(Color.WHITE);
-            }
-        });
-        options.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (options != selected){
-                    options.setForeground(Color.GREEN);
-                }
-            }
-        });
-        options.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
-                options.setForeground(Color.WHITE);
-            }
-        });
-        options.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                setSelected(options);
-                options.setForeground(Color.WHITE);
-            }
-        });
+        };
+        news.addMouseListener(tabAdapter);
+        skins.addMouseListener(tabAdapter);
+        settings.addMouseListener(tabAdapter);
+        options.addMouseListener(tabAdapter);
         contentPanel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -183,39 +120,33 @@ public class Main extends JFrame{
                     playButton.setIcon(playButton_click);
                 }
             }
-        });
-        playButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!downloader.isDownloading() && !gameLauncher.isStarted()){
-                    try {
-                        downloader.download();
-                        gameLauncher.launch();
-                    } catch (GameLauncherException e1) {
-                        e1.printStackTrace();
-                    } catch (DownloaderException e1) {
-                        e1.printStackTrace();
+                if (playButton.isEnabled()){
+                    if (!downloader.isDownloading() && !gameLauncher.isStarted()){
+                        try {
+                            downloader.download();
+                            gameLauncher.launch();
+                        } catch (GameLauncherException e1) {
+                            e1.printStackTrace();
+                        } catch (DownloaderException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
             }
-        });
-        playButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (playButton.isEnabled()){
                     playButton.setIcon(playButton_hover);
                 }
             }
-        });
-        playButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (playButton.isEnabled()){
                     playButton.setIcon(playButton_normal);
                 }
             }
-        });
-        playButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (playButton.isEnabled()){
@@ -230,32 +161,24 @@ public class Main extends JFrame{
                     profileButton.setIcon(profile_hover);
                 }
             }
-        });
-        profileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (profileButton.isEnabled()){
                     profileButton.setIcon(profile_normal);
                 }
             }
-        });
-        profileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (profileButton.isEnabled()){
                     profileButton.setIcon(profile_click);
                 }
             }
-        });
-        profileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (profileButton.isEnabled()){
                     profileButton.setIcon(profile_normal);
                 }
             }
-        });
-        profileButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (profileButton.isEnabled()){
@@ -266,10 +189,20 @@ public class Main extends JFrame{
         logout.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (response == JOptionPane.YES_OPTION){
-                    kernel.getAuthentication().logOut();
+                if (logout.isEnabled()){
+                    int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION){
+                        kernel.getAuthentication().logOut();
+                    }
                 }
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                logout.setForeground(Color.YELLOW);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                logout.setForeground(Color.WHITE);
             }
         });
         this.addWindowListener(new WindowAdapter() {
@@ -304,16 +237,6 @@ public class Main extends JFrame{
                 }
             }
         };
-        logout.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                logout.setForeground(Color.YELLOW);
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                logout.setForeground(Color.WHITE);
-            }
-        });
     }
     @Override
     public void setVisible(boolean b){
@@ -357,6 +280,7 @@ public class Main extends JFrame{
             this.skins.setEnabled(!b);
             this.playButton.setEnabled(!b);
             this.profileButton.setEnabled(!b);
+            this.logout.setEnabled(!b);
             componentsDisabled = b;
             if (!b){
                 this.setSelected(news);

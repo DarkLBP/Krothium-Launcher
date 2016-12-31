@@ -123,8 +123,6 @@ public class LaunchOptionsTab {
                     JOptionPane.showMessageDialog(null, "A profile is already being edited!", "Profile editor busy", JOptionPane.WARNING_MESSAGE);
                 }
             }
-        });
-        profiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 profiles.clearSelection();
