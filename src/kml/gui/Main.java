@@ -26,6 +26,7 @@ public class Main extends JFrame{
     private JLabel settings;
     private JLabel options;
     private JButton profileButton;
+    private JLabel logout;
     private JLabel selected;
     private final Kernel kernel;
     private final LoginTab login;
@@ -61,7 +62,7 @@ public class Main extends JFrame{
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
-        setSize(900, 700);
+        setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
@@ -80,6 +81,7 @@ public class Main extends JFrame{
         profileButton.setIcon(profile_normal);
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         news.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -261,6 +263,15 @@ public class Main extends JFrame{
                 }
             }
         });
+        logout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    kernel.getAuthentication().logOut();
+                }
+            }
+        });
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -293,6 +304,16 @@ public class Main extends JFrame{
                 }
             }
         };
+        logout.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                logout.setForeground(Color.YELLOW);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                logout.setForeground(Color.WHITE);
+            }
+        });
     }
     @Override
     public void setVisible(boolean b){
