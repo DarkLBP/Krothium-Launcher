@@ -39,6 +39,7 @@ public class ProfileEditor{
     private JButton cancelButton;
     private JLabel nameLabel;
     private JLabel versionsLabel;
+    private JButton deleteButton;
     private final Kernel kernel;
     private Profile profile = null;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
@@ -56,8 +57,10 @@ public class ProfileEditor{
         javaArgsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cancelButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         saveButton.setIcon(button_normal);
         cancelButton.setIcon(button_normal);
+        deleteButton.setIcon(button_normal);
         resolutionLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -182,6 +185,32 @@ public class ProfileEditor{
             @Override
             public void mouseReleased(MouseEvent e) {
                 saveButton.setForeground(Color.WHITE);
+            }
+        });
+        deleteButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this profile?", "Profile deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    kernel.getProfiles().deleteProfile(profile.getID());
+                    kernel.getGUI().setSelected(kernel.getGUI().options);
+                }
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                deleteButton.setIcon(button_hover);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                deleteButton.setIcon(button_normal);
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                deleteButton.setForeground(Color.YELLOW);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                deleteButton.setForeground(Color.RED);
             }
         });
     }
@@ -383,6 +412,11 @@ public class ProfileEditor{
                 }
                 count++;
             }
+        }
+        if (this.profile.getType() == ProfileType.CUSTOM && kernel.getProfiles().existsProfile(this.profile.getID())){
+            deleteButton.setVisible(true);
+        } else {
+            deleteButton.setVisible(false);
         }
     }
     public JPanel getPanel(){
