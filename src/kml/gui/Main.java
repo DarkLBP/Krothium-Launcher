@@ -274,8 +274,12 @@ public class Main extends JFrame{
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
-        timer.scheduleAtFixedRate(guiThread, 0, 500);
-        kernel.getProfiles().updateSessionProfiles();
+        if (b){
+            timer.scheduleAtFixedRate(guiThread, 0, 500);
+            kernel.getProfiles().updateSessionProfiles();
+        } else {
+            timer.cancel();
+        }
     }
     public void setSelected(JLabel l){
         if (!componentsDisabled){

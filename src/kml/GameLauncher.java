@@ -3,6 +3,7 @@ package kml;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
+import kml.gui.GameLog;
 import kml.objects.Library;
 import kml.objects.Profile;
 import kml.objects.User;
@@ -27,10 +28,12 @@ public class GameLauncher {
     private Process process;
     private final Kernel kernel;
     private boolean error = false;
+    private final GameLog gameLog;
     
     public GameLauncher(Kernel k){
         this.kernel = k;
         this.console = k.getConsole();
+        this.gameLog = new GameLog(k);
     }
     public void launch() throws GameLauncherException{
         error = false;
@@ -265,7 +268,7 @@ public class GameLauncher {
         gameArgs.forEach(console::printInfo);
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
-        if (!kernel.getSettings().getKeepLauncherOpen()){
+        if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()){
             try {
                 pb.start();
                 kernel.exitSafely();
@@ -275,6 +278,10 @@ public class GameLauncher {
         } else {
             try{
                 this.process = pb.start();
+                if (!kernel.getSettings().getKeepLauncherOpen()){
+                    kernel.getGUI().setVisible(false);
+                }
+                gameLog.setVisible(true);
                 Thread log_info = new Thread(){
                     @Override
                     public void run(){
@@ -284,6 +291,9 @@ public class GameLauncher {
                         try{
                             while (isStarted()){
                                 if ((lineRead = br.readLine()) != null){
+                                    if (kernel.getSettings().getShowGameLog()){
+                                        gameLog.pushString(lineRead);
+                                    }
                                     console.printInfo(lineRead);
                                 }
                             }
@@ -309,6 +319,9 @@ public class GameLauncher {
                         try{
                             while (isStarted()){
                                 if ((lineRead = br.readLine()) != null){
+                                    if (kernel.getSettings().getShowGameLog()){
+                                        gameLog.pushString(lineRead);
+                                    }
                                     console.printInfo(lineRead);
                                 }
                             }
@@ -320,6 +333,7 @@ public class GameLauncher {
                 log_error.start();
             }catch (Exception ex){
                 error = true;
+                ex.printStackTrace();
                 console.printError("Game returned an error code.");
             }
         }
