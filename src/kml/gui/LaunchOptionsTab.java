@@ -33,7 +33,6 @@ public class LaunchOptionsTab {
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
-    private final Map<Integer, String> profileIDS = new HashMap<>();
     private final ProfileEditor editor;
 
     public LaunchOptionsTab(Kernel k) {
@@ -106,7 +105,7 @@ public class LaunchOptionsTab {
         profiles.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                JLabel label = kernel.getProfiles().getProfile(value.toString()).getListItem();
                 label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
                 label.setFont(plain);
                 return label;
@@ -116,7 +115,7 @@ public class LaunchOptionsTab {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (!editor.isVisible()){
-                    if (editor.setProfile(profileIDS.get(profiles.getSelectedIndex()))){
+                    if (editor.setProfile(profiles.getSelectedValue().toString())){
                         editor.setVisible(true);
                     }
                 } else {
@@ -134,28 +133,13 @@ public class LaunchOptionsTab {
     }
     public void populateList(){
         this.listModel.clear();
-        this.profileIDS.clear();
         Profiles p = kernel.getProfiles();
         Map<String, Profile> profs = p.getProfiles();
         Set set = profs.keySet();
         Iterator it = set.iterator();
-        int count = 0;
         while (it.hasNext()){
             Profile pf = profs.get(it.next().toString());
-            if (pf.hasName()){
-                this.listModel.add(count, pf.getName());
-            } else {
-                if (pf.getType() == ProfileType.CUSTOM){
-                    this.listModel.add(count, "Unnamed Profile");
-                } else {
-                    if (pf.getType() == ProfileType.SNAPSHOT){
-                        this.listModel.add(count, "Latest Snapshot");
-                    } else {
-                        this.listModel.add(count, "Latest Release");
-                    }
-                }
-            }
-            this.profileIDS.put(count++, pf.getID());
+            this.listModel.addElement(pf.getID());
         }
     }
 }

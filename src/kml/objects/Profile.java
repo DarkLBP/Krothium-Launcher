@@ -33,6 +33,7 @@ public class Profile {
     private Instant lastUsed = null;
     private Map<String, Integer> resolution = new HashMap<>();
     private JMenuItem menuItem;
+    private JLabel listItem;
     private final Kernel kernel;
     private final Font bold = new Font("Minecraftia", Font.BOLD,16);
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
@@ -151,40 +152,41 @@ public class Profile {
             resolution.put("height", h);
         }
     }
+    public JLabel getListItem(){
+        if (this.listItem == null){
+            if (this.hasName()){
+                this.listItem = new JLabel(this.getName());
+            } else if (this.getType() == ProfileType.RELEASE) {
+                this.listItem = new JLabel("Latest Release");
+            } else if (this.getType() == ProfileType.SNAPSHOT){
+                this.listItem = new JLabel("Latest Snapshot");
+            } else {
+                this.listItem = new JLabel("Unnamed Profile");
+            }
+        } else {
+            if (this.hasName() && !this.getName().equals(this.listItem.getText())){
+                this.listItem.setText(this.getName());
+            }
+        }
+        return this.listItem;
+    }
     public JMenuItem getMenuItem(){
         if (this.menuItem == null){
             if (this.hasName()){
                 this.menuItem = new JMenuItem(this.getName());
+            } else if (this.getType() == ProfileType.RELEASE){
+                this.menuItem = new JMenuItem("Latest Release");
+            } else if (this.getType() == ProfileType.SNAPSHOT){
+                this.menuItem = new JMenuItem("Latest Snapshot");
             } else {
-                if (this.getType() == ProfileType.RELEASE){
-                    this.menuItem = new JMenuItem("Latest Release");
-                } else if (this.getType() == ProfileType.SNAPSHOT){
-                    this.menuItem = new JMenuItem("Latest Snapshot");
-                } else {
-                    this.menuItem = new JMenuItem("Unnamed Profile");
-                }
+                this.menuItem = new JMenuItem("Unnamed Profile");
             }
             this.menuItem.addActionListener(e -> kernel.getProfiles().setSelectedProfile(getID()));
             this.menuItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
         } else {
-            if (this.hasName()){
-                if (!this.menuItem.getText().equals(this.getName())){
-                    this.menuItem.setText(this.getName());
-                }
-            } else {
-                String fakeName;
-                if (this.getType() == ProfileType.RELEASE){
-                    fakeName = "Latest Release";
-                } else if (this.getType() == ProfileType.SNAPSHOT){
-                    fakeName = "Latest Snapshot";
-                } else {
-                    fakeName = "Unnamed Profile";
-                }
-                if (!this.menuItem.getText().equals(fakeName)){
-                    this.menuItem.setText(fakeName);
-                }
+            if (this.hasName() && !this.menuItem.getText().equals(this.getName())){
+                this.menuItem.setText(this.getName());
             }
-
         }
         if (kernel.getProfiles().getSelectedProfile().equals(this.getID())){
             this.menuItem.setFont(bold);
