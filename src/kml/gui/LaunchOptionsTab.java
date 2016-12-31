@@ -35,13 +35,10 @@ public class LaunchOptionsTab {
     private final ImageIcon addProfile = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/add.png"));
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
     private final Font bold = new Font("Minecraftia", Font.BOLD,16);
-    private final ProfileEditor editor;
     private final JLabel newProfile = new JLabel("New Profile");
 
     public LaunchOptionsTab(Kernel k) {
         kernel = k;
-        editor = new ProfileEditor(k, this);
-        editor.setLocationRelativeTo(profiles);
         settings = k.getSettings();
         snapshots.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         historical.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -56,9 +53,6 @@ public class LaunchOptionsTab {
                 } else {
                     snapshots.setIcon(checkbox_disabled);
                 }
-                if (editor.isVisible()){
-                    editor.updateConstraints();
-                }
             }
         });
         historical.addMouseListener(new MouseAdapter() {
@@ -70,9 +64,6 @@ public class LaunchOptionsTab {
                 } else {
                     historical.setIcon(checkbox_disabled);
                 }
-                if (editor.isVisible()){
-                    editor.updateConstraints();
-                }
             }
         });
         advanced.addMouseListener(new MouseAdapter() {
@@ -83,9 +74,6 @@ public class LaunchOptionsTab {
                     advanced.setIcon(checkbox_enabled);
                 } else {
                     advanced.setIcon(checkbox_disabled);
-                }
-                if (editor.isVisible()){
-                    editor.updateConstraints();
                 }
             }
         });
@@ -123,18 +111,10 @@ public class LaunchOptionsTab {
         profiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!editor.isVisible()){
-                    if (profiles.getSelectedValue() == null){
-                        if (editor.setProfile(null)){
-                            editor.setVisible(true);
-                        }
-                    } else {
-                        if (editor.setProfile(profiles.getSelectedValue().toString())){
-                            editor.setVisible(true);
-                        }
-                    }
+                if (profiles.getSelectedValue() == null){
+                    kernel.getGUI().editProfile(null);
                 } else {
-                    JOptionPane.showMessageDialog(null, "A profile is already being edited!", "Profile editor busy", JOptionPane.WARNING_MESSAGE);
+                    kernel.getGUI().editProfile(profiles.getSelectedValue().toString());
                 }
             }
             @Override

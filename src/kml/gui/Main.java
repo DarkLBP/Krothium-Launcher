@@ -21,10 +21,10 @@ public class Main extends JFrame{
     private BackgroundPanel footerPanel;
     private BackgroundPanel headPanel;
     private BackgroundPanel contentPanel;
-    private JLabel news;
-    private JLabel skins;
-    private JLabel settings;
-    private JLabel options;
+    public JLabel news;
+    public JLabel skins;
+    public JLabel settings;
+    public JLabel options;
     private JButton profileButton;
     private JLabel logout;
     private JProgressBar progress;
@@ -47,6 +47,7 @@ public class Main extends JFrame{
     private final TimerTask guiThread;
     public final Downloader downloader;
     private final GameLauncher gameLauncher;
+    private final ProfileEditor editor;
     private final JPopupMenu popupMenu = new JPopupMenu();
 
     public Main(Kernel k){
@@ -63,6 +64,7 @@ public class Main extends JFrame{
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
+        this.editor = new ProfileEditor(kernel);
         setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -251,13 +253,30 @@ public class Main extends JFrame{
             }
         };
     }
+    public void editProfile(String s){
+        if (s == null){
+            editor.setProfile(null);
+            editor.refreshData();
+            this.contentPanel.removeAll();
+            this.contentPanel.add(editor.getPanel());
+            this.contentPanel.updateUI();
+        } else {
+            if (kernel.getProfiles().existsProfile(s)){
+                editor.setProfile(s);
+                editor.refreshData();
+                this.contentPanel.removeAll();
+                this.contentPanel.add(editor.getPanel());
+                this.contentPanel.updateUI();
+            }
+        }
+    }
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
         timer.scheduleAtFixedRate(guiThread, 0, 500);
         kernel.getProfiles().updateSessionProfiles();
     }
-    private void setSelected(JLabel l){
+    public void setSelected(JLabel l){
         if (!componentsDisabled){
             this.contentPanel.removeAll();
             if (selected == null ){

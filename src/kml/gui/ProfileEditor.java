@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Created by darkl on 27/12/2016.
  */
-public class ProfileEditor extends JFrame{
+public class ProfileEditor{
     private JPanel main;
     private BackgroundPanel contentPanel;
     private JTextField name;
@@ -46,14 +46,8 @@ public class ProfileEditor extends JFrame{
     private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
     private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
     private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
-    private final LaunchOptionsTab tab;
 
-    public ProfileEditor(Kernel k, LaunchOptionsTab tab){
-        this.tab = tab;
-        setContentPane(main);
-        setSize(650, 450);
-        setResizable(false);
-        setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
+    public ProfileEditor(Kernel k){
         this.kernel = k;
         contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
         resolutionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -148,7 +142,7 @@ public class ProfileEditor extends JFrame{
             public void mouseClicked(MouseEvent e) {
                 int response = JOptionPane.showConfirmDialog(null, "Are you sure? Any change won't be saved!", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
-                    ProfileEditor.this.setVisible(false);
+                    kernel.getGUI().setSelected(kernel.getGUI().options);
                 }
             }
             @Override
@@ -191,13 +185,6 @@ public class ProfileEditor extends JFrame{
             }
         });
     }
-    @Override
-    public void setVisible(boolean b){
-        if (b){
-            refreshData();
-        }
-        super.setVisible(b);
-    }
     public boolean setProfile(String p){
         if (p == null){
             this.profile = new Profile(ProfileType.CUSTOM, kernel);
@@ -220,27 +207,23 @@ public class ProfileEditor extends JFrame{
         javaExecLabel.setEnabled(true);
         javaArgsLabel.setEnabled(true);
         if (profile.hasName()){
-            setTitle("Profile Editor: " + profile.getName());
             name.setText(profile.getName());
             nameEnabled = true;
             versionEnabled = true;
         } else {
             if (profile.getType() == ProfileType.RELEASE){
-                setTitle("Profile Editor: Latest Release");
                 name.setEnabled(false);
                 versions.setEnabled(false);
                 nameEnabled = false;
                 versionEnabled = false;
                 name.setText("Latest Release");
             } else if (profile.getType() == ProfileType.SNAPSHOT){
-                setTitle("Profile Editor: Latest Snapshot");
                 name.setEnabled(false);
                 versions.setEnabled(false);
                 nameEnabled = false;
                 versionEnabled = false;
                 name.setText("Latest Snapshot");
             } else {
-                setTitle("Profile Editor: Unnamed Profile");
                 name.setText("");
                 nameEnabled = true;
                 versionEnabled = true;
@@ -354,9 +337,8 @@ public class ProfileEditor extends JFrame{
         if (!kernel.getProfiles().existsProfile(this.profile.getID())){
             kernel.getProfiles().addProfile(this.profile);
         }
-        tab.populateList();
         JOptionPane.showMessageDialog(null, "Profile saved successfully!", "Saved", JOptionPane.INFORMATION_MESSAGE);
-        setVisible(false);
+        kernel.getGUI().setSelected(kernel.getGUI().options);
     }
     public void updateConstraints(){
         if (!kernel.getSettings().getEnableAdvanced()){
@@ -402,5 +384,8 @@ public class ProfileEditor extends JFrame{
                 count++;
             }
         }
+    }
+    public JPanel getPanel(){
+        return this.contentPanel;
     }
 }
