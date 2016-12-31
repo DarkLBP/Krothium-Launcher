@@ -190,7 +190,7 @@ public class Profile {
         }
         if (kernel.getProfiles().getSelectedProfile().equals(this.getID())){
             this.menuItem.setFont(bold);
-            this.menuItem.setText(this.menuItem.getText() + " (Selected)");
+            this.menuItem.setText(this.menuItem.getText());
         } else {
             this.menuItem.setFont(plain);
         }
