@@ -223,6 +223,7 @@ public class Main extends JFrame{
             }
         });
         guiThread = new TimerTask() {
+            @Override
             public void run() {
                 if (kernel.getAuthentication().isAuthenticated()){
                     if (componentsDisabled){
