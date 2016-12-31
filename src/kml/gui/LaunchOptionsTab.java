@@ -32,8 +32,11 @@ public class LaunchOptionsTab {
     private final Kernel kernel;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
+    private final ImageIcon addProfile = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/add.png"));
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
+    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
     private final ProfileEditor editor;
+    private final JLabel newProfile = new JLabel("New Profile");
 
     public LaunchOptionsTab(Kernel k) {
         kernel = k;
@@ -105,18 +108,30 @@ public class LaunchOptionsTab {
         profiles.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = kernel.getProfiles().getProfile(value.toString()).getListItem();
-                label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-                label.setFont(plain);
-                return label;
+                if (value == null){
+                    newProfile.setIcon(addProfile);
+                    newProfile.setFont(bold);
+                    return newProfile;
+                } else {
+                    JLabel label = kernel.getProfiles().getProfile(value.toString()).getListItem();
+                    label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
+                    label.setFont(plain);
+                    return label;
+                }
             }
         });
         profiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (!editor.isVisible()){
-                    if (editor.setProfile(profiles.getSelectedValue().toString())){
-                        editor.setVisible(true);
+                    if (profiles.getSelectedValue() == null){
+                        if (editor.setProfile(null)){
+                            editor.setVisible(true);
+                        }
+                    } else {
+                        if (editor.setProfile(profiles.getSelectedValue().toString())){
+                            editor.setVisible(true);
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "A profile is already being edited!", "Profile editor busy", JOptionPane.WARNING_MESSAGE);
@@ -137,6 +152,7 @@ public class LaunchOptionsTab {
         Map<String, Profile> profs = p.getProfiles();
         Set set = profs.keySet();
         Iterator it = set.iterator();
+        this.listModel.addElement(null);
         while (it.hasNext()){
             this.listModel.addElement(profs.get(it.next().toString()).getID());
         }

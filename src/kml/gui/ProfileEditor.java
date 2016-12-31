@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.time.Instant;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -198,9 +199,16 @@ public class ProfileEditor extends JFrame{
         super.setVisible(b);
     }
     public boolean setProfile(String p){
-        if (kernel.getProfiles().existsProfile(p)){
-            this.profile = kernel.getProfiles().getProfile(p);
+        if (p == null){
+            this.profile = new Profile(ProfileType.CUSTOM, kernel);
+            this.profile.setCreated(Instant.EPOCH);
+            this.profile.setName("New Profile");
             return true;
+        } else {
+            if (kernel.getProfiles().existsProfile(p)){
+                this.profile = kernel.getProfiles().getProfile(p);
+                return true;
+            }
         }
         return false;
     }
@@ -233,6 +241,9 @@ public class ProfileEditor extends JFrame{
                 name.setText("Latest Snapshot");
             } else {
                 setTitle("Profile Editor: Unnamed Profile");
+                name.setText("");
+                nameEnabled = true;
+                versionEnabled = true;
             }
         }
         resolutionEnabled = profile.hasResolution();
@@ -339,6 +350,9 @@ public class ProfileEditor extends JFrame{
             profile.setJavaArgs(javaArgs.getText());
         } else {
             profile.setJavaArgs(null);
+        }
+        if (!kernel.getProfiles().existsProfile(this.profile.getID())){
+            kernel.getProfiles().addProfile(this.profile);
         }
         tab.populateList();
         JOptionPane.showMessageDialog(null, "Profile saved successfully!", "Saved", JOptionPane.INFORMATION_MESSAGE);
