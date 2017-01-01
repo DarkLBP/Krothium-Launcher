@@ -138,7 +138,7 @@ public class Profiles {
                             console.printError("Profile " + ((name != null) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, kernel);
+                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution);
                     if (first == null){
                         first = name;
                     }
@@ -190,12 +190,12 @@ public class Profiles {
     public void updateSessionProfiles(){
         if (kernel.getAuthentication().isAuthenticated()){
             if (!hasReleaseProfile()){
-                Profile release = new Profile(ProfileType.RELEASE, kernel);
+                Profile release = new Profile(ProfileType.RELEASE);
                 addProfile(release);
                 setSelectedProfile(release.getID());
             }
             if (!hasSnapshotProfile() && kernel.getSettings().getEnableSnapshots()){
-                Profile snapshot = new Profile(ProfileType.SNAPSHOT, kernel);
+                Profile snapshot = new Profile(ProfileType.SNAPSHOT);
                 addProfile(snapshot);
             }
             if (hasSnapshotProfile() && !kernel.getSettings().getEnableSnapshots()){

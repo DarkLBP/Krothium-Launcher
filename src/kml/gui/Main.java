@@ -8,6 +8,8 @@ import kml.objects.Profile;
 
 import java.util.*;
 import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicSeparatorUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Timer;
@@ -48,7 +50,8 @@ public class Main extends JFrame{
     public final Downloader downloader;
     private final GameLauncher gameLauncher;
     private final ProfileEditor editor;
-    private final JPopupMenu popupMenu = new JPopupMenu();
+    private final ProfilePopup popupMenu;
+    private final ImageIcon tabSelection;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -64,7 +67,9 @@ public class Main extends JFrame{
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
+        this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
         this.editor = new ProfileEditor(kernel);
+        this.popupMenu = new ProfilePopup(kernel);
         setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -274,11 +279,11 @@ public class Main extends JFrame{
             this.contentPanel.removeAll();
             if (selected == null ){
                 selected = l;
-                selected.setIcon(new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                selected.setIcon(new ImageIcon(tabSelection.getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
             } else if (l != selected) {
                 selected.setIcon(null);
                 selected = l;
-                selected.setIcon(new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png")).getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
+                selected.setIcon(new ImageIcon(tabSelection.getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
             }
             if (l.equals(news)){
                 this.contentPanel.setLayout(borderLayout);
@@ -294,6 +299,7 @@ public class Main extends JFrame{
                     this.launchOptions.populateList();
                 }
             }
+            this.headPanel.updateUI();
             this.contentPanel.updateUI();
         }
     }
@@ -319,8 +325,8 @@ public class Main extends JFrame{
         Set set = profs.keySet();
         Iterator it = set.iterator();
         while (it.hasNext()){
-            popupMenu.add(profs.get(it.next().toString()).getMenuItem());
+            popupMenu.addElement(profs.get(it.next().toString()).getID());
         }
-        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+        popupMenu.showPopup((JComponent)e.getComponent());
     }
 }

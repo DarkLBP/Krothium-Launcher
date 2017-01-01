@@ -6,14 +6,12 @@ import kml.Profiles;
 import kml.Settings;
 import kml.Utils;
 import kml.enums.ProfileIcon;
-import kml.enums.ProfileType;
 import kml.objects.Profile;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -127,7 +125,7 @@ public class LaunchOptionsTab {
         return this.main;
     }
     public void populateList(){
-        this.listModel.clear();
+        this.listModel.removeAllElements();
         Profiles p = kernel.getProfiles();
         Map<String, Profile> profs = p.getProfiles();
         Set set = profs.keySet();

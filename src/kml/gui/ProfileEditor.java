@@ -148,6 +148,7 @@ public class ProfileEditor{
             @Override
             public void mouseExited(MouseEvent e) {
                 cancelButton.setIcon(button_normal);
+                cancelButton.setForeground(Color.WHITE);
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -169,6 +170,7 @@ public class ProfileEditor{
             }
             @Override
             public void mouseExited(MouseEvent e) {
+                saveButton.setForeground(Color.WHITE);
                 saveButton.setIcon(button_normal);
             }
             @Override
@@ -189,6 +191,7 @@ public class ProfileEditor{
             @Override
             public void mouseExited(MouseEvent e) {
                 deleteButton.setIcon(button_normal);
+                deleteButton.setForeground(Color.RED);
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -207,7 +210,7 @@ public class ProfileEditor{
     }
     public boolean setProfile(String p){
         if (p == null){
-            this.profile = new Profile(ProfileType.CUSTOM, kernel);
+            this.profile = new Profile(ProfileType.CUSTOM);
             this.profile.setCreated(Instant.EPOCH);
             this.profile.setName("New Profile");
             return true;

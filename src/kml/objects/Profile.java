@@ -1,17 +1,11 @@
 package kml.objects;
 
-import kml.Kernel;
-import kml.Utils;
-import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.font.TextAttribute;
 import java.io.File;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -32,19 +26,14 @@ public class Profile {
     private Instant created = null;
     private Instant lastUsed = null;
     private Map<String, Integer> resolution = new HashMap<>();
-    private JMenuItem menuItem;
     private JLabel listItem;
-    private final Kernel kernel;
-    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
-    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
     
-    public Profile(ProfileType type, Kernel k){
+    public Profile(ProfileType type){
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
         this.lastUsed = Instant.EPOCH;
-        this.kernel = k;
     }
-    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, Kernel k){
+    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution){
         if (id == null){
             this.id = UUID.randomUUID().toString().replaceAll("-", "");
         } else {
@@ -98,7 +87,6 @@ public class Profile {
                 }
             }
         }
-        this.kernel = k;
     }
     public String getID(){return this.id;}
     public void setName(String newName){this.name = newName;}
@@ -169,31 +157,5 @@ public class Profile {
             }
         }
         return this.listItem;
-    }
-    public JMenuItem getMenuItem(){
-        if (this.menuItem == null){
-            if (this.hasName()){
-                this.menuItem = new JMenuItem(this.getName());
-            } else if (this.getType() == ProfileType.RELEASE){
-                this.menuItem = new JMenuItem("Latest Release");
-            } else if (this.getType() == ProfileType.SNAPSHOT){
-                this.menuItem = new JMenuItem("Latest Snapshot");
-            } else {
-                this.menuItem = new JMenuItem("Unnamed Profile");
-            }
-            this.menuItem.addActionListener(e -> kernel.getProfiles().setSelectedProfile(getID()));
-            this.menuItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-        } else {
-            if (this.hasName() && !this.menuItem.getText().equals(this.getName())){
-                this.menuItem.setText(this.getName());
-            }
-        }
-        if (kernel.getProfiles().getSelectedProfile().equals(this.getID())){
-            this.menuItem.setFont(bold);
-            this.menuItem.setText(this.menuItem.getText());
-        } else {
-            this.menuItem.setFont(plain);
-        }
-        return this.menuItem;
     }
 }
