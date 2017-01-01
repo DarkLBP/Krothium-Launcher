@@ -30,7 +30,7 @@ public class ProfilePopup extends JFrame{
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = kernel.getProfiles().getProfile((String)value).getListItem();
-                if (kernel.getProfiles().getSelectedProfile() != null && kernel.getProfiles().getSelectedProfile().equals((String)value)){
+                if (kernel.getProfiles().getSelectedProfile() != null && kernel.getProfiles().getSelectedProfile().equals(value)){
                     label.setFont(bold);
                 } else {
                     label.setFont(plain);

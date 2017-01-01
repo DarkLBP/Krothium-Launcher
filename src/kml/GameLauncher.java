@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -279,7 +280,7 @@ public class GameLauncher {
             Thread log_info = new Thread(){
                 @Override
                 public void run(){
-                    InputStreamReader isr = new InputStreamReader(getInputStream());
+                    InputStreamReader isr = new InputStreamReader(getInputStream(), Charset.forName("ISO-8859-1"));
                     BufferedReader br = new BufferedReader(isr);
                     String lineRead;
                     try{
@@ -310,7 +311,7 @@ public class GameLauncher {
             Thread log_error = new Thread(){
                 @Override
                 public void run(){
-                    InputStreamReader isr = new InputStreamReader(getErrorStream());
+                    InputStreamReader isr = new InputStreamReader(getErrorStream(), Charset.forName("ISO-8859-1"));
                     BufferedReader br = new BufferedReader(isr);
                     String lineRead;
                     try{
