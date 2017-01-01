@@ -10,6 +10,7 @@ import kml.objects.User;
 import kml.objects.Version;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -300,6 +301,9 @@ public class GameLauncher {
                 }
                 console.printInfo("Deleteting natives dir.");
                 Utils.deleteDirectory(nativesDir);
+                if (hasError()){
+                    JOptionPane.showMessageDialog(null, "The game has crashed! Check the logs for more information.", "Game Crashed", JOptionPane.ERROR_MESSAGE);
+                }
                 if (!kernel.getSettings().getKeepLauncherOpen()){
                     kernel.exitSafely();
                 }
