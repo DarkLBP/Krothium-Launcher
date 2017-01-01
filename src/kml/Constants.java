@@ -8,7 +8,7 @@ import java.net.URL;
  */
 
 public class Constants {
-    public static final int KERNEL_BUILD = 2;
+    public static final int KERNEL_BUILD = 23;
     public static final String KERNEL_BUILD_NAME = "1.4.3";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
