@@ -30,7 +30,6 @@ public final class Version {
     private AssetIndex assetIndex;
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final List<Library> libraries = new ArrayList<>();
-    private String inheritsFrom;
     private String jar;
     private File relativeJar;
     private File relativeJSON;
@@ -222,8 +221,6 @@ public final class Version {
     private boolean hasMainClass(){return (this.mainClass != null);}
     public String getMinecraftArguments(){return this.minecraftArguments;}
     public String getMainClass(){return this.mainClass;}
-    public String getInheritedVersion(){return this.inheritsFrom;}
-    public boolean hasInheritedVersion(){return (this.inheritsFrom != null);}
     private boolean hasLibraries(){return (this.libraries.size() > 0);}
     public List<Library> getLibraries(){return this.libraries;}
     public boolean hasAssetIndex(){return (this.assetIndex != null);}

@@ -118,11 +118,13 @@ public class GameLauncher {
                                 continue;
                             }
                             final File targetFile = new File(nativesDir, entry.getName());
-                            List<String> exclude = lib.getExtractExclusions();
                             boolean excluded = false;
-                            for (String e : exclude){
-                                if (entry.getName().startsWith(e)){
-                                    excluded = true;
+                            if (lib.hasExtractExclusions()){
+                                List<String> exclude = lib.getExtractExclusions();
+                                for (String e : exclude){
+                                    if (entry.getName().startsWith(e)){
+                                        excluded = true;
+                                    }
                                 }
                             }
                             if (excluded){
