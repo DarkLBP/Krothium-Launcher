@@ -12,8 +12,8 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Versions {
@@ -57,12 +57,6 @@ public class Versions {
             return this.getVersion(this.getLatestSnapshot());
         }
         console.printError("Version id " + id + " not found.");
-        return null;
-    }
-    public VersionMeta getVersionMeta(String id){
-        if (this.versions.containsKey(id)){
-            return this.versions.get(id);
-        }
         return null;
     }
     public void fetchVersions(){
@@ -156,22 +150,6 @@ public class Versions {
         }catch (Exception ex){
             console.printError("Failed to fetch local version list.");
         }
-    }
-    public LinkedHashSet<String> getVersionsByType(VersionType t){
-        LinkedHashSet<String> vers = new LinkedHashSet<>();
-        Set keys = this.versions.keySet();
-        Iterator it = keys.iterator();
-        while (it.hasNext()){
-            String verName = it.next().toString();
-            VersionMeta vm = this.versions.get(verName);
-            if (vm.hasType()){
-                VersionType type = vm.getType();
-                if (type.equals(t)){
-                    vers.add(verName);
-                }
-            }
-        }
-        return vers;
     }
     public Map<String, VersionMeta> getVersions(){
         return versions;

@@ -6,16 +6,15 @@ import kml.exceptions.GameLauncherException;
 import kml.objects.Browser;
 import kml.objects.Profile;
 
-import java.util.*;
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicSeparatorUI;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import java.util.Timer;
 
 /**
- * Created by darkl on 18/11/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class Main extends JFrame{
     private JPanel main;
@@ -47,7 +46,7 @@ public class Main extends JFrame{
     private final ImageIcon profile_click;
     private final Timer timer = new Timer();
     private final TimerTask guiThread;
-    public final Downloader downloader;
+    private final Downloader downloader;
     private final GameLauncher gameLauncher;
     private final ProfileEditor editor;
     private final ProfilePopup popupMenu;
@@ -74,7 +73,7 @@ public class Main extends JFrame{
         this.skinTab = new SkinTab(kernel);
         setSize(950, 750);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
@@ -128,21 +127,16 @@ public class Main extends JFrame{
             public void mousePressed(MouseEvent e) {
                 if (playButton.isEnabled()){
                     playButton.setIcon(playButton_click);
-                    Thread runThread = new Thread(){
-                        @Override
-                        public void run(){
-                            if (!downloader.isDownloading() && !gameLauncher.isStarted()){
-                                try {
-                                    downloader.download();
-                                    gameLauncher.launch();
-                                } catch (GameLauncherException e1) {
-                                    e1.printStackTrace();
-                                } catch (DownloaderException e1) {
-                                    e1.printStackTrace();
-                                }
+                    Thread runThread = new Thread(() -> {
+                        if (!downloader.isDownloading() && !gameLauncher.isStarted()){
+                            try {
+                                downloader.download();
+                                gameLauncher.launch();
+                            } catch (GameLauncherException | DownloaderException e1) {
+                                e1.printStackTrace();
                             }
                         }
-                    };
+                    });
                     runThread.start();
                 }
             }
@@ -245,6 +239,7 @@ public class Main extends JFrame{
                         contentPanel.add(login.getPanel());
                         contentPanel.updateUI();
                     }
+                    progress.setVisible(false);
                 }
             }
         };
@@ -323,14 +318,13 @@ public class Main extends JFrame{
             }
         }
     }
-    public void showPopupMenu(MouseEvent e){
+    private void showPopupMenu(MouseEvent e){
         popupMenu.removeAll();
         Profiles p = kernel.getProfiles();
         Map<String, Profile> profs = p.getProfiles();
         Set set = profs.keySet();
-        Iterator it = set.iterator();
-        while (it.hasNext()){
-            popupMenu.addElement(profs.get(it.next().toString()).getID());
+        for (Object aSet : set) {
+            popupMenu.addElement(profs.get(aSet.toString()).getID());
         }
         popupMenu.showPopup((JComponent)e.getComponent());
     }

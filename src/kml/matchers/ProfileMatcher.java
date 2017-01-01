@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class ProfileMatcher implements URLMatcher{
     private final Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");

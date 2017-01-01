@@ -19,10 +19,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
-
 public class GameLauncher {
     
     private final Console console;
@@ -170,22 +169,21 @@ public class GameLauncher {
                     JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
                     JSONObject objects = o.getJSONObject("objects");
                     Set s = objects.keySet();
-                    Iterator it = s.iterator();
-                    while (it.hasNext()){
-                        String name = it.next().toString();
+                    for (Object value : s) {
+                        String name = value.toString();
                         File assetFile = new File(assetsDir + File.separator + name);
                         JSONObject asset = objects.getJSONObject(name);
                         long size = asset.getLong("size");
                         String sha = asset.getString("hash");
                         boolean valid = false;
-                        if (assetFile.exists()){
-                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)){
+                        if (assetFile.exists()) {
+                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)) {
                                 valid = true;
                             }
                         }
-                        if (!valid){
-                            File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0,2) + File.separator + sha);
-                            if (assetFile.getParentFile() != null){
+                        if (!valid) {
+                            File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
+                            if (assetFile.getParentFile() != null) {
                                 assetFile.getParentFile().mkdirs();
                             }
                             Files.copy(objectFile.toPath(), assetFile.toPath());
@@ -239,7 +237,7 @@ public class GameLauncher {
                         }
                         break;
                     case "${auth_uuid}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID().toString().replaceAll("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID().replaceAll("-", ""));
                         break;
                     case "${auth_access_token}":
                         versionArgs[i] = versionArgs[i].replace("${auth_access_token}", u.getAccessToken());
@@ -254,7 +252,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");
                         break;
                     case "${auth_session}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().toString().replaceAll("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().replaceAll("-", ""));
                         break;
                 }
             }
@@ -277,57 +275,51 @@ public class GameLauncher {
             if (kernel.getSettings().getShowGameLog()){
                 gameLog.setVisible(true);
             }
-            Thread log_info = new Thread(){
-                @Override
-                public void run(){
-                    InputStreamReader isr = new InputStreamReader(getInputStream(), Charset.forName("ISO-8859-1"));
-                    BufferedReader br = new BufferedReader(isr);
-                    String lineRead;
-                    try{
-                        while (isStarted()){
-                            if ((lineRead = br.readLine()) != null){
-                                if (kernel.getSettings().getShowGameLog()){
-                                    gameLog.pushString(lineRead);
-                                }
-                                console.printInfo(lineRead);
+            Thread log_info = new Thread(() -> {
+                InputStreamReader isr = new InputStreamReader(getInputStream(), Charset.forName("ISO-8859-1"));
+                BufferedReader br = new BufferedReader(isr);
+                String lineRead;
+                try{
+                    while (isStarted()){
+                        if ((lineRead = br.readLine()) != null){
+                            if (kernel.getSettings().getShowGameLog()){
+                                gameLog.pushString(lineRead);
                             }
+                            console.printInfo(lineRead);
                         }
-                        if (process.exitValue() != 0){
-                            error = true;
-                            console.printError("Game stopped unexpectedly.");
-                        }
-                    } catch (Exception ex){
+                    }
+                    if (process.exitValue() != 0){
                         error = true;
                         console.printError("Game stopped unexpectedly.");
                     }
-                    console.printInfo("Deleteting natives dir.");
-                    Utils.deleteDirectory(nativesDir);
-                    if (!kernel.getSettings().getKeepLauncherOpen()){
-                        kernel.saveProfiles();
-                    }
+                } catch (Exception ex){
+                    error = true;
+                    console.printError("Game stopped unexpectedly.");
                 }
-            };
+                console.printInfo("Deleteting natives dir.");
+                Utils.deleteDirectory(nativesDir);
+                if (!kernel.getSettings().getKeepLauncherOpen()){
+                    kernel.exitSafely();
+                }
+            });
             log_info.start();
-            Thread log_error = new Thread(){
-                @Override
-                public void run(){
-                    InputStreamReader isr = new InputStreamReader(getErrorStream(), Charset.forName("ISO-8859-1"));
-                    BufferedReader br = new BufferedReader(isr);
-                    String lineRead;
-                    try{
-                        while (isStarted()){
-                            if ((lineRead = br.readLine()) != null){
-                                if (kernel.getSettings().getShowGameLog()){
-                                    gameLog.pushString(lineRead);
-                                }
-                                console.printInfo(lineRead);
+            Thread log_error = new Thread(() -> {
+                InputStreamReader isr = new InputStreamReader(getErrorStream(), Charset.forName("ISO-8859-1"));
+                BufferedReader br = new BufferedReader(isr);
+                String lineRead;
+                try{
+                    while (isStarted()){
+                        if ((lineRead = br.readLine()) != null){
+                            if (kernel.getSettings().getShowGameLog()){
+                                gameLog.pushString(lineRead);
                             }
+                            console.printInfo(lineRead);
                         }
-                    } catch (Exception ignored){
-                        console.printError("Failed to read game error stream.");
                     }
+                } catch (Exception ignored){
+                    console.printError("Failed to read game error stream.");
                 }
-            };
+            });
             log_error.start();
         }catch (Exception ex){
             error = true;
@@ -348,6 +340,6 @@ public class GameLauncher {
         this.error = false;
         return current;
     }
-    public InputStream getInputStream(){return this.process.getInputStream();}
+    private InputStream getInputStream(){return this.process.getInputStream();}
     private InputStream getErrorStream(){return this.process.getErrorStream();}
 }

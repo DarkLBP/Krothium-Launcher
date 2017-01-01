@@ -1,10 +1,7 @@
 package kml;
 
-import kml.enums.ProfileType;
 import kml.exceptions.AuthenticationException;
-import kml.objects.Profile;
 import kml.objects.User;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -14,8 +11,8 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Authentication {
@@ -39,7 +36,7 @@ public class Authentication {
         if (this.userDatabase.containsKey(userID)){
             console.printInfo("User " + this.userDatabase.get(userID).getDisplayName() + " deleted.");
             this.userDatabase.remove(userID);
-            if (this.selectedAccount == userID){
+            if (this.selectedAccount.equals(userID)){
                 this.selectedAccount = null;
                 this.selectedProfile = null;
             }
@@ -59,15 +56,14 @@ public class Authentication {
     }
     public User getSelectedUser(){return this.userDatabase.get(this.selectedAccount);}
     public boolean hasSelectedUser(){return (this.selectedAccount != null);}
-    public boolean logOut(){
+    public void logOut(){
         if (this.hasSelectedUser()){
-            this.authenticated = false;
             if (this.removeUser(this.selectedAccount)){
+                this.authenticated = false;
                 kernel.getProfiles().updateSessionProfiles();
-                return true;
+                console.printInfo("Logged out.");
             }
         }
-        return false;
     }
     public void authenticate(final String username, final String password) throws AuthenticationException{
         JSONObject request = new JSONObject();
@@ -230,16 +226,15 @@ public class Authentication {
                     JSONObject users = root.getJSONObject("authenticationDatabase");
                     if (users.length() > 0) {
                         Set s = users.keySet();
-                        Iterator it = s.iterator();
-                        while (it.hasNext()) {
-                            String userID = it.next().toString();
+                        for (Object value : s) {
+                            String userID = value.toString();
                             JSONObject user = users.getJSONObject(userID);
                             if (user.has("accessToken") && user.has("username") && user.has("profiles")) {
                                 JSONObject profiles = user.getJSONObject("profiles");
-                                if (profiles.keySet().size() == 1){
+                                if (profiles.keySet().size() == 1) {
                                     String uuid = profiles.keySet().toArray()[0].toString();
                                     JSONObject profile = profiles.getJSONObject(uuid);
-                                    if (profile.has("displayName")){
+                                    if (profile.has("displayName")) {
                                         User u = new User(profile.getString("displayName"), user.getString("accessToken"), userID, user.getString("username"), uuid);
                                         this.addUser(userID, u);
                                     }
@@ -294,9 +289,8 @@ public class Authentication {
         if (this.userDatabase.size() > 0){
             JSONObject db = new JSONObject();
             Set s = this.userDatabase.keySet();
-            Iterator it = s.iterator();
-            while (it.hasNext()){
-                String key = it.next().toString();
+            for (Object value : s) {
+                String key = value.toString();
                 JSONObject user = new JSONObject();
                 User u = this.userDatabase.get(key);
                 user.put("accessToken", u.getAccessToken());

@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @website https://krothium.com
- *  @author DarkLBP
+ * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Profile {
-    private String id;
+    private final String id;
     private String name;
     private ProfileType type;
     private String lastVersionId = null;
@@ -65,17 +65,22 @@ public class Profile {
                 this.lastUsed = Instant.EPOCH;
             }
         }
-        type = type.toLowerCase();
-        switch (type){
-            case "latest-release":
-                this.type = ProfileType.RELEASE;
-                break;
-            case "latest-snapshot":
-                this.type = ProfileType.SNAPSHOT;
-                break;
-            default:
-                this.type = ProfileType.CUSTOM;
+        if (type == null) {
+            this.type = ProfileType.CUSTOM;
+        } else {
+            type = type.toLowerCase();
+            switch (type){
+                case "latest-release":
+                    this.type = ProfileType.RELEASE;
+                    break;
+                case "latest-snapshot":
+                    this.type = ProfileType.SNAPSHOT;
+                    break;
+                default:
+                    this.type = ProfileType.CUSTOM;
+            }
         }
+
         if (this.type == ProfileType.CUSTOM) {
             if (created == null) {
                 this.created = Instant.EPOCH;

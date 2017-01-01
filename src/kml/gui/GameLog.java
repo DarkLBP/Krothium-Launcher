@@ -9,7 +9,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * Created by darkl on 31/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class GameLog extends JFrame{
     private JPanel main;

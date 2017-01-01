@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Console {
@@ -114,20 +114,18 @@ public class Console {
             System.err.println(err);
         }
     }
-    public boolean close(){
+    public void close(){
         if (this.enabled){
             try{
                 this.cdata.close();
-                return this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
+                this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
             } catch (Exception ex){
-                return false;
             }
         } else {
             try{
                 this.cdata.close();
-                return this.log.delete();
+                this.log.delete();
             } catch (Exception ex){
-                return false;
             }
         }
     }

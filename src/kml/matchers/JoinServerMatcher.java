@@ -7,8 +7,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class JoinServerMatcher implements URLMatcher{
     private final String joinURL = "http://session.minecraft.net/game/joinserver.jsp";

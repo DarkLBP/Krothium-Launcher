@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by darkl on 26/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class LaunchOptionsTab {
     private JPanel main;
@@ -51,6 +52,7 @@ public class LaunchOptionsTab {
                 } else {
                     snapshots.setIcon(checkbox_disabled);
                 }
+                populateList();
             }
         });
         historical.addMouseListener(new MouseAdapter() {

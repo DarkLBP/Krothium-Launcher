@@ -6,11 +6,14 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Profiles {
@@ -172,7 +175,7 @@ public class Profiles {
         }
         return null;
     }
-    public int profileCount(){return profiles.size();}
+    private int profileCount(){return profiles.size();}
     public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
@@ -183,10 +186,10 @@ public class Profiles {
         }
         return false;
     }
-    public boolean hasReleaseProfile(){return this.releaseProfile != null;}
-    public boolean hasSnapshotProfile(){return this.snapshotProfile != null;}
-    public String getReleaseProfile(){return this.releaseProfile;}
-    public String getSnapshotProfile(){return this.snapshotProfile;}
+    private boolean hasReleaseProfile(){return this.releaseProfile != null;}
+    private boolean hasSnapshotProfile(){return this.snapshotProfile != null;}
+    private String getReleaseProfile(){return this.releaseProfile;}
+    private String getSnapshotProfile(){return this.snapshotProfile;}
     public void updateSessionProfiles(){
         if (kernel.getAuthentication().isAuthenticated()){
             if (!hasReleaseProfile()){
@@ -214,15 +217,14 @@ public class Profiles {
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();
         Set s = this.profiles.keySet();
-        Iterator it = s.iterator();
-        while (it.hasNext()){
-            String key = it.next().toString();
+        for (Object value : s) {
+            String key = value.toString();
             Profile p = this.profiles.get(key);
             JSONObject prof = new JSONObject();
-            if (p.hasName()){
+            if (p.hasName()) {
                 prof.put("name", p.getName());
             }
-            switch (p.getType()){
+            switch (p.getType()) {
                 case RELEASE:
                     prof.put("type", "latest-release");
                     break;
@@ -232,23 +234,23 @@ public class Profiles {
                 default:
                     prof.put("type", "custom");
             }
-            if (p.hasCreated()){
+            if (p.hasCreated()) {
                 prof.put("created", p.getCreated().toString());
             }
             prof.put("lastUsed", p.getLastUsed().toString());
-            if (p.hasGameDir()){
+            if (p.hasGameDir()) {
                 prof.put("gameDir", p.getGameDir().toString());
             }
-            if (p.hasVersion()){
+            if (p.hasVersion()) {
                 prof.put("lastVersionId", p.getVersionID());
             }
-            if (p.hasJavaDir()){
+            if (p.hasJavaDir()) {
                 prof.put("javaDir", p.getJavaDir().toString());
             }
-            if (p.hasJavaArgs()){
+            if (p.hasJavaArgs()) {
                 prof.put("javaArgs", p.getJavaArgs());
             }
-            if (p.hasResolution()){
+            if (p.hasResolution()) {
                 JSONObject res = new JSONObject();
                 res.put("width", p.getResolutionWidth());
                 res.put("height", p.getResolutionHeight());

@@ -1,10 +1,8 @@
 package kml.objects;
 
-import java.util.Map;
-import java.util.UUID;
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class User {

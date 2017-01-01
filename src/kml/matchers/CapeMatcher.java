@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class CapeMatcher implements URLMatcher{
     private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");

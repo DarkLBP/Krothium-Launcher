@@ -1,15 +1,12 @@
 package kml;
 
-import kml.enums.ProfileType;
-import kml.objects.Profile;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
- * Created by darkl on 18/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class Settings {
     private String locale = "en-us";
@@ -61,7 +58,7 @@ public class Settings {
         }
     }
     public boolean getKeepLauncherOpen(){return this.keepLauncherOpen;}
-    public String getLocale(){return this.locale;}
+    private String getLocale(){return this.locale;}
     public boolean getShowGameLog(){return this.showGameLog;}
     public boolean getEnableAdvanced(){return this.enableAdvanced;}
     public boolean getEnableHistorical(){return this.enableHistorical;}

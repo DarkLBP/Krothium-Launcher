@@ -18,8 +18,8 @@ import java.security.MessageDigest;
 import java.util.*;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Utils {
@@ -54,7 +54,7 @@ public class Utils {
         }
         return workingDirectory;
     }
-    public static boolean deleteDirectory(File directory) {
+    public static void deleteDirectory(File directory) {
         if(directory.exists()){
             File[] files = directory.listFiles();
             if(files != null){
@@ -68,7 +68,7 @@ public class Utils {
                 }
             }
         }
-        return(directory.delete());
+        directory.delete();
     }
     public static void openWebsite(String url) throws IOException{
         String os = System.getProperty("os.name").toLowerCase();
@@ -77,7 +77,7 @@ public class Utils {
             rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
         } else if (os.contains("mac")) {
             rt.exec( "open " + url);
-        } else if (os.contains("nix") || os.indexOf( "nux") >=0) {
+        } else if (os.contains("nix") || os.contains("nux")) {
             String[] browsers = {"firefox", "epiphany", "mozilla", "konqueror", "netscape","opera","links","lynx", "chromium"};
             StringBuilder cmd = new StringBuilder();
             for (int i=0; i<browsers.length; i++)
@@ -140,8 +140,8 @@ public class Utils {
             }
             byte[] hashBytes = sha1.digest();
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hashBytes.length; i++) {
-              sb.append(Integer.toString((hashBytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte hashByte : hashBytes) {
+                sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
             }
             String fileHash = sb.toString();
             return fileHash.equals(sha);
@@ -190,9 +190,8 @@ public class Utils {
         }
         if (params.size() > 0){
             Set keys = params.keySet();
-            Iterator it = keys.iterator();
-            while (it.hasNext()){
-                String param = it.next().toString();
+            for (Object key : keys) {
+                String param = key.toString();
                 con.setRequestProperty(param, params.get(param));
             }
         }
@@ -237,18 +236,6 @@ public class Utils {
             return path + "javaw.exe";
         }
         return path + "java";
-    }
-    public static String toBase64(String st){
-        if (st == null || st.isEmpty()){
-            return null;
-        }
-        String conversion;
-        try{
-            conversion = Base64.getEncoder().encodeToString(st.getBytes());
-        } catch (Exception ex) {
-            conversion = null;
-        }
-        return conversion;
     }
     public static String fromBase64(String st){
         if (st == null || st.isEmpty()){

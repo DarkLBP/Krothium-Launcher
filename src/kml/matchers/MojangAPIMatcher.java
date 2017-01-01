@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class MojangAPIMatcher implements URLMatcher{
     private final Pattern apiRegex = Pattern.compile("/(.+?)");

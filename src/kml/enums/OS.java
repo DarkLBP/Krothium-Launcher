@@ -1,7 +1,7 @@
 package kml.enums;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public enum OS {WINDOWS, OSX, LINUX, UNKNOWN}

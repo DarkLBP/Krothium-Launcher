@@ -4,8 +4,8 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Downloadable {

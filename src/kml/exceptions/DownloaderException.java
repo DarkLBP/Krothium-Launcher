@@ -1,8 +1,8 @@
 package kml.exceptions;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class DownloaderException extends Exception{

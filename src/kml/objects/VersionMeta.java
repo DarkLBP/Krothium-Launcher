@@ -5,8 +5,8 @@ import kml.enums.VersionType;
 import java.net.URL;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class VersionMeta {

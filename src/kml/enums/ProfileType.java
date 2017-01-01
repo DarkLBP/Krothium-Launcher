@@ -1,6 +1,7 @@
 package kml.enums;
 
 /**
- * Created by darkl on 23/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public enum ProfileType {RELEASE, SNAPSHOT, CUSTOM}

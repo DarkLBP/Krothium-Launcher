@@ -9,7 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Created by darkl on 18/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class SettingsTab {
     private JPanel main;

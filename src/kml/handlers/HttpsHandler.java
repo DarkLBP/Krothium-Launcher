@@ -8,8 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 class HttpsHandler extends sun.net.www.protocol.https.Handler{
 

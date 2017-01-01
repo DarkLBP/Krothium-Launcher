@@ -1,7 +1,6 @@
 package kml.gui;
 
 import kml.*;
-import kml.CapePreview;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -14,7 +13,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 
 /**
- * Created by darkl on 01/01/2017.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class SkinTab {
     private JPanel main;
@@ -26,7 +26,7 @@ public class SkinTab {
     private JButton deleteCapeButton;
     private JRadioButton steve;
     private JRadioButton alex;
-    private HashMap<String, String> params = new HashMap<>();
+    private final HashMap<String, String> params = new HashMap<>();
     private final Console console;
     private final Kernel kernel;
     private final ImageIcon button_normal;
@@ -132,9 +132,6 @@ public class SkinTab {
         deleteCapeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         steve.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         alex.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        ButtonGroup group = new ButtonGroup();
-        group.add(steve);
-        group.add(alex);
         changeSkinButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -251,14 +248,14 @@ public class SkinTab {
         Thread refresh = new Thread(() -> {
             try {
                 URL skinURL = new URL("http://mc.krothium.com/skins/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
-                skinPreview.setIcon(new ImageIcon(SkinPreview.generateCombo(skinURL, 4, 1)));
+                skinPreview.setIcon(new ImageIcon(TexturePreview.generateComboSkin(skinURL, 4, 1)));
             } catch (Exception ex){
                 console.printError("Failed to load skin preview!");
                 skinPreview.setIcon(null);
             }
             try {
                 URL capeURL = new URL("http://mc.krothium.com/capes/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
-                capePreview.setIcon(new ImageIcon(CapePreview.generateCombo(capeURL, 6, 1)));
+                capePreview.setIcon(new ImageIcon(TexturePreview.generateComboCape(capeURL, 6, 1)));
             } catch (Exception ex){
                 console.printError("Failed to load cape preview!");
                 capePreview.setIcon(null);

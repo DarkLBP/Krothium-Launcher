@@ -3,14 +3,15 @@ package kml;
 import kml.gui.Main;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Set;
 
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public final class Kernel {
@@ -53,29 +54,27 @@ public final class Kernel {
     }
     public Console getConsole(){return this.console;}
     public File getWorkingDir(){return this.workingDir;}
-    public boolean saveProfiles(){
+    public void saveProfiles(){
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();
         JSONObject authdata = this.authentication.toJSON();
         Set pset = profiles.keySet();
-        Iterator pit = pset.iterator();
-        while (pit.hasNext()){
-            String name = pit.next().toString();
+        for (Object aPset : pset) {
+            String name = aPset.toString();
             output.put(name, profiles.get(name));
         }
         Set aset = authdata.keySet();
-        Iterator ait = aset.iterator();
-        while (ait.hasNext()){
-            String name = ait.next().toString();
+        for (Object anAset : aset) {
+            String name = anAset.toString();
             output.put(name, authdata.get(name));
         }
         output.put("settings", this.settings.toJSON());
-        return Utils.writeToFile(output.toString(), this.getConfigFile());
+        Utils.writeToFile(output.toString(), this.getConfigFile());
     }
-    public void loadProfiles(){profiles.fetchProfiles();}
-    public void loadVersions(){versions.fetchVersions();}
-    public void loadUsers(){authentication.fetchUsers();}
-    public void loadSettings(){settings.loadSettings();}
+    private void loadProfiles(){profiles.fetchProfiles();}
+    private void loadVersions(){versions.fetchVersions();}
+    private void loadUsers(){authentication.fetchUsers();}
+    private void loadSettings(){settings.loadSettings();}
     public Versions getVersions(){return this.versions;}
     public Profiles getProfiles(){return this.profiles;}
     public Settings getSettings(){return this.settings;}
@@ -101,11 +100,7 @@ public final class Kernel {
                 String r = Utils.sendPost(url, new byte[0], new HashMap<>());
                 String[] data = r.split(":");
                 int version = Integer.parseInt(Utils.fromBase64(data[0]));
-                if (version > Constants.KERNEL_BUILD){
-                    return true;
-                } else {
-                    return false;
-                }
+                return version > Constants.KERNEL_BUILD;
             } catch (Exception ex){
                 return false;
             }

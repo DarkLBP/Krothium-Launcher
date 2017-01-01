@@ -8,8 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class HasJoinedMatcher implements URLMatcher{
     private final String hasURL = "https://sessionserver.mojang.com/session/minecraft/hasJoined";

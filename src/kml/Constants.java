@@ -1,11 +1,10 @@
 package kml;
 
 import java.net.URL;
-import java.util.Random;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class Constants {

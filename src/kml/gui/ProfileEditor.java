@@ -14,12 +14,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.time.Instant;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by darkl on 27/12/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class ProfileEditor{
     private JPanel main;
@@ -308,7 +308,7 @@ public class ProfileEditor{
         }
         updateConstraints();
     }
-    public void saveProfile(){
+    private void saveProfile(){
         if (nameEnabled){
             if (!name.getText().isEmpty()){
                 profile.setName(name.getText());
@@ -363,7 +363,7 @@ public class ProfileEditor{
         JOptionPane.showMessageDialog(null, "Profile saved successfully!", "Saved", JOptionPane.INFORMATION_MESSAGE);
         kernel.getGUI().setSelected(kernel.getGUI().options);
     }
-    public void updateConstraints(){
+    private void updateConstraints(){
         if (!kernel.getSettings().getEnableAdvanced()){
             if (!javaExecEnabled) {
                 javaExecLabel.setEnabled(false);
@@ -386,22 +386,23 @@ public class ProfileEditor{
             versionsLabel.setEnabled(false);
         }
         this.versions.removeAllItems();
+        int count = 0;
         this.versions.addItem("Latest Version");
+        count++;
         if (kernel.getSettings().getEnableSnapshots()){
             this.versions.addItem("Latest Snapshot");
+            count++;
         }
         if ((profile.hasVersion() && profile.getVersionID().equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) || (!profile.hasVersion() && profile.getType() == ProfileType.SNAPSHOT)){
             this.versions.setSelectedIndex(1);
         }
-        int count = 2;
         Map<String, VersionMeta> versions = kernel.getVersions().getVersions();
         Set keySet = versions.keySet();
-        Iterator it = keySet.iterator();
-        while (it.hasNext()){
-            VersionMeta vm = versions.get(it.next().toString());
-            if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())){
+        for (Object aKeySet : keySet) {
+            VersionMeta vm = versions.get(aKeySet.toString());
+            if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())) {
                 this.versions.addItem(vm.getID());
-                if (profile.hasVersion() && vm.getID().equalsIgnoreCase(profile.getVersionID())){
+                if (profile.hasVersion() && vm.getID().equalsIgnoreCase(profile.getVersionID())) {
                     this.versions.setSelectedIndex(count);
                 }
                 count++;

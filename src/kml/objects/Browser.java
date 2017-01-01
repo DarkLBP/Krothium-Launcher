@@ -18,8 +18,8 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class Browser{
 
@@ -27,8 +27,8 @@ public class Browser{
     private final Object lock = new Object();
     private WebView browser;
     private WebEngine webEngine;
-    final Group root = new Group();
-    final Scene scene = new Scene(root);
+    private final Group root = new Group();
+    private final Scene scene = new Scene(root);
     public Browser() {
         Platform.setImplicitExit(false);
         Platform.runLater(() -> {

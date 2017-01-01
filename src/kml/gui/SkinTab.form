@@ -141,4 +141,10 @@
       </component>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="skinTypes">
+      <member id="34318"/>
+      <member id="9a03a"/>
+    </group>
+  </buttonGroups>
 </form>

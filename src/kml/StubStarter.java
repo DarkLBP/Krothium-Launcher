@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 class StubStarter {
     public static void main(String[] args){

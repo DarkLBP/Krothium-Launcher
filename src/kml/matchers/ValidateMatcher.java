@@ -8,8 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class ValidateMatcher implements URLMatcher{
     private final String validateURL = "https://authserver.mojang.com/validate";

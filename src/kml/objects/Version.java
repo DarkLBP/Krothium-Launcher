@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public final class Version {

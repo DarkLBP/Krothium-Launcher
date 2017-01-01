@@ -6,8 +6,8 @@ import java.util.*;
 import java.util.jar.*;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public class StubLauncher {
     public static void load(File f, String[] args){

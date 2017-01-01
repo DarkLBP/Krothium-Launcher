@@ -3,8 +3,8 @@ package kml.matchers;
 import java.net.URLConnection;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 public interface URLMatcher {
     boolean match();

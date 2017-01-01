@@ -12,8 +12,8 @@ import java.awt.event.*;
 import java.io.IOException;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public class LoginTab {
@@ -27,11 +27,10 @@ public class LoginTab {
     private final ImageIcon button_normal;
     private final ImageIcon button_hover;
     private final Kernel kernel;
-    private final Border border;
 
     public LoginTab(Kernel k) {
         this.kernel = k;
-        this.border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
         this.username.setBorder(border);
         this.password.setBorder(border);
         FocusAdapter focusButton = new FocusAdapter() {
@@ -105,7 +104,7 @@ public class LoginTab {
         });
 
     }
-    public void authenticate(){
+    private void authenticate(){
         Authentication a = kernel.getAuthentication();
         try {
             a.authenticate(username.getText(), new String(password.getPassword()));

@@ -4,7 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by darkl on 18/11/2016.
+ * @author DarkLBP
+ * website https://krothium.com
  */
 public class BackgroundPanel extends JPanel {
     private Image image;

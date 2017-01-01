@@ -13,14 +13,13 @@ import org.json.JSONObject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
 /**
- * @website https://krothium.com
  * @author DarkLBP
+ * website https://krothium.com
  */
 
 public final class Library {
@@ -34,7 +33,6 @@ public final class Library {
     private final Map<OS, String> natives = new HashMap<>();
     
     public Library(JSONObject lib, Kernel k) throws ObjectException{
-        final Kernel kernel = k;
         final Console console = k.getConsole();
         if (lib.has("name")){
             this.name = lib.getString("name");
