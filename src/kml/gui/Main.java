@@ -51,6 +51,7 @@ public class Main extends JFrame{
     private final GameLauncher gameLauncher;
     private final ProfileEditor editor;
     private final ProfilePopup popupMenu;
+    private final SkinTab skinTab;
     private final ImageIcon tabSelection;
 
     public Main(Kernel k){
@@ -70,6 +71,7 @@ public class Main extends JFrame{
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
         this.editor = new ProfileEditor(kernel);
         this.popupMenu = new ProfilePopup(kernel);
+        this.skinTab = new SkinTab(kernel);
         setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -297,6 +299,9 @@ public class Main extends JFrame{
                 } else if (l.equals(options)){
                     this.contentPanel.add(this.launchOptions.getPanel());
                     this.launchOptions.populateList();
+                } else if (l.equals(skins)){
+                    this.contentPanel.add(this.skinTab.getPanel());
+                    this.skinTab.refreshPreviews();
                 }
             }
             this.headPanel.updateUI();
