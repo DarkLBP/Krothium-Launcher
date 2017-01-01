@@ -89,7 +89,7 @@ public final class Kernel {
         this.console.close();
         System.exit(0);
     }
-    public boolean checkForUpdates(){
+    public String checkForUpdates(){
         if (!Constants.UPDATE_CHECKED){
             Constants.UPDATE_CHECKED = true;
             try{
@@ -100,12 +100,15 @@ public final class Kernel {
                 String r = Utils.sendPost(url, new byte[0], new HashMap<>());
                 String[] data = r.split(":");
                 int version = Integer.parseInt(Utils.fromBase64(data[0]));
-                return version > Constants.KERNEL_BUILD;
+                if (version > Constants.KERNEL_BUILD){
+                    return data[1];
+                }
             } catch (Exception ex){
-                return false;
+                console.printError("Failed to check for updates.");
+                return null;
             }
         }
-        return false;
+        return null;
     }
     public Main getGUI(){return this.mainForm;}
 }

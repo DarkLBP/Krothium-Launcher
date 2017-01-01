@@ -9,8 +9,11 @@ import kml.objects.Profile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author DarkLBP
@@ -267,6 +270,17 @@ public class Main extends JFrame{
         if (b){
             timer.scheduleAtFixedRate(guiThread, 0, 500);
             kernel.getProfiles().updateSessionProfiles();
+            String update = kernel.checkForUpdates();
+            if (update != null){
+                int response = JOptionPane.showConfirmDialog(null, "A new launcher version is available! Do you want to download it?", "New version available", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (response == JOptionPane.YES_OPTION){
+                    try {
+                        Utils.openWebsite(Utils.fromBase64(update));
+                    } catch (IOException e) {
+                        kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+                    }
+                }
+            }
         } else {
             timer.cancel();
         }
