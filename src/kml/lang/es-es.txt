@@ -17,7 +17,7 @@ El juego ha crasheado
 Seleccionar perfil...
 Usuario o Email de Krothium:
 Contraseña:
-INICIAR SESIÓN
+ENTRAR
 REGISTRARSE
 ¡Imposible iniciar sesión!
 Error
@@ -64,7 +64,7 @@ Nombre:
 Versión:
 Resolución:
 Directorio del juego:
-Ejecutable de java:
+Ejecutable de Java:
 Argumentos JVM:
 Salida del Juego
 Perfil sin Nombre

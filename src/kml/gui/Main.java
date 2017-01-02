@@ -64,7 +64,7 @@ public class Main extends JFrame{
     private final ImageIcon flag_es;
     private final ImageIcon flag_pt;
     private final ImageIcon flag_us;
-    private final ImageIcon flag_ca;
+    private final ImageIcon flag_val;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -83,7 +83,7 @@ public class Main extends JFrame{
         this.flag_es = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_es-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_us = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_en-us.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
-        this.flag_ca = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_ca.jpg")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
+        this.flag_val = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_val-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
         this.editor = new ProfileEditor(kernel);
         this.popupMenu = new ProfilePopup(kernel);
@@ -112,14 +112,14 @@ public class Main extends JFrame{
         language.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         JMenuItem en = new JMenuItem("English - United States");
         JMenuItem es = new JMenuItem("Español - España");
-        JMenuItem ca = new JMenuItem("Català - Catalunya");
-        JMenuItem pt = new JMenuItem("Portugués - Portugal");
-        ca.setIcon(flag_ca);
+        JMenuItem ca = new JMenuItem("Català (Valencià) - País Valencià");
+        JMenuItem pt = new JMenuItem("Português - Portugal");
+        ca.setIcon(flag_val);
         ca.setFont(plain);
         ca.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                kernel.getSettings().setLocale("ca");
+                kernel.getSettings().setLocale("val-es");
                 refreshAllLocalizedStrings();
             }
         });
@@ -366,6 +366,7 @@ public class Main extends JFrame{
         launchOptions.refreshLocalizedStrings();
         setting.refreshLocalizedStrings();
         editor.refreshLocalizedStrings();
+        login.refreshLocalizedStrings();
     }
     public void editProfile(String s){
         if (s == null){

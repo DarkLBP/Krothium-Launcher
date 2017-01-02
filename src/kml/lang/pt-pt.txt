@@ -1,0 +1,70 @@
+//en-US language file by DarkLBP (https://krothium.com)
+IDIOMA
+Terminar Sessão
+Notícias
+Skins
+Definições
+Opções de início
+Tem certeza de que deseja terminar o sessão?
+Terminar sessão
+Uma nova versão do lançador está disponível! Deseja fazer o download?
+Nova versão disponível
+JOGAR
+BAIXANDO
+JOGANDO
+O jogo crashed! Verifique os logs para obter mais informações.
+O jogo crashed
+Select profile...
+Krothium Nome de Usuário ou Email:
+Senha:
+ENTRAR
+REGISTRE-SE
+Impossível iniciar sessão!
+Erro
+Mudar Skin
+Eliminar Skin
+Mudar Capa
+Eliminar Cape
+Tipo de skin:
+Skin:
+Capa:
+Tem certeza de que deseja eliminar sua skin?
+Eliminação de skin
+Failed to delete the skin!
+Skin eliminada com sucesso!
+Sucesso
+Tem certeza de que deseja eliminar sua capa?
+Eliminação de capa
+Failed to delete the cape!
+Capa eliminada com sucesso!
+Skin alterada com sucesso!
+Capa alterada com sucesso!
+Falha ao alterar o skin!
+Falha ao alterar o capa!
+Arquivo PNG de Skin / Cape (128KB MAX)
+DEFINIÇÕES DO LAUNCHER
+Manter o launcher aberto enquanto o jovo estiver a ser executado
+Abrir o registo de saída quando o jogo começár
+Habilitar snapshots
+Versões antigas
+Definições avançadas
+Novo Perfil
+Guardar
+Cancelar
+Eliminar
+Você tem certeza? Qualquer alteração feita não será guardada!
+Confirmação
+Perfil guardado com sucesso!
+Guardado
+Versão mais recente
+Snapshot mais recente
+Tem a certesa que deseja eliminar este perfil?
+Eliminação de perfil
+Nome:
+Versão:
+Resolução:
+Diretório de jogo:
+Executável do Java:
+Argumentos do JVM:
+Saída o Jogo
+Perfil sem Nome

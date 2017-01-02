@@ -17,7 +17,7 @@ Joc crashejat
 Seleccionar perfil...
 Usuari o Email de Krothium:
 Contrasenya:
-INICIAR SESIÓ
+ENTRAR
 REGISTRAR-SE
 Imposible inciar sessió!
 Error
@@ -64,7 +64,7 @@ Nom:
 Versió:
 Resolució:
 Directori del joc:
-Executable de java:
+Executable de Java:
 Arguments JVM:
 Eixida del Joc
 Perfil sense Nom
