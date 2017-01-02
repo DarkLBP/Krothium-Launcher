@@ -1,0 +1,70 @@
+//ca language file by DarkLBP (https://krothium.com)
+IDIOMA
+TANCAR SESSIÓ
+Novetats
+Skins
+Ajustos
+Opcions de llançament
+Estás segur de que vols tancar la sessió?
+Tancar sessió
+Una nova versió del llançador está disponible! Vols descarregar-la?
+Nova versió disponible
+JUGAR
+DESCARREGANT
+JUGANT
+El joc ha crashejat! Comprova els registres per a mes informació.
+Joc crashejat
+Seleccionar perfil...
+Usuari o Email de Krothium:
+Contrasenya:
+INICIAR SESIÓ
+REGISTRAR-SE
+Imposible inciar sessió!
+Error
+Canviar Skin
+Eliminar Skin
+Canviar Capa
+Eliminar Capa
+Tipus de skin:
+Skin:
+Capa:
+Estás segur de que vols eliminar la teua skin?
+Eliminació de skin
+Fallada al eliminar la skin!
+Skin eliminada amb èxit!
+Èxit
+Estás segur de que vols eliminar la teua capa?
+Eliminació de capa
+Fallada al eliminar la capa!
+Capa eliminada amb èxit!
+Skin canviada amb èxit!
+Capa canviada amb èxit!
+Fallada al eliminar la skin!
+Fallada al eliminar la capa!
+Arxiu PNG de Skin / Capa (128KB MAX)
+AJUSTOS DEL LLANÇADOR
+Mantindre el llançador obert mentres s'executa el joc
+Obrir el registre de eixida al iniciar el joc
+Habilitar snapshots
+Versions històriques
+Ajustos avançats
+Nou Perfil
+Guardar
+Cancel-lar
+Eliminar
+Estás segur? Qualsevol canvi fet no es guardat!
+Confirmació
+Perfil guardat amb èxit!
+Guardat
+Últim Llançament
+Última Snapshot
+Estás segur de que vols eliminar este perfil?
+Eliminació de perfil
+Nom:
+Versió:
+Resolució:
+Directori del joc:
+Executable de java:
+Arguments JVM:
+Eixida del Joc
+Perfil sense Nom

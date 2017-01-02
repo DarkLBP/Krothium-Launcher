@@ -2,6 +2,7 @@ package kml.gui;
 
 import kml.Authentication;
 import kml.Kernel;
+import kml.Language;
 import kml.Utils;
 import kml.exceptions.AuthenticationException;
 
@@ -24,6 +25,8 @@ public class LoginTab {
     private JButton register;
     private JTextField username;
     private JPasswordField password;
+    private JLabel userLabel;
+    private JLabel passLabel;
     private final ImageIcon button_normal;
     private final ImageIcon button_hover;
     private final Kernel kernel;
@@ -102,20 +105,25 @@ public class LoginTab {
                 }
             }
         });
-
+    }
+    public void refreshLocalizedStrings(){
+        userLabel.setText(Language.get(18));
+        passLabel.setText(Language.get(19));
+        login.setText(Language.get(20));
+        register.setText(Language.get(21));
     }
     private void authenticate(){
         Authentication a = kernel.getAuthentication();
         try {
             a.authenticate(username.getText(), new String(password.getPassword()));
             if (!a.isAuthenticated()){
-                JOptionPane.showMessageDialog(null,"Unnable to login!","Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,Language.get(22), Language.get(23), JOptionPane.ERROR_MESSAGE);
                 password.setText("");
             } else {
                 kernel.getGUI().setDisable(false);
             }
         } catch (AuthenticationException e1) {
-            JOptionPane.showMessageDialog(null,e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,e1.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
             password.setText("");
             password.requestFocus();
         }

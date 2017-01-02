@@ -1,10 +1,7 @@
 package kml.gui;
 
 
-import kml.Kernel;
-import kml.Profiles;
-import kml.Settings;
-import kml.Utils;
+import kml.*;
 import kml.enums.ProfileIcon;
 import kml.objects.Profile;
 
@@ -122,6 +119,12 @@ public class LaunchOptionsTab {
                 profiles.clearSelection();
             }
         });
+    }
+    public void refreshLocalizedStrings(){
+        snapshots.setText(Language.get(48));
+        historical.setText(Language.get(49));
+        advanced.setText(Language.get(50));
+        newProfile.setText(Language.get(51));
     }
     public JPanel getPanel(){
         return this.main;

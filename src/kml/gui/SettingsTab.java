@@ -1,6 +1,7 @@
 package kml.gui;
 
 import kml.Kernel;
+import kml.Language;
 import kml.Settings;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ public class SettingsTab {
     private JPanel main;
     private JLabel keepOpen;
     private JLabel logOpen;
+    private JLabel settingsLabel;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
     private final Settings settings;
@@ -55,6 +57,11 @@ public class SettingsTab {
         } else {
             logOpen.setIcon(checkbox_disabled);
         }
+    }
+    public void refreshLocalizedStrings(){
+        settingsLabel.setText(Language.get(45));
+        keepOpen.setText(Language.get(46));
+        logOpen.setText(Language.get(47));
     }
     public JPanel getPanel(){return this.main;}
 }

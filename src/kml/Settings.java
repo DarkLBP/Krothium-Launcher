@@ -29,7 +29,7 @@ public class Settings {
             if (root.has("settings")){
                 JSONObject settings = root.getJSONObject("settings");
                 if (settings.has("locale")){
-                    locale = settings.getString("locale");
+                    setLocale(settings.getString("locale"));
                 }
                 if (settings.has("keepLauncherOpen")){
                     keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
@@ -49,7 +49,8 @@ public class Settings {
             }
         } catch (Exception ex) {
             kernel.getConsole().printError("Failed to load settings data. Using defaults...");
-            locale = "en-us";
+            ex.printStackTrace();
+            setLocale("en-us");
             keepLauncherOpen = false;
             showGameLog = false;
             enableAdvanced = false;
@@ -69,6 +70,7 @@ public class Settings {
             if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("ca")){
                 kernel.getConsole().printInfo("Switched language to " + s);
                 this.locale = s;
+                Language.loadLang(s);
             }
         }
     }

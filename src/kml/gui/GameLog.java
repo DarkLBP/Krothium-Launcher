@@ -2,6 +2,7 @@ package kml.gui;
 
 import kml.Constants;
 import kml.Kernel;
+import kml.Language;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,6 @@ public class GameLog extends JFrame{
     private JScrollPane scrollPane;
     private final DefaultListModel model = new DefaultListModel();
     public GameLog(Kernel k){
-        setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " | Game Output");
         setSize(new Dimension(750, 600));
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         setLocationRelativeTo(null);
@@ -32,6 +32,10 @@ public class GameLog extends JFrame{
                 }
             }
         });
+        refreshLocalizedStrings();
+    }
+    public void refreshLocalizedStrings(){
+        setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " | " + Language.get(69));
     }
     @Override
     public void setVisible(boolean s){

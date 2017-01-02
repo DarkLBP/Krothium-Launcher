@@ -49,7 +49,7 @@
               <text value="LOGIN"/>
             </properties>
           </component>
-          <component id="5f414" class="javax.swing.JLabel">
+          <component id="5f414" class="javax.swing.JLabel" binding="userLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -59,7 +59,7 @@
               <text value="Krothium Username or Email:"/>
             </properties>
           </component>
-          <component id="bec1c" class="javax.swing.JLabel">
+          <component id="bec1c" class="javax.swing.JLabel" binding="passLabel">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

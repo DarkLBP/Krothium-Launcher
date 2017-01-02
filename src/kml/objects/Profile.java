@@ -1,5 +1,6 @@
 package kml.objects;
 
+import kml.Language;
 import kml.enums.ProfileType;
 
 import javax.swing.*;
@@ -150,15 +151,21 @@ public class Profile {
             if (this.hasName()){
                 this.listItem = new JLabel(this.getName());
             } else if (this.getType() == ProfileType.RELEASE) {
-                this.listItem = new JLabel("Latest Release");
+                this.listItem = new JLabel(Language.get(59));
             } else if (this.getType() == ProfileType.SNAPSHOT){
-                this.listItem = new JLabel("Latest Snapshot");
+                this.listItem = new JLabel(Language.get(60));
             } else {
-                this.listItem = new JLabel("Unnamed Profile");
+                this.listItem = new JLabel(Language.get(70));
             }
         } else {
             if (this.hasName() && !this.getName().equals(this.listItem.getText())){
                 this.listItem.setText(this.getName());
+            } else if (this.getType() == ProfileType.RELEASE && !listItem.getText().equals(Language.get(59))){
+                this.listItem.setText(Language.get(59));
+            } else if (this.getType() == ProfileType.SNAPSHOT && !listItem.getText().equals(Language.get(60))){
+                this.listItem.setText(Language.get(60));
+            } else if (!this.hasName() && this.getType() == ProfileType.CUSTOM) {
+                this.listItem.setText(Language.get(70));
             }
         }
         return this.listItem;

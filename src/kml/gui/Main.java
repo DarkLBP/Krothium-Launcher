@@ -120,6 +120,7 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 kernel.getSettings().setLocale("ca");
+                refreshAllLocalizedStrings();
             }
         });
         languages.add(ca);
@@ -129,6 +130,7 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 kernel.getSettings().setLocale("en-us");
+                refreshAllLocalizedStrings();
             }
         });
         languages.add(en);
@@ -138,6 +140,7 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 kernel.getSettings().setLocale("es-es");
+                refreshAllLocalizedStrings();
             }
         });
         languages.add(es);
@@ -147,6 +150,7 @@ public class Main extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 kernel.getSettings().setLocale("pt-pt");
+                refreshAllLocalizedStrings();
             }
         });
         languages.add(pt);
@@ -164,14 +168,10 @@ public class Main extends JFrame{
             }
 
             @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-
-            }
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
             @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {
-
-            }
+            public void popupMenuCanceled(PopupMenuEvent e) {}
         });
         language.addMouseListener(new MouseAdapter() {
             @Override
@@ -278,7 +278,7 @@ public class Main extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 if (logout.isEnabled()){
-                    int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    int response = JOptionPane.showConfirmDialog(null, Language.get(8), Language.get(9), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION){
                         kernel.getAuthentication().logOut();
                     }
@@ -325,15 +325,15 @@ public class Main extends JFrame{
                     }
                     if (downloader.isDownloading()){
                         progress.setVisible(true);
-                        playButton.setText("DOWNLOADING " + kernel.getDownloader().getProgress() + "%");
+                        playButton.setText(Language.get(13) + " " + kernel.getDownloader().getProgress() + "%");
                         progress.setValue(kernel.getDownloader().getProgress());
                         profileButton.setEnabled(false);
                     } else if (gameLauncher.isStarted()){
-                        playButton.setText("PLAYING");
+                        playButton.setText(Language.get(14));
                         progress.setVisible(false);
                         profileButton.setEnabled(false);
                     } else {
-                        playButton.setText("PLAY");
+                        playButton.setText(Language.get(12));
                         progress.setVisible(false);
                         profileButton.setEnabled(true);
                     }
@@ -348,6 +348,24 @@ public class Main extends JFrame{
                 }
             }
         };
+        refreshAllLocalizedStrings();
+    }
+    public void refreshLocalizedStrings(){
+        language.setText(Language.get(2));
+        logout.setText(Language.get(3));
+        news.setText(Language.get(4));
+        skins.setText(Language.get(5));
+        settings.setText(Language.get(6));
+        options.setText(Language.get(7));
+        playButton.setText(Language.get(12));
+        profileButton.setToolTipText(Language.get(17));
+    }
+    public void refreshAllLocalizedStrings(){
+        this.refreshLocalizedStrings();
+        skinTab.refreshLocalizedStrings();
+        launchOptions.refreshLocalizedStrings();
+        setting.refreshLocalizedStrings();
+        editor.refreshLocalizedStrings();
     }
     public void editProfile(String s){
         if (s == null){
@@ -374,7 +392,7 @@ public class Main extends JFrame{
             kernel.getProfiles().updateSessionProfiles();
             String update = kernel.checkForUpdates();
             if (update != null){
-                int response = JOptionPane.showConfirmDialog(null, "A new launcher version is available! Do you want to download it?", "New version available", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, Language.get(10), Language.get(11), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     try {
                         Utils.openWebsite(Utils.fromBase64(update));

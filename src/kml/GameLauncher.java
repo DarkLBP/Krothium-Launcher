@@ -277,6 +277,7 @@ public class GameLauncher {
             }
             if (kernel.getSettings().getShowGameLog()){
                 gameLog.setVisible(true);
+                gameLog.refreshLocalizedStrings();
             }
             Thread log_info = new Thread(() -> {
                 InputStreamReader isr = new InputStreamReader(getInputStream(), Charset.forName("ISO-8859-1"));
@@ -302,7 +303,7 @@ public class GameLauncher {
                 console.printInfo("Deleteting natives dir.");
                 Utils.deleteDirectory(nativesDir);
                 if (hasError()){
-                    JOptionPane.showMessageDialog(null, "The game has crashed! Check the logs for more information.", "Game Crashed", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, Language.get(15), Language.get(16), JOptionPane.ERROR_MESSAGE);
                 }
                 if (!kernel.getSettings().getKeepLauncherOpen()){
                     kernel.exitSafely();
@@ -332,7 +333,6 @@ public class GameLauncher {
             ex.printStackTrace();
             console.printError("Game returned an error code.");
         }
-
     }
     public boolean isStarted(){
         if (this.process != null){

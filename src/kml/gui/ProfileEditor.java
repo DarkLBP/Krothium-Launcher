@@ -1,6 +1,7 @@
 package kml.gui;
 
 import kml.Kernel;
+import kml.Language;
 import kml.Utils;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
@@ -9,6 +10,7 @@ import kml.objects.Profile;
 import kml.objects.VersionMeta;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -153,7 +155,7 @@ public class ProfileEditor{
             @Override
             public void mousePressed(MouseEvent e) {
                 cancelButton.setForeground(Color.YELLOW);
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure? Any change won't be saved!", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, Language.get(55), Language.get(56), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     kernel.getGUI().setSelected(kernel.getGUI().options);
                 }
@@ -196,7 +198,7 @@ public class ProfileEditor{
             @Override
             public void mousePressed(MouseEvent e) {
                 deleteButton.setForeground(Color.YELLOW);
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this profile?", "Profile deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, Language.get(61), Language.get(62), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     kernel.getProfiles().deleteProfile(profile.getID());
                     kernel.getGUI().setSelected(kernel.getGUI().options);
@@ -208,11 +210,23 @@ public class ProfileEditor{
             }
         });
     }
+    public void refreshLocalizedStrings(){
+        saveButton.setText(Language.get(52));
+        cancelButton.setText(Language.get(53));
+        deleteButton.setText(Language.get(54));
+        nameLabel.setText(Language.get(63));
+        versionsLabel.setText(Language.get(64));
+        resolutionLabel.setText(Language.get(65));
+        gameDirLabel.setText(Language.get(66));
+        javaExecLabel.setText(Language.get(67));
+        javaArgsLabel.setText(Language.get(68));
+        updateConstraints();
+    }
     public boolean setProfile(String p){
         if (p == null){
             this.profile = new Profile(ProfileType.CUSTOM);
             this.profile.setCreated(Instant.EPOCH);
-            this.profile.setName("New Profile");
+            this.profile.setName(Language.get(51));
             return true;
         } else {
             if (kernel.getProfiles().existsProfile(p)){
@@ -239,13 +253,13 @@ public class ProfileEditor{
                 versions.setEnabled(false);
                 nameEnabled = false;
                 versionEnabled = false;
-                name.setText("Latest Release");
+                name.setText(Language.get(59));
             } else if (profile.getType() == ProfileType.SNAPSHOT){
                 name.setEnabled(false);
                 versions.setEnabled(false);
                 nameEnabled = false;
                 versionEnabled = false;
-                name.setText("Latest Snapshot");
+                name.setText(Language.get(60));
             } else {
                 name.setText("");
                 nameEnabled = true;
@@ -360,10 +374,13 @@ public class ProfileEditor{
         if (!kernel.getProfiles().existsProfile(this.profile.getID())){
             kernel.getProfiles().addProfile(this.profile);
         }
-        JOptionPane.showMessageDialog(null, "Profile saved successfully!", "Saved", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, Language.get(57), Language.get(58), JOptionPane.INFORMATION_MESSAGE);
         kernel.getGUI().setSelected(kernel.getGUI().options);
     }
     private void updateConstraints(){
+        if (profile == null){
+            return;
+        }
         if (!kernel.getSettings().getEnableAdvanced()){
             if (!javaExecEnabled) {
                 javaExecLabel.setEnabled(false);
@@ -387,10 +404,10 @@ public class ProfileEditor{
         }
         this.versions.removeAllItems();
         int count = 0;
-        this.versions.addItem("Latest Version");
+        this.versions.addItem(Language.get(59));
         count++;
         if (kernel.getSettings().getEnableSnapshots()){
-            this.versions.addItem("Latest Snapshot");
+            this.versions.addItem(Language.get(60));
             count++;
         }
         if ((profile.hasVersion() && profile.getVersionID().equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) || (!profile.hasVersion() && profile.getType() == ProfileType.SNAPSHOT)){

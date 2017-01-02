@@ -63,7 +63,7 @@
           <text value="Delete Cape"/>
         </properties>
       </component>
-      <component id="6feb9" class="javax.swing.JLabel">
+      <component id="6feb9" class="javax.swing.JLabel" binding="skinPreviewLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -73,7 +73,7 @@
           <text value="Skin:"/>
         </properties>
       </component>
-      <component id="ee791" class="javax.swing.JLabel">
+      <component id="ee791" class="javax.swing.JLabel" binding="capePreviewLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -83,12 +83,13 @@
           <text value="Cape:"/>
         </properties>
       </component>
-      <component id="69696" class="javax.swing.JLabel">
+      <component id="69696" class="javax.swing.JLabel" binding="skinType">
         <constraints>
           <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font name="Minecraftia" size="16"/>
+          <foreground color="-16777216"/>
           <text value="Skin type:"/>
         </properties>
       </component>
@@ -98,6 +99,7 @@
         </constraints>
         <properties>
           <font name="Minecraftia" size="16"/>
+          <foreground color="-16777216"/>
           <selected value="true"/>
           <text value="Steve"/>
         </properties>
@@ -108,6 +110,7 @@
         </constraints>
         <properties>
           <font name="Minecraftia" size="16"/>
+          <foreground color="-16777216"/>
           <text value="Alex"/>
         </properties>
       </component>

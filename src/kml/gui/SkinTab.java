@@ -26,6 +26,9 @@ public class SkinTab {
     private JButton deleteCapeButton;
     private JRadioButton steve;
     private JRadioButton alex;
+    private JLabel skinType;
+    private JLabel skinPreviewLabel;
+    private JLabel capePreviewLabel;
     private final HashMap<String, String> params = new HashMap<>();
     private final Console console;
     private final Kernel kernel;
@@ -40,7 +43,7 @@ public class SkinTab {
             @Override
             public void mousePressed(MouseEvent e) {
                 params.clear();
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your cape?", "Cape deletion", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, Language.get(36), Language.get(37), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
                     params.put("Client-Token", kernel.getAuthentication().getClientToken());
@@ -54,16 +57,16 @@ public class SkinTab {
                         if (!r.equals("OK")){
                             console.printError("Failed to delete the cape.");
                             console.printError(r);
-                            JOptionPane.showMessageDialog(null, "Failed to delete the cape!\n" + r, "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(38) + "\n" + r, Language.get(23), JOptionPane.ERROR_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(null, "Cape deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(39), Language.get(35), JOptionPane.INFORMATION_MESSAGE);
                             console.printInfo("Cape deleted successfully!");
                             refreshPreviews();
                         }
                     } catch (Exception ex){
                         console.printError("Failed to delete the cape.");
                         console.printError(ex.getMessage());
-                        JOptionPane.showMessageDialog(null, "Failed to delete the cape!\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, Language.get(38) + "\n" + ex.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -81,7 +84,7 @@ public class SkinTab {
         deleteSkinButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your skin?", "Skin deletion", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int response = JOptionPane.showConfirmDialog(null, Language.get(31), Language.get(32), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
                     params.put("Client-Token", kernel.getAuthentication().getClientToken());
@@ -95,16 +98,16 @@ public class SkinTab {
                         if (!r.equals("OK")){
                             console.printError("Failed to delete the skin.");
                             console.printError(r);
-                            JOptionPane.showMessageDialog(null, "Failed to delete the skin!\n" + r, "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(33) + "\n" + r, Language.get(23), JOptionPane.ERROR_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(null, "Skin deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(34), Language.get(35), JOptionPane.INFORMATION_MESSAGE);
                             console.printInfo("Skin deleted successfully!");
                             refreshPreviews();
                         }
                     } catch (Exception ex){
                         console.printError("Failed to delete the skin.");
                         console.printError(ex.getMessage());
-                        JOptionPane.showMessageDialog(null, "Failed to delete the skin!\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, Language.get(33) + "\n" + ex.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     }
                     params.clear();
                 }
@@ -166,16 +169,16 @@ public class SkinTab {
                         if (!r.equals("OK")){
                             console.printError("Failed to change the skin.");
                             console.printError(r);
-                            JOptionPane.showMessageDialog(null, "Failed to change the skin!\n" + r, "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(42) + "\n" + r, Language.get(23), JOptionPane.ERROR_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(null, "Skin changed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(40), Language.get(35), JOptionPane.INFORMATION_MESSAGE);
                             console.printInfo("Skin changed successfully!");
                             refreshPreviews();
                         }
                     } catch (Exception ex){
                         console.printError("Failed to change the skin.");
                         console.printError(ex.getMessage());
-                        JOptionPane.showMessageDialog(null, "Failed to change the skin!\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, Language.get(42) + "\n" + ex.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     }
                     params.clear();
                 }
@@ -210,16 +213,16 @@ public class SkinTab {
                         if (!r.equals("OK")){
                             console.printError("Failed to change the cape.");
                             console.printError(r);
-                            JOptionPane.showMessageDialog(null, "Failed to change the cape!\n" + r, "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(43) + "\n" + r, Language.get(23), JOptionPane.ERROR_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(null, "Cape changed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, Language.get(41), Language.get(35), JOptionPane.INFORMATION_MESSAGE);
                             console.printInfo("Cape changed successfully!");
                             refreshPreviews();
                         }
                     } catch (Exception ex){
                         console.printError("Failed to change the cape.");
                         console.printError(ex.getMessage());
-                        JOptionPane.showMessageDialog(null, "Failed to change the cape!\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, Language.get(43) + "\n" + ex.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     }
                     params.clear();
                 }
@@ -237,9 +240,18 @@ public class SkinTab {
             }
             @Override
             public String getDescription() {
-                return "Skin / Cape PNG File (128KB MAX)";
+                return Language.get(44);
             }
         });
+    }
+    public void refreshLocalizedStrings(){
+        changeSkinButton.setText(Language.get(24));
+        deleteSkinButton.setText(Language.get(25));
+        changeCapeButton.setText(Language.get(26));
+        deleteCapeButton.setText(Language.get(27));
+        skinType.setText(Language.get(28));
+        skinPreviewLabel.setText(Language.get(29));
+        capePreviewLabel.setText(Language.get(30));
     }
     public JPanel getPanel(){
         return this.main;

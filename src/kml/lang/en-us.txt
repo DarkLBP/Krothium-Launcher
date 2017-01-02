@@ -1,0 +1,70 @@
+//en-US language file by DarkLBP (https://krothium.com)
+LANGUAGE
+LOGOUT
+News
+Skins
+Settings
+Launch Options
+Are you sure you want to logout?
+Logout
+A new launcher version is available! Do you want to download it?
+New version available
+PLAY
+DOWNLOADING
+PLAYING
+The game has crashed! Check the logs for more information.
+Game crashed
+Select profile...
+Krothium Username or Email:
+Password:
+LOGIN
+REGISTER
+Unnable to login!
+Error
+Change Skin
+Delete Skin
+Change Cape
+Delete Cape
+Skin type:
+Skin:
+Cape:
+Are you sure you want to delete your skin?
+Skin deletion
+Failed to delete the skin!
+Skin deleted successfully!
+Success
+Are you sure you want to delete your cape?
+Cape deletion
+Failed to delete the cape!
+Cape deleted successfully!
+Skin changed successfully!
+Cape changed successfully!
+Failed to change the skin!
+Failed to change the cape!
+Skin / Cape PNG File (128KB MAX)
+LAUNCHER SETTINGS
+Keep the launcher open when the game is running
+Open output log when the game starts
+Enable snapshots
+Historical versions
+Advanced settings
+New Profile
+Save
+Cancel
+Delete
+Are you sure? Any change made won't be saved!
+Confirmation
+Profile saved successfully!
+Saved
+Latest Release
+Latest Snapshot
+Are you sure you want to delete this profile?
+Profile deletion
+Name:
+Version:
+Resolution:
+Game directory:
+Java executable:
+JVM arguments:
+Game Output
+Unnamed Profile
