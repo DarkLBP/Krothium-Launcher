@@ -58,13 +58,20 @@ public class Settings {
         }
     }
     public boolean getKeepLauncherOpen(){return this.keepLauncherOpen;}
-    private String getLocale(){return this.locale;}
+    public String getLocale(){return this.locale;}
     public boolean getShowGameLog(){return this.showGameLog;}
     public boolean getEnableAdvanced(){return this.enableAdvanced;}
     public boolean getEnableHistorical(){return this.enableHistorical;}
     public boolean getEnableSnapshots(){return this.enableSnapshots;}
     public void setKeepLauncherOpen(boolean b){this.keepLauncherOpen = b;}
-    public void setLocale(String s){this.locale = s;}
+    public void setLocale(String s){
+        if (s != null){
+            if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("ca")){
+                kernel.getConsole().printInfo("Switched language to " + s);
+                this.locale = s;
+            }
+        }
+    }
     public void setShowGameLog(boolean b){this.showGameLog = b;}
     public void setEnableAdvanced(boolean b){this.enableAdvanced = b;}
     public void setEnableHistorical(boolean b){this.enableHistorical = b;}

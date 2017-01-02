@@ -33,7 +33,8 @@ public final class Kernel {
             this.workingDir.mkdirs();
         }
         this.console = new Console(this);
-        this.console.printInfo("KMLK v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
+        this.console.printInfo("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
+        this.console.printInfo("Kernel build: " + Constants.KERNEL_BUILD);
         this.console.printInfo("OS: " + System.getProperty("os.name"));
         this.console.printInfo("OS Version: " + System.getProperty("os.version"));
         this.console.printInfo("OS Architecture: " + System.getProperty("os.arch"));
@@ -90,23 +91,21 @@ public final class Kernel {
         System.exit(0);
     }
     public String checkForUpdates(){
-        if (!Constants.UPDATE_CHECKED){
-            Constants.UPDATE_CHECKED = true;
-            try{
-                URL url = Constants.GETLATEST_URL;
-                if (!Constants.USE_HTTPS){
-                    url = Utils.stringToURL(url.toString().replace("https", "http"));
-                }
-                String r = Utils.sendPost(url, new byte[0], new HashMap<>());
-                String[] data = r.split(":");
-                int version = Integer.parseInt(Utils.fromBase64(data[0]));
-                if (version > Constants.KERNEL_BUILD){
-                    return data[1];
-                }
-            } catch (Exception ex){
-                console.printError("Failed to check for updates.");
-                return null;
+        try{
+            URL url = Constants.GETLATEST_URL;
+            if (!Constants.USE_HTTPS){
+                url = Utils.stringToURL(url.toString().replace("https", "http"));
             }
+            String r = Utils.sendPost(url, new byte[0], new HashMap<>());
+            String[] data = r.split(":");
+            int version = Integer.parseInt(Utils.fromBase64(data[0]));
+            if (version > Constants.KERNEL_BUILD){
+                console.printInfo("New kernel build available: " + version);
+                return data[1];
+            }
+        } catch (Exception ex){
+            console.printError("Failed to check for updates.");
+            return null;
         }
         return null;
     }

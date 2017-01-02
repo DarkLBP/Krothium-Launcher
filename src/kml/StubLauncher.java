@@ -22,7 +22,6 @@ public class StubLauncher {
                 System.out.println("Your build: " + Constants.KERNEL_BUILD);
                 System.out.println("New build: " + version);
             }
-            Constants.UPDATE_CHECKED = true;
         } catch (Exception ex){
             System.out.println("Failed to get latest version. " + ex.getMessage());
         }

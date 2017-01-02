@@ -21,7 +21,6 @@ public class Constants {
     public static final URL HANDSHAKE_URL = Utils.stringToURL("https://mc.krothium.com/hello");
     public static final URL PROFILE_ICONS = Constants.class.getResource("/kml/gui/textures/profile-icons.png");
     public static final int DOWNLOAD_TRIES = 5;
-    public static boolean UPDATE_CHECKED = false;
     public static final int KEEP_OLD_LOGS = 2;
     public static boolean USE_HTTPS = false;
     public static boolean USE_LOCAL = false;

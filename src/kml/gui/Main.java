@@ -7,6 +7,8 @@ import kml.objects.Browser;
 import kml.objects.Profile;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -32,6 +34,7 @@ public class Main extends JFrame{
     private JButton profileButton;
     private JLabel logout;
     private JProgressBar progress;
+    private JLabel language;
     private JLabel selected;
     private final Kernel kernel;
     private final LoginTab login;
@@ -55,6 +58,13 @@ public class Main extends JFrame{
     private final ProfilePopup popupMenu;
     private final SkinTab skinTab;
     private final ImageIcon tabSelection;
+    private final JPopupMenu languages;
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
+    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
+    private final ImageIcon flag_es;
+    private final ImageIcon flag_pt;
+    private final ImageIcon flag_us;
+    private final ImageIcon flag_ca;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -70,10 +80,15 @@ public class Main extends JFrame{
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
+        this.flag_es = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_es-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
+        this.flag_us = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_en-us.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
+        this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
+        this.flag_ca = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_ca.jpg")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
         this.editor = new ProfileEditor(kernel);
         this.popupMenu = new ProfilePopup(kernel);
         this.skinTab = new SkinTab(kernel);
+        this.languages = new JPopupMenu();
         setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -94,6 +109,76 @@ public class Main extends JFrame{
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        language.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JMenuItem en = new JMenuItem("English - United States");
+        JMenuItem es = new JMenuItem("Español - España");
+        JMenuItem ca = new JMenuItem("Català - Catalunya");
+        JMenuItem pt = new JMenuItem("Portugués - Portugal");
+        ca.setIcon(flag_ca);
+        ca.setFont(plain);
+        ca.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("ca");
+            }
+        });
+        languages.add(ca);
+        en.setFont(plain);
+        en.setIcon(flag_us);
+        en.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("en-us");
+            }
+        });
+        languages.add(en);
+        es.setIcon(flag_es);
+        es.setFont(plain);
+        es.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("es-es");
+            }
+        });
+        languages.add(es);
+        pt.setIcon(flag_pt);
+        pt.setFont(plain);
+        pt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("pt-pt");
+            }
+        });
+        languages.add(pt);
+        languages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        languages.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                for (MenuElement element: languages.getSubElements()){
+                    if (element.getComponent().equals(ca) && kernel.getSettings().getLocale().equals("ca") || element.getComponent().equals(en) && kernel.getSettings().getLocale().equals("en-us") || element.getComponent().equals(es) && kernel.getSettings().getLocale().equals("es-es") || element.getComponent().equals(pt) && kernel.getSettings().getLocale().equals("pt-pt")){
+                        element.getComponent().setFont(bold);
+                    } else {
+                        element.getComponent().setFont(plain);
+                    }
+                }
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+
+            }
+        });
+        language.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                languages.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
         MouseAdapter tabAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -208,6 +293,20 @@ public class Main extends JFrame{
                 logout.setForeground(Color.WHITE);
             }
         });
+        language.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                language.setForeground(Color.YELLOW);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                language.setForeground(Color.WHITE);
+            }
+        });
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -228,12 +327,15 @@ public class Main extends JFrame{
                         progress.setVisible(true);
                         playButton.setText("DOWNLOADING " + kernel.getDownloader().getProgress() + "%");
                         progress.setValue(kernel.getDownloader().getProgress());
+                        profileButton.setEnabled(false);
                     } else if (gameLauncher.isStarted()){
                         playButton.setText("PLAYING");
                         progress.setVisible(false);
+                        profileButton.setEnabled(false);
                     } else {
                         playButton.setText("PLAY");
                         progress.setVisible(false);
+                        profileButton.setEnabled(true);
                     }
                 } else {
                     if (!componentsDisabled){

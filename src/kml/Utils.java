@@ -15,7 +15,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author DarkLBP
