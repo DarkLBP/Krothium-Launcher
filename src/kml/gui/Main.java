@@ -101,7 +101,6 @@ public class Main extends JFrame{
         setSize(950, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
         contentPanel.setLayout(new FlowLayout());
@@ -326,6 +325,7 @@ public class Main extends JFrame{
             @Override
             public void run() {
                 if (kernel.getAuthentication().isAuthenticated()){
+                    setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " | " + kernel.getAuthentication().getSelectedUser().getDisplayName());
                     if (componentsDisabled){
                         setDisable(false);
                     }
@@ -361,6 +361,7 @@ public class Main extends JFrame{
                         profileButton.setEnabled(true);
                     }
                 } else {
+                    setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
                     if (!componentsDisabled){
                         setDisable(true);
                         contentPanel.removeAll();
