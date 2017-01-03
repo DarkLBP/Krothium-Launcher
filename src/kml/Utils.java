@@ -159,7 +159,7 @@ public class Utils {
                 f.getParentFile().mkdirs();
             }
             FileOutputStream out = new FileOutputStream(f);
-            out.write(o.getBytes());
+            out.write(o.getBytes(Charset.forName("UTF-8")));
             out.close();
             return true;
         } catch (Exception ex) {
