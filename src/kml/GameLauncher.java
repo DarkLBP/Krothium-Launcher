@@ -305,7 +305,7 @@ public class GameLauncher {
                 if (hasError()){
                     JOptionPane.showMessageDialog(null, Language.get(15), Language.get(16), JOptionPane.ERROR_MESSAGE);
                 }
-                if (!kernel.getSettings().getKeepLauncherOpen()){
+                if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()){
                     kernel.exitSafely();
                 }
             });
