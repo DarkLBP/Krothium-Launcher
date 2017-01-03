@@ -68,3 +68,11 @@ Java executable:
 JVM arguments:
 Game Output
 Unnamed Profile
+Snapshots are development versions which are not guaranteed to be stable and may corrupt your world.
+You're advised to run them in separate directories or create regular backups.
+This enables selecting old alpha and bveta versions when you add a new launch option.
+These are out of date and may be unstable. Any bugs, crashes, missing features or similar will not be fixed.
+It is strongly recommended you run these versions in separate directories to avoid world corruption.
+This enables changing advanced Java settings when you add a new launch option.
+Changing these may cause the game to malfunction.
+Information

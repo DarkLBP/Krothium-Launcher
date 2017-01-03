@@ -68,3 +68,11 @@ Executável do Java:
 Argumentos do JVM:
 Saída o Jogo
 Perfil sem Nome
+Snapshots são versões em desenvolvimento que não são garantido que sejam estáveis e podem corromper o teu mundo.
+É recomendado que execute-os em diretórios separados ou criar backups regulares.
+Esta seção permite seleccionar antigas versões alpha e beta quando adicionarem uma nova opção de launch.
+Estas versões antigas e podem ser instáveis. Quaisquer bugs, crashes, opções que faltem ou similares não serão resolvidas.
+É altamente recomendado que execute-os em diretórios separados ou criar backups regulares.
+Isto habilita as configurações avançadas de Java quando você adicionar uma nova opção de inicialização.
+Alterando estes pode causar o jogo a mau funcionar.
+Informação

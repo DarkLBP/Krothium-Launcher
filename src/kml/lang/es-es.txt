@@ -68,3 +68,11 @@ Ejecutable de Java:
 Argumentos JVM:
 Salida del Juego
 Perfil sin Nombre
+Las snapshots son versiones de prueba en desarrollo, no podemos garantizar la estabilidad y podrían dañar tu mundo.
+Se aconseja ejecutarlas en directorios separados o crear copias de seguridad regularmente.
+Esto permite seleccionar versiones alfa y beta antiguas cuando añadas una nueva opción de lanzamiento.
+Dichas versiones están desactualizadas y podrían ser inestables. Cualquier error, cuelgue del juego, característica ausente o similares no se solucionarán.
+Es muy recomendable ejecutar estas versiones en directorios separados para evitar que se produzcan daños en los mundos guardados.
+Esto te permite modificar ajustes avanzados de Java cuando añadas una nueva opción de lanzamiento.
+Estos cambios podrían causar un mal funcionamiento del juego.
+Información

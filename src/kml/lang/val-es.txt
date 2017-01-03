@@ -68,3 +68,11 @@ Executable de Java:
 Arguments JVM:
 Eixida del Joc
 Perfil sense Nom
+Les snapshots son versions de prova en desenvolupament, no podem garantir la estabilitat i podrien danyar el teu món.
+S'aconsella executar-les en directoris separats o crear còpies de seguretat regularment.
+Això permet seleccionar versions alfa i beta antigues quan afegisques una nova opció de llançament.
+Estes versions estan desactualitzades i podrien ser inestables. Qualsevol error, penjament del joc, característica ausent o similars no es solucionaran.
+Es molt recomanable executar estes versions en directoris separats per evitar que es produïsquen danys en els móns guardats.
+Això et permet modificar ajustos avançats de Java quan afegisques una nova opció de llançament.
+Aquestos canvis podrien causar un mal funcionament del joc.
+Informació

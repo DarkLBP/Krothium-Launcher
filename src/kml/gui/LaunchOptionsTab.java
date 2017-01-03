@@ -46,6 +46,7 @@ public class LaunchOptionsTab {
                 settings.setEnableSnapshots(!settings.getEnableSnapshots());
                 if (settings.getEnableSnapshots()){
                     snapshots.setIcon(checkbox_enabled);
+                    JOptionPane.showMessageDialog(null, Language.get(71) + "\n" + Language.get(72), Language.get(78), JOptionPane.WARNING_MESSAGE);
                 } else {
                     snapshots.setIcon(checkbox_disabled);
                 }
@@ -58,6 +59,7 @@ public class LaunchOptionsTab {
                 settings.setEnableHistorical(!settings.getEnableHistorical());
                 if (settings.getEnableHistorical()){
                     historical.setIcon(checkbox_enabled);
+                    JOptionPane.showMessageDialog(null, Language.get(73) + "\n" + Language.get(74) + "\n" + Language.get(75), Language.get(78), JOptionPane.WARNING_MESSAGE);
                 } else {
                     historical.setIcon(checkbox_disabled);
                 }
@@ -69,6 +71,7 @@ public class LaunchOptionsTab {
                 settings.setEnableAdvanced(!settings.getEnableAdvanced());
                 if (settings.getEnableAdvanced()){
                     advanced.setIcon(checkbox_enabled);
+                    JOptionPane.showMessageDialog(null, Language.get(76) + "\n" + Language.get(77), Language.get(78), JOptionPane.WARNING_MESSAGE);
                 } else {
                     advanced.setIcon(checkbox_disabled);
                 }
