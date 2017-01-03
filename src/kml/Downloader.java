@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 public class Downloader {
     private final Console console;
     private final Kernel kernel;
-    private long downloaded = 0;
-    private long validated = 0;
-    private long total = 0;
+    private double downloaded = 0;
+    private double validated = 0;
+    private double total = 0;
     private boolean downloading = false;
     public Downloader(Kernel k){
         this.kernel = k;
@@ -109,17 +109,15 @@ public class Downloader {
                         localValid = true;
                     }
                 }
-                this.total += size;
-                if (!localValid){
-                    Downloadable d = new Downloadable(downloadURL, size, relPath, hash);
-                    urls.add(d);
-                }else{
-                    console.printInfo("Asset file " + object + " found locally and it is valid.");
-                    if (!processedHashes.contains(hash)){
-                        processedHashes.add(hash);
+                if (!processedHashes.contains(hash)){
+                    this.total += size;
+                    processedHashes.add(hash);
+                    if (!localValid){
+                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash);
+                        urls.add(d);
+                    }else{
+                        console.printInfo("Asset file " + object + " found locally and it is valid.");
                         validated += size;
-                    } else {
-                        this.total -= size;
                     }
                 }
             }
@@ -143,7 +141,7 @@ public class Downloader {
                             JSONValid = true;
                         }
                     } catch (IOException ex) {
-                        console.printError("Falied to verify existing JSON integrity.");
+                        console.printError("Failed to verify existing JSON integrity.");
                     }
                 }
                 if (!JSONValid){
@@ -169,7 +167,7 @@ public class Downloader {
                     validated += jarSize;
                 }
             } else {
-                console.printInfo("Incompatible version dowloadable.");
+                console.printInfo("Incompatible version downloadable.");
             }
         } else {
             console.printInfo("Version file from " + v.getID() + " has no compatible downloadable objects.");
@@ -196,6 +194,10 @@ public class Downloader {
                             }
                         }
                     }
+                    this.total += a.getSize();
+                    if (valid){
+                        this.validated += a.getSize();
+                    }
                     if (!urls.contains(a) && !valid){
                         urls.add(a);
                     }
@@ -214,6 +216,10 @@ public class Downloader {
                             }
                         }
                     }
+                    this.total += c.getSize();
+                    if (valid){
+                        this.validated += c.getSize();
+                    }
                     if (!urls.contains(c) && !valid){
                         urls.add(c);
                     }
@@ -230,7 +236,7 @@ public class Downloader {
                     File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
                     URL url = dw.getURL();
                     int tries = 0;
-                    console.printInfo("Downloading " + path.getName() + "...");
+                    console.printInfo("Downloading " + path.getName());
                     while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)){
                        tries++;
                     }
@@ -246,7 +252,7 @@ public class Downloader {
                 pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             } catch (InterruptedException ex){
                 this.downloading = false;
-                throw new DownloaderException("Thread pool unexceptedly closed.");
+                throw new DownloaderException("Thread pool unexpectedly closed.");
             }
         }
         this.downloading = false;
@@ -255,8 +261,7 @@ public class Downloader {
         if (!this.downloading){
             return 0;
         }
-        long sum = this.downloaded + this.validated;
-        return (int)((float)(sum)/this.total*100);
+        return (int)((this.downloaded + this.validated) / this.total * 100);
     }
     public boolean isDownloading(){return this.downloading;}
 }
