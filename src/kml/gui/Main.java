@@ -363,6 +363,7 @@ public class Main extends JFrame{
                 } else {
                     if (!componentsDisabled){
                         setDisable(true);
+                        contentPanel.removeAll();
                         contentPanel.setLayout(flowLayout);
                         contentPanel.add(login.getPanel());
                         contentPanel.updateUI();
