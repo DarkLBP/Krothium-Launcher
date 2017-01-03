@@ -1,6 +1,7 @@
 package kml.gui;
 
 import kml.*;
+import kml.enums.ProfileType;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Browser;
@@ -78,9 +79,9 @@ public class Main extends JFrame{
         this.launchOptions = new LaunchOptionsTab(k);
         this.gameLauncher = kernel.getGameLauncher();
         this.downloader = kernel.getDownloader();
-        this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
-        this.playButton_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_hover.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
-        this.playButton_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_click.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
+        this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
+        this.playButton_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_hover.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
+        this.playButton_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_click.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
@@ -341,7 +342,21 @@ public class Main extends JFrame{
                         progress.setVisible(false);
                         profileButton.setEnabled(false);
                     } else {
-                        playButton.setText(Language.get(12));
+                        if (kernel.getProfiles().getSelectedProfile() != null){
+                            Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
+                            if (p.hasVersion()){
+                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                            } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
+                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestRelease() + "</font></center></html>");
+
+                            } else if (p.getType() == ProfileType.SNAPSHOT && kernel.getVersions().getLatestSnapshot() != null){
+                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestSnapshot() + "</font></center></html>");
+                            } else {
+                                playButton.setText(Language.get(12));
+                            }
+                        } else {
+                            playButton.setText(Language.get(12));
+                        }
                         progress.setVisible(false);
                         profileButton.setEnabled(true);
                     }
