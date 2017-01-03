@@ -120,6 +120,9 @@ public class LoginTab {
                 JOptionPane.showMessageDialog(null,Language.get(22), Language.get(23), JOptionPane.ERROR_MESSAGE);
                 password.setText("");
             } else {
+                username.setText("");
+                password.setText("");
+                username.requestFocus();
                 kernel.getGUI().setDisable(false);
             }
         } catch (AuthenticationException e1) {
