@@ -341,7 +341,7 @@ public class GameLauncher {
             return false;
         }
     }
-    public boolean hasError(){
+    private boolean hasError(){
         boolean current = this.error;
         this.error = false;
         return current;

@@ -374,7 +374,7 @@ public class Main extends JFrame{
         };
         refreshAllLocalizedStrings();
     }
-    public void refreshLocalizedStrings(){
+    private void refreshLocalizedStrings(){
         language.setText(Language.get(2));
         logout.setText(Language.get(3));
         news.setText(Language.get(4));
@@ -384,7 +384,7 @@ public class Main extends JFrame{
         playButton.setText(Language.get(12));
         profileButton.setToolTipText(Language.get(17));
     }
-    public void refreshAllLocalizedStrings(){
+    private void refreshAllLocalizedStrings(){
         this.refreshLocalizedStrings();
         skinTab.refreshLocalizedStrings();
         launchOptions.refreshLocalizedStrings();

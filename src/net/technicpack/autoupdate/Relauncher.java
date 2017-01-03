@@ -13,7 +13,6 @@ import net.technicpack.utilslib.OperatingSystem;
 import net.technicpack.utilslib.Utils;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
