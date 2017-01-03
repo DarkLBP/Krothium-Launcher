@@ -65,6 +65,10 @@ public class Main extends JFrame{
     private final ImageIcon flag_pt;
     private final ImageIcon flag_us;
     private final ImageIcon flag_val;
+    private final ImageIcon newsIcon;
+    private final ImageIcon skinsIcon;
+    private final ImageIcon settingsIcon;
+    private final ImageIcon optionsIcon;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -85,6 +89,10 @@ public class Main extends JFrame{
         this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_val = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_val-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
+        this.newsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(125, 40, Image.SCALE_SMOOTH));
+        this.skinsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(100, 40, Image.SCALE_SMOOTH));
+        this.settingsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(150, 40, Image.SCALE_SMOOTH));
+        this.optionsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(315, 40, Image.SCALE_SMOOTH));
         this.editor = new ProfileEditor(kernel);
         this.popupMenu = new ProfilePopup(kernel);
         this.skinTab = new SkinTab(kernel);
@@ -409,29 +417,31 @@ public class Main extends JFrame{
     public void setSelected(JLabel l){
         if (!componentsDisabled){
             this.contentPanel.removeAll();
-            if (selected == null ){
+            if (selected == null){
                 selected = l;
-                selected.setIcon(new ImageIcon(tabSelection.getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
-            } else if (l != selected) {
+            } if (l != selected) {
                 selected.setIcon(null);
                 selected = l;
-                selected.setIcon(new ImageIcon(tabSelection.getImage().getScaledInstance(selected.getWidth() + 15, selected.getHeight() + 15, Image.SCALE_SMOOTH)));
             }
             if (l.equals(news)){
                 this.contentPanel.setLayout(borderLayout);
                 this.contentPanel.add(this.browser.getPanel());
                 browser.loadURL("http://mcupdate.tumblr.com/");
                 browser.resizeBrowser(contentPanel.getSize());
+                news.setIcon(newsIcon);
             } else {
                 this.contentPanel.setLayout(flowLayout);
                 if (l.equals(settings)){
                     this.contentPanel.add(this.setting.getPanel());
+                    settings.setIcon(settingsIcon);
                 } else if (l.equals(options)){
                     this.contentPanel.add(this.launchOptions.getPanel());
                     this.launchOptions.populateList();
+                    options.setIcon(optionsIcon);
                 } else if (l.equals(skins)){
                     this.contentPanel.add(this.skinTab.getPanel());
                     this.skinTab.refreshPreviews();
+                    skins.setIcon(skinsIcon);
                 }
             }
             this.headPanel.updateUI();
