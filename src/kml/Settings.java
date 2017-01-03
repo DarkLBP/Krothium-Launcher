@@ -21,41 +21,46 @@ public class Settings {
         kernel = k;
     }
 
-    public void loadSettings(){
-        try {
-            kernel.getConsole().printInfo("Loading settings...");
-            File launcherProfiles = kernel.getConfigFile();
-            JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
-            if (root.has("settings")){
-                JSONObject settings = root.getJSONObject("settings");
-                if (settings.has("locale")){
-                    setLocale(settings.getString("locale"));
+    public void loadSettings() {
+        kernel.getConsole().printInfo("Loading settings...");
+        File launcherProfiles = kernel.getConfigFile();
+        if (launcherProfiles.exists()) {
+            try {
+                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
+                if (root.has("settings")) {
+                    JSONObject settings = root.getJSONObject("settings");
+                    if (settings.has("locale")) {
+                        setLocale(settings.getString("locale"));
+                    }
+                    if (settings.has("keepLauncherOpen")) {
+                        keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
+                    }
+                    if (settings.has("showGameLog")) {
+                        showGameLog = settings.getBoolean("showGameLog");
+                    }
+                    if (settings.has("enableAdvanced")) {
+                        enableAdvanced = settings.getBoolean("enableAdvanced");
+                    }
+                    if (settings.has("enableHistorical")) {
+                        enableHistorical = settings.getBoolean("enableHistorical");
+                    }
+                    if (settings.has("enableSnapshots")) {
+                        enableSnapshots = settings.getBoolean("enableSnapshots");
+                    }
                 }
-                if (settings.has("keepLauncherOpen")){
-                    keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
-                }
-                if (settings.has("showGameLog")){
-                    showGameLog = settings.getBoolean("showGameLog");
-                }
-                if (settings.has("enableAdvanced")){
-                    enableAdvanced = settings.getBoolean("enableAdvanced");
-                }
-                if (settings.has("enableHistorical")){
-                    enableHistorical = settings.getBoolean("enableHistorical");
-                }
-                if (settings.has("enableSnapshots")){
-                    enableSnapshots = settings.getBoolean("enableSnapshots");
-                }
+            } catch (Exception ex) {
+                kernel.getConsole().printError("Failed to load settings data. Using defaults...");
+                ex.printStackTrace();
+                setLocale("en-us");
+                keepLauncherOpen = false;
+                showGameLog = false;
+                enableAdvanced = false;
+                enableHistorical = false;
+                enableSnapshots = false;
             }
-        } catch (Exception ex) {
-            kernel.getConsole().printError("Failed to load settings data. Using defaults...");
-            ex.printStackTrace();
+        } else{
+            kernel.getConsole().printError("Launcher profiles file not found. Using defaults.");
             setLocale("en-us");
-            keepLauncherOpen = false;
-            showGameLog = false;
-            enableAdvanced = false;
-            enableHistorical = false;
-            enableSnapshots = false;
         }
     }
     public boolean getKeepLauncherOpen(){return this.keepLauncherOpen;}
