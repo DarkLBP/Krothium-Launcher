@@ -16,13 +16,13 @@ import java.util.Properties;
  */
 class Starter {
     public static void main(String[] args) throws IOException, FontFormatException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        Font font = Font.createFont(Font.TRUETYPE_FONT, Starter.class.getResourceAsStream("/kml/gui/fonts/Minecraftia-Regular.ttf"));
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        ge.registerFont(font);
         if (args.length == 0){
             if (existsResource()){
                 bootFromResource(args);
             } else {
+                Font font = Font.createFont(Font.TRUETYPE_FONT, Starter.class.getResourceAsStream("/kml/gui/fonts/Minecraftia-Regular.ttf"));
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ge.registerFont(font);
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 Kernel kernel = new Kernel();
                 Console console = kernel.getConsole();
