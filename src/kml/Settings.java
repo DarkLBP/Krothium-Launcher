@@ -31,6 +31,8 @@ public class Settings {
                     JSONObject settings = root.getJSONObject("settings");
                     if (settings.has("locale")) {
                         setLocale(settings.getString("locale"));
+                    } else {
+                        setLocale("en-us");
                     }
                     if (settings.has("keepLauncherOpen")) {
                         keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
@@ -47,10 +49,11 @@ public class Settings {
                     if (settings.has("enableSnapshots")) {
                         enableSnapshots = settings.getBoolean("enableSnapshots");
                     }
+                } else {
+                    setLocale("en-us");
                 }
             } catch (Exception ex) {
                 kernel.getConsole().printError("Failed to load settings data. Using defaults...");
-                ex.printStackTrace();
                 setLocale("en-us");
                 keepLauncherOpen = false;
                 showGameLog = false;

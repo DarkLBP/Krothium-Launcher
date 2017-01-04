@@ -70,7 +70,9 @@ public final class Kernel {
             output.put(name, authdata.get(name));
         }
         output.put("settings", this.settings.toJSON());
-        Utils.writeToFile(output.toString(), this.getConfigFile());
+        if (!Utils.writeToFile(output.toString(), this.getConfigFile())){
+            console.printError("Failed to save the profiles file!");
+        }
     }
     private void loadProfiles(){profiles.fetchProfiles();}
     private void loadVersions(){versions.fetchVersions();}

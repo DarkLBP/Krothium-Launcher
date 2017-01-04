@@ -334,7 +334,7 @@ public class ProfileEditor{
         if (versionEnabled){
             if (versions.getSelectedIndex() == 0){
                 profile.setVersionID("latest-release");
-            } else if (versions.getSelectedIndex() == 1){
+            } else if (versions.getSelectedIndex() == 1 && kernel.getSettings().getEnableSnapshots()){
                 profile.setVersionID("latest-snapshot");
             } else {
                 profile.setVersionID(versions.getSelectedItem().toString());
