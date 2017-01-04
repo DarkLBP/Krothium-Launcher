@@ -18,7 +18,7 @@ public class GameLog extends JFrame{
     private JList logList;
     private JScrollPane scrollPane;
     private final DefaultListModel model = new DefaultListModel();
-    public GameLog(Kernel k){
+    public GameLog(final Kernel k){
         setSize(new Dimension(750, 600));
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
         setLocationRelativeTo(null);

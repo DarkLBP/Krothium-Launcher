@@ -14,7 +14,7 @@ public class StubLauncher {
         System.out.println("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         File usingFile = f;
         try{ 
-            String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap<>());
+            String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap<String, String>());
             String[] data = r.split(":");
             int version = Integer.parseInt(Utils.fromBase64(data[0]));
             if (version > Constants.KERNEL_BUILD){

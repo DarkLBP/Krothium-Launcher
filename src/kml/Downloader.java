@@ -231,19 +231,22 @@ public class Downloader {
             console.printInfo("Nothing to download.");
         } else {
             for (final Downloadable dw : urls){
-                Runnable thread = () -> {
-                    File path = dw.getRelativePath();
-                    File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
-                    URL url = dw.getURL();
-                    int tries = 0;
-                    console.printInfo("Downloading " + path.getName());
-                    while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)){
-                       tries++;
+                Runnable thread = new Runnable() {
+                    @Override
+                    public void run() {
+                        File path = dw.getRelativePath();
+                        File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
+                        URL url = dw.getURL();
+                        int tries = 0;
+                        console.printInfo("Downloading " + path.getName());
+                        while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)) {
+                            tries++;
+                        }
+                        if (tries == Constants.DOWNLOAD_TRIES) {
+                            console.printError("Failed to download file: " + path.getName());
+                        }
+                        downloaded += dw.getSize();
                     }
-                    if (tries == Constants.DOWNLOAD_TRIES){
-                        console.printError("Failed to download file: " + path.getName());
-                    }
-                    downloaded += dw.getSize();
                 };
                 pool.execute(thread);                
             }

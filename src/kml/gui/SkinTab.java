@@ -36,7 +36,7 @@ public class SkinTab {
     private final ImageIcon button_hover;
     private final JFileChooser fc = new JFileChooser();
 
-    public SkinTab(Kernel kernel) {
+    public SkinTab(final Kernel kernel) {
         this.kernel = kernel;
         console = kernel.getConsole();
         deleteCapeButton.addMouseListener(new MouseAdapter() {
@@ -257,20 +257,23 @@ public class SkinTab {
         return this.main;
     }
     public void refreshPreviews(){
-        Thread refresh = new Thread(() -> {
-            try {
-                URL skinURL = new URL("http://mc.krothium.com/skins/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
-                skinPreview.setIcon(new ImageIcon(TexturePreview.generateComboSkin(skinURL, 4, 1)));
-            } catch (Exception ex){
-                console.printError("Failed to load skin preview!");
-                skinPreview.setIcon(null);
-            }
-            try {
-                URL capeURL = new URL("http://mc.krothium.com/capes/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
-                capePreview.setIcon(new ImageIcon(TexturePreview.generateComboCape(capeURL, 6, 1)));
-            } catch (Exception ex){
-                console.printError("Failed to load cape preview!");
-                capePreview.setIcon(null);
+        Thread refresh = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL skinURL = new URL("http://mc.krothium.com/skins/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
+                    skinPreview.setIcon(new ImageIcon(TexturePreview.generateComboSkin(skinURL, 4, 1)));
+                } catch (Exception ex) {
+                    console.printError("Failed to load skin preview!");
+                    skinPreview.setIcon(null);
+                }
+                try {
+                    URL capeURL = new URL("http://mc.krothium.com/capes/" + kernel.getAuthentication().getSelectedUser().getDisplayName() + ".png");
+                    capePreview.setIcon(new ImageIcon(TexturePreview.generateComboCape(capeURL, 6, 1)));
+                } catch (Exception ex) {
+                    console.printError("Failed to load cape preview!");
+                    capePreview.setIcon(null);
+                }
             }
         });
         refresh.start();

@@ -1,6 +1,8 @@
 package kml.objects;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
@@ -10,8 +12,8 @@ import javafx.scene.web.WebView;
 import kml.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.*;
+import org.w3c.dom.events.Event;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,50 +33,59 @@ public class Browser{
     private final Scene scene = new Scene(root);
     public Browser() {
         Platform.setImplicitExit(false);
-        Platform.runLater(() -> {
-            panel.setScene(scene);
-            synchronized (this.lock) {
-                browser = new WebView();
-                webEngine = browser.getEngine();
-                webEngine.setJavaScriptEnabled(true);
-                webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue == Worker.State.SUCCEEDED){
-                        if (!webEngine.getLocation().contains("tumblr.com") && !webEngine.getLocation().contains("adf.ly") && !webEngine.getLocation().contains("sh.st") && !webEngine.getLocation().contains("adfoc.us") && !webEngine.getLocation().contains("krothium.com")){
-                            webEngine.load("http://mcupdate.tumblr.com/");
-                        }
-                        try {
-                            EventListener listener = event -> {
-                                try {
-                                    Utils.openWebsite(event.getTarget().toString());
-                                } catch (IOException e) {
-                                    System.out.println("Failed to open url. " + event.getTarget());
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                panel.setScene(scene);
+                synchronized (Browser.this.lock) {
+                    browser = new WebView();
+                    webEngine = browser.getEngine();
+                    webEngine.setJavaScriptEnabled(true);
+                    webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newValue) {
+                            if (newValue == Worker.State.SUCCEEDED) {
+                                if (!webEngine.getLocation().contains("tumblr.com") && !webEngine.getLocation().contains("adf.ly") && !webEngine.getLocation().contains("sh.st") && !webEngine.getLocation().contains("adfoc.us") && !webEngine.getLocation().contains("krothium.com")) {
+                                    webEngine.load("http://mcupdate.tumblr.com/");
                                 }
-                                event.preventDefault();
-                                event.stopPropagation();
-                            };
-                            if (webEngine.getLocation().contains("tumblr.com")){
-                                if (webEngine.getDocument() != null){
-                                    NodeList list = webEngine.getDocument().getElementsByTagName("a");
-                                    for (int i = 0; i < list.getLength(); i++){
-                                        Node node = list.item(i);
-                                        if (node instanceof EventTarget) {
-                                            Node a = list.item(i);
-                                            if (a instanceof EventTarget) {
-                                                ((EventTarget)a).addEventListener("click", listener, false);
+                                try {
+                                    EventListener listener = new EventListener() {
+                                        @Override
+                                        public void handleEvent(Event event) {
+                                            try {
+                                                Utils.openWebsite(event.getTarget().toString());
+                                            } catch (IOException e) {
+                                                System.out.println("Failed to open url. " + event.getTarget());
+                                            }
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                        }
+                                    };
+                                    if (webEngine.getLocation().contains("tumblr.com")) {
+                                        if (webEngine.getDocument() != null) {
+                                            NodeList list = webEngine.getDocument().getElementsByTagName("a");
+                                            for (int i = 0; i < list.getLength(); i++) {
+                                                Node node = list.item(i);
+                                                if (node instanceof EventTarget) {
+                                                    Node a = list.item(i);
+                                                    if (a instanceof EventTarget) {
+                                                        ((EventTarget) a).addEventListener("click", listener, false);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
                                 }
                             }
-                        } catch (Exception ex){
-                            ex.printStackTrace();
                         }
-                    }
-                });
-                webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
-                webEngine.load("http://mc.krothium.com/news/");
+                    });
+                    webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
+                    webEngine.load("http://mc.krothium.com/news/");
+                }
+                root.getChildren().add(browser);
             }
-            root.getChildren().add(browser);
         });
 
     }

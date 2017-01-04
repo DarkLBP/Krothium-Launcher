@@ -22,7 +22,7 @@ public class ProfilePopup extends JFrame{
     private final Font bold = new Font("Minecraftia", Font.BOLD,16);
     private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
 
-    public ProfilePopup(Kernel kernel){
+    public ProfilePopup(final Kernel kernel){
         setUndecorated(true);
         setSize(new Dimension(300, 150));
         setContentPane(main);

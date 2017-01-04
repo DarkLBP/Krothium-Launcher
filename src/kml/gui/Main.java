@@ -118,10 +118,10 @@ public class Main extends JFrame{
         popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         language.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        JMenuItem en = new JMenuItem("English - United States");
-        JMenuItem es = new JMenuItem("Español - España");
-        JMenuItem ca = new JMenuItem("Català (Valencià) - País Valencià");
-        JMenuItem pt = new JMenuItem("Português - Portugal");
+        final JMenuItem en = new JMenuItem("English - United States");
+        final JMenuItem es = new JMenuItem("Español - España");
+        final JMenuItem ca = new JMenuItem("Català (Valencià) - País Valencià");
+        final JMenuItem pt = new JMenuItem("Português - Portugal");
         ca.setIcon(flag_val);
         ca.setFont(plain);
         ca.addActionListener(new ActionListener() {
@@ -223,13 +223,16 @@ public class Main extends JFrame{
             public void mousePressed(MouseEvent e) {
                 if (playButton.isEnabled()){
                     playButton.setIcon(playButton_click);
-                    Thread runThread = new Thread(() -> {
-                        if (!downloader.isDownloading() && !gameLauncher.isStarted()){
-                            try {
-                                downloader.download();
-                                gameLauncher.launch();
-                            } catch (GameLauncherException | DownloaderException e1) {
-                                e1.printStackTrace();
+                    Thread runThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!downloader.isDownloading() && !gameLauncher.isStarted()) {
+                                try {
+                                    downloader.download();
+                                    gameLauncher.launch();
+                                } catch (GameLauncherException | DownloaderException e1) {
+                                    e1.printStackTrace();
+                                }
                             }
                         }
                     });
