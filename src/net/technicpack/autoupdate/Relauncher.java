@@ -207,7 +207,7 @@ public abstract class Relauncher {
         outArgs.add(this.getRunningPath());
         outArgs.add("-moveronly");
         outArgs.addAll(Arrays.asList(this.getLaunchArgs()));
-        return (String[])outArgs.toArray(new String[outArgs.size()]);
+        return outArgs.toArray(new String[outArgs.size()]);
     }
 
     public String[] buildLauncherArgs(boolean isLegacy) {
@@ -220,6 +220,6 @@ public abstract class Relauncher {
 
         outArgs.addAll(Arrays.asList(this.getLaunchArgs()));
         outArgs.remove("-moveronly");
-        return (String[])outArgs.toArray(new String[outArgs.size()]);
+        return outArgs.toArray(new String[outArgs.size()]);
     }
 }

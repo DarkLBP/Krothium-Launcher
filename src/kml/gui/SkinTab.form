@@ -38,12 +38,12 @@
       <component id="7c9f0" class="javax.swing.JButton" binding="changeSkinButton" default-binding="true">
         <constraints>
           <grid row="1" column="1" row-span="2" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="240" height="50"/>
-            <maximum-size width="240" height="50"/>
+            <minimum-size width="220" height="40"/>
+            <maximum-size width="220" height="40"/>
           </grid>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-1"/>
           <horizontalTextPosition value="0"/>
           <text value="Change Skin"/>
@@ -52,12 +52,12 @@
       <component id="304cc" class="javax.swing.JButton" binding="deleteCapeButton" default-binding="true">
         <constraints>
           <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="240" height="50"/>
-            <maximum-size width="240" height="50"/>
+            <minimum-size width="220" height="40"/>
+            <maximum-size width="220" height="40"/>
           </grid>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-65536"/>
           <horizontalTextPosition value="0"/>
           <text value="Delete Cape"/>
@@ -68,7 +68,7 @@
           <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-16777216"/>
           <text value="Skin:"/>
         </properties>
@@ -78,7 +78,7 @@
           <grid row="5" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-16777216"/>
           <text value="Cape:"/>
         </properties>
@@ -88,7 +88,7 @@
           <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="16"/>
+          <font name="Minecraftia" size="14"/>
           <foreground color="-16777216"/>
           <text value="Skin type:"/>
         </properties>
@@ -98,7 +98,7 @@
           <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="16"/>
+          <font name="Minecraftia" size="14"/>
           <foreground color="-16777216"/>
           <selected value="true"/>
           <text value="Steve"/>
@@ -109,7 +109,7 @@
           <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="16"/>
+          <font name="Minecraftia" size="14"/>
           <foreground color="-16777216"/>
           <text value="Alex"/>
         </properties>
@@ -117,12 +117,12 @@
       <component id="25326" class="javax.swing.JButton" binding="deleteSkinButton" default-binding="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="240" height="50"/>
-            <maximum-size width="240" height="50"/>
+            <minimum-size width="220" height="40"/>
+            <maximum-size width="220" height="40"/>
           </grid>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-65536"/>
           <horizontalTextPosition value="0"/>
           <text value="Delete Skin"/>
@@ -131,12 +131,12 @@
       <component id="cfe37" class="javax.swing.JButton" binding="changeCapeButton" default-binding="true">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="240" height="50"/>
-            <maximum-size width="240" height="50"/>
+            <minimum-size width="220" height="40"/>
+            <maximum-size width="220" height="40"/>
           </grid>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18"/>
+          <font name="Minecraftia" size="16"/>
           <foreground color="-1"/>
           <horizontalTextPosition value="0"/>
           <text value="Change Cape"/>

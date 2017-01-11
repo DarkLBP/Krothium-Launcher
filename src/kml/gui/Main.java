@@ -60,8 +60,8 @@ public class Main extends JFrame{
     private final SkinTab skinTab;
     private final ImageIcon tabSelection;
     private final JPopupMenu languages;
-    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
-    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
+    private final Font bold = new Font("Minecraftia", Font.BOLD,14);
     private final ImageIcon flag_es;
     private final ImageIcon flag_pt;
     private final ImageIcon flag_us;
@@ -79,26 +79,26 @@ public class Main extends JFrame{
         this.launchOptions = new LaunchOptionsTab(k);
         this.gameLauncher = kernel.getGameLauncher();
         this.downloader = kernel.getDownloader();
-        this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
-        this.playButton_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_hover.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
-        this.playButton_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_click.png")).getImage().getScaledInstance(350,80, Image.SCALE_SMOOTH));
-        this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,80, Image.SCALE_SMOOTH));
-        this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,80, Image.SCALE_SMOOTH));
-        this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,80, Image.SCALE_SMOOTH));
+        this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
+        this.playButton_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_hover.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
+        this.playButton_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_click.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
+        this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
+        this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
+        this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.flag_es = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_es-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_us = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_en-us.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_val = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_val-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
-        this.newsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(125, 40, Image.SCALE_SMOOTH));
-        this.skinsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(100, 40, Image.SCALE_SMOOTH));
-        this.settingsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(150, 40, Image.SCALE_SMOOTH));
-        this.optionsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(315, 40, Image.SCALE_SMOOTH));
+        this.newsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(115, 35, Image.SCALE_SMOOTH));
+        this.skinsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(90, 35, Image.SCALE_SMOOTH));
+        this.settingsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(140, 35, Image.SCALE_SMOOTH));
+        this.optionsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(295, 35, Image.SCALE_SMOOTH));
         this.editor = new ProfileEditor(kernel);
         this.popupMenu = new ProfilePopup(kernel);
         this.skinTab = new SkinTab(kernel);
         this.languages = new JPopupMenu();
-        setSize(950, 750);
+        setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
@@ -349,16 +349,16 @@ public class Main extends JFrame{
                             Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
                             if (p.hasVersion()){
                                 if (p.getVersionID().equals("latest-release")){
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
                                 } else if (p.getVersionID().equals("latest-snapshot")){
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
                                 } else {
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
                                 }
                             } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
-                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
                             } else if (p.getType() == ProfileType.SNAPSHOT && kernel.getVersions().getLatestSnapshot() != null){
-                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='3'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
                             } else {
                                 playButton.setText(Language.get(12));
                             }

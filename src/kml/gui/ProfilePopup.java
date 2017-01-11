@@ -19,8 +19,8 @@ public class ProfilePopup extends JFrame{
     private JPanel main;
     private JList profiles;
     private final DefaultListModel model = new DefaultListModel();
-    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
-    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
+    private final Font bold = new Font("Minecraftia", Font.BOLD,14);
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
 
     public ProfilePopup(final Kernel kernel){
         setUndecorated(true);

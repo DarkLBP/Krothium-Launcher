@@ -123,8 +123,8 @@ public class SkinTab {
                 deleteSkinButton.setForeground(Color.RED);
             }
         });
-        button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
-        button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
+        button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
+        button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
         changeSkinButton.setIcon(button_normal);
         changeCapeButton.setIcon(button_normal);
         deleteSkinButton.setIcon(button_normal);

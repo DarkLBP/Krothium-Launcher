@@ -44,8 +44,8 @@ public class ProfileEditor{
     private Profile profile = null;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
-    private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
-    private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(175, 40, Image.SCALE_SMOOTH));
+    private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
+    private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
     private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
 
     public ProfileEditor(Kernel k){

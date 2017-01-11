@@ -15,7 +15,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="18" style="0"/>
+          <font name="Minecraftia" size="16" style="0"/>
           <foreground color="-16777216"/>
           <horizontalAlignment value="0"/>
           <text value="LAUNCHER SETTINGS"/>
@@ -38,7 +38,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Minecraftia" size="16"/>
+          <font name="Minecraftia" size="14"/>
           <horizontalAlignment value="2"/>
           <icon value="kml/gui/textures/checkbox_disabled.png"/>
           <text value="Keep the launcher open when the game is running"/>
@@ -50,7 +50,7 @@
         </constraints>
         <properties>
           <autoscrolls value="true"/>
-          <font name="Minecraftia" size="16"/>
+          <font name="Minecraftia" size="14"/>
           <horizontalAlignment value="2"/>
           <icon value="kml/gui/textures/checkbox_disabled.png"/>
           <text value="Open output log when the game starts"/>

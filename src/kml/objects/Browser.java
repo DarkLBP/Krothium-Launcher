@@ -12,8 +12,9 @@ import javafx.scene.web.WebView;
 import kml.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.events.*;
 import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
 
 import javax.swing.*;
 import java.awt.*;

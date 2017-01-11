@@ -29,8 +29,8 @@ public class LaunchOptionsTab {
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
     private final ImageIcon addProfile = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/add.png"));
-    private final Font plain = new Font("Minecraftia", Font.PLAIN,16);
-    private final Font bold = new Font("Minecraftia", Font.BOLD,16);
+    private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
+    private final Font bold = new Font("Minecraftia", Font.BOLD,14);
     private final JLabel newProfile = new JLabel("New Profile");
 
     public LaunchOptionsTab(Kernel k) {

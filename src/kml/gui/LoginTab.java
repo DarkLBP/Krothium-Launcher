@@ -45,8 +45,8 @@ public class LoginTab {
                 ((JButton)e.getComponent()).setIcon(button_normal);
             }
         };
-        button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
-        button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(240, 50, Image.SCALE_SMOOTH));
+        button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
+        button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         login.setIcon(button_normal);
         register.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
