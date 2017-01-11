@@ -19,8 +19,7 @@ import java.io.IOException;
 
 public class LoginTab {
 
-    private JPanel mainPanel;
-    private JPanel content;
+    private JPanel main;
     private JButton login;
     private JButton register;
     private JTextField username;
@@ -132,7 +131,7 @@ public class LoginTab {
         }
     }
     public JPanel getPanel(){
-        return this.mainPanel;
+        return this.main;
     }
 
 }

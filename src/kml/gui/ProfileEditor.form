@@ -1,237 +1,232 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="kml.gui.ProfileEditor">
-  <grid id="27dc6" binding="main" layout-manager="BorderLayout" hgap="0" vgap="0">
+  <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="14" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <constraints>
       <xy x="20" y="20" width="693" height="484"/>
     </constraints>
     <properties/>
     <border type="none"/>
+    <margin top="15" left="15" bottom="15" right="15"/>
+    <properties>
+      <opaque value="false"/>
+    </properties>
+    <border type="none"/>
     <children>
-      <grid id="a7b73" class="kml.gui.BackgroundPanel" binding="contentPanel" layout-manager="GridLayoutManager" row-count="14" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="15" left="15" bottom="15" right="15"/>
-        <constraints border-constraint="Center"/>
+      <component id="a50a" class="javax.swing.JLabel" binding="nameLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
         <properties>
-          <opaque value="false"/>
+          <font name="Minecraftia" size="16"/>
+          <text value="Name:"/>
         </properties>
-        <border type="none"/>
-        <children>
-          <component id="a50a" class="javax.swing.JLabel" binding="nameLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <text value="Name:"/>
-            </properties>
-          </component>
-          <component id="ef68a" class="javax.swing.JTextField" binding="name">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="4c875" class="javax.swing.JLabel" binding="versionsLabel">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <text value="Version:"/>
-            </properties>
-          </component>
-          <component id="84f55" class="javax.swing.JComboBox" binding="versions">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <model/>
-            </properties>
-          </component>
-          <component id="bcd6" class="javax.swing.JSpinner" binding="resX">
-            <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="1c982" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="X"/>
-            </properties>
-          </component>
-          <component id="876d2" class="javax.swing.JSpinner" binding="resY">
-            <constraints>
-              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="f2258" class="javax.swing.JLabel" binding="resolutionLabel">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <icon value="kml/gui/textures/checkbox_disabled.png"/>
-              <text value="Resolution:"/>
-            </properties>
-          </component>
-          <component id="27bb9" class="javax.swing.JLabel" binding="gameDirLabel">
-            <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <icon value="kml/gui/textures/checkbox_disabled.png"/>
-              <text value="Game directory:"/>
-            </properties>
-          </component>
-          <component id="f8004" class="javax.swing.JTextField" binding="gameDir">
-            <constraints>
-              <grid row="6" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="2c4e9" class="javax.swing.JLabel" binding="javaExecLabel">
-            <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <icon value="kml/gui/textures/checkbox_disabled.png"/>
-              <text value="Java executable:"/>
-            </properties>
-          </component>
-          <component id="ed96a" class="javax.swing.JTextField" binding="javaExec">
-            <constraints>
-              <grid row="8" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="6ab3e" class="javax.swing.JLabel" binding="javaArgsLabel">
-            <constraints>
-              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-              <icon value="kml/gui/textures/checkbox_disabled.png"/>
-              <text value="JVM arguments:"/>
-            </properties>
-          </component>
-          <component id="31689" class="javax.swing.JTextField" binding="javaArgs">
-            <constraints>
-              <grid row="10" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="16"/>
-            </properties>
-          </component>
-          <component id="269a5" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
-            <constraints>
-              <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="175" height="40"/>
-                <maximum-size width="175" height="40"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="18"/>
-              <foreground color="-1"/>
-              <horizontalTextPosition value="0"/>
-              <text value="Cancel"/>
-            </properties>
-          </component>
-          <component id="2c98e" class="javax.swing.JButton" binding="saveButton" default-binding="true">
-            <constraints>
-              <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="175" height="40"/>
-                <maximum-size width="175" height="40"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="18"/>
-              <foreground color="-1"/>
-              <horizontalTextPosition value="0"/>
-              <text value="Save"/>
-            </properties>
-          </component>
-          <hspacer id="ae742">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="5"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <hspacer id="5f267">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="5"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <hspacer id="ef86b">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="5"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <hspacer id="bfe6c">
-            <constraints>
-              <grid row="7" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="5"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <hspacer id="7aae1">
-            <constraints>
-              <grid row="9" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="5"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <hspacer id="63777">
-            <constraints>
-              <grid row="11" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="-1" height="10"/>
-              </grid>
-            </constraints>
-          </hspacer>
-          <component id="a75ba" class="javax.swing.JButton" binding="deleteButton">
-            <constraints>
-              <grid row="13" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="175" height="40"/>
-                <maximum-size width="175" height="40"/>
-              </grid>
-            </constraints>
-            <properties>
-              <font name="Minecraftia" size="18"/>
-              <foreground color="-65536"/>
-              <horizontalTextPosition value="0"/>
-              <text value="Delete"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
+      </component>
+      <component id="ef68a" class="javax.swing.JTextField" binding="name">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="4c875" class="javax.swing.JLabel" binding="versionsLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <text value="Version:"/>
+        </properties>
+      </component>
+      <component id="84f55" class="javax.swing.JComboBox" binding="versions">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <model/>
+        </properties>
+      </component>
+      <component id="bcd6" class="javax.swing.JSpinner" binding="resX">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="1c982" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="X"/>
+        </properties>
+      </component>
+      <component id="876d2" class="javax.swing.JSpinner" binding="resY">
+        <constraints>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="f2258" class="javax.swing.JLabel" binding="resolutionLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <icon value="kml/gui/textures/checkbox_disabled.png"/>
+          <text value="Resolution:"/>
+        </properties>
+      </component>
+      <component id="27bb9" class="javax.swing.JLabel" binding="gameDirLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <icon value="kml/gui/textures/checkbox_disabled.png"/>
+          <text value="Game directory:"/>
+        </properties>
+      </component>
+      <component id="f8004" class="javax.swing.JTextField" binding="gameDir">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="2c4e9" class="javax.swing.JLabel" binding="javaExecLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <icon value="kml/gui/textures/checkbox_disabled.png"/>
+          <text value="Java executable:"/>
+        </properties>
+      </component>
+      <component id="ed96a" class="javax.swing.JTextField" binding="javaExec">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="6ab3e" class="javax.swing.JLabel" binding="javaArgsLabel">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+          <icon value="kml/gui/textures/checkbox_disabled.png"/>
+          <text value="JVM arguments:"/>
+        </properties>
+      </component>
+      <component id="31689" class="javax.swing.JTextField" binding="javaArgs">
+        <constraints>
+          <grid row="10" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="16"/>
+        </properties>
+      </component>
+      <component id="269a5" class="javax.swing.JButton" binding="cancelButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="175" height="40"/>
+            <maximum-size width="175" height="40"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="18"/>
+          <foreground color="-1"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Cancel"/>
+        </properties>
+      </component>
+      <component id="2c98e" class="javax.swing.JButton" binding="saveButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="175" height="40"/>
+            <maximum-size width="175" height="40"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="18"/>
+          <foreground color="-1"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Save"/>
+        </properties>
+      </component>
+      <hspacer id="ae742">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="5f267">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="ef86b">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="bfe6c">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="7aae1">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <hspacer id="63777">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="10"/>
+          </grid>
+        </constraints>
+      </hspacer>
+      <component id="a75ba" class="javax.swing.JButton" binding="deleteButton">
+        <constraints>
+          <grid row="13" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="175" height="40"/>
+            <maximum-size width="175" height="40"/>
+          </grid>
+        </constraints>
+        <properties>
+          <font name="Minecraftia" size="18"/>
+          <foreground color="-65536"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Delete"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

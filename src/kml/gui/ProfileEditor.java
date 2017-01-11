@@ -24,7 +24,6 @@ import java.util.Set;
  */
 public class ProfileEditor{
     private JPanel main;
-    private BackgroundPanel contentPanel;
     private JTextField name;
     private JComboBox versions;
     private JSpinner resX;
@@ -51,7 +50,6 @@ public class ProfileEditor{
 
     public ProfileEditor(Kernel k){
         this.kernel = k;
-        contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
         resolutionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         gameDirLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         javaExecLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -431,6 +429,6 @@ public class ProfileEditor{
         }
     }
     public JPanel getPanel(){
-        return this.contentPanel;
+        return this.main;
     }
 }
