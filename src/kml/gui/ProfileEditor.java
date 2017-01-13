@@ -246,6 +246,7 @@ public class ProfileEditor{
                 nameEnabled = false;
             } else {
                 name.setVisible(true);
+                name.setText("");
                 nameLabel.setVisible(true);
                 nameEnabled = true;
             }
