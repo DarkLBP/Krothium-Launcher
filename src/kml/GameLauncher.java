@@ -240,7 +240,7 @@ public class GameLauncher {
                         }
                         break;
                     case "${auth_uuid}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID().replaceAll("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID());
                         break;
                     case "${auth_access_token}":
                         versionArgs[i] = versionArgs[i].replace("${auth_access_token}", u.getAccessToken());
