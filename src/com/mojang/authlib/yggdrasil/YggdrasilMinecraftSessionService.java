@@ -20,7 +20,6 @@ import com.mojang.authlib.yggdrasil.response.HasJoinedMinecraftServerResponse;
 import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
 import com.mojang.authlib.yggdrasil.response.Response;
-import com.mojang.util.UUIDTypeAdapter;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.mojang.util.UUIDTypeAdapter;
 import kml.Constants;
 import kml.Utils;
 import org.apache.commons.codec.Charsets;
@@ -153,7 +153,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
 
     protected GameProfile fillGameProfile(GameProfile profile, boolean requireSecure) {
         try {
-            URL e = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/" + UUIDTypeAdapter.fromUUID(profile.getId()));
+            URL e = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/" + profile.getId().toString().replaceAll("-", ""));
             e = HttpAuthenticationService.concatenateURL(e, "unsigned=" + !requireSecure);
             MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse)this.getAuthenticationService().makeRequest(e, (Object)null, MinecraftProfilePropertiesResponse.class);
             if(response == null) {
