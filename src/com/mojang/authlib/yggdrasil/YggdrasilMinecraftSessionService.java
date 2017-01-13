@@ -148,7 +148,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     }
 
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) {
-        return profile.getId() == null?profile:(!requireSecure?(GameProfile)this.insecureProfiles.getUnchecked(profile):this.fillGameProfile(profile, true));
+        return profile.getId() == null?profile:(!requireSecure?this.insecureProfiles.getUnchecked(profile):this.fillGameProfile(profile, true));
     }
 
     protected GameProfile fillGameProfile(GameProfile profile, boolean requireSecure) {

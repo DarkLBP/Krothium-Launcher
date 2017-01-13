@@ -97,17 +97,16 @@ public class ProfileEditor{
                 if (javaExecEnabled){
                     javaExec.setEnabled(false);
                     javaExecLabel.setIcon(checkbox_disabled);
-                } else {
-                    if (kernel.getSettings().getEnableAdvanced()){
-                        javaExec.setEnabled(true);
-                        javaExecLabel.setIcon(checkbox_enabled);
+                    if (!kernel.getSettings().getEnableAdvanced()){
+                        javaExecLabel.setVisible(false);
+                        javaExec.setVisible(false);
                     }
+                } else {
+                    javaExec.setEnabled(true);
+                    javaExecLabel.setIcon(checkbox_enabled);
                 }
                 javaExec.setText(Utils.getJavaDir());
                 javaExecEnabled = !javaExecEnabled;
-                if (!kernel.getSettings().getEnableAdvanced() && !javaExecEnabled){
-                    updateConstraints();
-                }
             }
         });
         javaArgsLabel.addMouseListener(new MouseAdapter() {
@@ -116,11 +115,13 @@ public class ProfileEditor{
                 if (javaArgsEnabled){
                     javaArgs.setEnabled(false);
                     javaArgsLabel.setIcon(checkbox_disabled);
-                } else {
-                    if (kernel.getSettings().getEnableAdvanced()){
-                        javaArgs.setEnabled(true);
-                        javaArgsLabel.setIcon(checkbox_enabled);
+                    if (!kernel.getSettings().getEnableAdvanced()){
+                        javaArgsLabel.setVisible(false);
+                        javaArgs.setVisible(false);
                     }
+                } else {
+                    javaArgs.setEnabled(true);
+                    javaArgsLabel.setIcon(checkbox_enabled);
                 }
                 StringBuilder builder = new StringBuilder();
                 if (Utils.getOSArch().equals(OSArch.OLD)){
@@ -134,9 +135,6 @@ public class ProfileEditor{
                 builder.append(" -Xmn128M");
                 javaArgs.setText(builder.toString());
                 javaArgsEnabled = !javaArgsEnabled;
-                if (!kernel.getSettings().getEnableAdvanced() && !javaArgsEnabled){
-                    updateConstraints();
-                }
             }
         });
         cancelButton.addMouseListener(new MouseAdapter() {
@@ -217,7 +215,6 @@ public class ProfileEditor{
         gameDirLabel.setText(Language.get(66));
         javaExecLabel.setText(Language.get(67));
         javaArgsLabel.setText(Language.get(68));
-        updateConstraints();
     }
     public boolean setProfile(String p){
         if (p == null){
@@ -234,39 +231,67 @@ public class ProfileEditor{
         return false;
     }
     public void refreshData(){
-        name.setEnabled(true);
-        versions.setEnabled(true);
-        javaExec.setEnabled(true);
-        javaArgs.setEnabled(true);
-        javaExecLabel.setEnabled(true);
-        javaArgsLabel.setEnabled(true);
+        if (profile == null){
+            return;
+        }
         if (profile.hasName()){
             name.setText(profile.getName());
+            name.setVisible(true);
+            nameLabel.setVisible(true);
+            versions.setVisible(true);
+            versionsLabel.setVisible(true);
             nameEnabled = true;
-            versionEnabled = true;
         } else {
-            if (profile.getType() == ProfileType.RELEASE){
-                name.setEnabled(false);
-                versions.setEnabled(false);
+            if (profile.getType() != ProfileType.CUSTOM){
+                name.setVisible(false);
+                versions.setVisible(false);
+                nameLabel.setVisible(false);
+                versionsLabel.setVisible(false);
                 nameEnabled = false;
-                versionEnabled = false;
-                name.setText(Language.get(59));
-            } else if (profile.getType() == ProfileType.SNAPSHOT){
-                name.setEnabled(false);
-                versions.setEnabled(false);
-                nameEnabled = false;
-                versionEnabled = false;
-                name.setText(Language.get(60));
             } else {
-                name.setText("");
+                name.setVisible(true);
+                nameLabel.setVisible(true);
+                versions.setVisible(true);
+                versionsLabel.setVisible(true);
                 nameEnabled = true;
-                versionEnabled = true;
             }
+        }
+        if (profile.getType() == ProfileType.CUSTOM){
+            versionsLabel.setVisible(true);
+            versions.setVisible(true);
+            versionEnabled = true;
+            this.versions.removeAllItems();
+            int count = 0;
+            this.versions.addItem(Language.get(59));
+            count++;
+            if (kernel.getSettings().getEnableSnapshots()){
+                this.versions.addItem(Language.get(60));
+                count++;
+            }
+            if ((profile.hasVersion() && profile.getVersionID().equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) || (!profile.hasVersion() && profile.getType() == ProfileType.SNAPSHOT)){
+                this.versions.setSelectedIndex(1);
+            }
+            Map<String, VersionMeta> versions = kernel.getVersions().getVersions();
+            Set keySet = versions.keySet();
+            for (Object aKeySet : keySet) {
+                VersionMeta vm = versions.get(aKeySet.toString());
+                if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())) {
+                    this.versions.addItem(vm.getID());
+                    if (profile.hasVersion() && vm.getID().equalsIgnoreCase(profile.getVersionID())) {
+                        this.versions.setSelectedIndex(count);
+                    }
+                    count++;
+                }
+            }
+            deleteButton.setVisible(true);
+        } else {
+            versionEnabled = false;
+            versionsLabel.setVisible(false);
+            versions.setVisible(false);
+            deleteButton.setVisible(false);
         }
         resolutionEnabled = profile.hasResolution();
         gameDirEnabled = profile.hasGameDir();
-        javaExecEnabled = profile.hasJavaDir();
-        javaArgsEnabled = profile.hasJavaArgs();
         if (resolutionEnabled){
             resX.setEnabled(true);
             resY.setEnabled(true);
@@ -289,35 +314,65 @@ public class ProfileEditor{
             gameDirLabel.setIcon(checkbox_disabled);
             gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
         }
-        if (javaExecEnabled){
-            javaExec.setEnabled(true);
-            javaExecLabel.setIcon(checkbox_enabled);
-            javaExec.setText(profile.getJavaDir().getAbsolutePath());
-        } else {
-            javaExec.setEnabled(false);
-            javaExecLabel.setIcon(checkbox_disabled);
-            javaExec.setText(Utils.getJavaDir());
-        }
-        if (javaArgsEnabled){
-            javaArgs.setEnabled(true);
-            javaArgsLabel.setIcon(checkbox_enabled);
-            javaArgs.setText(profile.getJavaArgs());
-        } else {
-            javaArgs.setEnabled(false);
-            javaArgsLabel.setIcon(checkbox_disabled);
-            StringBuilder builder = new StringBuilder();
-            if (Utils.getOSArch().equals(OSArch.OLD)){
-                builder.append("-Xmx512M");
+        if (!kernel.getSettings().getEnableAdvanced()){
+            if (profile.hasJavaDir()){
+                javaExecLabel.setVisible(true);
+                javaExec.setVisible(true);
+                javaExecLabel.setIcon(checkbox_enabled);
+                javaExec.setText(profile.getJavaDir().getAbsolutePath());
+                javaExecEnabled = true;
             } else {
-                builder.append("-Xmx1G");
+                javaExecLabel.setVisible(false);
+                javaExec.setVisible(false);
+                javaExecEnabled = false;
             }
-            builder.append(" -XX:+UseConcMarkSweepGC");
-            builder.append(" -XX:+CMSIncrementalMode");
-            builder.append(" -XX:-UseAdaptiveSizePolicy");
-            builder.append(" -Xmn128M");
-            javaArgs.setText(builder.toString());
+            if (profile.hasJavaArgs()){
+                javaArgsLabel.setVisible(true);
+                javaArgs.setVisible(true);
+                javaArgsLabel.setIcon(checkbox_enabled);
+                javaArgs.setText(profile.getJavaArgs());
+                javaArgsEnabled = true;
+            } else {
+                javaArgsLabel.setVisible(false);
+                javaArgs.setVisible(false);
+                javaArgsEnabled = false;
+            }
+        } else {
+            javaExecLabel.setVisible(true);
+            javaExec.setVisible(true);
+            javaArgsLabel.setVisible(true);
+            javaArgs.setVisible(true);
+            javaExecEnabled = profile.hasJavaDir();
+            javaArgsEnabled = profile.hasJavaArgs();
+            if (javaExecEnabled){
+                javaExec.setEnabled(true);
+                javaExecLabel.setIcon(checkbox_enabled);
+                javaExec.setText(profile.getJavaDir().getAbsolutePath());
+            } else {
+                javaExec.setEnabled(false);
+                javaExecLabel.setIcon(checkbox_disabled);
+                javaExec.setText(Utils.getJavaDir());
+            }
+            if (javaArgsEnabled){
+                javaArgs.setEnabled(true);
+                javaArgsLabel.setIcon(checkbox_enabled);
+                javaArgs.setText(profile.getJavaArgs());
+            } else {
+                javaArgs.setEnabled(false);
+                javaArgsLabel.setIcon(checkbox_disabled);
+                StringBuilder builder = new StringBuilder();
+                if (Utils.getOSArch().equals(OSArch.OLD)){
+                    builder.append("-Xmx512M");
+                } else {
+                    builder.append("-Xmx1G");
+                }
+                builder.append(" -XX:+UseConcMarkSweepGC");
+                builder.append(" -XX:+CMSIncrementalMode");
+                builder.append(" -XX:-UseAdaptiveSizePolicy");
+                builder.append(" -Xmn128M");
+                javaArgs.setText(builder.toString());
+            }
         }
-        updateConstraints();
     }
     private void saveProfile(){
         if (nameEnabled){
@@ -373,60 +428,6 @@ public class ProfileEditor{
         }
         JOptionPane.showMessageDialog(null, Language.get(57), Language.get(58), JOptionPane.INFORMATION_MESSAGE);
         kernel.getGUI().setSelected(kernel.getGUI().options);
-    }
-    private void updateConstraints(){
-        if (profile == null){
-            return;
-        }
-        if (!kernel.getSettings().getEnableAdvanced()){
-            if (!javaExecEnabled) {
-                javaExecLabel.setEnabled(false);
-            }
-            if (!javaArgsEnabled){
-                javaArgsLabel.setEnabled(false);
-            }
-        } else {
-            javaExecLabel.setEnabled(true);
-            javaArgsLabel.setEnabled(true);
-        }
-        if (nameEnabled){
-            nameLabel.setEnabled(true);
-        } else {
-            nameLabel.setEnabled(false);
-        }
-        if (versionEnabled){
-            versionsLabel.setEnabled(true);
-        } else {
-            versionsLabel.setEnabled(false);
-        }
-        this.versions.removeAllItems();
-        int count = 0;
-        this.versions.addItem(Language.get(59));
-        count++;
-        if (kernel.getSettings().getEnableSnapshots()){
-            this.versions.addItem(Language.get(60));
-            count++;
-        }
-        if ((profile.hasVersion() && profile.getVersionID().equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) || (!profile.hasVersion() && profile.getType() == ProfileType.SNAPSHOT)){
-            this.versions.setSelectedIndex(1);
-        }
-        Map<String, VersionMeta> versions = kernel.getVersions().getVersions();
-        Set keySet = versions.keySet();
-        for (Object aKeySet : keySet) {
-            VersionMeta vm = versions.get(aKeySet.toString());
-            if (vm.getType() == VersionType.RELEASE || (vm.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) || ((vm.getType() == VersionType.OLD_ALPHA || vm.getType() == VersionType.OLD_BETA) && kernel.getSettings().getEnableHistorical())) {
-                this.versions.addItem(vm.getID());
-                if (profile.hasVersion() && vm.getID().equalsIgnoreCase(profile.getVersionID())) {
-                    this.versions.setSelectedIndex(count);
-                }
-                count++;
-            }
-        }
-        if (this.profile.getType() == ProfileType.CUSTOM && kernel.getProfiles().existsProfile(this.profile.getID())){
-            deleteButton.setVisible(true);
-        } else {
-            deleteButton.setVisible(false);
-        }
     }
     public JPanel getPanel(){
         return this.main;
