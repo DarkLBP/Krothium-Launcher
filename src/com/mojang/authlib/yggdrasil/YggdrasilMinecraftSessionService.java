@@ -38,9 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionService {
-    private static final String[] WHITELISTED_DOMAINS = new String[]{".minecraft.net", ".mojang.com"};
+
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final String BASE_URL = "https://sessionserver.mojang.com/session/minecraft/";
     private static final URL JOIN_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/join");
     private static final URL CHECK_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/hasJoined");
     private final Gson gson = (new GsonBuilder()).registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
@@ -100,6 +99,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
         Property textureProperty = (Property)Iterables.getFirst(profile.getProperties().get("textures"), (Object)null);
         if(textureProperty == null) {
             try {
+                System.out.println("Serving skin for: " + profile.getName());
                 JSONArray users = new JSONArray();
                 users.put(profile.getName());
                 byte[] data = users.toString().getBytes();
@@ -153,9 +153,9 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
 
     protected GameProfile fillGameProfile(GameProfile profile, boolean requireSecure) {
         try {
-            URL e = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/" + profile.getId().toString().replaceAll("-", ""));
+            URL e = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/profile/" + UUIDTypeAdapter.fromUUID(profile.getId()));
             e = HttpAuthenticationService.concatenateURL(e, "unsigned=" + !requireSecure);
-            MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse)this.getAuthenticationService().makeRequest(e, (Object)null, MinecraftProfilePropertiesResponse.class);
+            MinecraftProfilePropertiesResponse response = (MinecraftProfilePropertiesResponse)this.getAuthenticationService().makeRequest(e, null, MinecraftProfilePropertiesResponse.class);
             if(response == null) {
                 LOGGER.debug("Couldn\'t fetch profile properties for " + profile + " as the profile does not exist");
                 return profile;
