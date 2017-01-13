@@ -15,15 +15,10 @@ import java.net.URL;
 class GameStarter {
     public static void main(String[] args){
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
-        try {
-            HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
-            int responseCode = con.getResponseCode();
-            Constants.USE_HTTPS = (responseCode == 204);
-        } catch (SSLHandshakeException ex) {
-            Constants.USE_HTTPS = false;
-        } catch (IOException ex){
-            Constants.USE_LOCAL = true;
+        if (!Utils.ignoreHTTPSCert()){
+            System.err.println("Failed load custom HTTPS certificate checker.");
         }
+        Utils.testNetwork();
         System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
         if (!Constants.USE_LOCAL){
             URL.setURLStreamHandlerFactory(new URLHandler());

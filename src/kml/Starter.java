@@ -27,15 +27,8 @@ class Starter {
                 Kernel kernel = new Kernel();
                 Console console = kernel.getConsole();
                 console.includeTimestamps(true);
-                try {
-                    HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
-                    int responseCode = con.getResponseCode();
-                    Constants.USE_HTTPS = (responseCode == 204);
-                } catch (SSLHandshakeException ex) {
-                    Constants.USE_HTTPS = false;
-                } catch (IOException ex){
-                    Constants.USE_LOCAL = true;
-                }
+                console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+                Utils.testNetwork();
                 console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
                 Authentication a = kernel.getAuthentication();
                 if (a.hasSelectedUser()){

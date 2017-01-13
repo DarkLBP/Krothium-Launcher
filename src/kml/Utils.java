@@ -5,7 +5,7 @@ import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
 
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,6 +16,8 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +29,38 @@ import java.util.UUID;
  */
 
 public class Utils {
+    public static boolean ignoreHTTPSCert(){
+        try {
+            SSLContext t = SSLContext.getInstance("SSL");
+            t.init(null, new X509TrustManager[]{new X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+            }}, null);
+            HttpsURLConnection.setDefaultSSLSocketFactory(t.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                public boolean verify(String s, SSLSession sslSession) {
+                    return true;
+                }
+            });
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+    public static void testNetwork(){
+        try {
+            HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
+            int responseCode = con.getResponseCode();
+            Constants.USE_HTTPS = (responseCode == 204);
+        } catch (SSLHandshakeException ex) {
+            Constants.USE_HTTPS = false;
+        } catch (IOException ex){
+            Constants.USE_LOCAL = true;
+        }
+    }
     public static OS getPlatform(){
         final String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")){
