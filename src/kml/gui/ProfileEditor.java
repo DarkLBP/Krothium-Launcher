@@ -238,21 +238,15 @@ public class ProfileEditor{
             name.setText(profile.getName());
             name.setVisible(true);
             nameLabel.setVisible(true);
-            versions.setVisible(true);
-            versionsLabel.setVisible(true);
             nameEnabled = true;
         } else {
             if (profile.getType() != ProfileType.CUSTOM){
                 name.setVisible(false);
-                versions.setVisible(false);
                 nameLabel.setVisible(false);
-                versionsLabel.setVisible(false);
                 nameEnabled = false;
             } else {
                 name.setVisible(true);
                 nameLabel.setVisible(true);
-                versions.setVisible(true);
-                versionsLabel.setVisible(true);
                 nameEnabled = true;
             }
         }
