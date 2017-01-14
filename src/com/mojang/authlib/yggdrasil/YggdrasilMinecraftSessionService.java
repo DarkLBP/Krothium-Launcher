@@ -44,7 +44,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     private static final URL CHECK_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/hasJoined");
     private final Gson gson = (new GsonBuilder()).registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private final LoadingCache<GameProfile, GameProfile> insecureProfiles;
-    private final HashMap<String, MinecraftTexturesPayload> cache = new HashMap();
+    private final HashMap<String, Map<Type, MinecraftProfileTexture>> cache = new HashMap();
 
     protected YggdrasilMinecraftSessionService(YggdrasilAuthenticationService authenticationService) {
         super(authenticationService);
@@ -122,7 +122,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     public Map<Type, MinecraftProfileTexture> fetchCustomTextures(GameProfile profile){
         if (cache.containsKey(profile.getName())){
             System.out.println("Serving cached textures for: " + profile.getName() + " / " + profile.getId());
-            return cache.get(profile.getName()).getTextures();
+            return cache.get(profile.getName());
         } else {
             try {
                 System.out.println("Serving textures for: " + profile.getName() + " / " + profile.getId());
@@ -144,8 +144,37 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                                     if (property.getString("name").equals("textures") && !property.getString("value").isEmpty()){
                                         String textures = new String(Base64.decodeBase64(property.getString("value")), Charsets.UTF_8);
                                         MinecraftTexturesPayload result = this.gson.fromJson(textures, MinecraftTexturesPayload.class);
-                                        cache.put(profile.getName(), result);
+                                        cache.put(profile.getName(), result.getTextures());
+                                        System.out.println("Found textures for " + profile.getName() + " on Krothium server.");
                                         return result.getTextures();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("No textures found on Krothium for " + profile.getName() + ". Searching in Mojang server...");
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/json");
+                    response = Utils.sendPost(Constants.GET_PROFILESID_MOJANG, data, params);
+                    rdata = new JSONArray(response);
+                    if (rdata.length() == 1){
+                        JSONObject user = rdata.getJSONObject(0);
+                        if (user.has("id")){
+                            String profileID = user.getString("id");
+                            JSONObject profileData = new JSONObject(Utils.readURL(new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + profileID)));
+                            if (profileData.has("properties")){
+                                JSONArray properties = profileData.getJSONArray("properties");
+                                if (properties.length() == 1){
+                                    JSONObject property = properties.getJSONObject(0);
+                                    if (property.has("name") && property.has("value")){
+                                        if (property.getString("name").equals("textures") && !property.getString("value").isEmpty()){
+                                            String textures = new String(Base64.decodeBase64(property.getString("value")), Charsets.UTF_8);
+                                            MinecraftTexturesPayload result = this.gson.fromJson(textures, MinecraftTexturesPayload.class);
+                                            cache.put(profile.getName(), result.getTextures());
+                                            System.out.println("Found textures for " + profile.getName() + " on Mojang server.");
+                                            return result.getTextures();
+                                        }
                                     }
                                 }
                             }
@@ -156,6 +185,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                 LOGGER.error("Failed to fetch data from profile " + profile.getId() + " with name " + profile.getName());
             }
         }
+        System.out.println("No textures found for " + profile.getName());
         return new HashMap();
     }
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) {
