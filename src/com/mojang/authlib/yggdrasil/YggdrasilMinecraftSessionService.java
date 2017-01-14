@@ -44,6 +44,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     private static final URL CHECK_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/hasJoined");
     private final Gson gson = (new GsonBuilder()).registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private final LoadingCache<GameProfile, GameProfile> insecureProfiles;
+    private final HashMap<String, MinecraftTexturesPayload> cache = new HashMap();
 
     protected YggdrasilMinecraftSessionService(YggdrasilAuthenticationService authenticationService) {
         super(authenticationService);
@@ -98,8 +99,33 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     public Map<Type, MinecraftProfileTexture> getTextures(GameProfile profile, boolean requireSecure) {
         Property textureProperty = (Property)Iterables.getFirst(profile.getProperties().get("textures"), (Object)null);
         if(textureProperty == null) {
+            return this.fetchCustomTextures(profile);
+        } else {
+            MinecraftTexturesPayload result;
             try {
-                System.out.println("Serving skin for: " + profile.getName());
+                if (textureProperty.getValue().isEmpty()){
+                    return this.fetchCustomTextures(profile);
+                }
+                String e = new String(Base64.decodeBase64(textureProperty.getValue()), Charsets.UTF_8);
+                result = this.gson.fromJson(e, MinecraftTexturesPayload.class);
+            } catch (JsonParseException var7) {
+                LOGGER.error("Could not decode textures payload", var7);
+                return new HashMap();
+            }
+            if(result.getTextures() == null) {
+                return this.fetchCustomTextures(profile);
+            } else {
+                return result.getTextures();
+            }
+        }
+    }
+    public Map<Type, MinecraftProfileTexture> fetchCustomTextures(GameProfile profile){
+        if (cache.containsKey(profile.getName())){
+            System.out.println("Serving cached textures for: " + profile.getName() + " / " + profile.getId());
+            return cache.get(profile.getName()).getTextures();
+        } else {
+            try {
+                System.out.println("Serving textures for: " + profile.getName() + " / " + profile.getId());
                 JSONArray users = new JSONArray();
                 users.put(profile.getName());
                 byte[] data = users.toString().getBytes();
@@ -118,6 +144,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                                     if (property.getString("name").equals("textures") && !property.getString("value").isEmpty()){
                                         String textures = new String(Base64.decodeBase64(property.getString("value")), Charsets.UTF_8);
                                         MinecraftTexturesPayload result = this.gson.fromJson(textures, MinecraftTexturesPayload.class);
+                                        cache.put(profile.getName(), result);
                                         return result.getTextures();
                                     }
                                 }
@@ -128,25 +155,9 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
             } catch (Exception ex){
                 LOGGER.error("Failed to fetch data from profile " + profile.getId() + " with name " + profile.getName());
             }
-            return new HashMap();
-        } else {
-            MinecraftTexturesPayload result;
-            try {
-                String e = new String(Base64.decodeBase64(textureProperty.getValue()), Charsets.UTF_8);
-                result = this.gson.fromJson(e, MinecraftTexturesPayload.class);
-            } catch (JsonParseException var7) {
-                LOGGER.error("Could not decode textures payload", var7);
-                return new HashMap();
-            }
-
-            if(result.getTextures() == null) {
-                return new HashMap();
-            } else {
-                return result.getTextures();
-            }
         }
+        return new HashMap();
     }
-
     public GameProfile fillProfileProperties(GameProfile profile, boolean requireSecure) {
         return profile.getId() == null?profile:(!requireSecure?this.insecureProfiles.getUnchecked(profile):this.fillGameProfile(profile, true));
     }
