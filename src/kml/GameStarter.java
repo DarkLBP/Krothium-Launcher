@@ -21,6 +21,7 @@ class GameStarter {
         Utils.testNetwork();
         if (!Constants.USE_LOCAL){
             URL.setURLStreamHandlerFactory(new URLHandler());
+            System.out.println("Loaded URL Handler.");
         }
         if (args.length == 0){
             System.exit(-1);
