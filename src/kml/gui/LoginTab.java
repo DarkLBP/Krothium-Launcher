@@ -35,16 +35,6 @@ public class LoginTab {
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
         this.username.setBorder(border);
         this.password.setBorder(border);
-        FocusAdapter focusButton = new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                ((JButton)e.getComponent()).setIcon(button_hover);
-            }
-            @Override
-            public void focusLost(FocusEvent e) {
-                ((JButton)e.getComponent()).setIcon(button_normal);
-            }
-        };
         button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
         button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(220, 40, Image.SCALE_SMOOTH));
         login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -71,7 +61,6 @@ public class LoginTab {
                 register.setForeground(Color.WHITE);
             }
         });
-        register.addFocusListener(focusButton);
         register.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {

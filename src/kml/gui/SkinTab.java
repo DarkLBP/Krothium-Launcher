@@ -42,7 +42,7 @@ public class SkinTab {
         deleteCapeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                params.clear();
+                deleteCapeButton.setForeground(Color.YELLOW);
                 int response = JOptionPane.showConfirmDialog(null, Language.get(36), Language.get(37), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
@@ -64,12 +64,12 @@ public class SkinTab {
                         console.printError(ex.getMessage());
                         JOptionPane.showMessageDialog(null, Language.get(38) + "\n" + ex.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     }
+                    params.clear();
                 }
             }
             @Override
             public void mouseEntered(MouseEvent e) {
                 deleteCapeButton.setIcon(button_hover);
-                deleteCapeButton.setForeground(Color.YELLOW);
             }
             @Override
             public void mouseExited(MouseEvent e) {
@@ -80,6 +80,7 @@ public class SkinTab {
         deleteSkinButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                deleteSkinButton.setForeground(Color.YELLOW);
                 int response = JOptionPane.showConfirmDialog(null, Language.get(31), Language.get(32), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
@@ -107,7 +108,6 @@ public class SkinTab {
             @Override
             public void mouseEntered(MouseEvent e) {
                 deleteSkinButton.setIcon(button_hover);
-                deleteSkinButton.setForeground(Color.YELLOW);
             }
             @Override
             public void mouseExited(MouseEvent e) {
@@ -131,7 +131,6 @@ public class SkinTab {
             @Override
             public void mouseEntered(MouseEvent e) {
                 changeSkinButton.setIcon(button_hover);
-                changeSkinButton.setForeground(Color.YELLOW);
             }
             @Override
             public void mouseExited(MouseEvent e) {
@@ -140,6 +139,7 @@ public class SkinTab {
             }
             @Override
             public void mousePressed(MouseEvent e) {
+                changeSkinButton.setForeground(Color.YELLOW);
                 int response = fc.showOpenDialog(kernel.getGUI());
                 if (response == JFileChooser.APPROVE_OPTION){
                     try {
@@ -176,7 +176,6 @@ public class SkinTab {
             @Override
             public void mouseEntered(MouseEvent e) {
                 changeCapeButton.setIcon(button_hover);
-                changeCapeButton.setForeground(Color.YELLOW);
             }
             @Override
             public void mouseExited(MouseEvent e) {
@@ -185,6 +184,7 @@ public class SkinTab {
             }
             @Override
             public void mousePressed(MouseEvent e) {
+                changeCapeButton.setForeground(Color.YELLOW);
                 int response = fc.showOpenDialog(kernel.getGUI());
                 if (response == JFileChooser.APPROVE_OPTION){
                     try {

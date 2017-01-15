@@ -154,10 +154,8 @@ public class ProfileEditor{
                 if (response == JOptionPane.YES_OPTION){
                     kernel.getGUI().setSelected(kernel.getGUI().options);
                 }
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
                 cancelButton.setForeground(Color.WHITE);
+                cancelButton.setIcon(button_normal);
             }
         });
         saveButton.addMouseListener(new MouseAdapter() {
@@ -174,10 +172,8 @@ public class ProfileEditor{
             public void mousePressed(MouseEvent e) {
                 saveButton.setForeground(Color.YELLOW);
                 saveProfile();
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
                 saveButton.setForeground(Color.WHITE);
+                saveButton.setIcon(button_normal);
             }
         });
         deleteButton.addMouseListener(new MouseAdapter() {
@@ -198,10 +194,8 @@ public class ProfileEditor{
                     kernel.getProfiles().deleteProfile(profile.getID());
                     kernel.getGUI().setSelected(kernel.getGUI().options);
                 }
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
                 deleteButton.setForeground(Color.RED);
+                deleteButton.setIcon(button_normal);
             }
         });
     }
