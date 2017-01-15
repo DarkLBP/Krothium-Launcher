@@ -101,12 +101,15 @@ public class StubLauncher {
                                 }
                             }
                             public boolean isStarted(){
-                                try {
-                                    process.exitValue();
-                                    return true;
-                                } catch (Exception ex){
-                                    return false;
+                                if (process != null){
+                                    try {
+                                        process.exitValue();
+                                        return false;
+                                    } catch (Exception ex){
+                                        return true;
+                                    }
                                 }
+                                return false;
                             }
                         };
                         log_info.start();
@@ -127,12 +130,15 @@ public class StubLauncher {
                                 }
                             }
                             public boolean isStarted(){
-                                try {
-                                    process.exitValue();
-                                    return true;
-                                } catch (Exception ex){
-                                    return false;
+                                if (process != null){
+                                    try {
+                                        process.exitValue();
+                                        return false;
+                                    } catch (Exception ex){
+                                        return true;
+                                    }
                                 }
+                                return false;
                             }
                         };
                         log_error.start();
