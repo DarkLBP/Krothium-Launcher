@@ -101,7 +101,12 @@ public class StubLauncher {
                                 }
                             }
                             public boolean isStarted(){
-                                return process.isAlive();
+                                try {
+                                    process.exitValue();
+                                    return true;
+                                } catch (Exception ex){
+                                    return false;
+                                }
                             }
                         };
                         log_info.start();
@@ -122,7 +127,12 @@ public class StubLauncher {
                                 }
                             }
                             public boolean isStarted(){
-                                return process.isAlive();
+                                try {
+                                    process.exitValue();
+                                    return true;
+                                } catch (Exception ex){
+                                    return false;
+                                }
                             }
                         };
                         log_error.start();

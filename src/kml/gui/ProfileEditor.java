@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
 
@@ -219,7 +219,7 @@ public class ProfileEditor{
     public boolean setProfile(String p){
         if (p == null){
             this.profile = new Profile(ProfileType.CUSTOM);
-            this.profile.setCreated(Instant.EPOCH);
+            this.profile.setCreated(new Timestamp(0));
             this.profile.setName(Language.get(51));
             return true;
         } else {

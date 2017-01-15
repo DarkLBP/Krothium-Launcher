@@ -343,11 +343,15 @@ public class GameLauncher {
         }
     }
     public boolean isStarted(){
-        if (this.process != null){
-            return this.process.isAlive();
-        } else {
-            return false;
+        if (process != null){
+            try {
+                process.exitValue();
+                return false;
+            } catch (Exception ex){
+                return true;
+            }
         }
+        return false;
     }
     private boolean hasError(){
         boolean current = this.error;

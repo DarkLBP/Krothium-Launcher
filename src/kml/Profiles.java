@@ -5,7 +5,7 @@ import kml.objects.Profile;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -88,7 +88,7 @@ public class Profiles {
         console.printInfo("Fetching profiles.");
         File launcherProfiles = kernel.getConfigFile();
         String latestUsedID = null;
-        long latestUsedMillis = 0;
+        Timestamp latestUsedMillis = new Timestamp(0);
         if (launcherProfiles.exists()){
             try{
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
@@ -147,8 +147,8 @@ public class Profiles {
                     }
                     if (!this.existsProfile(p)){
                         this.addProfile(p);
-                        if (p.getLastUsed().toEpochMilli() > latestUsedMillis){
-                            latestUsedMillis = p.getLastUsed().toEpochMilli();
+                        if (p.getLastUsed().compareTo(latestUsedMillis) > 0){
+                            latestUsedMillis = p.getLastUsed();
                             latestUsedID = p.getID();
                         }
                     }
@@ -179,7 +179,7 @@ public class Profiles {
     public String getSelectedProfile(){return this.selected;}
     public boolean setSelectedProfile(String p){
         if (this.existsProfile(p)){
-            this.getProfile(p).setLastUsed(Instant.now());
+            this.getProfile(p).setLastUsed(new Timestamp(System.currentTimeMillis()));
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;
@@ -235,9 +235,9 @@ public class Profiles {
                     prof.put("type", "custom");
             }
             if (p.hasCreated()) {
-                prof.put("created", p.getCreated().toString());
+                prof.put("created", p.getCreated().toString().replace(" ", "T") + "Z");
             }
-            prof.put("lastUsed", p.getLastUsed().toString());
+            prof.put("lastUsed", p.getLastUsed().toString().replace(" ", "T") + "Z");
             if (p.hasGameDir()) {
                 prof.put("gameDir", p.getGameDir().toString());
             }

@@ -5,8 +5,7 @@ import kml.enums.ProfileType;
 
 import javax.swing.*;
 import java.io.File;
-import java.time.Instant;
-import java.time.format.DateTimeParseException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,15 +23,15 @@ public class Profile {
     private File gameDir = null;
     private File javaDir = null;
     private String javaArgs = null;
-    private Instant created = null;
-    private Instant lastUsed = null;
+    private Timestamp created = null;
+    private Timestamp lastUsed = null;
     private Map<String, Integer> resolution = new HashMap<>();
     private JLabel listItem;
     
     public Profile(ProfileType type){
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
-        this.lastUsed = Instant.EPOCH;
+        this.lastUsed = new Timestamp(0);
     }
     public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution){
         if (id == null){
@@ -58,12 +57,12 @@ public class Profile {
         this.javaArgs = javaArgs;
         this.resolution = resolution;
         if (lastUsed == null) {
-            this.lastUsed = Instant.EPOCH;
+            this.lastUsed = new Timestamp(0);
         } else {
             try {
-                this.lastUsed = Instant.parse(lastUsed);
-            } catch (DateTimeParseException ex){
-                this.lastUsed = Instant.EPOCH;
+                this.lastUsed = Timestamp.valueOf(lastUsed.replace("T", " ").replace("Z", ""));
+            } catch (Exception ex){
+                this.lastUsed = new Timestamp(0);
             }
         }
         if (type == null) {
@@ -84,12 +83,12 @@ public class Profile {
 
         if (this.type == ProfileType.CUSTOM) {
             if (created == null) {
-                this.created = Instant.EPOCH;
+                this.created = new Timestamp(0);
             } else {
                 try {
-                    this.created = Instant.parse(created);
-                } catch (DateTimeParseException ex){
-                    this.created = Instant.EPOCH;
+                    this.created = Timestamp.valueOf(created.replace("T", " ").replace("Z", ""));
+                } catch (Exception ex){
+                    this.created = new Timestamp(0);
                 }
             }
         }
@@ -112,11 +111,11 @@ public class Profile {
     public boolean hasJavaDir(){return this.javaDir != null;}
     public String getJavaArgs(){return this.javaArgs;}
     public boolean hasJavaArgs(){return this.javaArgs != null;}
-    public Instant getLastUsed(){return lastUsed;}
-    public void setLastUsed(Instant used){this.lastUsed = used;}
+    public Timestamp getLastUsed(){return lastUsed;}
+    public void setLastUsed(Timestamp used){this.lastUsed = used;}
     public boolean hasCreated(){return this.created != null;}
-    public Instant getCreated(){return this.created;}
-    public void setCreated(Instant created){this.created = created;}
+    public Timestamp getCreated(){return this.created;}
+    public void setCreated(Timestamp created){this.created = created;}
     public boolean hasResolution(){
         if (this.resolution != null){
             return (this.resolution.size() == 2);

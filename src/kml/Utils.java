@@ -3,10 +3,10 @@ package kml;
 import kml.enums.OS;
 import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
-
 import javax.imageio.ImageIO;
 import javax.net.ssl.*;
 import javax.swing.*;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,9 +16,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -281,7 +279,7 @@ public class Utils {
         }
         String conversion;
         try{
-            conversion = new String(Base64.getDecoder().decode(st), StandardCharsets.UTF_8);
+            conversion = new String(DatatypeConverter.parseBase64Binary(st), StandardCharsets.UTF_8);
         } catch (Exception ex) {
             conversion = null;
         }

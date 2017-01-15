@@ -30,13 +30,13 @@ public class Browser{
     private final Object lock = new Object();
     private WebView browser;
     private WebEngine webEngine;
-    private final Group root = new Group();
-    private final Scene scene = new Scene(root);
     public Browser() {
         Platform.setImplicitExit(false);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                Group root = new Group();
+                Scene scene = new Scene(root);
                 panel.setScene(scene);
                 synchronized (Browser.this.lock) {
                     browser = new WebView();
@@ -82,7 +82,7 @@ public class Browser{
                             }
                         }
                     });
-                    webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
+                    //webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
                     webEngine.load("http://mc.krothium.com/news/");
                 }
                 root.getChildren().add(browser);
