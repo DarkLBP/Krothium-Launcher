@@ -354,12 +354,16 @@ public class Main extends JFrame{
                         if (kernel.getProfiles().getSelectedProfile() != null){
                             Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
                             if (p.hasVersion()){
-                                if (p.getVersionID().equals("latest-release")){
-                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
-                                } else if (p.getVersionID().equals("latest-snapshot")){
-                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
-                                } else {
-                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                                switch (p.getVersionID()) {
+                                    case "latest-release":
+                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                                        break;
+                                    case "latest-snapshot":
+                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                                        break;
+                                    default:
+                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                                        break;
                                 }
                             } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
                                 playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
