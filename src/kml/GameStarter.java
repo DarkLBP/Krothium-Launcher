@@ -2,9 +2,6 @@ package kml;
 
 import kml.handlers.URLHandler;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLHandshakeException;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 

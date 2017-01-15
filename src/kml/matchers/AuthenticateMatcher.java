@@ -1,7 +1,6 @@
 package kml.matchers;
 
 import kml.Constants;
-import kml.Utils;
 
 import java.io.IOException;
 import java.net.URL;

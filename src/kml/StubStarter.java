@@ -2,7 +2,6 @@ package kml;
 
 import kml.handlers.URLHandler;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.lang.reflect.Method;
 import java.net.URL;
 

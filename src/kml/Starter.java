@@ -3,13 +3,10 @@ package kml;
 import kml.exceptions.AuthenticationException;
 import kml.gui.Main;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLHandshakeException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.Properties;
-import java.util.UUID;
 
 /**
  * @author DarkLBP

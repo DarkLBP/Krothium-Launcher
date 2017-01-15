@@ -3,6 +3,7 @@ package kml;
 import kml.enums.OS;
 import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
+
 import javax.imageio.ImageIO;
 import javax.net.ssl.*;
 import javax.swing.*;
