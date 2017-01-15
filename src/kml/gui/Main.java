@@ -345,25 +345,31 @@ public class Main extends JFrame{
                         progress.setVisible(false);
                         profileButton.setEnabled(false);
                     } else {
+                        String buttonMain;
+                        if (Constants.USE_LOCAL){
+                            buttonMain = Language.get(79);
+                        } else {
+                            buttonMain = Language.get(12);
+                        }
                         if (kernel.getProfiles().getSelectedProfile() != null){
                             Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
                             if (p.hasVersion()){
                                 if (p.getVersionID().equals("latest-release")){
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
                                 } else if (p.getVersionID().equals("latest-snapshot")){
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
                                 } else {
-                                    playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
                                 }
                             } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
-                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                                playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
                             } else if (p.getType() == ProfileType.SNAPSHOT && kernel.getVersions().getLatestSnapshot() != null){
-                                playButton.setText("<html><center>" + Language.get(12) + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                                playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
                             } else {
-                                playButton.setText(Language.get(12));
+                                playButton.setText(buttonMain);
                             }
                         } else {
-                            playButton.setText(Language.get(12));
+                            playButton.setText(buttonMain);
                         }
                         progress.setVisible(false);
                         profileButton.setEnabled(true);

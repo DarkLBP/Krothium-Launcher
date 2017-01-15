@@ -76,3 +76,4 @@ Estas versões antigas e podem ser instáveis. Quaisquer bugs, crashes, opções
 Isto habilita as configurações avançadas de Java quando você adicionar uma nova opção de inicialização.
 Alterando estes pode causar o jogo a mau funcionar.
 Informação
+JOGAR OFFLINE

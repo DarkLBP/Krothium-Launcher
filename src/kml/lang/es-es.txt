@@ -76,3 +76,4 @@ Es muy recomendable ejecutar estas versiones en directorios separados para evita
 Esto te permite modificar ajustes avanzados de Java cuando añadas una nueva opción de lanzamiento.
 Estos cambios podrían causar un mal funcionamiento del juego.
 Información
+JUGAR SIN LÍNEA

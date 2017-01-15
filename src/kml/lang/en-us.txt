@@ -76,3 +76,4 @@ It is strongly recommended you run these versions in separate directories to avo
 This enables changing advanced Java settings when you add a new launch option.
 Changing these may cause the game to malfunction.
 Information
+PLAY OFFLINE

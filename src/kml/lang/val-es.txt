@@ -76,3 +76,4 @@ Es molt recomanable executar estes versions en directoris separats per evitar qu
 Això et permet modificar ajustos avançats de Java quan afegisques una nova opció de llançament.
 Aquestos canvis podrien causar un mal funcionament del joc.
 Informació
+JUGAR SENSE LÍNEA
