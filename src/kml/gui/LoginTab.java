@@ -50,22 +50,16 @@ public class LoginTab {
             public void mousePressed(MouseEvent e) {
                 login.setForeground(Color.YELLOW);
                 authenticate();
+                login.setForeground(Color.WHITE);
+                login.setIcon(button_normal);
             }
             @Override
             public void mouseExited(MouseEvent e) {
                 login.setIcon(button_normal);
                 login.setForeground(Color.WHITE);
             }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                register.setForeground(Color.WHITE);
-            }
         });
         register.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                register.setForeground(Color.WHITE);
-            }
             @Override
             public void mousePressed(MouseEvent e) {
                 register.setForeground(Color.YELLOW);
