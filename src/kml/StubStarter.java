@@ -17,7 +17,6 @@ class StubStarter {
             System.err.println("Failed load custom HTTPS certificate checker.");
         }
         Utils.testNetwork();
-        System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
         URL.setURLStreamHandlerFactory(new URLHandler());
         try{
             if (args.length > 0){

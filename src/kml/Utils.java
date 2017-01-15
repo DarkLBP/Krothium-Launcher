@@ -52,9 +52,7 @@ public class Utils {
         try {
             HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
             int responseCode = con.getResponseCode();
-            Constants.USE_HTTPS = (responseCode == 204);
-        } catch (SSLHandshakeException ex) {
-            Constants.USE_HTTPS = false;
+            Constants.USE_LOCAL = (responseCode == 204);
         } catch (IOException ex){
             Constants.USE_LOCAL = true;
         }

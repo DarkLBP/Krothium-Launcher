@@ -30,7 +30,6 @@ class Starter {
                 console.includeTimestamps(true);
                 console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
                 Utils.testNetwork();
-                console.printInfo("Using HTTPS when available? | " + Constants.USE_HTTPS);
                 Authentication a = kernel.getAuthentication();
                 if (a.hasSelectedUser()){
                     try{

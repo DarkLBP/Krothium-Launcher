@@ -19,7 +19,6 @@ class GameStarter {
             System.err.println("Failed load custom HTTPS certificate checker.");
         }
         Utils.testNetwork();
-        System.out.println("Using HTTPS when available? | " + Constants.USE_HTTPS);
         if (!Constants.USE_LOCAL){
             URL.setURLStreamHandlerFactory(new URLHandler());
         }

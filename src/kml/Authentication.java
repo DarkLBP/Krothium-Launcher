@@ -82,11 +82,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         try {
-            URL url = Constants.AUTHENTICATE_URL;
-            if (!Constants.USE_HTTPS){
-                url = Utils.stringToURL(url.toString().replace("https", "http"));
-            }
-            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
             throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
         }
@@ -134,11 +130,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         try {
-            URL url = Constants.REFRESH_URL;
-            if (!Constants.USE_HTTPS){
-                url = Utils.stringToURL(url.toString().replace("https", "http"));
-            }
-            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(Constants.REFRESH_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
@@ -183,11 +175,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         try {
-            URL url = Constants.VALIDATE_URL;
-            if (!Constants.USE_HTTPS){
-                url = Utils.stringToURL(url.toString().replace("https", "http"));
-            }
-            response = Utils.sendPost(url, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;

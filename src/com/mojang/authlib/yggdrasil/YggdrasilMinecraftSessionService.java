@@ -21,6 +21,8 @@ import com.mojang.authlib.yggdrasil.response.MinecraftProfilePropertiesResponse;
 import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
 import com.mojang.authlib.yggdrasil.response.Response;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +41,9 @@ import org.json.JSONObject;
 
 public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionService {
 
+    private static final String[] WHITELISTED_DOMAINS = { ".minecraft.net", ".mojang.com" , ".krothium.com"};
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String BASE_URL = "https://sessionserver.mojang.com/session/minecraft/";
     private static final URL JOIN_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/join");
     private static final URL CHECK_URL = HttpAuthenticationService.constantURL("https://sessionserver.mojang.com/session/minecraft/hasJoined");
     private final Gson gson = (new GsonBuilder()).registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
@@ -135,7 +139,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                     JSONObject user = rdata.getJSONObject(0);
                     if (user.has("id")){
                         String profileID = user.getString("id");
-                        JSONObject profileData = new JSONObject(Utils.readURL(new URL("http://mc.krothium.com/profiles/" + profileID)));
+                        JSONObject profileData = new JSONObject(Utils.readURL(new URL("https://mc.krothium.com/profiles/" + profileID)));
                         if (profileData.has("properties")){
                             JSONArray properties = profileData.getJSONArray("properties");
                             if (properties.length() == 1){
@@ -215,5 +219,20 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
 
     public YggdrasilAuthenticationService getAuthenticationService() {
         return (YggdrasilAuthenticationService)super.getAuthenticationService();
+    }
+    private static boolean isWhitelistedDomain(String url) {
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException ignored) {
+            throw new IllegalArgumentException("Invalid URL '" + url + "'");
+        }
+        String domain = uri.getHost();
+        for (int i = 0; i < WHITELISTED_DOMAINS.length; i++) {
+            if (domain.endsWith(WHITELISTED_DOMAINS[i])) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -95,9 +95,6 @@ public final class Kernel {
     public String checkForUpdates(){
         try{
             URL url = Constants.GETLATEST_URL;
-            if (!Constants.USE_HTTPS){
-                url = Utils.stringToURL(url.toString().replace("https", "http"));
-            }
             String r = Utils.sendPost(url, new byte[0], new HashMap<String, String>());
             String[] data = r.split(":");
             int version = Integer.parseInt(Utils.fromBase64(data[0]));

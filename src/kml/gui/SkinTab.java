@@ -49,11 +49,7 @@ public class SkinTab {
                     params.put("Client-Token", kernel.getAuthentication().getClientToken());
                     params.put("Content-Length", "0");
                     try{
-                        URL url = Constants.CHANGECAPE_URL;
-                        if (!Constants.USE_HTTPS){
-                            url = Utils.stringToURL(url.toString().replace("https", "http"));
-                        }
-                        String r = Utils.sendPost(url, new byte[0], params);
+                        String r = Utils.sendPost(Constants.CHANGECAPE_URL, new byte[0], params);
                         if (!r.equals("OK")){
                             console.printError("Failed to delete the cape.");
                             console.printError(r);
@@ -90,11 +86,7 @@ public class SkinTab {
                     params.put("Client-Token", kernel.getAuthentication().getClientToken());
                     params.put("Content-Length", "0");
                     try{
-                        URL url = Constants.CHANGESKIN_URL;
-                        if (!Constants.USE_HTTPS){
-                            url = Utils.stringToURL(url.toString().replace("https", "http"));
-                        }
-                        String r = Utils.sendPost(url, new byte[0], params);
+                        String r = Utils.sendPost(Constants.CHANGESKIN_URL, new byte[0], params);
                         if (!r.equals("OK")){
                             console.printError("Failed to delete the skin.");
                             console.printError(r);
@@ -161,11 +153,7 @@ public class SkinTab {
                         }
                         params.put("Content-Type", "image/png");
                         params.put("Content-Length", String.valueOf(data.length));
-                        URL url = Constants.CHANGESKIN_URL;
-                        if (!Constants.USE_HTTPS){
-                            url = Utils.stringToURL(url.toString().replace("https", "http"));
-                        }
-                        String r = Utils.sendPost(url, data, params);
+                        String r = Utils.sendPost(Constants.CHANGESKIN_URL, data, params);
                         if (!r.equals("OK")){
                             console.printError("Failed to change the skin.");
                             console.printError(r);
@@ -205,11 +193,7 @@ public class SkinTab {
                         params.put("Client-Token", kernel.getAuthentication().getClientToken());
                         params.put("Content-Type", "image/png");
                         params.put("Content-Length", String.valueOf(data.length));
-                        URL url = Constants.CHANGECAPE_URL;
-                        if (!Constants.USE_HTTPS){
-                            url = Utils.stringToURL(url.toString().replace("https", "http"));
-                        }
-                        String r = Utils.sendPost(url, data, params);
+                        String r = Utils.sendPost(Constants.CHANGECAPE_URL, data, params);
                         if (!r.equals("OK")){
                             console.printError("Failed to change the cape.");
                             console.printError(r);

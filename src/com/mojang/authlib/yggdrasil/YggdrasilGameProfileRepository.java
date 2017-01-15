@@ -48,7 +48,7 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
         }
 
         byte var211 = 0;
-        Iterator var221 = Iterables.partition(criteria, 2).iterator();
+        Iterator var221 = Iterables.partition(criteria, ENTRIES_PER_PAGE).iterator();
 
         while(var221.hasNext()) {
             List var21 = (List)var221.next();
@@ -72,7 +72,7 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
                         callback.onProfileLookupSucceeded(var27);
                     }
 
-                    Iterator var261 = Iterables.partition(var23, 2).iterator();
+                    Iterator var261 = Iterables.partition(var23, ENTRIES_PER_PAGE).iterator();
                     while(var261.hasNext()) {
                         List var30 = (List)var261.next();
                         var18 = (ProfileSearchResultsResponse)this.authenticationService.makeRequest(Constants.GET_PROFILESID_MOJANG, var30, ProfileSearchResultsResponse.class);
@@ -110,7 +110,7 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
                 } catch (AuthenticationException var201) {
                     AuthenticationException e = var201;
                     ++var22;
-                    if(var22 == 3) {
+                    if(var22 == MAX_FAIL_COUNT) {
                         Iterator ignored = var21.iterator();
 
                         while(ignored.hasNext()) {

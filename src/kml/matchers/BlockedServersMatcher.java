@@ -25,12 +25,7 @@ public class BlockedServersMatcher implements URLMatcher{
     @Override
     public URLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(blockURL)){
-            URL remoteURL;
-            if (Constants.USE_HTTPS){
-                remoteURL = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
-            } else {
-                remoteURL = Utils.stringToURL("http://mc.krothium.com/server/blockedservers");
-            }
+            URL remoteURL = Constants.BLOCKED_SERVERS;
             try{
                 return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {

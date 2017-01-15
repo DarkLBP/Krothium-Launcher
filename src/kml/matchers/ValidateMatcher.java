@@ -25,12 +25,7 @@ public class ValidateMatcher implements URLMatcher{
     @Override
     public URLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(validateURL)){
-            URL remoteURL;
-            if (Constants.USE_HTTPS){
-                remoteURL = Utils.stringToURL("https://mc.krothium.com/validate");
-            } else {
-                remoteURL = Utils.stringToURL("http://mc.krothium.com/validate");
-            }
+            URL remoteURL = Constants.VALIDATE_URL;
             try{
                 return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {

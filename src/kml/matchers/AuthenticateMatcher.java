@@ -25,12 +25,7 @@ public class AuthenticateMatcher implements URLMatcher{
     @Override
     public URLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(authenticateURL)){
-            URL remoteURL;
-            if (Constants.USE_HTTPS){
-                remoteURL = Utils.stringToURL("https://mc.krothium.com/authenticate");
-            } else {
-                remoteURL = Utils.stringToURL("http://mc.krothium.com/authenticate");
-            }
+            URL remoteURL = Constants.AUTHENTICATE_URL;
             try{
                 return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {

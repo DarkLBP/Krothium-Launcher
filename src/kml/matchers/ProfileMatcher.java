@@ -34,12 +34,7 @@ public class ProfileMatcher implements URLMatcher{
         Matcher m = profileRegex.matcher(this.url.getPath());
         if (m.matches()){
             String profileID = m.group(1);
-            URL remoteURL;
-            if (Constants.USE_HTTPS){
-                remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
-            } else {
-                remoteURL = Utils.stringToURL("http://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
-            }
+            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
             try{
                 return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {

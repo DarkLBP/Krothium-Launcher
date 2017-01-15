@@ -25,12 +25,7 @@ public class RefreshMatcher implements URLMatcher{
     @Override
     public URLConnection handle(){
         if (this.url.toString().equalsIgnoreCase(refreshURL)){
-            URL remoteURL;
-            if (Constants.USE_HTTPS){
-                remoteURL = Utils.stringToURL("https://mc.krothium.com/refresh");
-            } else {
-                remoteURL = Utils.stringToURL("http://mc.krothium.com/refresh");
-            }
+            URL remoteURL = Constants.REFRESH_URL;
             try{
                 return remoteURL != null ? remoteURL.openConnection() : null;
             } catch (IOException ex) {
