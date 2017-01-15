@@ -32,7 +32,6 @@ public class Versions {
     private void add(String name, VersionMeta m){
         if (!versions.containsKey(name)){
             versions.put(name, m);
-            console.printInfo("Version " + name + " loaded.");
         }
     }
     public Version getVersion(String id){

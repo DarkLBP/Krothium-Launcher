@@ -116,7 +116,6 @@ public class Downloader {
                         Downloadable d = new Downloadable(downloadURL, size, relPath, hash);
                         urls.add(d);
                     }else{
-                        console.printInfo("Asset file " + object + " found locally and it is valid.");
                         validated += size;
                     }
                 }
@@ -163,7 +162,6 @@ public class Downloader {
                 if (!localValid){
                     urls.add(d);
                 }else{
-                    console.printInfo("Version file " + destPath.getName() + " found locally and it is valid.");
                     validated += jarSize;
                 }
             } else {

@@ -127,7 +127,7 @@ public class Utils {
             }
             InputStream in = url.openStream();
             FileOutputStream fo = new FileOutputStream(output);
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[16384];
             int read;
             while ((read = in.read(buffer)) != -1){
                 fo.write(buffer, 0, read);
