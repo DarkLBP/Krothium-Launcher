@@ -82,7 +82,14 @@ public class Browser{
                             }
                         }
                     });
-                    //webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
+                    try {
+                        String javaVer = System.getProperty("java.version");
+                        double ver = Double.parseDouble(javaVer.substring(0,3));
+                        if (ver >= 1.8){
+                            System.out.println("Browser user agent switched.");
+                            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
+                        }
+                    } catch (Exception ex){}
                     webEngine.load("http://mc.krothium.com/news/");
                 }
                 root.getChildren().add(browser);

@@ -3,8 +3,11 @@ package kml;
 import kml.gui.Main;
 import org.json.JSONObject;
 
+import java.beans.IntrospectionException;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -41,6 +44,28 @@ public final class Kernel {
         this.console.printInfo("Java Version: " + System.getProperty("java.version"));
         this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        try {
+            this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
+            this.console.printInfo("JavaFX loaded.");
+        }
+        catch (ClassNotFoundException e) {
+            final File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
+            if (jfxrt.isFile()) {
+                this.console.printInfo("Attempting to load JavaFX manually...");
+                try {
+                    if (addToSystemClassLoader(jfxrt)){
+                        this.console.printInfo("JavaFX loaded manually.");
+                    } else {
+                        this.console.printError("Found JavaFX but it couldn't be loaded!");
+                    }
+                }
+                catch (Throwable e2) {
+                    this.console.printError("Found JavaFX but it couldn't be loaded!");
+                }
+            } else {
+                this.console.printError("JavaFX library not found. Please update Java!");
+            }
+        }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
         this.settings = new Settings(this);
@@ -107,6 +132,21 @@ public final class Kernel {
             return null;
         }
         return null;
+    }
+    public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
+        if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
+            final URLClassLoader classLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+            try {
+                final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                method.setAccessible(true);
+                method.invoke(classLoader, file.toURI().toURL());
+                return true;
+            }
+            catch (Throwable t) {
+                return false;
+            }
+        }
+        return false;
     }
     public Main getGUI(){return this.mainForm;}
 }
