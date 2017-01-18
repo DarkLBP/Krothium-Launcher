@@ -136,7 +136,7 @@ public class Downloader {
                 boolean JSONValid = false;
                 if (jsonFile.exists() && jsonFile.isFile()){
                     try {
-                        if (jsonFile.length() == jsonFile.toURI().toURL().openConnection().getContentLength()){
+                        if (jsonFile.length() == v.getJSONURL().openConnection().getContentLength()){
                             JSONValid = true;
                         }
                     } catch (IOException ex) {
