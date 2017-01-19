@@ -3,6 +3,7 @@ package kml;
 import kml.gui.Main;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.beans.IntrospectionException;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -57,10 +58,14 @@ public final class Kernel {
                         this.console.printInfo("JavaFX loaded manually.");
                     } else {
                         this.console.printError("Found JavaFX but it couldn't be loaded!");
+                        JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
+                        exitSafely();
                     }
                 }
                 catch (Throwable e2) {
                     this.console.printError("Found JavaFX but it couldn't be loaded!");
+                    JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
+                    exitSafely();
                 }
             } else {
                 this.console.printError("JavaFX library not found. Please update Java!");
