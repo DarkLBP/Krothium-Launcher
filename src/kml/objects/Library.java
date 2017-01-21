@@ -145,7 +145,15 @@ public final class Library {
             }
         } else {
             if (this.isCompatible()){
-                if (this.hasURL()){
+                if (this.isNative() && this.natives.containsKey(Utils.getPlatform())){
+                    try{
+                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
+                        Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null);
+                        this.downloads.put("classifier", d);
+                    } catch (MalformedURLException ex) {
+                        console.printError("Invalid " + this.name + " url.");
+                    }
+                } else if (this.hasURL()){
                     try {
                         URL url = new URL(this.url + Utils.getArtifactPath(this.name, "jar"));
                         Downloadable d = new Downloadable(url, -1, this.relativePath, null);
@@ -155,32 +163,14 @@ public final class Library {
                     }
                 } else {
                     try {
-                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
+                        URL url= new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
                         Downloadable d = new Downloadable(url, -1, this.relativePath, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
                     }
                 }
-                if (this.isNative()){
-                    if (this.natives.containsKey(Utils.getPlatform())){
-                        try{
-                            URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
-                            HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                            con.connect();
-                            int responseCode = con.getResponseCode();
-                            int contentLength = con.getContentLength();
-                            if (responseCode == 200){
-                                Downloadable d = new Downloadable(url, contentLength, this.relativePath, null);
-                                this.downloads.put("classifier", d);
-                            }
-                        } catch (MalformedURLException ex) {
-                            console.printError("Invalid " + this.name + " url.");
-                        } catch (IOException ex) {
-                            console.printError("Failed to establish connection in library " + this.name);
-                        }
-                    }
-                }
+
             }
         }
     }

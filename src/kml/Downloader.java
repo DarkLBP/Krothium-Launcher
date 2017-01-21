@@ -195,10 +195,7 @@ public class Downloader {
                     if (completePath.exists()){
                         if (completePath.isFile()){
                             if (a.hasSize()){
-                                if (completePath.length() == a.getSize()){
-                                    valid = true;
-                                }
-                                if (a.hasHash()){
+                                if (a.hasHash() && completePath.length() == a.getSize()){
                                     valid = Utils.verifyChecksum(completePath, a.getHash());
                                 }
                             } else {
@@ -220,11 +217,10 @@ public class Downloader {
                     boolean valid = false;
                     if (completePath.exists()){
                         if (completePath.isFile()){
-                            if (completePath.length() == c.getSize()){
-                                valid = true;
-                            }
-                            if (c.hasHash() && valid){
+                            if (c.hasHash() && completePath.length() == c.getSize()){
                                 valid = Utils.verifyChecksum(completePath, c.getHash());
+                            } else {
+                                valid = true;
                             }
                         }
                     }
