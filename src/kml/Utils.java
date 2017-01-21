@@ -122,17 +122,31 @@ public class Utils {
     }
     public static boolean downloadFile(URL url, File output){
         try{
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            if (output.exists() && output.isFile()) {
-                if (con.getContentLength() == output.length()) {
-                    return true;
+            InputStream in = null;
+            if (url.getProtocol().equalsIgnoreCase("http")){
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                if (output.exists() && output.isFile()) {
+                    if (con.getContentLength() == output.length()) {
+                        return true;
+                    }
                 }
+                in = con.getInputStream();
+            } else if (url.getProtocol().equalsIgnoreCase("https")){
+                HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+                if (output.exists() && output.isFile()) {
+                    if (con.getContentLength() == output.length()) {
+                        return true;
+                    }
+                }
+                in = con.getInputStream();
+            }
+            if (in == null){
+                in = url.openConnection().getInputStream();
             }
             File parent = output.getParentFile();
             if (!parent.exists()){
                 parent.mkdirs();
             }
-            InputStream in = con.getInputStream();
             FileOutputStream fo = new FileOutputStream(output);
             byte[] buffer = new byte[16384];
             int read;
