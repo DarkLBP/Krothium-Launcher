@@ -237,6 +237,8 @@ public class GameLauncher {
                     case "${assets_index_name}":
                         if (ver.hasAssetIndex()){
                             versionArgs[i] = versionArgs[i].replace("${assets_index_name}", assetsID);
+                        } else if (ver.hasAssets()){
+                            versionArgs[i] = versionArgs[i].replace("${assets_index_name}", assetsID);
                         }
                         break;
                     case "${auth_uuid}":

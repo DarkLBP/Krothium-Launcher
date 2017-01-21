@@ -58,17 +58,16 @@ public final class Kernel {
                         this.console.printInfo("JavaFX loaded manually.");
                     } else {
                         this.console.printError("Found JavaFX but it couldn't be loaded!");
-                        JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
-                        exitSafely();
+                        warnJavaFX();
                     }
                 }
                 catch (Throwable e2) {
                     this.console.printError("Found JavaFX but it couldn't be loaded!");
-                    JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
-                    exitSafely();
+                    warnJavaFX();
                 }
             } else {
                 this.console.printError("JavaFX library not found. Please update Java!");
+                warnJavaFX();
             }
         }
         this.profiles = new Profiles(this);
@@ -152,6 +151,10 @@ public final class Kernel {
             }
         }
         return false;
+    }
+    private void warnJavaFX(){
+        JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
+        exitSafely();
     }
     public Main getGUI(){return this.mainForm;}
 }

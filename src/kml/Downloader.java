@@ -53,12 +53,13 @@ public class Downloader {
         this.validated = 0;
         this.total = 0;
         console.printInfo("Fetching asset urls..");
+        File indexJSON = null;
         if (v.hasAssetIndex()){
             AssetIndex index = v.getAssetIndex();
             String assetID = index.getID();
             long assetFileLength = index.getSize();
             boolean localIndex = false;
-            File indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
+            indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
             URL assetsURL = null;
             if (indexJSON.exists() && indexJSON.isFile()){
                 if (indexJSON.length() == assetFileLength){
@@ -69,7 +70,7 @@ public class Downloader {
                         throw new DownloaderException("Invalid asset index json file path.");
                     }
                     localIndex = true;
-                } 
+                }
             }
             assetsURL = (assetsURL == null) ? index.getURL() : assetsURL;
             if (!localIndex){
@@ -81,6 +82,21 @@ public class Downloader {
                     console.printError("Failed to download asset index for version " + assetID);
                 }
             }
+        }  else if (v.hasAssets()){
+            String assetIndex = v.getAssets();
+            URL assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetIndex + ".json");
+            indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetIndex + ".json");
+            int tries = 0;
+            while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)){
+                tries++;
+            }
+            if (tries == Constants.DOWNLOAD_TRIES){
+                console.printError("Failed to download asset index for version " + assetIndex);
+            }
+        } else {
+            console.printInfo("Version " + v.getID() + " does not have any valid assets.");
+        }
+        if (indexJSON != null){
             JSONObject root;
             try {
                 root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
@@ -120,8 +136,6 @@ public class Downloader {
                     }
                 }
             }
-        } else {
-            System.out.println("Version " + v.getID() + " does not have AssetIndex.");
         }
         console.printInfo("Fetching version urls..");
         Downloadable d = v.getClientDownload();
