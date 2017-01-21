@@ -74,7 +74,7 @@ public class Main extends JFrame{
     public Main(Kernel k){
         this.kernel = k;
         this.login = new LoginTab(k);
-        this.browser = new Browser();
+        this.browser = new Browser(k);
         this.setting = new SettingsTab(k);
         this.launchOptions = new LaunchOptionsTab(k);
         this.gameLauncher = kernel.getGameLauncher();

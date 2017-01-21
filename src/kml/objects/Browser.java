@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import kml.Kernel;
 import kml.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +31,7 @@ public class Browser{
     private final Object lock = new Object();
     private WebView browser;
     private WebEngine webEngine;
-    public Browser() {
+    public Browser(final Kernel k) {
         Platform.setImplicitExit(false);
         Platform.runLater(new Runnable() {
             @Override
@@ -86,7 +87,7 @@ public class Browser{
                         String javaVer = System.getProperty("java.version");
                         double ver = Double.parseDouble(javaVer.substring(0,3));
                         if (ver >= 1.8){
-                            System.out.println("Browser user agent switched.");
+                            k.getConsole().printInfo("Browser user agent switched.");
                             webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
                         }
                     } catch (Exception ex){}

@@ -148,7 +148,7 @@ public class Utils {
                 parent.mkdirs();
             }
             FileOutputStream fo = new FileOutputStream(output);
-            byte[] buffer = new byte[16384];
+            byte[] buffer = new byte[8192];
             int read;
             while ((read = in.read(buffer)) != -1){
                 fo.write(buffer, 0, read);
