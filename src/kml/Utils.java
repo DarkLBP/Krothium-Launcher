@@ -160,14 +160,6 @@ public class Utils {
             return false;
         }
     }
-    public static String getExtension(String s){
-        String extension = "";
-        int i = s.lastIndexOf('.');
-        if (i >= 0) {
-            extension = s.substring(i+1);
-        }
-        return extension;
-    }
     public static String readURL(URL url){
         try{
             StringBuilder content = new StringBuilder();
@@ -226,7 +218,6 @@ public class Utils {
         final String[] parts = artifact.split(":", 3);
         return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
     }
-    public static UUID stringToUUID(String s){return UUID.fromString(s.substring(0, 8) + "-" + s.substring(8, 12) + "-" + s.substring(12, 16) + "-" + s.substring(16, 20) + "-" + s.substring(20, s.length()));}
     public static URL stringToURL(String url){
         try{
             return new URL(url);

@@ -17,7 +17,6 @@ import java.util.zip.GZIPOutputStream;
 
 public class Console {
     private boolean enabled = true;
-    private boolean timestamps = false;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private FileOutputStream data;
     private GZIPOutputStream cdata;
@@ -34,13 +33,13 @@ public class Console {
                 for (File f : logFiles){
                     if (f.isFile()){
                         String name = f.getName();
-                        if (name.startsWith("weblauncher-unclosed")){
+                        if (name.startsWith("krothium-unclosed")){
                             if (f.delete()){
                                 System.out.println("Successfully deleted unclosed log file: " + name);
                             } else {
                                 System.out.println("Failed to delete unclosed log file: " + name);
                             }
-                        } else if (name.startsWith("weblauncher")){
+                        } else if (name.startsWith("krothium")){
                             count++;
                         }
                     }
@@ -51,7 +50,7 @@ public class Console {
                         for (File f : logFiles){
                             if (f.isFile()){
                                 String name = f.getName();
-                                if (name.startsWith("weblauncher") && !name.contains("-unclosed-")){
+                                if (name.startsWith("krothium") && !name.contains("-unclosed-")){
                                     if (f.delete()){
                                         System.out.println("Successfully deleted old log file: " + name);
                                     } else {
@@ -66,8 +65,7 @@ public class Console {
             }
         }
         try {
-            Calendar c = Calendar.getInstance();
-            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "weblauncher-unclosed-" + c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + 1 + "-" + c.get(Calendar.DAY_OF_MONTH) + "-" +  System.nanoTime() + ".log.gz");
+            log = new File(kernel.getWorkingDir() + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log.gz");
             if (!log.getParentFile().exists()){
                 log.getParentFile().mkdirs();
             }
@@ -77,41 +75,29 @@ public class Console {
             this.enabled = false;
         }
     }
-    public boolean isEnabled(){return this.enabled;}
-    public void setEnabled(boolean value){
-        if (this.cdata == null || this.data == null){
-            this.enabled = false;
-        } else {
-            this.enabled = value;
-        }
-    }
-    public void includeTimestamps(boolean value){this.timestamps = value;}
     public void printInfo(Object info){
         if (this.enabled){
             date = new Date();
-            Object inf = (timestamps) ? ("[" + dateFormat.format(date) + "] " + info) : info;
-            try {
-                byte[] raw = (inf.toString() + System.lineSeparator()).getBytes();
-                cdata.write(raw);
-            } catch (IOException ignored){
-                System.out.println("Failed to write log data.");
-                this.enabled = false;
-            }
+            Object inf = "[" + dateFormat.format(date) + "] " + info;
+            writeData(inf);
             System.out.println(inf);
         }
     }
     public void printError(Object error){
         if (this.enabled){
             date = new Date();
-            Object err = (timestamps) ? ("[" + dateFormat.format(date) + "] " + error) : error;
-            try {
-                byte[] raw = (err.toString() + System.lineSeparator()).getBytes();
-                cdata.write(raw);
-            } catch (IOException ignored) {
-                System.out.println("Failed to write log data.");
-                this.enabled = false;
-            }
+            Object err = "[" + dateFormat.format(date) + "] " + error;
+            writeData(err);
             System.err.println(err);
+        }
+    }
+    private void writeData(Object data){
+        try {
+            byte[] raw = (data.toString() + System.lineSeparator()).getBytes();
+            cdata.write(raw);
+        } catch (IOException ignored) {
+            System.out.println("Failed to write log data.");
+            this.enabled = false;
         }
     }
     public void close(){
@@ -119,14 +105,12 @@ public class Console {
             try{
                 this.cdata.close();
                 this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
-            } catch (Exception ex){
-            }
+            } catch (Exception ex){}
         } else {
             try{
                 this.cdata.close();
                 this.log.delete();
-            } catch (Exception ex){
-            }
+            } catch (Exception ex){}
         }
     }
 }

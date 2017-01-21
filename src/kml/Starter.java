@@ -24,7 +24,6 @@ class Starter {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 Kernel kernel = new Kernel();
                 Console console = kernel.getConsole();
-                console.includeTimestamps(true);
                 console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
                 Utils.testNetwork();
                 Authentication a = kernel.getAuthentication();
