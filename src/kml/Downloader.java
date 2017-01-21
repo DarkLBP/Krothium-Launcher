@@ -250,12 +250,12 @@ public class Downloader {
                         File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
                         URL url = dw.getURL();
                         int tries = 0;
-                        console.printInfo("Downloading " + path.getName());
+                        console.printInfo("Downloading " + path.getName() + " from " + url.toString());
                         while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)) {
                             tries++;
                         }
                         if (tries == Constants.DOWNLOAD_TRIES) {
-                            console.printError("Failed to download file: " + path.getName());
+                            console.printError("Failed to download file " + path.getName() + " from " + url.toString());
                         }
                         downloaded += dw.getSize();
                     }
