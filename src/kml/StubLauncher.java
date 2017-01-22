@@ -12,6 +12,7 @@ import java.util.jar.*;
 public class StubLauncher {
     public static void load(File f, String[] args){
         System.out.println("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
+        System.out.println("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         File usingFile = f;
         try{ 
             String r = Utils.sendPost(Constants.GETLATEST_URL, new byte[0], new HashMap<String, String>());
