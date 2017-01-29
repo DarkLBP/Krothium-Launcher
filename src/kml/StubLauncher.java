@@ -1,7 +1,12 @@
 package kml;
 
+import kml.handlers.URLHandler;
+
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.*;
 
@@ -65,87 +70,14 @@ public class StubLauncher {
                         out.close();
                         usingFile = outJar;
                     }
-                    List<String> serverArgs = new ArrayList<>();
-                    serverArgs.add(Utils.getJavaDir());
-                    serverArgs.add("-cp");
-                    StringBuilder libraries = new StringBuilder();
-                    String separator = System.getProperty("path.separator");
-                    try {
-                        File launchPath = new File(StubLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                        libraries.append(launchPath.getAbsolutePath()).append(separator);
-                    } catch (URISyntaxException ex) {
-                        System.out.println("Failed to load StubStarter.");
-                    }
-                    libraries.append(usingFile.getAbsolutePath());
-                    serverArgs.add(libraries.toString());
-                    serverArgs.add("kml.StubStarter");
-                    serverArgs.add(atrb.getValue(Attributes.Name.MAIN_CLASS));
-                    Collections.addAll(serverArgs, args);
-                    ProcessBuilder pb = new ProcessBuilder(serverArgs);
-                    pb.directory(usingFile.getParentFile());
-                    try{
-                        final Process process = pb.start();
-                        Thread log_info = new Thread(){
-                            @Override
-                            public void run(){
-                                InputStreamReader isr = new InputStreamReader(process.getInputStream());
-                                BufferedReader br = new BufferedReader(isr);
-                                String lineRead;
-                                try{
-                                    while (this.isStarted()){
-                                        if ((lineRead = br.readLine()) != null){
-                                            System.out.println(lineRead);
-                                        }
-                                    }
-                                } catch (Exception ex){
-                                    System.out.println("Stub stopped unexpectedly.");
-                                }
-                            }
-                            public boolean isStarted(){
-                                if (process != null){
-                                    try {
-                                        process.exitValue();
-                                        return false;
-                                    } catch (Exception ex){
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            }
-                        };
-                        log_info.start();
-                        Thread log_error = new Thread(){
-                            @Override
-                            public void run(){
-                                InputStreamReader isr = new InputStreamReader(process.getErrorStream());
-                                BufferedReader br = new BufferedReader(isr);
-                                String lineRead;
-                                try{
-                                    while (isStarted()){
-                                        if ((lineRead = br.readLine()) != null){
-                                            System.out.println(lineRead);
-                                        }
-                                    }
-                                } catch (Exception ex){
-                                    System.out.println("Failed to read game error stream.");
-                                }
-                            }
-                            public boolean isStarted(){
-                                if (process != null){
-                                    try {
-                                        process.exitValue();
-                                        return false;
-                                    } catch (Exception ex){
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            }
-                        };
-                        log_error.start();
-                    }catch (Exception ex){
-                        System.out.println("Stub returned an error code.");
-                    }
+                    URL.setURLStreamHandlerFactory(new URLHandler());
+                    URLClassLoader classLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+                    Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                    method.setAccessible(true);
+                    method.invoke(classLoader, usingFile.toURI().toURL());
+                    Class<?> cl = Class.forName(atrb.getValue(Attributes.Name.MAIN_CLASS));
+                    Method meth = cl.getMethod("main", String[].class);
+                    meth.invoke(null, (Object) args);
                 } else {
                     System.out.println(f.getAbsolutePath() + " does not have a Main Class!");
                 }
