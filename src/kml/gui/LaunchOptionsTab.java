@@ -102,7 +102,6 @@ public class LaunchOptionsTab {
                     return newProfile;
                 } else {
                     JLabel label = kernel.getProfiles().getProfile(value.toString()).getListItem();
-                    label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
                     label.setFont(plain);
                     return label;
                 }

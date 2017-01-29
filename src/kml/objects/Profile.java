@@ -1,6 +1,8 @@
 package kml.objects;
 
 import kml.Language;
+import kml.Utils;
+import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 
 import javax.swing.*;
@@ -156,6 +158,7 @@ public class Profile {
             } else {
                 this.listItem = new JLabel(Language.get(70));
             }
+            this.listItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
         } else {
             if (this.hasName() && !this.getName().equals(this.listItem.getText())){
                 this.listItem.setText(this.getName());

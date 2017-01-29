@@ -36,7 +36,6 @@ public class ProfilePopup extends JFrame{
                 } else {
                     label.setFont(plain);
                 }
-                label.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
                 return label;
             }
         });
