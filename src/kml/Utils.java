@@ -18,9 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -28,6 +26,7 @@ import java.util.UUID;
  */
 
 public class Utils {
+    private static final HashMap<ProfileIcon, ImageIcon> ICON_CACHE = new HashMap<>();
     public static boolean ignoreHTTPSCert(){
         try {
             SSLContext t = SSLContext.getInstance("SSL");
@@ -296,6 +295,9 @@ public class Utils {
         return conversion;
     }
     public static ImageIcon getProfileIcon(ProfileIcon p){
+        if (ICON_CACHE.containsKey(p)) {
+            return ICON_CACHE.get(p);
+        }
         BufferedImage bImg = new BufferedImage(32,32,BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bImg.createGraphics();
         int blockX = 0;
@@ -312,6 +314,8 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ImageIcon(bImg);
+        ImageIcon icon = new ImageIcon(bImg);
+        ICON_CACHE.put(p, icon);
+        return icon;
     }
 }
