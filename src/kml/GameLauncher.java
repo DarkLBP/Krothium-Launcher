@@ -270,7 +270,7 @@ public class GameLauncher {
             gameArgs.add(String.valueOf(p.getResolutionHeight()));
         }
         for (String arg : gameArgs){
-            System.out.println(arg);
+            console.printInfo(arg);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
