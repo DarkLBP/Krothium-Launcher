@@ -51,6 +51,14 @@ class ConnectionHandler extends HttpURLConnection{
         }
     }
     @Override
+    public void setRequestProperty(String key, String value) {
+        this.relay.setRequestProperty(key, value);
+    }
+    @Override
+    public String getRequestProperty(String key) {
+        return this.relay.getRequestProperty(key);
+    }
+    @Override
     public OutputStream getOutputStream(){
        try{
             this.relay.setDoOutput(true);
