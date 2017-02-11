@@ -432,19 +432,25 @@ public class Main extends JFrame{
     public void setVisible(boolean b){
         super.setVisible(b);
         if (b){
-            timer.scheduleAtFixedRate(guiThread, 0, 500);
-            kernel.getProfiles().updateSessionProfiles();
-            String update = kernel.checkForUpdates();
-            if (update != null){
-                int response = JOptionPane.showConfirmDialog(null, Language.get(10), Language.get(11), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (response == JOptionPane.YES_OPTION){
-                    try {
-                        Utils.openWebsite(Utils.fromBase64(update));
-                    } catch (IOException e) {
-                        kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+            Thread t = new Thread("Visibility thread") {
+                @Override
+                public void run() {
+                    timer.scheduleAtFixedRate(guiThread, 0, 500);
+                    kernel.getProfiles().updateSessionProfiles();
+                    String update = kernel.checkForUpdates();
+                    if (update != null){
+                        int response = JOptionPane.showConfirmDialog(null, Language.get(10), Language.get(11), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        if (response == JOptionPane.YES_OPTION){
+                            try {
+                                Utils.openWebsite(Utils.fromBase64(update));
+                            } catch (IOException e) {
+                                kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+                            }
+                        }
                     }
                 }
-            }
+            };
+            t.start();
         } else {
             timer.cancel();
         }

@@ -48,15 +48,6 @@ public class Utils {
             return false;
         }
     }
-    public static void testNetwork(){
-        try {
-            HttpsURLConnection con = (HttpsURLConnection)Constants.HANDSHAKE_URL.openConnection();
-            int responseCode = con.getResponseCode();
-            Constants.USE_LOCAL = responseCode != 204;
-        } catch (IOException ex){
-            Constants.USE_LOCAL = true;
-        }
-    }
     public static OS getPlatform(){
         final String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")){

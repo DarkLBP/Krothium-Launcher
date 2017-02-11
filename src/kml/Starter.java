@@ -25,7 +25,6 @@ class Starter {
                 Kernel kernel = new Kernel();
                 Console console = kernel.getConsole();
                 console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
-                Utils.testNetwork();
                 Authentication a = kernel.getAuthentication();
                 if (a.hasSelectedUser()){
                     try{

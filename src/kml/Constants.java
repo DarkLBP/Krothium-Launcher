@@ -34,7 +34,6 @@ public class Constants {
     public static final URL REALMS_EDITWORLD_URL = Utils.stringToURL("https://mc.krothium.com/realms/editworld");
     public static final URL REALMS_REGIONS_URL = Utils.stringToURL("https://mc.krothium.com/realms/regions");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
-    public static final URL HANDSHAKE_URL = Utils.stringToURL("https://mc.krothium.com/hello");
     public static final URL PROFILE_ICONS = Constants.class.getResource("/kml/gui/textures/profile-icons.png");
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEP_OLD_LOGS = 2;
