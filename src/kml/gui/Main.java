@@ -389,6 +389,7 @@ public class Main extends JFrame{
                         contentPanel.add(login.getPanel());
                         contentPanel.updateUI();
                     } else if (authenticating) {
+                        setDisable(true);
                         playButton.setText(Language.get(80));
                     }
                     progress.setVisible(false);
@@ -436,7 +437,24 @@ public class Main extends JFrame{
     public void setVisible(boolean b){
         super.setVisible(b);
         if (b){
-            Thread t = new Thread("Visibility thread") {
+            Thread t1 = new Thread("Authentication thread") {
+                @Override
+                public void run() {
+                    Main.this.authenticating = true;
+                    Authentication a = kernel.getAuthentication();
+                    if (a.hasSelectedUser()){
+                        try{
+                            a.refresh();
+                        }catch(AuthenticationException ex){
+                            Main.this.kernel.getConsole().printError(ex.getMessage());
+                        }
+                        kernel.saveProfiles();
+                    }
+                    Main.this.authenticating = false;
+                }
+            };
+            t1.start();
+            Thread t2 = new Thread("Visibility thread") {
                 @Override
                 public void run() {
                     timer.scheduleAtFixedRate(guiThread, 0, 500);
@@ -452,23 +470,6 @@ public class Main extends JFrame{
                             }
                         }
                     }
-                }
-            };
-            t.start();
-            Thread t2 = new Thread("Authentication thread") {
-                @Override
-                public void run() {
-                    Main.this.authenticating = true;
-                    Authentication a = kernel.getAuthentication();
-                    if (a.hasSelectedUser()){
-                        try{
-                            a.refresh();
-                        }catch(AuthenticationException ex){
-                            Main.this.kernel.getConsole().printError(ex.getMessage());
-                        }
-                        kernel.saveProfiles();
-                    }
-                    Main.this.authenticating = false;
                 }
             };
             t2.start();
