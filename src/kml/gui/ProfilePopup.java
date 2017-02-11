@@ -1,8 +1,6 @@
 package kml.gui;
 
 import kml.Kernel;
-import kml.Utils;
-import kml.enums.ProfileIcon;
 
 import javax.swing.*;
 import java.awt.*;

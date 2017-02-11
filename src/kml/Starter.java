@@ -1,6 +1,5 @@
 package kml;
 
-import kml.exceptions.AuthenticationException;
 import kml.gui.Main;
 
 import javax.swing.*;

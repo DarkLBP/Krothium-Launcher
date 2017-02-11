@@ -2,12 +2,14 @@ package kml;
 
 import kml.handlers.URLHandler;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.jar.*;
 
 /**
