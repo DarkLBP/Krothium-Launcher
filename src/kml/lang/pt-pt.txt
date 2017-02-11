@@ -77,3 +77,4 @@ Isto habilita as configurações avançadas de Java quando você adicionar uma n
 Alterando estes pode causar o jogo a mau funcionar.
 Informação
 JOGAR OFFLINE
+AUTENTICANDO

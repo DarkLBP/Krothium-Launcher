@@ -2,6 +2,7 @@ package kml.gui;
 
 import kml.*;
 import kml.enums.ProfileType;
+import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Browser;
@@ -70,6 +71,7 @@ public class Main extends JFrame{
     private final ImageIcon skinsIcon;
     private final ImageIcon settingsIcon;
     private final ImageIcon optionsIcon;
+    private boolean authenticating = false;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -380,12 +382,14 @@ public class Main extends JFrame{
                     }
                 } else {
                     setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-                    if (!componentsDisabled){
+                    if (!componentsDisabled && !authenticating){
                         setDisable(true);
                         contentPanel.removeAll();
                         contentPanel.setLayout(flowLayout);
                         contentPanel.add(login.getPanel());
                         contentPanel.updateUI();
+                    } else if (authenticating) {
+                        playButton.setText(Language.get(80));
                     }
                     progress.setVisible(false);
                 }
@@ -451,6 +455,23 @@ public class Main extends JFrame{
                 }
             };
             t.start();
+            Thread t2 = new Thread("Authentication thread") {
+                @Override
+                public void run() {
+                    Main.this.authenticating = true;
+                    Authentication a = kernel.getAuthentication();
+                    if (a.hasSelectedUser()){
+                        try{
+                            a.refresh();
+                        }catch(AuthenticationException ex){
+                            Main.this.kernel.getConsole().printError(ex.getMessage());
+                        }
+                        kernel.saveProfiles();
+                    }
+                    Main.this.authenticating = false;
+                }
+            };
+            t2.start();
         } else {
             timer.cancel();
         }

@@ -77,3 +77,4 @@ Això et permet modificar ajustos avançats de Java quan afegisques una nova opc
 Aquestos canvis podrien causar un mal funcionament del joc.
 Informació
 JUGAR SENSE LÍNEA
+AUTENTICANT

@@ -77,3 +77,4 @@ This enables changing advanced Java settings when you add a new launch option.
 Changing these may cause the game to malfunction.
 Information
 PLAY OFFLINE
+AUTHENTICATING
