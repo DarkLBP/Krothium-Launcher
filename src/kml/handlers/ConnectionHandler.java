@@ -51,6 +51,10 @@ class ConnectionHandler extends HttpURLConnection{
         }
     }
     @Override
+    public String getHeaderField(String header) {
+        return this.relay.getHeaderField(header);
+    }
+    @Override
     public void setRequestProperty(String key, String value) {
         this.relay.setRequestProperty(key, value);
     }
