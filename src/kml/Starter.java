@@ -24,6 +24,7 @@ class Starter {
                 Kernel kernel = new Kernel();
                 Console console = kernel.getConsole();
                 console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+                Utils.testNetwork();
                 Main main = kernel.getGUI();
                 main.setVisible(true);
             }

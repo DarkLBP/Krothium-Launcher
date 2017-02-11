@@ -36,7 +36,6 @@ public final class Version {
     private final URL jsonURL;
     
     public Version(URL durl, Kernel k) throws ObjectException{
-        final Kernel kernel = k;
         final Console console = k.getConsole();
         this.jsonURL = durl;
         JSONObject version = new JSONObject(Utils.readURL(durl));
@@ -147,13 +146,13 @@ public final class Version {
         if (version.has("libraries")){
             JSONArray libraries = version.getJSONArray("libraries");
             for (int i = 0; i < libraries.length(); i++){
-                Library lib = new Library(libraries.getJSONObject(i), kernel);
+                Library lib = new Library(libraries.getJSONObject(i), k);
                 this.libraries.add(lib);
             }
         }
         if (version.has("inheritsFrom")){
             String inheritsFrom = version.getString("inheritsFrom");
-            Version ver = kernel.getVersions().getVersion(inheritsFrom);
+            Version ver = k.getVersions().getVersion(inheritsFrom);
             if (ver.hasLibraries()){
                 for (Library lib : ver.libraries){
                     if (!this.libraries.contains(lib)){
