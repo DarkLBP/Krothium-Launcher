@@ -31,7 +31,9 @@ public class Browser{
     private final Object lock = new Object();
     private WebView browser;
     private WebEngine webEngine;
+    private final Kernel k;
     public Browser(final Kernel k) {
+        this.k = k;
         Platform.setImplicitExit(false);
         Platform.runLater(new Runnable() {
             @Override
@@ -91,7 +93,6 @@ public class Browser{
                             webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
                         }
                     } catch (Exception ex){}
-                    webEngine.load("http://mc.krothium.com/news/" + k.getAuthentication().getSelectedUser().getProfileID());
                 }
                 root.getChildren().add(browser);
             }
@@ -103,6 +104,16 @@ public class Browser{
             browser.setMinSize(d.getWidth(), d.getHeight());
             browser.setMaxSize(d.getWidth(), d.getHeight());
             browser.setPrefSize(d.getWidth(), d.getHeight());
+        }
+    }
+    public void home() {
+        synchronized (this.lock) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    webEngine.load("http://mc.krothium.com/news/" + k.getAuthentication().getSelectedUser().getProfileID());
+                }
+            });
         }
     }
     public JComponent getPanel(){

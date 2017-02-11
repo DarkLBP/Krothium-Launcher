@@ -382,15 +382,16 @@ public class Main extends JFrame{
                     }
                 } else {
                     setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-                    if (!componentsDisabled && !authenticating){
+                    if (!componentsDisabled){
                         setDisable(true);
-                        contentPanel.removeAll();
-                        contentPanel.setLayout(flowLayout);
-                        contentPanel.add(login.getPanel());
-                        contentPanel.updateUI();
-                    } else if (authenticating) {
-                        setDisable(true);
-                        playButton.setText(Language.get(80));
+                        if (authenticating) {
+                            playButton.setText(Language.get(80));
+                        } else {
+                            contentPanel.removeAll();
+                            contentPanel.setLayout(flowLayout);
+                            contentPanel.add(login.getPanel());
+                            contentPanel.updateUI();
+                        }
                     }
                     progress.setVisible(false);
                 }
@@ -447,6 +448,10 @@ public class Main extends JFrame{
                             a.refresh();
                         }catch(AuthenticationException ex){
                             Main.this.kernel.getConsole().printError(ex.getMessage());
+                            contentPanel.removeAll();
+                            contentPanel.setLayout(flowLayout);
+                            contentPanel.add(login.getPanel());
+                            contentPanel.updateUI();
                         }
                         kernel.saveProfiles();
                     }
@@ -490,6 +495,7 @@ public class Main extends JFrame{
                 this.contentPanel.setLayout(borderLayout);
                 this.contentPanel.add(this.browser.getPanel());
                 browser.resizeBrowser(contentPanel.getSize());
+                browser.home();
                 news.setIcon(newsIcon);
             } else {
                 this.contentPanel.setLayout(flowLayout);
