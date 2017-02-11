@@ -91,7 +91,7 @@ public class Browser{
                             webEngine.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
                         }
                     } catch (Exception ex){}
-                    webEngine.load("http://mc.krothium.com/news/");
+                    webEngine.load("http://mc.krothium.com/news/" + k.getProfiles().getSelectedProfile());
                 }
                 root.getChildren().add(browser);
             }
