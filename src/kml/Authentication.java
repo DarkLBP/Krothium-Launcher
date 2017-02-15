@@ -146,6 +146,7 @@ public class Authentication {
                 u.updateAccessToken(r.getString("accessToken"));
             }
             this.authenticated = true;
+            kernel.getProfiles().updateSessionProfiles();
         }else{
             this.authenticated = false;
             this.removeUser(this.selectedAccount);
@@ -183,6 +184,7 @@ public class Authentication {
         }
         if (response.isEmpty()){
             this.authenticated = true;
+            kernel.getProfiles().updateSessionProfiles();
         }else{
             this.authenticated = false;
             JSONObject o = new JSONObject(response);

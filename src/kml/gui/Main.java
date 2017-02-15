@@ -463,7 +463,6 @@ public class Main extends JFrame{
                 @Override
                 public void run() {
                     timer.scheduleAtFixedRate(guiThread, 0, 500);
-                    kernel.getProfiles().updateSessionProfiles();
                     String update = kernel.checkForUpdates();
                     if (update != null){
                         int response = JOptionPane.showConfirmDialog(null, Language.get(10), Language.get(11), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
