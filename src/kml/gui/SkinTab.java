@@ -263,7 +263,6 @@ public class SkinTab {
                         } catch (Exception ex) {
                             console.printInfo("No skin found.");
                         }
-
                     }
                     if (textures.has("CAPE")) {
                         try {

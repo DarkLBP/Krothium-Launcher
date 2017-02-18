@@ -8,8 +8,8 @@ import java.net.URL;
  */
 
 public class Constants {
-    public static final int KERNEL_BUILD = 30;
-    public static final String KERNEL_BUILD_NAME = "2.1.4";
+    public static final int KERNEL_BUILD = 31;
+    public static final String KERNEL_BUILD_NAME = "2.2.0";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
     public static final URL VALIDATE_URL = Utils.stringToURL("https://mc.krothium.com/validate");
@@ -37,6 +37,6 @@ public class Constants {
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
     public static final URL PROFILE_ICONS = Constants.class.getResource("/kml/gui/textures/profile-icons.png");
     public static final int DOWNLOAD_TRIES = 5;
-    public static final int KEEP_OLD_LOGS = 2;
+    public static final int KEEP_OLD_LOGS = 4;
     public static boolean USE_LOCAL = false;
 }
