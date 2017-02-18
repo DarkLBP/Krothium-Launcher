@@ -382,16 +382,17 @@ public class Main extends JFrame{
                     }
                 } else {
                     setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
+                    if (authenticating) {
+                        playButton.setText(Language.get(80));
+                    } else {
+                        playButton.setText(Language.get(12));
+                    }
                     if (!componentsDisabled){
                         setDisable(true);
-                        if (authenticating) {
-                            playButton.setText(Language.get(80));
-                        } else {
-                            contentPanel.removeAll();
-                            contentPanel.setLayout(flowLayout);
-                            contentPanel.add(login.getPanel());
-                            contentPanel.updateUI();
-                        }
+                        contentPanel.removeAll();
+                        contentPanel.setLayout(flowLayout);
+                        contentPanel.add(login.getPanel());
+                        contentPanel.updateUI();
                     }
                     progress.setVisible(false);
                 }
