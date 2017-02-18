@@ -35,24 +35,24 @@ public class Profiles {
                 if (!hasReleaseProfile() && p.getType() == ProfileType.RELEASE){
                     releaseProfile = p.getID();
                     profiles.put(p.getID(), p);
-                    console.printInfo("Profile " + p.getID() + " added");
+                    console.printInfo("Profile " + p + " added");
                     return true;
                 } else if (!hasSnapshotProfile() && p.getType() == ProfileType.SNAPSHOT){
                     snapshotProfile = p.getID();
                     profiles.put(p.getID(), p);
-                    console.printInfo("Profile " + p.getID() + " added");
+                    console.printInfo("Profile " + p + " added");
                     return true;
                 } else {
-                    console.printInfo("Profile " + p.getID() + " ignored.");
+                    console.printInfo("Profile " + p + " ignored.");
                     return false;
                 }
             } else {
                 profiles.put(p.getID(), p);
-                console.printInfo("Profile " + p.getID() + " added");
+                console.printInfo("Profile " + p + " added");
                 return true;
             }
         }
-        console.printError("Profile " + p.getID() + " already exists!");
+        console.printError("Profile " + p + " already exists!");
         return false;
     }
     public boolean deleteProfile(String p){

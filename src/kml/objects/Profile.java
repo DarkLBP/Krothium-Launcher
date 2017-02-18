@@ -172,4 +172,14 @@ public class Profile {
         }
         return this.listItem;
     }
+
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append("[Name: ");
+        b.append(getName());
+        b.append(" | UUID: ");
+        b.append(getID());
+        b.append("]");
+        return b.toString();
+    }
 }
