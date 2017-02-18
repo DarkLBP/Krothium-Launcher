@@ -389,10 +389,12 @@ public class Main extends JFrame{
                     }
                     if (!componentsDisabled){
                         setDisable(true);
-                        contentPanel.removeAll();
-                        contentPanel.setLayout(flowLayout);
-                        contentPanel.add(login.getPanel());
-                        contentPanel.updateUI();
+                        if (!authenticating) {
+                            contentPanel.removeAll();
+                            contentPanel.setLayout(flowLayout);
+                            contentPanel.add(login.getPanel());
+                            contentPanel.updateUI();
+                        }
                     }
                     progress.setVisible(false);
                 }
