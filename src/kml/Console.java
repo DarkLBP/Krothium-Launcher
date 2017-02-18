@@ -18,7 +18,6 @@ public class Console {
     private boolean enabled = true;
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private FileOutputStream data;
-    private GZIPOutputStream cdata;
     private Date date;
     private File log;
     public Console(Kernel instance){
@@ -63,12 +62,11 @@ public class Console {
             }
         }
         try {
-            log = new File(instance.getWorkingDir() + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log.gz");
+            log = new File(instance.getWorkingDir() + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
             if (!log.getParentFile().exists()){
                 log.getParentFile().mkdirs();
             }
             this.data = new FileOutputStream(log);
-            this.cdata = new GZIPOutputStream(data);
         } catch (IOException ex) {
             this.enabled = false;
         }
@@ -92,7 +90,7 @@ public class Console {
     private void writeData(Object data){
         try {
             byte[] raw = (data.toString() + System.lineSeparator()).getBytes();
-            cdata.write(raw);
+            this.data.write(raw);
         } catch (IOException ignored) {
             System.out.println("Failed to write log data.");
             this.enabled = false;
@@ -101,12 +99,12 @@ public class Console {
     public void close(){
         if (this.enabled){
             try{
-                this.cdata.close();
+                this.data.close();
                 this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
             } catch (Exception ex){}
         } else {
             try{
-                this.cdata.close();
+                this.data.close();
                 this.log.delete();
             } catch (Exception ex){}
         }
