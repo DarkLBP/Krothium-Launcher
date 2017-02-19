@@ -449,7 +449,6 @@ public class Main extends JFrame{
                     if (a.hasSelectedUser()){
                         try{
                             a.refresh();
-                            browser.home();
                         }catch(AuthenticationException ex){
                             Main.this.kernel.getConsole().printError(ex.getMessage());
                             contentPanel.removeAll();
@@ -460,6 +459,11 @@ public class Main extends JFrame{
                         kernel.saveProfiles();
                     }
                     Main.this.authenticating = false;
+                    if (a.isAuthenticated()) {
+                        browser.home();
+                        refreshSkinPreviews();
+                        populateProfileList();
+                    }
                 }
             };
             t1.start();
@@ -506,11 +510,9 @@ public class Main extends JFrame{
                     settings.setIcon(settingsIcon);
                 } else if (l.equals(options)){
                     this.contentPanel.add(this.launchOptions.getPanel());
-                    this.launchOptions.populateList();
                     options.setIcon(optionsIcon);
                 } else if (l.equals(skins)){
                     this.contentPanel.add(this.skinTab.getPanel());
-                    this.skinTab.refreshPreviews();
                     skins.setIcon(skinsIcon);
                 }
             }
@@ -534,16 +536,32 @@ public class Main extends JFrame{
         }
     }
     private void showPopupMenu(MouseEvent e){
-        popupMenu.removeAll();
-        Profiles p = kernel.getProfiles();
-        Map<String, Profile> profs = p.getProfiles();
-        Set set = profs.keySet();
-        for (Object aSet : set) {
-            popupMenu.addElement(profs.get(aSet.toString()).getID());
-        }
         popupMenu.showPopup((JComponent)e.getComponent());
     }
     public Browser getBrowser() {
         return this.browser;
+    }
+    public void refreshSkinPreviews() {
+        skinTab.refreshPreviews();
+    }
+    public void populateProfileList() {
+        launchOptions.populateList();
+        Thread t = new Thread("Profile popup population"){
+            @Override
+            public void run() {
+                try {
+                    popupMenu.removeAll();
+                    Profiles p = kernel.getProfiles();
+                    Map<String, Profile> profs = p.getProfiles();
+                    Set set = profs.keySet();
+                    for (Object aSet : set) {
+                        popupMenu.addElement(profs.get(aSet.toString()).getID());
+                    }
+                } catch (Exception ex){
+                    kernel.getConsole().printError("Popup profile list interrupted by another thread.");
+                }
+            }
+        };
+        t.run();
     }
 }

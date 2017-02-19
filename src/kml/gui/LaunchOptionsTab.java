@@ -134,14 +134,24 @@ public class LaunchOptionsTab {
         return this.main;
     }
     public void populateList(){
-        this.listModel.removeAllElements();
-        Profiles p = kernel.getProfiles();
-        Map<String, Profile> profs = p.getProfiles();
-        Set set = profs.keySet();
-        Iterator it = set.iterator();
-        this.listModel.addElement(null);
-        while (it.hasNext()){
-            this.listModel.addElement(profs.get(it.next().toString()).getID());
-        }
+        Thread t = new Thread("Profile list population") {
+            @Override
+            public void run() {
+                try {
+                    listModel.removeAllElements();
+                    Profiles p = kernel.getProfiles();
+                    Map<String, Profile> profs = p.getProfiles();
+                    Set set = profs.keySet();
+                    Iterator it = set.iterator();
+                    listModel.addElement(null);
+                    while (it.hasNext()){
+                        listModel.addElement(profs.get(it.next().toString()).getID());
+                    }
+                } catch (Exception ex) {
+                    kernel.getConsole().printError("Load profile list interrupted by another thread.");
+                }
+            }
+        };
+        t.run();
     }
 }

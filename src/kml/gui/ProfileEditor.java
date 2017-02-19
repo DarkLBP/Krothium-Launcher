@@ -192,6 +192,7 @@ public class ProfileEditor{
                 int response = JOptionPane.showConfirmDialog(null, Language.get(61), Language.get(62), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (response == JOptionPane.YES_OPTION){
                     kernel.getProfiles().deleteProfile(profile.getID());
+                    kernel.getGUI().populateProfileList();
                     kernel.getGUI().setSelected(kernel.getGUI().options);
                 }
                 deleteButton.setForeground(Color.RED);
@@ -416,6 +417,7 @@ public class ProfileEditor{
             kernel.getProfiles().addProfile(this.profile);
         }
         JOptionPane.showMessageDialog(null, Language.get(57), Language.get(58), JOptionPane.INFORMATION_MESSAGE);
+        kernel.getGUI().populateProfileList();
         kernel.getGUI().setSelected(kernel.getGUI().options);
     }
     public JPanel getPanel(){
