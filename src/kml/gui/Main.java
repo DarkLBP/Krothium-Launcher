@@ -449,6 +449,7 @@ public class Main extends JFrame{
                     if (a.hasSelectedUser()){
                         try{
                             a.refresh();
+                            browser.home();
                         }catch(AuthenticationException ex){
                             Main.this.kernel.getConsole().printError(ex.getMessage());
                             contentPanel.removeAll();
@@ -497,7 +498,6 @@ public class Main extends JFrame{
                 this.contentPanel.setLayout(borderLayout);
                 this.contentPanel.add(this.browser.getPanel());
                 browser.resizeBrowser(contentPanel.getSize());
-                browser.home();
                 news.setIcon(newsIcon);
             } else {
                 this.contentPanel.setLayout(flowLayout);
@@ -542,5 +542,8 @@ public class Main extends JFrame{
             popupMenu.addElement(profs.get(aSet.toString()).getID());
         }
         popupMenu.showPopup((JComponent)e.getComponent());
+    }
+    public Browser getBrowser() {
+        return this.browser;
     }
 }

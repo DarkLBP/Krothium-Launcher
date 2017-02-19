@@ -109,6 +109,7 @@ public class LoginTab {
                 password.setText("");
                 username.requestFocus();
                 kernel.getGUI().setDisable(false);
+                kernel.getGUI().getBrowser().home();
             }
         } catch (AuthenticationException e1) {
             JOptionPane.showMessageDialog(null,e1.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
