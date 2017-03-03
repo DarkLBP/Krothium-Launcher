@@ -28,7 +28,7 @@ public class GameLauncher {
     private final Console console;
     private Process process;
     private final Kernel kernel;
-    private boolean error = false;
+    private boolean error;
     private final GameLog gameLog;
     
     public GameLauncher(Kernel k){

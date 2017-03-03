@@ -15,12 +15,10 @@ import java.util.*;
  */
 
 public class Authentication {
-    private boolean authenticated = false;
+    private boolean authenticated;
     private final Console console;
-    private String clientToken = UUID.randomUUID().toString();
     private final Map<String, User> userDatabase = new HashMap<>();
-    private String selectedAccount;
-    private String selectedProfile;
+    private String selectedAccount, selectedProfile, clientToken = UUID.randomUUID().toString();
     private final Kernel kernel;
     
     public Authentication(Kernel k){

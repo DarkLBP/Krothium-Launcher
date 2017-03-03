@@ -23,16 +23,12 @@ import java.util.Map;
 public final class Version {
 
     private final String id;
-    private String mainClass;
-    private String minecraftArguments;
+    private String mainClass, minecraftArguments, jar, assets;
     private final VersionType type;
-    private String assets;
     private AssetIndex assetIndex;
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final List<Library> libraries = new ArrayList<>();
-    private String jar;
-    private File relativeJar;
-    private File relativeJSON;
+    private File relativeJar, relativeJSON;
     private final URL jsonURL;
     
     public Version(URL durl, Kernel k) throws ObjectException{

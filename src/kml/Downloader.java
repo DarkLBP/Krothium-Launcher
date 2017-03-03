@@ -27,10 +27,8 @@ import java.util.concurrent.TimeUnit;
 public class Downloader {
     private final Console console;
     private final Kernel kernel;
-    private double downloaded = 0;
-    private double validated = 0;
-    private double total = 0;
-    private boolean downloading = false;
+    private double downloaded, validated, total;
+    private boolean downloading;
     public Downloader(Kernel k){
         this.kernel = k;
         this.console = k.getConsole();

@@ -20,17 +20,10 @@ import java.util.HashMap;
  */
 public class SkinTab {
     private JPanel main;
-    private JButton changeSkinButton;
-    private JButton deleteSkinButton;
-    private JButton changeCapeButton;
-    private JLabel capePreview;
-    private JLabel skinPreview;
-    private JButton deleteCapeButton;
-    private JRadioButton steve;
-    private JRadioButton alex;
-    private JLabel skinType;
-    private JLabel skinPreviewLabel;
-    private JLabel capePreviewLabel;
+    private JButton changeSkinButton, deleteSkinButton, changeCapeButton, deleteCapeButton;
+    private JLabel capePreview, skinPreview;
+    private JRadioButton steve, alex;
+    private JLabel skinType, skinPreviewLabel, capePreviewLabel;
     private final HashMap<String, String> params = new HashMap<>();
     private final Console console;
     private final Kernel kernel;

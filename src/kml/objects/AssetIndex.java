@@ -10,11 +10,9 @@ import java.net.URL;
 */
 
 public class AssetIndex {
-    private final String id;
-    private final long size;
-    private final long totalSize;
+    private final String id, sha1;
+    private final long size, totalSize;
     private final URL url;
-    private final String sha1;
     private final File relFile;
     public AssetIndex(String id, long size, long totalSize, URL url, String sha1){
         this.id = id;

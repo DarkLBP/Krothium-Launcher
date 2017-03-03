@@ -19,10 +19,8 @@ import java.util.Set;
 public class Profiles {
     private final Map<String, Profile> profiles = new HashMap<>();
     private final Console console;
-    private String selected;
+    private String selected, releaseProfile, snapshotProfile;
     private final Kernel kernel;
-    private String releaseProfile = null;
-    private String snapshotProfile = null;
     
     public Profiles(Kernel k){
         this.kernel = k;

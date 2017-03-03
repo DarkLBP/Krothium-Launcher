@@ -25,8 +25,7 @@ public final class Library {
     private final URL url;
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final Map<OS, LibraryRule> rules = new HashMap<>();
-    private final File relativePath;
-    private final File relativeNativePath;
+    private final File relativePath, relativeNativePath;
     private final List<String> exclude = new ArrayList<>();
     private final Map<OS, String> natives = new HashMap<>();
     

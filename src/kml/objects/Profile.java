@@ -19,14 +19,10 @@ import java.util.UUID;
 
 public class Profile {
     private final String id;
-    private String name;
+    private String name, javaArgs, lastVersionId;
     private ProfileType type;
-    private String lastVersionId = null;
-    private File gameDir = null;
-    private File javaDir = null;
-    private String javaArgs = null;
-    private Timestamp created = null;
-    private Timestamp lastUsed = null;
+    private File gameDir, javaDir;
+    private Timestamp created, lastUsed;
     private Map<String, Integer> resolution = new HashMap<>();
     private JLabel listItem;
     

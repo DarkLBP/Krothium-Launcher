@@ -10,11 +10,7 @@ import java.io.File;
  */
 public class Settings {
     private String locale = "en-us";
-    private boolean keepLauncherOpen = false;
-    private boolean showGameLog = false;
-    private boolean enableAdvanced = false;
-    private boolean enableHistorical = false;
-    private boolean enableSnapshots = false;
+    private boolean keepLauncherOpen, showGameLog, enableAdvanced, enableHistorical, enableSnapshots;
     private final Kernel kernel;
 
     public Settings(Kernel k){

@@ -232,8 +232,10 @@ public class Main extends JFrame{
                                 try {
                                     downloader.download();
                                     gameLauncher.launch();
-                                } catch (GameLauncherException | DownloaderException e1) {
-                                    e1.printStackTrace();
+                                } catch (GameLauncherException ex) {
+                                    System.out.println("Failed to perform game launch task: " + ex);
+                                } catch (DownloaderException e1) {
+                                    System.out.println("Failed to perform download task: " + e1);
                                 }
                             }
                         }

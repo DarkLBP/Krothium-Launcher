@@ -6,11 +6,8 @@ package kml.objects;
  */
 
 public class User {
-    private final String displayName;
+    private final String displayName, userID, userName, profileUUID;
     private String accessToken;
-    private final String userID;
-    private final String userName;
-    private final String profileUUID;
     public User(String name, String at, String ui, String un, String pi){
         this.displayName = name;
         this.accessToken = at;

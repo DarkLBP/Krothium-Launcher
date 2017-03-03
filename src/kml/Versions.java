@@ -22,8 +22,7 @@ public class Versions {
     private final Map<String, VersionMeta> versions = new LinkedHashMap<>();
     private final Map<String, Version> version_cache = new HashMap<>();
     private final Console console;
-    private String latestSnap;
-    private String latestRel;
+    private String latestSnap, latestRel;
     private final Kernel kernel;
     public Versions(Kernel k){
         this.kernel = k;

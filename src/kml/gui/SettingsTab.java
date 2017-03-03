@@ -15,9 +15,7 @@ import java.awt.event.MouseEvent;
  */
 public class SettingsTab {
     private JPanel main;
-    private JLabel keepOpen;
-    private JLabel logOpen;
-    private JLabel settingsLabel;
+    private JLabel keepOpen, logOpen, settingsLabel;
     private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
     private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
     private final Settings settings;

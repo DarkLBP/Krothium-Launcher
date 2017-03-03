@@ -21,9 +21,7 @@ import java.util.Set;
  */
 public class LaunchOptionsTab {
     private JPanel main;
-    private JLabel snapshots;
-    private JLabel historical;
-    private JLabel advanced;
+    private JLabel snapshots, historical, advanced;
     private JList profiles;
     private final DefaultListModel listModel = new DefaultListModel();
     private final Settings settings;
