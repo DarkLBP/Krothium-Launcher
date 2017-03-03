@@ -74,7 +74,11 @@ public class Settings {
             if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("pt-br") || s.equals("val-es")){
                 kernel.getConsole().printInfo("Switched language to " + s);
                 this.locale = s;
-                Language.loadLang(s);
+                Language.loadLang(this.locale);
+            } else {
+                kernel.getConsole().printInfo("Switched language to en-us");
+                this.locale = "en-us";
+                Language.loadLang(this.locale);
             }
         }
     }

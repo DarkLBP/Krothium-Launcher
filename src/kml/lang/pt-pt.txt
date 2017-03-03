@@ -1,6 +1,6 @@
 //en-US language file by DarkLBP (https://krothium.com)
 IDIOMA
-Terminar Sessão
+TERMINAR SESSÃO
 Notícias
 Skins
 Definições

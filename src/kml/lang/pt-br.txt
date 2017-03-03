@@ -1,6 +1,6 @@
 ﻿//pt-br language file by FelipeStealth (https://krothium.com/profile/18575-felipestealth/)
 IDIOMA
-Sair da conta
+SAIR DA CONTA
 Notícias
 Skins
 Configurações
