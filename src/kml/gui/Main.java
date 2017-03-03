@@ -25,19 +25,10 @@ import java.util.TimerTask;
  */
 public class Main extends JFrame{
     private JPanel main;
-    private JButton playButton;
-    private BackgroundPanel footerPanel;
-    private BackgroundPanel headPanel;
-    private BackgroundPanel contentPanel;
-    public JLabel news;
-    public JLabel skins;
-    public JLabel settings;
-    public JLabel options;
-    private JButton profileButton;
-    private JLabel logout;
+    private JButton playButton, profileButton;
+    private BackgroundPanel footerPanel, headPanel, contentPanel;
+    public JLabel news, skins, settings, options, logout, language, selected;
     private JProgressBar progress;
-    private JLabel language;
-    private JLabel selected;
     private final Kernel kernel;
     private final LoginTab login;
     private final Browser browser;
@@ -46,12 +37,7 @@ public class Main extends JFrame{
     private boolean componentsDisabled = false;
     private final BorderLayout borderLayout = new BorderLayout();
     private final FlowLayout flowLayout = new FlowLayout();
-    private final ImageIcon playButton_normal;
-    private final ImageIcon playButton_hover;
-    private final ImageIcon playButton_click;
-    private final ImageIcon profile_normal;
-    private final ImageIcon profile_hover;
-    private final ImageIcon profile_click;
+    private final ImageIcon playButton_normal, playButton_hover, playButton_click, profile_normal, profile_hover, profile_click;
     private final Timer timer = new Timer();
     private final TimerTask guiThread;
     private final Downloader downloader;
@@ -63,18 +49,14 @@ public class Main extends JFrame{
     private final JPopupMenu languages;
     private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
     private final Font bold = new Font("Minecraftia", Font.BOLD,14);
-    private final ImageIcon flag_es;
-    private final ImageIcon flag_pt;
-    private final ImageIcon flag_us;
-    private final ImageIcon flag_val;
-    private final ImageIcon newsIcon;
-    private final ImageIcon skinsIcon;
-    private final ImageIcon settingsIcon;
-    private final ImageIcon optionsIcon;
-    private boolean authenticating = false;
+    private final ImageIcon flag_es, flag_pt, flag_us, flag_val;
+    private final ImageIcon newsIcon, skinsIcon, settingsIcon, optionsIcon;
+    private boolean authenticating;
+    private final Console console;
 
     public Main(Kernel k){
         this.kernel = k;
+        this.console = k.getConsole();
         this.login = new LoginTab(k);
         this.browser = new Browser(k);
         this.setting = new SettingsTab(k);
@@ -233,9 +215,9 @@ public class Main extends JFrame{
                                     downloader.download();
                                     gameLauncher.launch();
                                 } catch (GameLauncherException ex) {
-                                    System.out.println("Failed to perform game launch task: " + ex);
+                                    console.printError("Failed to perform game launch task: " + ex);
                                 } catch (DownloaderException e1) {
-                                    System.out.println("Failed to perform download task: " + e1);
+                                    console.printError("Failed to perform download task: " + e1);
                                 }
                             }
                         }
