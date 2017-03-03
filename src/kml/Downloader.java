@@ -46,6 +46,9 @@ public class Downloader {
         } else {
             verID = kernel.getVersions().getLatestSnapshot();
         }
+        if (verID == null) {
+            throw new DownloaderException("Version ID is null.");
+        }
         Version v = kernel.getVersions().getVersion(verID);
         ExecutorService pool = Executors.newFixedThreadPool(5);
         List<Downloadable> urls = new ArrayList<>();

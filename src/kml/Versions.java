@@ -61,6 +61,8 @@ public class Versions {
         return null;
     }
     public void fetchVersions(){
+        boolean last_rel = (this.latestRel != null);
+        boolean last_snap = (this.latestSnap != null);
         console.printInfo("Fetching remote version list.");
         try {
             JSONObject root = new JSONObject(Utils.readURL(Constants.VERSION_MANIFEST_FILE));
@@ -68,14 +70,14 @@ public class Versions {
                 JSONObject latest = root.getJSONObject("latest");
                 if (latest.has("snapshot")){
                     this.latestSnap = latest.getString("snapshot");
+                    last_snap = true;
                 }
                 if (latest.has("release")){
                     this.latestRel = latest.getString("release");
+                    last_rel = true;
                 }
             }
             JSONArray vers = root.getJSONArray("versions");
-            boolean last_rel = (this.latestRel != null);
-            boolean last_snap = (this.latestSnap != null);
             for (int i = 0; i < vers.length(); i++){
                 JSONObject ver = vers.getJSONObject(i);
                 String id = null;
@@ -93,27 +95,20 @@ public class Versions {
                 if (ver.has("url")){
                     url = Utils.stringToURL(ver.getString("url"));
                 }
-                if (id == null || type == null || url == null){
+                if (id == null || url == null){
                     continue;
                 }
                 VersionMeta vm = new VersionMeta(id, url, type);
                 this.add(id, vm);
-                if (!last_rel && type.equals(VersionType.RELEASE)){
-                    this.latestRel = id;
-                    last_rel = true;
-                }
-                if (!last_snap && type.equals(VersionType.SNAPSHOT)){
-                    this.latestSnap = id;
-                    last_snap = true;
-                }
             }
             console.printInfo("Remote version list loaded.");
         } catch (Exception ex) {
             console.printError("Failed to fetch remote version list.");
         }
         console.printInfo("Fetching local version list versions.");
+        VersionMeta lastRelease = null, lastSnapshot = null;
+        String latestRelease = "", latestSnapshot = "";
         try{
-            boolean last_rel = (this.latestRel != null);
             File versionsDir = new File(kernel.getWorkingDir() + File.separator + "versions");
             if (versionsDir.exists()){
                 if (versionsDir.isDirectory()){
@@ -133,19 +128,26 @@ public class Versions {
                                     console.printError("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
                                 }
                                 VersionMeta vm = new VersionMeta(id, url, type);
-                                if (!this.versions.containsKey(id)){
-                                    if (Constants.USE_LOCAL){
-                                        if (!last_rel){
-                                            this.latestRel = id;
-                                            last_rel = true;
-                                        }
+                                this.add(id, vm);
+                                if (ver.has("releaseTime")) {
+                                    if (type == VersionType.RELEASE && ver.getString("releaseTime").compareTo(latestRelease) > 0) {
+                                        lastRelease =  vm;
+                                        latestRelease = ver.getString("releaseTime");
+                                    } else if(type == VersionType.SNAPSHOT && ver.getString("releaseTime").compareTo(latestSnapshot) > 0) {
+                                        lastSnapshot =  vm;
+                                        latestSnapshot = ver.getString("releaseTime");
                                     }
-                                    this.add(id, vm);
                                 }
                             }
                         }
                     }
                 }
+            }
+            if (!last_rel && lastRelease != null){
+                this.latestRel = lastRelease.getID();
+            }
+            if (!last_snap && lastSnapshot != null){
+                this.latestSnap = lastSnapshot.getID();
             }
             console.printInfo("Local version list loaded.");
         }catch (Exception ex){

@@ -257,7 +257,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");
                         break;
                     case "${auth_session}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().replaceAll("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().replace("-", ""));
                         break;
                 }
             }

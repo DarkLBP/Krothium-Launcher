@@ -132,7 +132,7 @@ public final class Kernel {
                 return data[1];
             }
         } catch (Exception ex){
-            console.printError("Failed to check for updates.");
+            console.printError("Failed to check for updates: " + ex);
             return null;
         }
         return null;

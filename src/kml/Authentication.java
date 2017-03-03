@@ -83,7 +83,7 @@ public class Authentication {
         try {
             response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (Exception ex) {
-            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
+            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
         }
         if (response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
@@ -134,7 +134,7 @@ public class Authentication {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
             }
-            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
+            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
         }
         if (response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
@@ -180,7 +180,7 @@ public class Authentication {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
             }
-            throw new AuthenticationException("Failed to send request to authentication server.\n" + ex.getMessage());
+            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
         }
         if (response.isEmpty()){
             this.authenticated = true;

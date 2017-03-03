@@ -274,7 +274,7 @@ public class SkinTab {
                         }
                     }
                 } catch (Exception ex) {
-                    console.printError("Failed to load profile textures data!");
+                    console.printError("Failed to load profile textures data: " + ex);
                     skinPreview.setIcon(null);
                 }
             }
