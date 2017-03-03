@@ -181,7 +181,7 @@ public class Utils {
         try{
             MessageDigest sha1 = MessageDigest.getInstance("SHA1");
             FileInputStream fis = new FileInputStream(file);
-            byte[] data = new byte[4096];
+            byte[] data = new byte[8192];
             int read; 
             while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);

@@ -132,7 +132,7 @@ public class GameLauncher {
                                 continue;
                             }
                             final BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
-                            final byte[] buffer = new byte[2048];
+                            final byte[] buffer = new byte[8192];
                             final FileOutputStream outputStream = new FileOutputStream(targetFile);
                             final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
                             int length;
