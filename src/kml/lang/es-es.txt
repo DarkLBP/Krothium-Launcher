@@ -78,3 +78,7 @@ Estos cambios podrían causar un mal funcionamiento del juego.
 Información
 JUGAR SIN LÍNEA
 AUTENTICANDO
+Ejecución fallida
+!Fallo al ejecutar la tarea de ejecución del juego! Comprueba los registros para más información.
+Descarga fallida
+!Fallo al ejecutar la tarea de descarga del juego! Comprueba los registros para más información.

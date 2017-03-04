@@ -78,3 +78,7 @@ Aquestos canvis podrien causar un mal funcionament del joc.
 Informació
 JUGAR SENSE LÍNEA
 AUTENTICANT
+Execució fallida
+!Fallada al executar la tasca d'execució del joc! Comprova els registres per a mes informació.
+Descàrrega fallida
+!Fallada al executar la tasca de descàrrega del joc! Comprova els registres per a mes informació.

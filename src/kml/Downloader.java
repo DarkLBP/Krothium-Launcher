@@ -45,6 +45,7 @@ public class Downloader {
             verID = kernel.getVersions().getLatestSnapshot();
         }
         if (verID == null) {
+            this.downloading = false;
             throw new DownloaderException("Version ID is null.");
         }
         Version v = kernel.getVersions().getVersion(verID);

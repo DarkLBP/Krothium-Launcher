@@ -227,9 +227,11 @@ public class Main extends JFrame{
                                     downloader.download();
                                     gameLauncher.launch();
                                 } catch (GameLauncherException ex) {
+                                    JOptionPane.showMessageDialog(null, Language.get(82), Language.get(81), JOptionPane.ERROR_MESSAGE);
                                     console.printError("Failed to perform game launch task: " + ex);
                                 } catch (DownloaderException e1) {
-                                    console.printError("Failed to perform download task: " + e1);
+                                    JOptionPane.showMessageDialog(null, Language.get(84), Language.get(83), JOptionPane.ERROR_MESSAGE);
+                                    console.printError("Failed to perform game download task: " + e1);
                                 }
                             }
                         }

@@ -78,3 +78,7 @@ Changing these may cause the game to malfunction.
 Information
 PLAY OFFLINE
 AUTHENTICATING
+Launch failed
+Failed to perform game launch task! Check the logs for more information.
+Download failed
+Failed to perform game download task! Check the logs for more information.
