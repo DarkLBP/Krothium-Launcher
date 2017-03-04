@@ -2,7 +2,6 @@ package kml.matchers;
 
 import kml.Utils;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;

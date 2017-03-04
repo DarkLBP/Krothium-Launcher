@@ -1,10 +1,12 @@
 package kml;
 
 import kml.gui.Main;
+import kml.handlers.BrowserHandler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -25,6 +27,7 @@ class Starter {
                 Console console = kernel.getConsole();
                 console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
                 Utils.testNetwork();
+                URL.setURLStreamHandlerFactory(new BrowserHandler());
                 Main main = kernel.getGUI();
                 main.setVisible(true);
             }

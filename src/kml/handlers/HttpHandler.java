@@ -1,7 +1,7 @@
 package kml.handlers;
 
 import kml.Constants;
-import kml.matchers.*;
+import kml.matchers.URLMatcher;
 
 import java.io.IOException;
 import java.net.Proxy;
