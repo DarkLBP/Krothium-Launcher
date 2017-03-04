@@ -14,30 +14,25 @@ import java.util.regex.Pattern;
  */
 public class CapeMatcher implements URLMatcher{
     private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
-    private final URL url;
-    
-    public CapeMatcher(URL url){
-        this.url = url;
-    }
+
     @Override
-    public boolean match(){
+    public boolean match(URL url){
         final String capeHost = "skins.minecraft.net";
         final String capeHostLegacy = "s3.amazonaws.com";
-        if (this.url.getHost().equalsIgnoreCase(capeHost) || this.url.getHost().equalsIgnoreCase(capeHostLegacy)){
-            Matcher m = capeRegex.matcher(this.url.getPath());
+        if (url.getHost().equalsIgnoreCase(capeHost) || url.getHost().equalsIgnoreCase(capeHostLegacy)){
+            Matcher m = capeRegex.matcher(url.getPath());
             return m.matches();
         }
         return false;
     }
     @Override
-    public URLConnection handle(){
-        Matcher m = capeRegex.matcher(this.url.getPath());
+    public URLConnection handle(URL url){
+        Matcher m = capeRegex.matcher(url.getPath());
         if (m.matches()){
-            String name = m.group(1);
-            URL remoteURL = Utils.stringToURL("http://mc.krothium.com/capes/" + name + ".png");
             try {
-                return remoteURL != null ? remoteURL.openConnection() : null;
-            } catch (IOException ex) {
+                String name = m.group(1);
+                return Utils.stringToURL("http://mc.krothium.com/capes/" + name + ".png").openConnection();
+            } catch (Exception ex) {
                 return null;
             }
         }

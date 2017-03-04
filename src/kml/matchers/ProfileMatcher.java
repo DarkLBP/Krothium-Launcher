@@ -14,29 +14,24 @@ import java.util.regex.Pattern;
  */
 public class ProfileMatcher implements URLMatcher{
     private final Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");
-    private final URL url;
-    
-    public ProfileMatcher(URL url){
-        this.url = url;
-    }
+
     @Override
-    public boolean match(){
+    public boolean match(URL url){
         final String profileHost = "sessionserver.mojang.com";
-        if (this.url.getHost().equalsIgnoreCase(profileHost)){
-            Matcher m = profileRegex.matcher(this.url.getPath());
+        if (url.getHost().equalsIgnoreCase(profileHost)){
+            Matcher m = profileRegex.matcher(url.getPath());
             return m.matches();
         }
         return false;
     }
     @Override
-    public URLConnection handle(){
-        Matcher m = profileRegex.matcher(this.url.getPath());
+    public URLConnection handle(URL url){
+        Matcher m = profileRegex.matcher(url.getPath());
         if (m.matches()){
             String profileID = m.group(1);
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (this.url.getQuery() != null ? "?" + this.url.getQuery() : ""));
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
-            } catch (IOException ex) {
+                return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (url.getQuery() != null ? "?" + url.getQuery() : "")).openConnection();
+            } catch (Exception ex) {
                 return null;
             }
         }

@@ -12,21 +12,16 @@ import java.net.URLConnection;
  */
 public class BlockedServersMatcher implements URLMatcher{
     private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
-    private final URL url;
-    
-    public BlockedServersMatcher(URL url){
-        this.url = url;
+
+    @Override
+    public boolean match(URL url){
+        return url.toString().equalsIgnoreCase(blockURL);
     }
     @Override
-    public boolean match(){
-        return this.url.toString().equalsIgnoreCase(blockURL);
-    }
-    @Override
-    public URLConnection handle(){
-        if (this.url.toString().equalsIgnoreCase(blockURL)){
-            URL remoteURL = Constants.BLOCKED_SERVERS;
+    public URLConnection handle(URL url){
+        if (url.toString().equalsIgnoreCase(blockURL)){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
+                return Constants.BLOCKED_SERVERS.openConnection();
             } catch (IOException ex) {
                 return null;
             }

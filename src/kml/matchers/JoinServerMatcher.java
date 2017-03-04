@@ -12,22 +12,17 @@ import java.net.URLConnection;
  */
 public class JoinServerMatcher implements URLMatcher{
     private final String joinURL = "http://session.minecraft.net/game/joinserver.jsp";
-    private final URL url;
-    
-    public JoinServerMatcher(URL url){
-        this.url = url;
+
+    @Override
+    public boolean match(URL url){
+        return url.toString().contains(joinURL) && url.getQuery() != null;
     }
     @Override
-    public boolean match(){
-        return (this.url.toString().contains(joinURL) && this.url.getQuery() != null);
-    }
-    @Override
-    public URLConnection handle(){
-        if ((this.url.toString().contains(joinURL) && this.url.getQuery() != null)){
-            URL remoteURL = Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + this.url.getQuery());
+    public URLConnection handle(URL url){
+        if (url.toString().contains(joinURL) && url.getQuery() != null){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
-            } catch (IOException ex) {
+                return Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + url.getQuery()).openConnection();
+            } catch (Exception ex) {
                 return null;
             }
         }

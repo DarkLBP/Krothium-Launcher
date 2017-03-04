@@ -12,22 +12,17 @@ import java.net.URLConnection;
  */
 public class HasJoinedMatcher implements URLMatcher{
     private final String hasURL = "https://sessionserver.mojang.com/session/minecraft/hasJoined";
-    private final URL url;
-    
-    public HasJoinedMatcher(URL url){
-        this.url = url;
+
+    @Override
+    public boolean match(URL url){
+        return url.toString().contains(hasURL) && url.getQuery() != null;
     }
     @Override
-    public boolean match(){
-        return (this.url.toString().contains(hasURL) && this.url.getQuery() != null);
-    }
-    @Override
-    public URLConnection handle(){
-        if ((this.url.toString().contains(hasURL) && this.url.getQuery() != null)){
-            URL remoteURL = Utils.stringToURL("https://mc.krothium.com/server/hasJoined?" + this.url.getQuery());
+    public URLConnection handle(URL url){
+        if (url.toString().contains(hasURL) && url.getQuery() != null){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
-            } catch (IOException ex) {
+                return Utils.stringToURL("https://mc.krothium.com/server/hasJoined?" + url.getQuery()).openConnection();
+            } catch (Exception ex) {
                 return null;
             }
         }

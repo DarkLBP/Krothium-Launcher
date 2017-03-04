@@ -12,21 +12,16 @@ import java.net.URLConnection;
  */
 public class AuthenticateMatcher implements URLMatcher{
     private final String authenticateURL = "https://authserver.mojang.com/authenticate";
-    private final URL url;
 
-    public AuthenticateMatcher(URL url){
-        this.url = url;
+    @Override
+    public boolean match(URL url){
+        return url.toString().equalsIgnoreCase(authenticateURL);
     }
     @Override
-    public boolean match(){
-        return this.url.toString().equalsIgnoreCase(authenticateURL);
-    }
-    @Override
-    public URLConnection handle(){
-        if (this.url.toString().equalsIgnoreCase(authenticateURL)){
-            URL remoteURL = Constants.AUTHENTICATE_URL;
+    public URLConnection handle(URL url){
+        if (url.toString().equalsIgnoreCase(authenticateURL)){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
+                return Constants.AUTHENTICATE_URL.openConnection();
             } catch (IOException ex) {
                 return null;
             }

@@ -18,7 +18,7 @@ class ConnectionHandler extends HttpURLConnection{
     
     public ConnectionHandler(URL url, URLMatcher m){
         super(url);
-        this.relay = m.handle();
+        this.relay = m.handle(url);
         System.out.println("URL handled: " + super.url.toString() + " | " + (this.relay != null));
     }
     @Override

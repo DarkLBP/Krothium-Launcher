@@ -1,5 +1,6 @@
 package kml.handlers;
 
+import kml.Constants;
 import kml.matchers.*;
 
 import java.io.IOException;
@@ -21,9 +22,8 @@ class HttpHandler extends sun.net.www.protocol.http.Handler{
     @Override
     protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url.toString());
-        URLMatcher[] matchers = new URLMatcher[]{new SkinMatcher(url), new CapeMatcher(url), new JoinServerMatcher(url), new CheckServerMatcher(url)};
-        for (URLMatcher m : matchers){
-            if (m.match()){
+        for (URLMatcher m : Constants.HTTP_MATCHERS){
+            if (m.match(url)){
                 return new ConnectionHandler(url, m);
             }
         }

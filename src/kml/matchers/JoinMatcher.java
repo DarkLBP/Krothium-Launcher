@@ -12,21 +12,16 @@ import java.net.URLConnection;
  */
 public class JoinMatcher implements URLMatcher{
     private final String joinURL = "https://sessionserver.mojang.com/session/minecraft/join";
-    private final URL url;
-    
-    public JoinMatcher(URL url){
-        this.url = url;
+
+    @Override
+    public boolean match(URL url){
+        return url.toString().equalsIgnoreCase(joinURL);
     }
     @Override
-    public boolean match(){
-        return this.url.toString().equalsIgnoreCase(joinURL);
-    }
-    @Override
-    public URLConnection handle(){
-        if (this.url.toString().equalsIgnoreCase(joinURL)){
-            URL remoteURL = Constants.JOINSERVER;
+    public URLConnection handle(URL url){
+        if (url.toString().equalsIgnoreCase(joinURL)){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
+                return Constants.JOINSERVER.openConnection();
             } catch (IOException ex) {
                 return null;
             }

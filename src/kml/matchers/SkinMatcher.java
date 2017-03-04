@@ -14,29 +14,24 @@ import java.util.regex.Pattern;
  */
 public class SkinMatcher implements URLMatcher{
     private final Pattern skinRegex = Pattern.compile("/MinecraftSkins/(.+?)\\.png");
-    private final URL url;
-    
-    public SkinMatcher(URL url){
-        this.url = url;
-    }
+
     @Override
-    public boolean match(){
+    public boolean match(URL url){
         final String skinHost = "skins.minecraft.net";
-        if (this.url.getHost().equalsIgnoreCase(skinHost)){
-            Matcher m = skinRegex.matcher(this.url.getPath());
+        if (url.getHost().equalsIgnoreCase(skinHost)){
+            Matcher m = skinRegex.matcher(url.getPath());
             return m.matches();
         }
         return false;
     }
     @Override
-    public URLConnection handle(){
-        Matcher m = skinRegex.matcher(this.url.getPath());
+    public URLConnection handle(URL url){
+        Matcher m = skinRegex.matcher(url.getPath());
         if (m.matches()){
-            String name = m.group(1);
-            URL remoteURL = Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png");
             try {
-                return remoteURL != null ? remoteURL.openConnection() : null;
-            } catch (IOException ex) {
+                String name = m.group(1);
+                return Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png").openConnection();
+            } catch (Exception ex) {
                 return null;
             }
         }

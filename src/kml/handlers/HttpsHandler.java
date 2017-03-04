@@ -1,5 +1,6 @@
 package kml.handlers;
 
+import kml.Constants;
 import kml.matchers.*;
 
 import java.io.IOException;
@@ -21,9 +22,8 @@ class HttpsHandler extends sun.net.www.protocol.https.Handler{
     @Override
     protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url.toString());
-        URLMatcher[] matchers = new URLMatcher[]{new ProfileMatcher(url), new JoinMatcher(url), new HasJoinedMatcher(url), new BlockedServersMatcher(url), new AuthenticateMatcher(url), new RefreshMatcher(url), new ValidateMatcher(url), new RealmsMatcher(url)};
-        for (URLMatcher m : matchers){
-            if (m.match()){
+        for (URLMatcher m : Constants.HTTPS_MATCHERS){
+            if (m.match(url)){
                 return new ConnectionHandler(url, m);
             }
         }

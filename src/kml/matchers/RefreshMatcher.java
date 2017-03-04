@@ -12,21 +12,16 @@ import java.net.URLConnection;
  */
 public class RefreshMatcher implements URLMatcher{
     private final String refreshURL = "https://authserver.mojang.com/refresh";
-    private final URL url;
 
-    public RefreshMatcher(URL url){
-        this.url = url;
+    @Override
+    public boolean match(URL url){
+        return url.toString().equalsIgnoreCase(refreshURL);
     }
     @Override
-    public boolean match(){
-        return this.url.toString().equalsIgnoreCase(refreshURL);
-    }
-    @Override
-    public URLConnection handle(){
-        if (this.url.toString().equalsIgnoreCase(refreshURL)){
-            URL remoteURL = Constants.REFRESH_URL;
+    public URLConnection handle(URL url){
+        if (url.toString().equalsIgnoreCase(refreshURL)){
             try{
-                return remoteURL != null ? remoteURL.openConnection() : null;
+                return Constants.REFRESH_URL.openConnection();
             } catch (IOException ex) {
                 return null;
             }
