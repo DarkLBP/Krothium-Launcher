@@ -10,17 +10,17 @@ import java.net.URLConnection;
  * @author DarkLBP
  * website https://krothium.com
  */
-class AdsHandler extends sun.net.www.protocol.http.Handler{
+class AdsHandlerSecure extends sun.net.www.protocol.https.Handler{
     private final String userAgent;
 
-    public AdsHandler(String userAgent) {
+    public AdsHandlerSecure(String userAgent) {
         this.userAgent = userAgent;
     }
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
         return openConnection(url, null);
     }
-    
+
     @Override
     protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         if (!url.getHost().toLowerCase().contains("minecraft.net") && !url.getHost().toLowerCase().contains("mojang.com")) {

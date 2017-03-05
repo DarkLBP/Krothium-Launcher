@@ -12,6 +12,7 @@ import java.net.URLStreamHandlerFactory;
  */
 public class BrowserHandler implements URLStreamHandlerFactory{
     private AdsHandler ADS_HANDLER;
+    private AdsHandlerSecure ADS_HANDLER_SECURE;
     public BrowserHandler() {
         String userAgent = "Mozilla/5.0 %s AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
         switch (Utils.getPlatform()) {
@@ -36,11 +37,14 @@ public class BrowserHandler implements URLStreamHandlerFactory{
                 userAgent = String.format(userAgent, "(Windows NT 10.0; Win64; x64)");
         }
         ADS_HANDLER = new AdsHandler(userAgent);
+        ADS_HANDLER_SECURE = new AdsHandlerSecure(userAgent);
     }
     @Override
     public URLStreamHandler createURLStreamHandler(String protocol) {
-        if (protocol.equalsIgnoreCase("https") || protocol.equalsIgnoreCase("http")){
+        if (protocol.equalsIgnoreCase("http")){
             return ADS_HANDLER;
+        } else if (protocol.equalsIgnoreCase("https")) {
+            return ADS_HANDLER_SECURE;
         }
         return null;
     }
