@@ -2,6 +2,7 @@ package kml.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
@@ -35,6 +36,14 @@ class AdsConnection extends HttpURLConnection {
     @Override
     public InputStream getInputStream() throws IOException {
         return con.getInputStream();
+    }
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return con.getOutputStream();
+    }
+    @Override
+    public void addRequestProperty(String key, String value) {
+        con.addRequestProperty(key, value);
     }
     @Override
     public void setRequestProperty(String key, String value) {
