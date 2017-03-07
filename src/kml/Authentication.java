@@ -231,22 +231,20 @@ public class Authentication {
                         }
                     }
                 }
-                if (root.has("selectedUser")){
+                if (root.has("selectedUser") && root.getJSONObject("selectedUser").has("account") && root.getJSONObject("selectedUser").has("profile")){
                     this.selectedAccount = null;
                     this.selectedProfile = null;
                     JSONObject selectedUser = root.getJSONObject("selectedUser");
-                    if (selectedUser.has("account") && selectedUser.has("profile")){
-                        if (this.userDatabase.size() > 0){
-                            if (this.userDatabase.containsKey(selectedUser.getString("account"))){
-                                this.selectedAccount = selectedUser.getString("account");
-                                this.selectedProfile = selectedUser.getString("profile");
-                            }else{
-                                Set s = this.userDatabase.keySet();
-                                Iterator i = s.iterator();
-                                while (this.selectedAccount == null){
-                                    this.selectedAccount = i.next().toString();
-                                    this.selectedProfile = this.userDatabase.get(this.selectedAccount).getProfileID();
-                                }
+                    if (this.userDatabase.size() > 0){
+                        if (this.userDatabase.containsKey(selectedUser.getString("account"))){
+                            this.selectedAccount = selectedUser.getString("account");
+                            this.selectedProfile = selectedUser.getString("profile");
+                        }else{
+                            Set s = this.userDatabase.keySet();
+                            Iterator i = s.iterator();
+                            while (this.selectedAccount == null){
+                                this.selectedAccount = i.next().toString();
+                                this.selectedProfile = this.userDatabase.get(this.selectedAccount).getProfileID();
                             }
                         }
                     }
