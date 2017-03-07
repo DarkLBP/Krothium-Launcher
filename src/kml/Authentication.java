@@ -26,8 +26,8 @@ public class Authentication {
         this.console = k.getConsole();
     }
     private void addUser(String userID, User u){
-        this.userDatabase.put(userID, u);
         console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(userID)) ? " updated." : " loaded."));
+        this.userDatabase.put(userID, u);
     }
     private boolean removeUser(String userID){
         if (this.userDatabase.containsKey(userID)){
