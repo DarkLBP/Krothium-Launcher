@@ -99,7 +99,7 @@ public final class Kernel {
             output.put(name, authdata.get(name));
         }
         output.put("settings", this.settings.toJSON());
-        if (!Utils.writeToFile(output.toString(), this.getConfigFile())){
+        if (!Utils.writeToFile(output.toString(4), this.getConfigFile())){
             console.printError("Failed to save the profiles file!");
         }
     }
