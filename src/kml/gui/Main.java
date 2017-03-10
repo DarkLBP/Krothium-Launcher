@@ -54,6 +54,7 @@ public class Main extends JFrame{
     private boolean wasPlaying;
 
     public Main(Kernel k){
+        setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         this.kernel = k;
         this.console = k.getConsole();
         this.login = new LoginTab(k);
