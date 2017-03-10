@@ -30,6 +30,7 @@ public class GameLauncher {
     private final Kernel kernel;
     private boolean error;
     private final GameLog gameLog;
+    private boolean started;
     
     public GameLauncher(Kernel k){
         this.kernel = k;
@@ -37,9 +38,10 @@ public class GameLauncher {
         this.gameLog = new GameLog(k);
     }
     public void launch() throws GameLauncherException{
+        started = true;
         error = false;
         Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
-        if (this.isStarted()){
+        if (this.isRunning()){
             throw new GameLauncherException("Game is already started!");
         }
         String verID;
@@ -290,7 +292,7 @@ public class GameLauncher {
                     BufferedReader br = new BufferedReader(isr);
                     String lineRead;
                     try {
-                        while (GameLauncher.this.isStarted()) {
+                        while (GameLauncher.this.isRunning()) {
                             if ((lineRead = br.readLine()) != null) {
                                 if (kernel.getSettings().getShowGameLog()) {
                                     gameLog.pushString(lineRead);
@@ -306,6 +308,7 @@ public class GameLauncher {
                         error = true;
                         console.printError("Game stopped unexpectedly.");
                     }
+                    started = false;
                     console.printInfo("Deleteting natives dir.");
                     Utils.deleteDirectory(nativesDir);
                     if (GameLauncher.this.hasError()) {
@@ -324,7 +327,7 @@ public class GameLauncher {
                     BufferedReader br = new BufferedReader(isr);
                     String lineRead;
                     try {
-                        while (GameLauncher.this.isStarted()) {
+                        while (GameLauncher.this.isRunning()) {
                             if ((lineRead = br.readLine()) != null) {
                                 if (kernel.getSettings().getShowGameLog()) {
                                     gameLog.pushString(lineRead);
@@ -340,11 +343,15 @@ public class GameLauncher {
             log_error.start();
         }catch (Exception ex){
             error = true;
+            started = false;
             ex.printStackTrace();
             console.printError("Game returned an error code.");
         }
     }
-    public boolean isStarted(){
+    public boolean isStarted() {
+        return this.started;
+    }
+    public boolean isRunning(){
         if (process != null){
             try {
                 process.exitValue();
