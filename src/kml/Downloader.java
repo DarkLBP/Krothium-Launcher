@@ -59,23 +59,9 @@ public class Downloader {
         if (v.hasAssetIndex()){
             AssetIndex index = v.getAssetIndex();
             String assetID = index.getID();
-            long assetFileLength = index.getSize();
-            boolean localIndex = false;
             indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
-            URL assetsURL = null;
-            if (indexJSON.exists() && indexJSON.isFile()){
-                if (indexJSON.length() == assetFileLength){
-                    try {
-                        assetsURL = indexJSON.toURI().toURL();
-                    } catch (MalformedURLException ex) {
-                        this.downloading = false;
-                        throw new DownloaderException("Invalid asset index json file path.");
-                    }
-                    localIndex = true;
-                }
-            }
-            assetsURL = (assetsURL == null) ? index.getURL() : assetsURL;
-            if (!localIndex){
+            URL assetsURL = index.getURL();
+            if (!Constants.USE_LOCAL) {
                 int tries = 0;
                 while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)){
                     tries++;
@@ -84,16 +70,18 @@ public class Downloader {
                     console.printError("Failed to download asset index for version " + assetID);
                 }
             }
-        }  else if (v.hasAssets()){
+        } else if (v.hasAssets()){
             String assetIndex = v.getAssets();
             URL assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetIndex + ".json");
             indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetIndex + ".json");
-            int tries = 0;
-            while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)){
-                tries++;
-            }
-            if (tries == Constants.DOWNLOAD_TRIES){
-                console.printError("Failed to download asset index for version " + assetIndex);
+            if (!Constants.USE_LOCAL) {
+                int tries = 0;
+                while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)){
+                    tries++;
+                }
+                if (tries == Constants.DOWNLOAD_TRIES){
+                    console.printError("Failed to download asset index for version " + assetIndex);
+                }
             }
         } else {
             console.printInfo("Version " + v.getID() + " does not have any valid assets.");
@@ -149,17 +137,7 @@ public class Downloader {
                 File destPath = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJar());
                 boolean localValid = false;
                 File jsonFile = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJSON());
-                boolean JSONValid = false;
-                if (jsonFile.exists() && jsonFile.isFile()){
-                    try {
-                        if (jsonFile.length() == v.getJSONURL().openConnection().getContentLength()){
-                            JSONValid = true;
-                        }
-                    } catch (IOException ex) {
-                        console.printError("Failed to verify existing JSON integrity.");
-                    }
-                }
-                if (!JSONValid){
+                if (!Constants.USE_LOCAL) {
                     int tries = 0;
                     while (!Utils.downloadFile(v.getJSONURL(), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)){
                         tries++;
@@ -167,8 +145,6 @@ public class Downloader {
                     if (tries == Constants.DOWNLOAD_TRIES){
                         console.printError("Failed to download version index " + destPath.getName());
                     }
-                }else{
-                    console.printInfo("Version " + v.getID() + " JSON file found locally and it is valid.");
                 }
                 if (destPath.exists() && destPath.isFile()){
                     if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)){

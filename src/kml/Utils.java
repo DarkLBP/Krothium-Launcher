@@ -126,19 +126,9 @@ public class Utils {
             InputStream in = null;
             if (url.getProtocol().equalsIgnoreCase("http")){
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
-                if (output.exists() && output.isFile()) {
-                    if (con.getContentLength() == output.length()) {
-                        return true;
-                    }
-                }
                 in = con.getInputStream();
             } else if (url.getProtocol().equalsIgnoreCase("https")){
                 HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
-                if (output.exists() && output.isFile()) {
-                    if (con.getContentLength() == output.length()) {
-                        return true;
-                    }
-                }
                 in = con.getInputStream();
             }
             if (in == null){
