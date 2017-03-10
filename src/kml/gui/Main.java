@@ -37,9 +37,8 @@ public class Main extends JFrame{
     private boolean componentsDisabled = false;
     private final BorderLayout borderLayout = new BorderLayout();
     private final FlowLayout flowLayout = new FlowLayout();
-    private final ImageIcon playButton_normal, playButton_hover, playButton_click, profile_normal, profile_hover, profile_click;
+    private final ImageIcon playButton_normal, playButton_hover, profile_normal, profile_hover;
     private final Timer timer = new Timer();
-    private final TimerTask guiThread;
     private final Downloader downloader;
     private final GameLauncher gameLauncher;
     private final ProfileEditor editor;
@@ -51,8 +50,8 @@ public class Main extends JFrame{
     private final Font bold = new Font("Minecraftia", Font.BOLD,14);
     private final ImageIcon flag_es, flag_pt, flag_us, flag_val, flag_br;
     private final ImageIcon newsIcon, skinsIcon, settingsIcon, optionsIcon;
-    private boolean authenticating;
     private final Console console;
+    private boolean wasPlaying;
 
     public Main(Kernel k){
         this.kernel = k;
@@ -65,10 +64,8 @@ public class Main extends JFrame{
         this.downloader = kernel.getDownloader();
         this.playButton_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
         this.playButton_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_hover.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
-        this.playButton_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/playbutton_click.png")).getImage().getScaledInstance(350,70, Image.SCALE_SMOOTH));
         this.profile_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.profile_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_hover.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
-        this.profile_click = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/profile_click.png")).getImage().getScaledInstance(40,70, Image.SCALE_SMOOTH));
         this.flag_es = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_es-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_us = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_en-us.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
@@ -177,12 +174,6 @@ public class Main extends JFrame{
             @Override
             public void popupMenuCanceled(PopupMenuEvent e) {}
         });
-        language.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                languages.show(e.getComponent(), e.getX(), e.getY());
-            }
-        });
         MouseAdapter tabAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -218,18 +209,38 @@ public class Main extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 if (playButton.isEnabled()){
-                    playButton.setIcon(playButton_click);
                     Thread runThread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             if (!downloader.isDownloading() && !gameLauncher.isStarted()) {
+                                Timer t = new Timer();
+                                TimerTask task = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        if (downloader.isDownloading()) {
+                                            updatePlayButton();
+                                        } else if (gameLauncher.isStarted()) {
+                                            if (!wasPlaying) {
+                                                updatePlayButton();
+                                                wasPlaying = true;
+                                            }
+                                        } else if (!(downloader.isDownloading() || gameLauncher.isStarted())) {
+                                            updatePlayButton();
+                                            wasPlaying = false;
+                                            super.cancel();
+                                        }
+                                    }
+                                };
+                                t.scheduleAtFixedRate(task, 0, 500);
                                 try {
                                     downloader.download();
                                     gameLauncher.launch();
                                 } catch (GameLauncherException ex) {
+                                    updatePlayButton();
                                     JOptionPane.showMessageDialog(null, Language.get(82), Language.get(81), JOptionPane.ERROR_MESSAGE);
                                     console.printError("Failed to perform game launch task: " + ex);
                                 } catch (DownloaderException e1) {
+                                    updatePlayButton();
                                     JOptionPane.showMessageDialog(null, Language.get(84), Language.get(83), JOptionPane.ERROR_MESSAGE);
                                     console.printError("Failed to perform game download task: " + e1);
                                 }
@@ -274,7 +285,6 @@ public class Main extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 if (profileButton.isEnabled()){
-                    profileButton.setIcon(profile_click);
                     showPopupMenu(e);
                 }
             }
@@ -289,10 +299,8 @@ public class Main extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 if (logout.isEnabled()){
-                    int response = JOptionPane.showConfirmDialog(null, Language.get(8), Language.get(9), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (response == JOptionPane.YES_OPTION){
-                        kernel.getAuthentication().logOut();
-                    }
+                    kernel.getAuthentication().setSelectedUser(null);
+                    showLoginPrompt(true);
                 }
             }
             @Override
@@ -307,7 +315,7 @@ public class Main extends JFrame{
         language.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-
+                languages.show(e.getComponent(), e.getX(), e.getY());
             }
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -324,85 +332,11 @@ public class Main extends JFrame{
                 kernel.exitSafely();
             }
         });
-        guiThread = new TimerTask() {
-            @Override
-            public void run() {
-                if (kernel.getAuthentication().isAuthenticated()){
-                    setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " | " + kernel.getAuthentication().getSelectedUser().getDisplayName());
-                    if (componentsDisabled){
-                        setDisable(false);
-                    }
-                    if (selected == null){
-                        setSelected(news);
-                    }
-                    if (downloader.isDownloading()){
-                        progress.setVisible(true);
-                        playButton.setText(Language.get(13) + " " + kernel.getDownloader().getProgress() + "%");
-                        progress.setValue(kernel.getDownloader().getProgress());
-                        profileButton.setEnabled(false);
-                    } else if (gameLauncher.isStarted()){
-                        playButton.setText(Language.get(14));
-                        progress.setVisible(false);
-                        profileButton.setEnabled(false);
-                    } else {
-                        String buttonMain;
-                        if (Constants.USE_LOCAL){
-                            buttonMain = Language.get(79);
-                        } else {
-                            buttonMain = Language.get(12);
-                        }
-                        if (kernel.getProfiles().getSelectedProfile() != null){
-                            Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
-                            if (p.hasVersion()){
-                                switch (p.getVersionID()) {
-                                    case "latest-release":
-                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
-                                        break;
-                                    case "latest-snapshot":
-                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
-                                        break;
-                                    default:
-                                        playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
-                                        break;
-                                }
-                            } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
-                                playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
-                            } else if (p.getType() == ProfileType.SNAPSHOT && kernel.getVersions().getLatestSnapshot() != null){
-                                playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
-                            } else {
-                                playButton.setText(buttonMain);
-                            }
-                        } else {
-                            playButton.setText(buttonMain);
-                        }
-                        progress.setVisible(false);
-                        profileButton.setEnabled(true);
-                    }
-                } else {
-                    setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
-                    if (authenticating) {
-                        playButton.setText(Language.get(80));
-                    } else {
-                        playButton.setText(Language.get(12));
-                    }
-                    if (!componentsDisabled){
-                        setDisable(true);
-                        if (!authenticating) {
-                            contentPanel.removeAll();
-                            contentPanel.setLayout(flowLayout);
-                            contentPanel.add(login.getPanel());
-                            contentPanel.updateUI();
-                        }
-                    }
-                    progress.setVisible(false);
-                }
-            }
-        };
         refreshAllLocalizedStrings();
     }
     private void refreshLocalizedStrings(){
         language.setText(Language.get(2));
-        logout.setText(Language.get(3));
+        logout.setText(Language.get(86));
         news.setText(Language.get(4));
         skins.setText(Language.get(5));
         settings.setText(Language.get(6));
@@ -435,32 +369,92 @@ public class Main extends JFrame{
             }
         }
     }
+    public void updatePlayButton() {
+        if (downloader.isDownloading()){
+            setDisable(true);
+            progress.setVisible(true);
+            playButton.setText(Language.get(13) + " " + kernel.getDownloader().getProgress() + "%");
+            progress.setValue(kernel.getDownloader().getProgress());
+            profileButton.setEnabled(false);
+        } else if (gameLauncher.isStarted()){
+            playButton.setText(Language.get(14));
+            progress.setVisible(false);
+            profileButton.setEnabled(false);
+        } else {
+            String buttonMain;
+            if (Constants.USE_LOCAL){
+                buttonMain = Language.get(79);
+            } else {
+                buttonMain = Language.get(12);
+            }
+            if (kernel.getProfiles().getSelectedProfile() != null){
+                Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
+                if (p.hasVersion()){
+                    switch (p.getVersionID()) {
+                        case "latest-release":
+                            playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                            break;
+                        case "latest-snapshot":
+                            playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                            break;
+                        default:
+                            playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + p.getVersionID() + "</font></center></html>");
+                            break;
+                    }
+                } else if (p.getType() == ProfileType.RELEASE && kernel.getVersions().getLatestRelease() != null){
+                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestRelease() + " (" + Language.get(59) + ")</font></center></html>");
+                } else if (p.getType() == ProfileType.SNAPSHOT && kernel.getVersions().getLatestSnapshot() != null){
+                    playButton.setText("<html><center>" + buttonMain + "<br><font size='2'>Minecraft " + kernel.getVersions().getLatestSnapshot() + " (" + Language.get(60) + ")</font></center></html>");
+                } else {
+                    playButton.setText(buttonMain);
+                }
+            } else {
+                playButton.setText(buttonMain);
+            }
+            setDisable(false);
+            progress.setVisible(false);
+            profileButton.setEnabled(true);
+        }
+    }
+    public void showLoginPrompt(boolean show) {
+        if (show) {
+            setDisable(true);
+            setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
+            contentPanel.removeAll();
+            contentPanel.setLayout(flowLayout);
+            contentPanel.add(login.getPanel());
+            contentPanel.updateUI();
+            login.updateExistingUsers();
+        } else {
+            setDisable(false);
+            setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " | " + kernel.getAuthentication().getSelectedUser().getDisplayName());
+            setSelected(news);
+            browser.home();
+            refreshSkinPreviews();
+            populateProfileList();
+        }
+    }
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
+        updatePlayButton();
+        progress.setVisible(false);
         if (b){
             Thread t1 = new Thread("Authentication thread") {
                 @Override
                 public void run() {
-                    Main.this.authenticating = true;
                     Authentication a = kernel.getAuthentication();
                     if (a.hasSelectedUser()){
                         try{
                             a.refresh();
                         }catch(AuthenticationException ex){
                             Main.this.kernel.getConsole().printError(ex.getMessage());
-                            contentPanel.removeAll();
-                            contentPanel.setLayout(flowLayout);
-                            contentPanel.add(login.getPanel());
-                            contentPanel.updateUI();
+                            showLoginPrompt(true);
                         }
                         kernel.saveProfiles();
                     }
-                    Main.this.authenticating = false;
-                    if (a.isAuthenticated()) {
-                        browser.home();
-                        refreshSkinPreviews();
-                        populateProfileList();
+                    if (!a.isAuthenticated()) {
+                        showLoginPrompt(true);
                     }
                 }
             };
@@ -468,7 +462,6 @@ public class Main extends JFrame{
             Thread t2 = new Thread("Visibility thread") {
                 @Override
                 public void run() {
-                    timer.scheduleAtFixedRate(guiThread, 0, 500);
                     String update = kernel.checkForUpdates();
                     if (update != null){
                         int response = JOptionPane.showConfirmDialog(null, Language.get(10), Language.get(11), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);

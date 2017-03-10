@@ -82,3 +82,5 @@ Execució fallida
 !Fallada al executar la tasca d'execució del joc! Comprova els registres per a mes informació.
 Descàrrega fallida
 !Fallada al executar la tasca de descàrrega del joc! Comprova els registres per a mes informació.
+Usuaris Existents:
+Canviar Compte

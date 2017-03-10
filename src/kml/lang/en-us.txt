@@ -82,3 +82,5 @@ Launch failed
 Failed to perform game launch task! Check the logs for more information.
 Download failed
 Failed to perform game download task! Check the logs for more information.
+Existing Users:
+Switch Account

@@ -41,6 +41,7 @@ public class ProfilePopup extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 kernel.getProfiles().setSelectedProfile((String)profiles.getSelectedValue());
+                kernel.getGUI().updatePlayButton();
                 setVisible(false);
             }
         });

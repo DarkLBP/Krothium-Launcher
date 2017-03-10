@@ -82,3 +82,5 @@ Falha no lançamento
 Falha ao executar a tarefa de lançamento do jogo! Verifique os logs para obter mais informações.
 Falha no download
 Falha ao executar a tarefa de download do jogo! Verifique os logs para obter mais informações.
+Usuários Existentes:
+Mudar de Conta
