@@ -243,28 +243,33 @@ public class SkinTab {
                     skinPreview.setIcon(null);
                     capePreview.setIcon(null);
                     URL profileURL = new URL("https://mc.krothium.com/profiles/" + kernel.getAuthentication().getSelectedUser().getProfileID());
-                    JSONArray properties = new JSONObject(Utils.readURL(profileURL)).getJSONArray("properties");
-                    JSONObject textures = new JSONObject(Utils.fromBase64(properties.getJSONObject(0).getString("value"))).getJSONObject("textures");
-                    if (textures.has("SKIN")) {
-                        try {
-                            JSONObject skin = textures.getJSONObject("SKIN");
-                            if (skin.has("metadata")) {
-                                alex.setSelected(true);
+                    String profile = Utils.readURL(profileURL);
+                    if (profile != null) {
+                        JSONArray properties = new JSONObject(Utils.readURL(profileURL)).getJSONArray("properties");
+                        JSONObject textures = new JSONObject(Utils.fromBase64(properties.getJSONObject(0).getString("value"))).getJSONObject("textures");
+                        if (textures.has("SKIN")) {
+                            try {
+                                JSONObject skin = textures.getJSONObject("SKIN");
+                                if (skin.has("metadata")) {
+                                    alex.setSelected(true);
+                                }
+                                URL skinURL = new URL(skin.getString("url"));
+                                skinPreview.setIcon(new ImageIcon(TexturePreview.generateComboSkin(skinURL, 3, 1)));
+                            } catch (Exception ex) {
+                                console.printInfo("No skin found.");
                             }
-                            URL skinURL = new URL(skin.getString("url"));
-                            skinPreview.setIcon(new ImageIcon(TexturePreview.generateComboSkin(skinURL, 3, 1)));
-                        } catch (Exception ex) {
-                            console.printInfo("No skin found.");
                         }
-                    }
-                    if (textures.has("CAPE")) {
-                        try {
-                            JSONObject cape = textures.getJSONObject("CAPE");
-                            URL capeURL = new URL(cape.getString("url"));
-                            capePreview.setIcon(new ImageIcon(TexturePreview.generateComboCape(capeURL, 5, 1)));
-                        } catch (Exception ex) {
-                            console.printInfo("No cape found.");
+                        if (textures.has("CAPE")) {
+                            try {
+                                JSONObject cape = textures.getJSONObject("CAPE");
+                                URL capeURL = new URL(cape.getString("url"));
+                                capePreview.setIcon(new ImageIcon(TexturePreview.generateComboCape(capeURL, 5, 1)));
+                            } catch (Exception ex) {
+                                console.printInfo("No cape found.");
+                            }
                         }
+                    } else {
+                        console.printError("Failed to load profile textures data. No server response.");
                     }
                 } catch (Exception ex) {
                     console.printError("Failed to load profile textures data: " + ex);
