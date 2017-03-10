@@ -148,8 +148,11 @@ public class Authentication {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
                 kernel.getGUI().showLoginPrompt(false);
+                console.printInfo("Authenticated locally.");
+                return;
+            } else {
+                throw new AuthenticationException("Failed to send request to authentication server: " + ex);
             }
-            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
         }
         if (response.isEmpty()){
             throw new AuthenticationException("Authentication server does not respond.");
@@ -196,8 +199,11 @@ public class Authentication {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
                 kernel.getGUI().showLoginPrompt(false);
+                console.printInfo("Authenticated locally.");
+                return;
+            }  else {
+                throw new AuthenticationException("Failed to send request to authentication server: " + ex);
             }
-            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
         }
         if (response.isEmpty()){
             this.authenticated = true;
