@@ -205,10 +205,21 @@ public class GameLauncher {
         }
         gameArgs.add(libraries.toString());
         gameArgs.add("kml.GameStarter");
-        gameArgs.add(ver.getMainClass());
-        console.printInfo("Full game launcher parameters: ");
+        if (p.hasGameDir()){
+            File gameDir = p.getGameDir();
+            if (!gameDir.exists() || !gameDir.isDirectory()){
+                gameDir.mkdirs();
+            }
+            gameArgs.add(gameDir.getAbsolutePath());
+        } else {
+            gameArgs.add(workingDir.getAbsolutePath());
+        }
         Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
+        gameArgs.add(u.getProfileID());
+        gameArgs.add(u.getAccessToken());
+        gameArgs.add(ver.getMainClass());
+        console.printInfo("Full game launcher parameters: ");
         String[] versionArgs = ver.getMinecraftArguments().split(" ");
         for (int i = 0; i < versionArgs.length; i++){
             if (versionArgs[i].startsWith("$")){

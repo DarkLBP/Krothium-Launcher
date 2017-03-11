@@ -21,6 +21,7 @@ public class Constants {
     public static final URL GET_PROFILESID = Utils.stringToURL("https://mc.krothium.com/api/profiles/minecraft");
     public static final URL BLOCKED_SERVERS = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
     public static final URL JOINSERVER = Utils.stringToURL("https://mc.krothium.com/server/join");
+    public static final URL PROTECTION_URL = Utils.stringToURL("https://mc.krothium.com/server/protection");
     public static final URL HANDSHAKE_URL = Utils.stringToURL("https://mc.krothium.com/hello");
     public static final URL GET_PROFILESID_MOJANG = Utils.stringToURL("https://api.mojang.com/profiles/minecraft");
     public static final URL VERSION_MANIFEST_FILE = Utils.stringToURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");

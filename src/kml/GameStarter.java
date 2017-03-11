@@ -9,7 +9,8 @@ import java.net.URL;
  * @author DarkLBP
  * website https://krothium.com
  */
-class GameStarter {
+public class GameStarter {
+    public static String PROFILE_ID, ACCESS_TOKEN, GAME_DIR;
     public static void main(String[] args){
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
         if (!Utils.ignoreHTTPSCert()){
@@ -23,9 +24,12 @@ class GameStarter {
         if (args.length == 0){
             System.exit(-1);
         }
-        String mainClass = args[0];
-        String[] gameArgs = new String[args.length - 1];
-        System.arraycopy(args, 1, gameArgs, 0, args.length - 1);
+        GAME_DIR = args[0];
+        PROFILE_ID = args[1];
+        ACCESS_TOKEN = args[2];
+        String mainClass = args[3];
+        String[] gameArgs = new String[args.length - 4];
+        System.arraycopy(args, 4, gameArgs, 0, args.length - 4);
         try{
             Class<?> gameClass = Class.forName(mainClass);
             Method method = gameClass.getMethod("main", String[].class);

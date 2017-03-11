@@ -126,7 +126,7 @@ public class LoginTab {
                 try {
                     kernel.getAuthentication().refresh();
                 } catch (AuthenticationException e1) {
-                    JOptionPane.showMessageDialog(null,e1.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
                     updateExistingUsers();
                 }
                 if (kernel.getAuthentication().isAuthenticated()) {
@@ -191,7 +191,6 @@ public class LoginTab {
                 username.setText("");
                 password.setText("");
                 username.requestFocus();
-                kernel.getGUI().setDisable(false);
                 kernel.getGUI().getBrowser().home();
                 kernel.getGUI().refreshSkinPreviews();
                 kernel.getGUI().populateProfileList();

@@ -227,6 +227,14 @@ public class Main extends JFrame{
                                             }
                                         } else if (!(downloader.isDownloading() || gameLauncher.isStarted())) {
                                             updatePlayButton();
+                                            Authentication a = kernel.getAuthentication();
+                                            try{
+                                                a.refresh();
+                                            }catch(AuthenticationException ex){
+                                                kernel.getConsole().printError(ex.getMessage());
+                                                kernel.getAuthentication().setSelectedUser(null);
+                                                kernel.getGUI().showLoginPrompt(true);
+                                            }
                                             wasPlaying = false;
                                             super.cancel();
                                         }

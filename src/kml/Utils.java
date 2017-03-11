@@ -169,10 +169,18 @@ public class Utils {
     }
     public static boolean verifyChecksum(File file, String sha){
         try{
-            MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+            String fileHash = calculateChecksum(file);
+            return sha.equals(fileHash);
+        }catch (Exception ex){
+            return false;
+        }
+    }
+    public static String calculateChecksum(File file) {
+        try{
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[8192];
-            int read; 
+            int read;
             while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);
             }
@@ -181,10 +189,9 @@ public class Utils {
             for (byte hashByte : hashBytes) {
                 sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
             }
-            String fileHash = sb.toString();
-            return fileHash.equals(sha);
+            return sb.toString();
         }catch (Exception ex){
-            return false;
+            return null;
         }
     }
     public static boolean writeToFile(String o, File f){
