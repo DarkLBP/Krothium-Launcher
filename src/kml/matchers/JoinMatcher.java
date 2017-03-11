@@ -4,6 +4,7 @@ import kml.Constants;
 import kml.GameStarter;
 import kml.Utils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.io.File;
@@ -35,9 +36,12 @@ public class JoinMatcher implements URLMatcher{
             for (String file : files) {
                 File f = new File(file);
                 if (f.exists() && f.isFile()) {
+                    JSONObject obj = new JSONObject();
                     String checksum = Utils.calculateChecksum(f);
                     if (checksum != null) {
-                        array.put(checksum);
+                        obj.put("name", f.getName());
+                        obj.put("hash", checksum);
+                        array.put(obj);
                     }
                 }
             }
@@ -47,9 +51,12 @@ public class JoinMatcher implements URLMatcher{
                 if (mods != null) {
                     for (File mod : mods) {
                         if (mod.isFile()) {
+                            JSONObject obj = new JSONObject();
                             String checksum = Utils.calculateChecksum(mod);
                             if (checksum != null) {
-                                array.put(checksum);
+                                obj.put("name", mod.getName());
+                                obj.put("hash", checksum);
+                                array.put(obj);
                             }
                         }
                     }
