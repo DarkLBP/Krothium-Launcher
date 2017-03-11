@@ -194,6 +194,7 @@ public class LoginTab {
                 kernel.getGUI().getBrowser().home();
                 kernel.getGUI().refreshSkinPreviews();
                 kernel.getGUI().populateProfileList();
+                kernel.getGUI().updatePlayButton();
             }
         } catch (AuthenticationException e1) {
             JOptionPane.showMessageDialog(null,e1.getMessage(), Language.get(23), JOptionPane.ERROR_MESSAGE);
