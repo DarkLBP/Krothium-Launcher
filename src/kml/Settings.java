@@ -71,7 +71,7 @@ public class Settings {
     public void setKeepLauncherOpen(boolean b){this.keepLauncherOpen = b;}
     public void setLocale(String s){
         if (s != null){
-            if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("pt-br") || s.equals("val-es")){
+            if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("pt-br") || s.equals("val-es") || s.equals("hu-hu")){
                 kernel.getConsole().printInfo("Switched language to " + s);
                 this.locale = s;
                 Language.loadLang(this.locale);
