@@ -11,11 +11,7 @@ import java.net.URLConnection;
  * website https://krothium.com
  */
 class AdsHandlerSecure extends sun.net.www.protocol.https.Handler{
-    private final String userAgent;
 
-    public AdsHandlerSecure(String userAgent) {
-        this.userAgent = userAgent;
-    }
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
         return openConnection(url, null);
@@ -23,12 +19,9 @@ class AdsHandlerSecure extends sun.net.www.protocol.https.Handler{
 
     @Override
     protected URLConnection openConnection(URL url, Proxy proxy) throws IOException {
-        if (!url.getHost().toLowerCase().contains("minecraft.net") && !url.getHost().toLowerCase().contains("mojang.com")) {
+        if (url.getHost().toLowerCase().contains("sh.st") || url.getHost().toLowerCase().contains("adf.ly") || url.getHost().toLowerCase().contains("go.krothium.com")) {
             System.out.println("Browser requested: " + url.toString());
-            AdsConnection connection = new AdsConnection(super.openConnection(url, proxy));
-            connection.setRequestProperty("Referer", "https://krothium.com");
-            connection.setRequestProperty("User-Agent", this.userAgent);
-            return connection;
+            return new AdsConnection(super.openConnection(url, proxy));
         }
         return super.openConnection(url, proxy);
     }
