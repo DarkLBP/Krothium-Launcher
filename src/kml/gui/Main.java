@@ -107,6 +107,7 @@ public class Main extends JFrame{
         final JMenuItem ca = new JMenuItem("Català (Valencià) - País Valencià");
         final JMenuItem pt = new JMenuItem("Português - Portugal");
         final JMenuItem br = new JMenuItem("Português - Brasil");
+        final JMenuItem hu = new JMenuItem("Hungarian - Magyar");
         ca.setIcon(flag_val);
         ca.setFont(plain);
         ca.addActionListener(new ActionListener() {
@@ -157,9 +158,9 @@ public class Main extends JFrame{
             }
         });
         languages.add(br);
-        br.setIcon(flag_hu);
-        br.setFont(plain);
-        br.addActionListener(new ActionListener() {
+        hu.setIcon(flag_hu);
+        hu.setFont(plain);
+        hu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 kernel.getSettings().setLocale("hu-hu");
