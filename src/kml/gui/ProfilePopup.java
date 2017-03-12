@@ -25,7 +25,7 @@ public class ProfilePopup extends JFrame{
         setBackground(new Color(239, 240, 241));
         setContentPane(main);
 
-        getContentPane().setPreferredSize(new Dimension(250, 100));
+        getContentPane().setPreferredSize(new Dimension(285, 163));
         pack();
 
         profiles.setModel(model);
@@ -64,7 +64,7 @@ public class ProfilePopup extends JFrame{
     }
     public void showPopup(JComponent component){
         setLocationRelativeTo(component);
-        setLocation(getX()+110, getY()-94);
+        setLocation(getX()+125, getY()-126);
         setVisible(true);
     }
 }
