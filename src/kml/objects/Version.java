@@ -200,7 +200,7 @@ public final class Version {
             idToUse = this.jar;
         }
         this.relativeJar = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".jar");
-        this.relativeJSON = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".json");
+        this.relativeJSON = new File("versions" + File.separator + this.id + File.separator + this.id + ".json");
         if (this.hasClientDownload() && this.hasJar()){
             Downloadable d = this.getClientDownload();
             Downloadable dnew = new Downloadable(d.getURL(), d.getSize(), this.relativeJar, d.getHash());

@@ -123,6 +123,9 @@ public class Utils {
     }
     public static boolean downloadFile(URL url, File output){
         try{
+            if (url.getProtocol().equalsIgnoreCase("file")) {
+                return true;
+            }
             InputStream in = null;
             if (url.getProtocol().equalsIgnoreCase("http")){
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();

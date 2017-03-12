@@ -477,9 +477,11 @@ public class Main extends JFrame{
                         kernel.saveProfiles();
                     }
                     if (!a.isAuthenticated()) {
+                        playButton.setText(Language.get(12));
                         showLoginPrompt(true);
+                    } else {
+                        updatePlayButton();
                     }
-                    updatePlayButton();
                 }
             };
             t1.start();
