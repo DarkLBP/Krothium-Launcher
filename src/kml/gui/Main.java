@@ -364,6 +364,7 @@ public class Main extends JFrame{
         options.setText(Language.get(7));
         playButton.setText(Language.get(12));
         profileButton.setToolTipText(Language.get(17));
+        updatePlayButton();
     }
     private void refreshAllLocalizedStrings(){
         this.refreshLocalizedStrings();
