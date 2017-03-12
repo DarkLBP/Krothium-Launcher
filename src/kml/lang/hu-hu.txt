@@ -1,0 +1,86 @@
+//hu-HU language file by TryHardDood (https://github.com/TryHardDood)
+NYELV
+KIJELENTKEZÉS
+Hírek
+Skinek
+Beállítások
+Indítási opciók
+Biztosan kiszeretnél jelentkezni?
+Kijelentkezés
+Új indító verzió elérhető! Leszeretnéd tölteni?
+Új verzió elérhető
+INDÍTÁS
+LETÖLTÉS
+JÁTÉKBAN
+A játék összeomlott! Nézd meg a log fájlokat további információkért.
+Játék összeomlott
+Válassz profilt...
+Krothium Felhasználónév vagy Email:
+Jelszó:
+BEJELENTKEZÉS
+REGISZTRÁCIÓ
+Sikertelen bejelentkezés!
+Hiba
+Skin változtatása
+Skin törlése
+Köpeny változtatása
+Köpeny törlése
+Skin típusa:
+Skin:
+Köpeny:
+Biztosan törölni szeretnéd a skined?
+Skin törlés
+Nem sikerült törölni a skinedet!
+Skin sikeresen törölve!
+Siker
+Biztosan törölni szeretnéd a köpenyed?
+Köpeny törlés
+Nem sikerült törölni a köpenyed!
+Köpeny sikeresen törölve!
+Skin sikeresen megváltoztatva!
+Köpeny sikeresen megváltoztatva!
+Nem sikerült a skin megváltoztatása!
+Nem sikerült a köpeny megváltoztatása!
+Skin / Köpeny PNG fájl (128KB MAX)
+INDÍTÓ BEÁLLÍTÁSOK
+Indító nyitvatartása mikor a játék fut
+Kimeneti log fájl menyitása játék indításakor
+Fejleszői kiadások engedéyezése
+Régi verziók engedélyezése
+Haladó beállítások
+Új Profil
+Mentés
+Mégse
+Törlés
+Biztos vagy benne? A változtatások nem lesznek elmentve!
+Megerősítés
+Profil sikeresen elmentve!
+Elmentve
+Legújabb verzió
+Legújabb fejlesztői kiadás
+Biztosan törölni szeretnéd ezt a profilt?
+Profil törlés
+Név:
+Verzió:
+Felbontás:
+Játék mappája:
+Java executable:
+JVM argumentumok:
+Játék kimenet
+Névtelen Profil
+A fejlesztői kiatások nem biztos, hogy stabil kiadások így tönkretehetik a világodat.
+Ajánlott, hogy külön mappába futtasd ezeket, hogy elkerüld a világaid korruptálását.
+Ez engedélyezi a régi alfa és béta verziókat.
+Ezek nagyon régiek és nem támogatottak. Hibák, összeomlások nem lesznek javítva.
+Ajánlott, hogy külön mappába futtasd ezeket, hogy elkerüld a világaid korruptálását.
+Ez engedélyezi a haladó JAVA beállításokat.
+Ezek a beállítások a játék elindíthatalanságát is okozhatják.
+Információk
+OFFLINE JÁTÉK
+BEJELENTKEZÉS
+Nem sikerült elindítani
+Nem sikerült elindítani az indítási folyamatot! Nézd meg a log fájlokat bővebb információkért.
+Letöltés nem sikerült
+Nem sikerült elindítani a letöltési folyamatot! Nézd meg a log fájlokat bővebb információkért.
+Felhasználók:
+Account váltása

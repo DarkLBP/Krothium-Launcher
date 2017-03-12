@@ -48,7 +48,7 @@ public class Main extends JFrame{
     private final JPopupMenu languages;
     private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
     private final Font bold = new Font("Minecraftia", Font.BOLD,14);
-    private final ImageIcon flag_es, flag_pt, flag_us, flag_val, flag_br;
+    private final ImageIcon flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
     private final ImageIcon newsIcon, skinsIcon, settingsIcon, optionsIcon;
     private final Console console;
     private boolean wasPlaying;
@@ -72,6 +72,7 @@ public class Main extends JFrame{
         this.flag_pt = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-pt.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_val = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_val-es.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.flag_br = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_pt-br.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
+        this.flag_hu = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/flags/flag_hu-hu.png")).getImage().getScaledInstance(40,30, Image.SCALE_SMOOTH));
         this.tabSelection = new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/menu_label.png"));
         this.newsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(115, 35, Image.SCALE_SMOOTH));
         this.skinsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(90, 35, Image.SCALE_SMOOTH));
@@ -106,6 +107,7 @@ public class Main extends JFrame{
         final JMenuItem ca = new JMenuItem("Català (Valencià) - País Valencià");
         final JMenuItem pt = new JMenuItem("Português - Portugal");
         final JMenuItem br = new JMenuItem("Português - Brasil");
+        final JMenuItem hu = new JMenuItem("Hungarian - Magyar");
         ca.setIcon(flag_val);
         ca.setFont(plain);
         ca.addActionListener(new ActionListener() {
@@ -156,6 +158,16 @@ public class Main extends JFrame{
             }
         });
         languages.add(br);
+        hu.setIcon(flag_hu);
+        hu.setFont(plain);
+        hu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("hu-hu");
+                refreshAllLocalizedStrings();
+            }
+        });
+        languages.add(hu);
         languages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         languages.addPopupMenuListener(new PopupMenuListener() {
             @Override
