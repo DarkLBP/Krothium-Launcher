@@ -31,14 +31,15 @@ public final class Version {
     private File relativeJar, relativeJSON;
     private final URL jsonURL;
     
-    public Version(URL durl, Kernel k) throws ObjectException{
+    public Version(URL durl, Kernel k) throws Exception{
         final Console console = k.getConsole();
         this.jsonURL = durl;
+        console.printInfo("Getting version info from " + durl);
         JSONObject version = new JSONObject(Utils.readURL(durl));
         if (version.has("id")){
             this.id = version.getString("id");
         } else {
-            throw new ObjectException("Invalid version id.");
+            throw new Exception("Invalid version id.");
         }
         if (version.has("type")){
             this.type = VersionType.valueOf(version.getString("type").toUpperCase());

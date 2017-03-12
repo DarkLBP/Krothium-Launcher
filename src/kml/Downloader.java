@@ -48,7 +48,11 @@ public class Downloader {
             this.downloading = false;
             throw new DownloaderException("Version ID is null.");
         }
+        console.printInfo("Using version ID: " + verID);
         Version v = kernel.getVersions().getVersion(verID);
+        if (v == null) {
+            throw new DownloaderException("Version info could not be obtained.");
+        }
         ExecutorService pool = Executors.newFixedThreadPool(5);
         List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;

@@ -47,7 +47,7 @@ public class Versions {
                 Version v = new Version(vm.getURL(), kernel);
                 this.version_cache.put(id, v);
                 return v;
-            } catch (ObjectException ex){
+            } catch (Exception ex){
                 console.printError(ex.getMessage());
                 return null;
             }
