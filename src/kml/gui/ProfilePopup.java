@@ -16,14 +16,18 @@ import java.awt.event.WindowEvent;
 public class ProfilePopup extends JFrame{
     private JPanel main;
     private JList profiles;
-    private final DefaultListModel model = new DefaultListModel();
-    private final Font bold = new Font("Minecraftia", Font.BOLD,14);
-    private final Font plain = new Font("Minecraftia", Font.PLAIN,14);
+    private final    DefaultListModel model         = new DefaultListModel();
+    private final    Font             bold          = new Font("Minecraftia", Font.BOLD,14);
+    private final    Font             plain         = new Font("Minecraftia", Font.PLAIN,14);
 
     public ProfilePopup(final Kernel kernel){
         setUndecorated(true);
-        setSize(new Dimension(300, 150));
+        setBackground(new Color(239, 240, 241));
         setContentPane(main);
+
+        getContentPane().setPreferredSize(new Dimension(250, 100));
+        pack();
+
         profiles.setModel(model);
         profiles.setCellRenderer(new DefaultListCellRenderer() {
             @Override
@@ -60,6 +64,7 @@ public class ProfilePopup extends JFrame{
     }
     public void showPopup(JComponent component){
         setLocationRelativeTo(component);
+        setLocation(getX()+110, getY()-94);
         setVisible(true);
     }
 }
