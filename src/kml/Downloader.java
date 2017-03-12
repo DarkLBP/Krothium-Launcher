@@ -34,6 +34,7 @@ public class Downloader {
     }
     public void download() throws DownloaderException{
         this.downloading = true;
+        console.printInfo("Download work has started.");
         Profile p = this.kernel.getProfiles().getProfile(this.kernel.getProfiles().getSelectedProfile());
         String verID;
         if (p.getType() == ProfileType.CUSTOM){

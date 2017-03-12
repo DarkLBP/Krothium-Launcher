@@ -147,7 +147,6 @@ public class Authentication {
         } catch (IOException ex) {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
-                kernel.getGUI().showLoginPrompt(false);
                 console.printInfo("Authenticated locally.");
                 return;
             } else {
@@ -165,7 +164,6 @@ public class Authentication {
             }
             this.authenticated = true;
             kernel.getProfiles().updateSessionProfiles();
-            kernel.getGUI().showLoginPrompt(false);
         }else{
             this.authenticated = false;
             this.removeUser(this.selectedAccount);
@@ -198,7 +196,6 @@ public class Authentication {
         } catch (IOException ex) {
             if (Constants.USE_LOCAL){
                 this.authenticated = true;
-                kernel.getGUI().showLoginPrompt(false);
                 console.printInfo("Authenticated locally.");
                 return;
             }  else {
@@ -208,7 +205,6 @@ public class Authentication {
         if (response.isEmpty()){
             this.authenticated = true;
             kernel.getProfiles().updateSessionProfiles();
-            kernel.getGUI().showLoginPrompt(false);
         }else{
             this.authenticated = false;
             JSONObject o = new JSONObject(response);

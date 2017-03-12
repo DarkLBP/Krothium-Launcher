@@ -40,6 +40,7 @@ public class GameLauncher {
     public void launch() throws GameLauncherException{
         started = true;
         error = false;
+        console.printInfo("Game launch work has started.");
         Profile p = kernel.getProfiles().getProfile(kernel.getProfiles().getSelectedProfile());
         if (this.isRunning()){
             throw new GameLauncherException("Game is already started!");

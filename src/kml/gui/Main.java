@@ -244,7 +244,6 @@ public class Main extends JFrame{
                                                 a.refresh();
                                             }catch(AuthenticationException ex){
                                                 kernel.getConsole().printError(ex.getMessage());
-                                                kernel.getAuthentication().setSelectedUser(null);
                                                 kernel.getGUI().showLoginPrompt(true);
                                             }
                                             wasPlaying = false;
@@ -320,7 +319,6 @@ public class Main extends JFrame{
             @Override
             public void mousePressed(MouseEvent e) {
                 if (logout.isEnabled()){
-                    kernel.getAuthentication().setSelectedUser(null);
                     showLoginPrompt(true);
                 }
             }
@@ -440,6 +438,7 @@ public class Main extends JFrame{
     }
     public void showLoginPrompt(boolean show) {
         if (show) {
+            kernel.getAuthentication().setSelectedUser(null);
             setDisable(true);
             setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
             contentPanel.removeAll();
@@ -469,6 +468,7 @@ public class Main extends JFrame{
                     if (a.hasSelectedUser()){
                         try{
                             a.refresh();
+                            showLoginPrompt(false);
                         }catch(AuthenticationException ex){
                             Main.this.kernel.getConsole().printError(ex.getMessage());
                             showLoginPrompt(true);
