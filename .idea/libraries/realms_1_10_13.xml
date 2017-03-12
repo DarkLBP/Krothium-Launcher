@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="realms-1.10.13">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../realms-1.10.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

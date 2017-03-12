@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Krothium_Launcher">
+    <output-path>$PROJECT_DIR$/out/artifacts/Krothium_Launcher</output-path>
+    <root id="archive" name="Krothium_Launcher.jar">
+      <element id="module-output" name="Krothium-Launcher" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
