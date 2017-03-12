@@ -458,12 +458,13 @@ public class Main extends JFrame{
     @Override
     public void setVisible(boolean b){
         super.setVisible(b);
-        updatePlayButton();
         progress.setVisible(false);
         if (b){
             Thread t1 = new Thread("Authentication thread") {
                 @Override
                 public void run() {
+                    setDisable(true);
+                    playButton.setText(Language.get(80));
                     Authentication a = kernel.getAuthentication();
                     if (a.hasSelectedUser()){
                         try{
@@ -478,6 +479,7 @@ public class Main extends JFrame{
                     if (!a.isAuthenticated()) {
                         showLoginPrompt(true);
                     }
+                    updatePlayButton();
                 }
             };
             t1.start();
