@@ -138,6 +138,16 @@ public class Main extends JFrame{
             }
         });
         languages.add(es);
+        hu.setIcon(flag_hu);
+        hu.setFont(plain);
+        hu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kernel.getSettings().setLocale("hu-hu");
+                refreshAllLocalizedStrings();
+            }
+        });
+        languages.add(hu);
         pt.setIcon(flag_pt);
         pt.setFont(plain);
         pt.addActionListener(new ActionListener() {
@@ -158,16 +168,6 @@ public class Main extends JFrame{
             }
         });
         languages.add(br);
-        hu.setIcon(flag_hu);
-        hu.setFont(plain);
-        hu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                kernel.getSettings().setLocale("hu-hu");
-                refreshAllLocalizedStrings();
-            }
-        });
-        languages.add(hu);
         languages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         languages.addPopupMenuListener(new PopupMenuListener() {
             @Override
