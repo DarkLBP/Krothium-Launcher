@@ -82,7 +82,7 @@ public class Main extends JFrame{
         this.popupMenu = new ProfilePopup(kernel);
         this.skinTab = new SkinTab(kernel);
         this.languages = new JPopupMenu();
-        setSize(900, 700);
+        setSize(950, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
