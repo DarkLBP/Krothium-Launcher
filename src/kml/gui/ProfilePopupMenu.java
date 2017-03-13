@@ -26,7 +26,7 @@ public class ProfilePopupMenu
 
 		jPopupMenu = new JPopupMenu();
 		jPopupMenu.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.DARK_GRAY));
-		MenuScroller.setScrollerFor(jPopupMenu, 3, 125, 1, 0);
+		MenuScroller.setScrollerFor(jPopupMenu, 4, 250, 1, 0);
 
 		this.popupListener = new ActionListener()
 		{
@@ -81,20 +81,13 @@ public class ProfilePopupMenu
 
 	public void showPopup(Component component)
 	{
-		Point pos = new Point();
-
-		// Adjust the x position so that the left side of the popup
-		// appears at the center of  the component
-		pos.x = (component.getWidth() / 2);
-
-		// Adjust the y position so that the y position (top corner)
-		// is positioned so that the bottom of the popup
-		// appears in the center
-		pos.y = (component.getHeight() / 2) - jPopupMenu.getHeight();
-
-		// For some reason everytime I modify the JPopupMenu's contents ( adding or deleting an item ) it does not update the height.
-		// After showing the menu it updates it self and it's working as intended.
-		// Basically you have to click it twice..
-		jPopupMenu.show(component, (int)pos.getX(), (int)pos.getY());
+		Dimension d = jPopupMenu.getPreferredSize();
+		d.width = 307;
+		d.height = 39 * jMenuItems.size();
+		if (jMenuItems.size() >= 6) {
+			d.height += 20;
+		}
+		jPopupMenu.setPreferredSize(d);
+		jPopupMenu.show(component, 0, -jPopupMenu.getPreferredSize().height + (jMenuItems.size() > 7 ? (jMenuItems.size() - 7) * 39 : 0) - 8);
 	}
 }
