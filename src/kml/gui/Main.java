@@ -42,7 +42,6 @@ public class Main extends JFrame{
     private final Downloader downloader;
     private final GameLauncher gameLauncher;
     private final ProfileEditor editor;
-    private final ProfilePopup popupMenu;
     private final SkinTab skinTab;
     private final ImageIcon tabSelection;
     private final JPopupMenu languages;
@@ -52,7 +51,7 @@ public class Main extends JFrame{
     private final ImageIcon newsIcon, skinsIcon, settingsIcon, optionsIcon;
     private final Console console;
     private boolean wasPlaying;
-
+    private final ProfilePopupMenu popupMenu;
     public Main(Kernel k){
         setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         this.kernel = k;
@@ -79,8 +78,8 @@ public class Main extends JFrame{
         this.settingsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(140, 35, Image.SCALE_SMOOTH));
         this.optionsIcon = new ImageIcon(tabSelection.getImage().getScaledInstance(295, 35, Image.SCALE_SMOOTH));
         this.editor = new ProfileEditor(kernel);
-        this.popupMenu = new ProfilePopup(kernel);
         this.skinTab = new SkinTab(kernel);
+        this.popupMenu = new ProfilePopupMenu(kernel);
         this.languages = new JPopupMenu();
         setSize(950, 700);
         setLocationRelativeTo(null);
@@ -99,7 +98,6 @@ public class Main extends JFrame{
         playButton.setIcon(playButton_normal);
         profileButton.setIcon(profile_normal);
         profileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        popupMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         language.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         final JMenuItem en = new JMenuItem("English - United States");
@@ -553,7 +551,7 @@ public class Main extends JFrame{
         }
     }
     private void showPopupMenu(MouseEvent e){
-        popupMenu.showPopup((JComponent)e.getComponent());
+        popupMenu.showPopup(e.getComponent());
     }
     public Browser getBrowser() {
         return this.browser;
@@ -567,12 +565,12 @@ public class Main extends JFrame{
             @Override
             public void run() {
                 try {
-                    popupMenu.removeAll();
+                    popupMenu.clear();
                     Profiles p = kernel.getProfiles();
                     Map<String, Profile> profs = p.getProfiles();
                     Set set = profs.keySet();
                     for (Object aSet : set) {
-                        popupMenu.addElement(profs.get(aSet.toString()).getID());
+                        popupMenu.addElement(profs.get(aSet.toString()).getID(), aSet);
                     }
                 } catch (Exception ex){
                     kernel.getConsole().printError("Popup profile list interrupted by another thread.");
