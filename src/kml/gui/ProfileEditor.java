@@ -164,6 +164,7 @@ public class ProfileEditor{
                 saveProfile();
                 saveButton.setForeground(Color.WHITE);
                 saveButton.setIcon(button_normal);
+                kernel.getGUI().updatePlayButton();
             }
         });
         deleteButton.addMouseListener(new MouseAdapter() {
@@ -184,6 +185,7 @@ public class ProfileEditor{
                     kernel.getProfiles().deleteProfile(profile.getID());
                     kernel.getGUI().populateProfileList();
                     kernel.getGUI().setSelected(kernel.getGUI().options);
+                    kernel.getGUI().updatePlayButton();
                 }
                 deleteButton.setForeground(Color.RED);
                 deleteButton.setIcon(button_normal);
