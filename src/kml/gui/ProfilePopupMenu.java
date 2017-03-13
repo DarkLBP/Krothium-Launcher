@@ -61,12 +61,12 @@ public class ProfilePopupMenu
 		}
 		jPopupMenu.add(item).setActionCommand(String.valueOf(aSet));
 		item.addActionListener(popupListener);
-		jMenuItems.add(item);
-	}
-
-	public JPopupMenu getjPopupMenu()
-	{
-		return jPopupMenu;
+		if (kernel.getProfiles().getProfile(id).getName() == null) {
+			jMenuItems.add(0, item); //Shifts all elements
+		}
+		else {
+			jMenuItems.add(item);
+		}
 	}
 
 	public void clear()
@@ -77,6 +77,7 @@ public class ProfilePopupMenu
 
 	public void showPopup(Component component)
 	{
-		jPopupMenu.show(component, 0, (jMenuItems.size() > 4 ? ((-jPopupMenu.getPreferredSize().height) - 12) : ((-jPopupMenu.getPreferredSize().height) - 8)));
+		//(jMenuItems.size() > 4 ? ((-jPopupMenu.getPreferredSize().height) - 12) : ((-jPopupMenu.getPreferredSize().height) - 8))
+		jPopupMenu.show(component, 0, -jPopupMenu.getPreferredSize().height);
 	}
 }
