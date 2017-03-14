@@ -16,29 +16,31 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author DarkLBP
- * website https://krothium.com
+ *         website https://krothium.com
  */
-public class ProfileEditor{
-    private JPanel main;
-    private JTextField name;
-    private JComboBox versions;
-    private JSpinner resX, resY;
-    private JTextField gameDir, javaExec, javaArgs;
-    private JLabel resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, nameLabel, versionsLabel;
-    private JButton saveButton, cancelButton, deleteButton;
-    private final Kernel kernel;
-    private Profile profile = null;
-    private final ImageIcon checkbox_enabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
-    private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
-    private final ImageIcon button_normal = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
-    private final ImageIcon button_hover = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
-    private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
+public class ProfileEditor
+{
+	private final Kernel kernel;
+	private final ImageIcon checkbox_enabled  = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_enabled.png"));
+	private final ImageIcon checkbox_disabled = new ImageIcon(SettingsTab.class.getResource("/kml/gui/textures/checkbox_disabled.png"));
+	private final ImageIcon button_normal     = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_normal.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
+	private final ImageIcon button_hover      = new ImageIcon(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/button_hover.png")).getImage().getScaledInstance(160, 40, Image.SCALE_SMOOTH));
+	private JPanel            main;
+	private JTextField        name;
+	private JComboBox<String> versions;
+	private JSpinner          resX, resY;
+	private JTextField gameDir, javaExec, javaArgs;
+	private JLabel resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, nameLabel, versionsLabel;
+	private JButton saveButton, cancelButton, deleteButton;
+	private       Profile   profile           = null;
+	private boolean nameEnabled, versionEnabled, resolutionEnabled, gameDirEnabled, javaExecEnabled, javaArgsEnabled;
 
-    public ProfileEditor(Kernel k){
+  public ProfileEditor(Kernel k){
         this.kernel = k;
         resolutionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         gameDirLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

@@ -2,6 +2,9 @@ package kml.enums;
 
 /**
  * @author DarkLBP
- * website https://krothium.com
+ *         website https://krothium.com
  */
-public enum OSArch {OLD, NEW}
+public enum OSArch
+{
+	OLD, NEW
+}

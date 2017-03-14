@@ -8,24 +8,29 @@ import java.net.URLConnection;
 
 /**
  * @author DarkLBP
- * website https://krothium.com
+ *         website https://krothium.com
  */
-public class BlockedServersMatcher implements URLMatcher{
-    private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
+public class BlockedServersMatcher implements URLMatcher
+{
+	private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
 
-    @Override
-    public boolean match(URL url){
-        return url.toString().equalsIgnoreCase(blockURL);
-    }
-    @Override
-    public URLConnection handle(URL url){
-        if (url.toString().equalsIgnoreCase(blockURL)){
-            try{
-                return Constants.BLOCKED_SERVERS.openConnection();
-            } catch (IOException ex) {
-                return null;
-            }
-        }
-        return null;
-    }
+	@Override
+	public boolean match(URL url)
+	{
+		return url.toString().equalsIgnoreCase(blockURL);
+	}
+
+	@Override
+	public URLConnection handle(URL url)
+	{
+		if (url.toString().equalsIgnoreCase(blockURL)) {
+			try {
+				return Constants.BLOCKED_SERVERS.openConnection();
+			}
+			catch (IOException ex) {
+				return null;
+			}
+		}
+		return null;
+	}
 }
