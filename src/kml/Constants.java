@@ -8,7 +8,6 @@ import java.net.URL;
  * @author DarkLBP
  *         website https://krothium.com
  */
-
 public class Constants
 {
 	public static final int          KERNEL_BUILD               = 34;
