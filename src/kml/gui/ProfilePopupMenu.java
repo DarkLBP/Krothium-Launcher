@@ -5,20 +5,18 @@ import kml.enums.ProfileType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProfilePopupMenu
 {
-	private ArrayList<JMenuItem> jMenuItems = new ArrayList<>();
-
 	private final Font bold  = new Font("Minecraftia", Font.BOLD, 14);
 	private final Font plain = new Font("Minecraftia", Font.PLAIN, 14);
-
 	private final Kernel         kernel;
 	private final JPopupMenu     jPopupMenu;
 	private final ActionListener popupListener;
+	private ArrayList<JMenuItem> jMenuItems = new ArrayList<>();
 
 	public ProfilePopupMenu(final Kernel kernel)
 	{
@@ -28,36 +26,32 @@ public class ProfilePopupMenu
 		jPopupMenu.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.DARK_GRAY));
 		MenuScroller.setScrollerFor(jPopupMenu, 4, 250, 1, 0);
 
-		this.popupListener = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent event)
-			{
-				String action = event.getActionCommand();
+		this.popupListener = event -> {
+			String action = event.getActionCommand();
 
-				kernel.getProfiles().setSelectedProfile(event.getActionCommand());
-				kernel.getGUI().updatePlayButton();
+			kernel.getProfiles().setSelectedProfile(event.getActionCommand());
+			kernel.getGUI().updatePlayButton();
 
-				//Update font
-				for (JMenuItem menuItem : jMenuItems) {
-					if (menuItem.getActionCommand().equals(action)) {
-						menuItem.setFont(bold);
-					}
-					else {
-						menuItem.setFont(plain);
-					}
+			//Update font
+			for (JMenuItem menuItem : jMenuItems) {
+				if (menuItem.getActionCommand().equals(action)) {
+					menuItem.setFont(bold);
 				}
-				// When updating fonts it does not update it in the popupmenu so we have to readd all items.
-				jPopupMenu.removeAll();
-				for (JMenuItem menuItem : jMenuItems)
-					jPopupMenu.add(menuItem);
+				else {
+					menuItem.setFont(plain);
+				}
 			}
+			// When updating fonts it does not update it in the popupmenu so we have to readd all items.
+			jPopupMenu.removeAll();
+			for (JMenuItem menuItem : jMenuItems)
+				jPopupMenu.add(menuItem);
 		};
 	}
 
 	public void addElement(String id, Object aSet)
 	{
 		JMenuItem item = kernel.getProfiles().getProfile(id).getMenuItem();
-		if (kernel.getProfiles().getSelectedProfile() != null) {
+		if (Objects.nonNull(kernel.getProfiles().getSelectedProfile())) {
 			item.setFont(kernel.getProfiles().getSelectedProfile().equals(id) ? bold : plain);
 		}
 		jPopupMenu.add(item).setActionCommand(String.valueOf(aSet));

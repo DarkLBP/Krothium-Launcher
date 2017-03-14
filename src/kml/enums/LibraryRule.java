@@ -2,6 +2,9 @@ package kml.enums;
 
 /**
  * @author DarkLBP
- * website https://krothium.com
+ *         website https://krothium.com
  */
-public enum LibraryRule {ALLOW, DISALLOW, NOSET}
+public enum LibraryRule
+{
+	ALLOW, DISALLOW, NOSET
+}
