@@ -28,8 +28,8 @@ public class Main extends JFrame
 	private final Browser          browser;
 	private final SettingsTab      setting;
 	private final LaunchOptionsTab launchOptions;
-	private final BorderLayout borderLayout       = new BorderLayout();
-	private final FlowLayout   flowLayout         = new FlowLayout();
+	private final BorderLayout borderLayout = new BorderLayout();
+	private final FlowLayout   flowLayout   = new FlowLayout();
 	private final ImageIcon playButton_normal, playButton_hover, profile_normal, profile_hover;
 	private final Timer timer = new Timer();
 	private final Downloader    downloader;
@@ -44,13 +44,13 @@ public class Main extends JFrame
 	private final ImageIcon newsIcon, skinsIcon, settingsIcon, optionsIcon;
 	private final Console          console;
 	private final ProfilePopupMenu popupMenu;
-	public JLabel news, skins, settings, options, logout, language, selected;
+	public        JLabel           news, skins, settings, options, logout, language, selected;
 	private JPanel  main;
 	private JButton playButton, profileButton;
 	private BackgroundPanel footerPanel, headPanel, contentPanel;
-	private       JProgressBar     progress;
-	private       boolean      componentsDisabled = false;
-	private       boolean          wasPlaying;
+	private JProgressBar progress;
+	private boolean componentsDisabled = false;
+	private boolean wasPlaying;
 
 	public Main(Kernel k)
 	{
@@ -216,57 +216,52 @@ public class Main extends JFrame
 			public void mousePressed(MouseEvent e)
 			{
 				if (playButton.isEnabled()) {
-					Thread runThread = new Thread(() -> new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							if (!downloader.isDownloading() && !gameLauncher.isStarted()) {
-								Timer t = new Timer();
-								TimerTask task = new TimerTask()
+					Thread runThread = new Thread(() -> {
+						if (!downloader.isDownloading() && !gameLauncher.isStarted()) {
+							Timer t = new Timer();
+							TimerTask task = new TimerTask()
+							{
+								@Override
+								public void run()
 								{
-									@Override
-									public void run()
-									{
-										if (downloader.isDownloading()) {
+									if (downloader.isDownloading()) {
+										updatePlayButton();
+									}
+									else if (gameLauncher.isStarted()) {
+										if (!wasPlaying) {
 											updatePlayButton();
-										}
-										else if (gameLauncher.isStarted()) {
-											if (!wasPlaying) {
-												updatePlayButton();
-												wasPlaying = true;
-											}
-										}
-										else if (!(downloader.isDownloading() || gameLauncher.isStarted())) {
-											updatePlayButton();
-											Authentication a = kernel.getAuthentication();
-											try {
-												a.refresh();
-											}
-											catch (AuthenticationException ex) {
-												kernel.getConsole().printError(ex.getMessage());
-												kernel.getGUI().showLoginPrompt(true);
-											}
-											wasPlaying = false;
-											super.cancel();
+											wasPlaying = true;
 										}
 									}
-								};
-								t.scheduleAtFixedRate(task, 0, 500);
-								try {
-									downloader.download();
-									gameLauncher.launch();
+									else if (!(downloader.isDownloading() || gameLauncher.isStarted())) {
+										updatePlayButton();
+										Authentication a = kernel.getAuthentication();
+										try {
+											a.refresh();
+										}
+										catch (AuthenticationException ex) {
+											kernel.getConsole().printError(ex.getMessage());
+											kernel.getGUI().showLoginPrompt(true);
+										}
+										wasPlaying = false;
+										super.cancel();
+									}
 								}
-								catch (GameLauncherException ex) {
-									updatePlayButton();
-									JOptionPane.showMessageDialog(null, Language.get(82), Language.get(81), JOptionPane.ERROR_MESSAGE);
-									console.printError("Failed to perform game launch task: " + ex);
-								}
-								catch (DownloaderException e1) {
-									updatePlayButton();
-									JOptionPane.showMessageDialog(null, Language.get(84), Language.get(83), JOptionPane.ERROR_MESSAGE);
-									console.printError("Failed to perform game download task: " + e1);
-								}
+							};
+							t.scheduleAtFixedRate(task, 0, 500);
+							try {
+								downloader.download();
+								gameLauncher.launch();
+							}
+							catch (GameLauncherException ex) {
+								updatePlayButton();
+								JOptionPane.showMessageDialog(null, Language.get(82), Language.get(81), JOptionPane.ERROR_MESSAGE);
+								console.printError("Failed to perform game launch task: " + ex);
+							}
+							catch (DownloaderException e1) {
+								updatePlayButton();
+								JOptionPane.showMessageDialog(null, Language.get(84), Language.get(83), JOptionPane.ERROR_MESSAGE);
+								console.printError("Failed to perform game download task: " + e1);
 							}
 						}
 					});
