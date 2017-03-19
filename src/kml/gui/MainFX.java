@@ -1,12 +1,12 @@
 package kml.gui;
 
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 /**
  * Created by darkl on 18/03/2017.
@@ -29,6 +29,22 @@ public class MainFX extends VBox {
         VBox.setVgrow(header, Priority.NEVER);
         super.getChildren().addAll(header);
 
+        //Quick action row
+        StackPane actionRow = new StackPane();
+        Label languages = new Label("Languages");
+        languages.setCursor(Cursor.HAND);
+        languages.setId("languages");
+        languages.setMinHeight(35);
+        languages.setMaxHeight(35);
+        StackPane.setAlignment(languages, Pos.TOP_LEFT);
+        Label switchAccount = new Label("Switch Account");
+        switchAccount.setCursor(Cursor.HAND);
+        switchAccount.setId("switchAccount");
+        switchAccount.setMinHeight(35);
+        switchAccount.setMaxHeight(35);
+        StackPane.setAlignment(switchAccount, Pos.TOP_RIGHT);
+        actionRow.getChildren().addAll(languages, switchAccount);
+
 
         //Logo row
         HBox logoRow = new HBox();
@@ -36,7 +52,9 @@ public class MainFX extends VBox {
         logo.setImage(new Image("/kml/gui/textures/logo.png"));
         logoRow.getChildren().add(logo);
         logoRow.setAlignment(Pos.CENTER);
-        header.getChildren().add(logoRow);
+
+
+        header.getChildren().addAll(actionRow, logoRow); //Add everything to header
 
 
         //Content

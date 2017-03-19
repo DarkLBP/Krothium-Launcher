@@ -5,12 +5,17 @@
 .lightBackground .viewport {
     -fx-background-image: url("textures/background.png");
 }
-
-#language {
+#languages, #switchAccount {
+    -fx-font: 12pt "Minecraftia";
+    -fx-text-fill: white;
+    -fx-graphic-text-gap: 10px;
+    -fx-padding: 5px;
+}
+#languages {
     -fx-graphic: url("textures/language.png");
 }
 
-#logout {
+#switchAccount {
     -fx-graphic: url("textures/logout.png");
 }
 
