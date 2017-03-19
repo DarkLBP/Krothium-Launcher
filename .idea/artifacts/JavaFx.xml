@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JavaFx">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaFx</output-path>
+    <root id="archive" name="JavaFx.jar">
+      <element id="module-output" name="Krothium-Launcher" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/manifests/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

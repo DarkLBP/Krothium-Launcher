@@ -1,0 +1,36 @@
+.darkBackground {
+    -fx-background-image: url("textures/login-background.png");
+}
+
+.lightBackground .viewport {
+    -fx-background-image: url("textures/background.png");
+}
+
+#language {
+    -fx-graphic: url("textures/language.png");
+}
+
+#logout {
+    -fx-graphic: url("textures/logout.png");
+}
+
+#playButton {
+    -fx-background-image: url("textures/playbutton.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}
+
+#profileButton {
+    -fx-background-image: url("textures/profile.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}
+
+.selected {
+    -fx-background-image: url("textures/menu_label.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}

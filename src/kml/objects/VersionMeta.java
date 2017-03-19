@@ -10,28 +10,38 @@ import java.util.Objects;
  *         website https://krothium.com
  */
 
-public class VersionMeta
-{
-	private final String      id;
-	private final URL         url;
-	private final VersionType type;
+public class VersionMeta {
+    private final String id;
+    private final URL url;
+    private final VersionType type;
 
-	public VersionMeta(String id, URL url, VersionType type)
-	{
-		this.id = id;
-		this.url = url;
-		this.type = type;
-	}
+    public VersionMeta(String id, URL url, VersionType type) {
+        this.id = id;
+        this.url = url;
+        this.type = type;
+    }
 
-	public boolean hasURL() {return Objects.nonNull(this.url);}
+    public boolean hasURL() {
+        return Objects.nonNull(this.url);
+    }
 
-	public boolean hasID() {return Objects.nonNull(this.id);}
+    public boolean hasID() {
+        return Objects.nonNull(this.id);
+    }
 
-	public boolean hasType() {return Objects.nonNull(this.type);}
+    public boolean hasType() {
+        return Objects.nonNull(this.type);
+    }
 
-	public String getID() {return this.id;}
+    public String getID() {
+        return this.id;
+    }
 
-	public URL getURL() {return this.url;}
+    public URL getURL() {
+        return this.url;
+    }
 
-	public VersionType getType() {return this.type;}
+    public VersionType getType() {
+        return this.type;
+    }
 }
