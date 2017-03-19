@@ -26,6 +26,7 @@ public class MainFX extends VBox {
         VBox header = new VBox();
         header.getStyleClass().add("darkBackground");
         header.setMinHeight(180);
+        header.setAlignment(Pos.TOP_CENTER);
         VBox.setVgrow(header, Priority.NEVER);
         super.getChildren().addAll(header);
 
@@ -47,11 +48,8 @@ public class MainFX extends VBox {
 
 
         //Logo row
-        HBox logoRow = new HBox();
-        ImageView logo = new ImageView();
-        logo.setImage(new Image("/kml/gui/textures/logo.png"));
-        logoRow.getChildren().add(logo);
-        logoRow.setAlignment(Pos.CENTER);
+        ImageView logoRow = new ImageView();
+        logoRow.setImage(new Image("/kml/gui/textures/logo.png"));
 
 
         header.getChildren().addAll(actionRow, logoRow); //Add everything to header
