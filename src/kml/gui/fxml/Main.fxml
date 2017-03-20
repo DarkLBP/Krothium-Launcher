@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+	<children>
+		<VBox alignment="TOP_CENTER" minHeight="180.0" prefHeight="180.0" prefWidth="100.0" styleClass="darkBackground" VBox.vgrow="NEVER">
+			<children>
+				<StackPane prefHeight="150.0" prefWidth="200.0">
+					<children>
+						<Label id="languages" fx:id="languages" contentDisplay="TOP" minHeight="35.0" minWidth="35.0" text="Languages" StackPane.alignment="TOP_LEFT">
+							<cursor>
+								<Cursor fx:constant="HAND" />
+							</cursor>
+							<StackPane.margin>
+								<Insets top="5.0" />
+							</StackPane.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+						</Label>
+						<Label id="switchAccount" fx:id="switchAccount" contentDisplay="TOP" minHeight="35.0" minWidth="35.0" text="Switch Account" StackPane.alignment="TOP_RIGHT">
+							<cursor>
+								<Cursor fx:constant="HAND" />
+							</cursor>
+							<StackPane.margin>
+								<Insets top="5.0" />
+							</StackPane.margin>
+                     <font>
+                        <Font name="Minecraftia 2.0" size="14.0" />
+                     </font>
+						</Label>
+						<ImageView fitHeight="150.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER">
+							<image>
+								<Image url="@../textures/logo.png" />
+							</image>
+						</ImageView>
+					</children>
+				</StackPane>
+			</children>
+		</VBox>
+		<ScrollPane minHeight="0.0" prefHeight="200.0" prefWidth="200.0" styleClass="lightBackground" VBox.vgrow="ALWAYS" />
+		<VBox minHeight="150.0" prefHeight="150.0" prefWidth="100.0" styleClass="darkBackground" VBox.vgrow="NEVER">
+			<children>
+				<StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="NEVER">
+					<children>
+						<Label id="playButton" fx:id="playButton" alignment="CENTER" minHeight="70.0" minWidth="330.0" prefHeight="70.0" prefWidth="330.0" text="Start" textAlignment="CENTER" StackPane.alignment="CENTER">
+							<cursor>
+								<Cursor fx:constant="HAND" />
+							</cursor>
+                     <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin>
+                     <padding>
+                        <Insets top="15.0" />
+                     </padding>
+						</Label>
+						<Label fx:id="profileButton" alignment="CENTER" minHeight="70.0" minWidth="40.0" prefHeight="70.0" prefWidth="40.0" StackPane.alignment="CENTER">
+							<StackPane.margin>
+								<Insets left="400.0" />
+							</StackPane.margin>
+							<cursor>
+								<Cursor fx:constant="HAND" />
+							</cursor>
+						</Label>
+						<ProgressBar fx:id="progress" prefWidth="200.0" progress="0.0" visible="false" StackPane.alignment="BOTTOM_CENTER">
+							<StackPane.margin>
+								<Insets bottom="10.0" left="15.0" right="15.0" />
+							</StackPane.margin>
+						</ProgressBar>
+					</children>
+				</StackPane>
+			</children>
+		</VBox>
+	</children>
+</VBox>

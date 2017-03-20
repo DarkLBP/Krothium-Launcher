@@ -1,3 +1,8 @@
+@font-face {
+    font-family: Minecraftia;
+    src: url("fonts/Minecraftia-Regular.ttf");
+}
+
 .darkBackground {
     -fx-background-image: url("textures/login-background.png");
 }
@@ -20,6 +25,9 @@
 }
 
 #playButton {
+    -fx-font: 22pt "Minecraftia";
+    -fx-text-fill: white;
+
     -fx-background-image: url("textures/playbutton.png");
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
