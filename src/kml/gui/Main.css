@@ -10,12 +10,15 @@
 .lightBackground .viewport {
     -fx-background-image: url("textures/background.png");
 }
+
 #languages, #switchAccount {
-    -fx-font: 12pt "Minecraftia";
+    -fx-font: 8pt "Minecraftia";
     -fx-text-fill: white;
+
+    -fx-font-weight: bold;
     -fx-graphic-text-gap: 10px;
-    -fx-padding: 5px;
 }
+
 #languages {
     -fx-graphic: url("textures/language.png");
 }
@@ -39,6 +42,14 @@
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
     -fx-background-size: cover;
+}
+
+.tab-pane {
+    -fx-tab-max-height: 0;
+}
+
+.tab-pane .tab-header-area {
+    visibility: hidden;
 }
 
 .selected {

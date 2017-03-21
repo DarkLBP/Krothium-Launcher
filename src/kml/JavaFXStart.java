@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import kml.gui.MainFX;
 
 /**
  * Created by darkl on 17/03/2017.
@@ -28,7 +29,12 @@ public class JavaFXStart extends Application {
 
         primaryStage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
+        primaryStage.setMaximized(false);
         primaryStage.show();
+
+	    MainFX mainFX = loader.getController();
+	    //mainFX.setKernel(new Kernel());
 
         /*Scene scene = new Scene(main, 950, 700);
         primaryStage.setScene(scene);
