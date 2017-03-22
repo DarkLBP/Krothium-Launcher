@@ -5,7 +5,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.web.WebView;
 import kml.Kernel;
 
 /**
@@ -13,6 +15,24 @@ import kml.Kernel;
  */
 public class MainFX
 {
+	/**
+	 * TAB CONTENTS
+	 */
+	public AnchorPane newsPane;
+	public WebView    webView;
+	public AnchorPane skinsPane;
+	public AnchorPane settingsPane;
+	public AnchorPane launcherOptionsPane;
+
+	/**
+	 * LOGIN
+	 */
+	public AnchorPane    loginScreenPane; // By default it's hidden
+	public PasswordField passwordInput;
+	public TextField     textInput;
+	public Button        loginButton;
+	public Button        registerButton;
+
 	private Kernel kernel;
 
 	/**
