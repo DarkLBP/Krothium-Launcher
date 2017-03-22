@@ -167,7 +167,7 @@ public class MainFX
 		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
 
 		newsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem().equals(newsTab)) return;
+			if (selectionModel.getSelectedItem() == newsTab) return;
 
 			selectionModel.select(newsTab);
 			newsTabButton.getStyleClass().add("selected");
@@ -177,7 +177,7 @@ public class MainFX
 			launcherOptionsTabButton.getStyleClass().remove("selected");
 		});
 		skinsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem().equals(skinsTab)) return;
+			if (selectionModel.getSelectedItem() == skinsTab) return;
 
 			selectionModel.select(skinsTab);
 			skinsTabButton.getStyleClass().add("selected");
@@ -187,7 +187,7 @@ public class MainFX
 			launcherOptionsTabButton.getStyleClass().remove("selected");
 		});
 		settingsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem().equals(settingsTab)) return;
+			if (selectionModel.getSelectedItem() == settingsTab) return;
 
 			selectionModel.select(settingsTab);
 			settingsTabButton.getStyleClass().add("selected");
@@ -197,7 +197,7 @@ public class MainFX
 			launcherOptionsTabButton.getStyleClass().remove("selected");
 		});
 		launcherOptionsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem().equals(launcherOptionsTab)) return;
+			if (selectionModel.getSelectedItem() == launcherOptionsTab) return;
 
 			selectionModel.select(launcherOptionsTab);
 			launcherOptionsTabButton.getStyleClass().add("selected");
