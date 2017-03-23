@@ -21,23 +21,23 @@
    <children>
       <StackPane prefHeight="25.0" prefWidth="200.0" style="-fx-background-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="languagesButton" prefHeight="25.0" text="Languages" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
+            <Label id="languages" fx:id="languagesButton" prefHeight="25.0" text="Languages" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
                <font>
                   <Font name="Minecraftia 2.0" size="12.0" />
                </font>
                <StackPane.margin>
-                  <Insets left="5.0" top="5.0" />
+                  <Insets left="5.0" />
                </StackPane.margin>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label fx:id="switchAccountButton" prefHeight="25.0" text="Switch Account" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
+            <Label id="switchAccount" fx:id="switchAccountButton" prefHeight="25.0" text="Switch Account" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
                <font>
                   <Font name="Minecraftia 2.0" size="12.0" />
                </font>
                <StackPane.margin>
-                  <Insets right="5.0" top="5.0" />
+                  <Insets right="5.0" />
                </StackPane.margin>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -45,7 +45,7 @@
             </Label>
          </children>
       </StackPane>
-      <StackPane layoutY="36.0" prefHeight="130.0" prefWidth="950.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+      <StackPane layoutY="36.0" prefHeight="130.0" prefWidth="950.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
          <children>
             <ImageView fitHeight="97.0" fitWidth="376.0" pickOnBounds="true">
                <image>
@@ -54,67 +54,55 @@
             </ImageView>
          </children>
       </StackPane>
-      <HBox fx:id="navHBox" alignment="CENTER" layoutY="165.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="165.0">
+      <HBox fx:id="navHBox" alignment="CENTER" layoutY="165.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="155.0">
          <children>
-            <Label fx:id="newsTabButton" styleClass="selected" text="News" textFill="WHITE">
+            <Label id="tabButton" fx:id="newsTabButton" alignment="CENTER" prefHeight="30.0" prefWidth="65.0" styleClass="selected" text="News" textFill="WHITE">
                <font>
                   <Font name="Minecraftia 2.0" size="14.0" />
                </font>
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
-               <padding>
-                  <Insets bottom="-10.0" left="5.0" right="5.0" top="3.0" />
-               </padding>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label fx:id="skinsTabButton" text="Skins" textFill="WHITE">
+            <Label id="tabButton" fx:id="skinsTabButton" alignment="CENTER" prefHeight="30.0" text="Skins" textFill="WHITE">
                <font>
                   <Font name="Minecraftia 2.0" size="14.0" />
                </font>
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
-               <padding>
-                  <Insets bottom="-10.0" left="5.0" right="5.0" top="3.0" />
-               </padding>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label fx:id="settingsTabButton" text="Settings" textFill="WHITE">
+            <Label id="tabButton" fx:id="settingsTabButton" alignment="CENTER" prefHeight="30.0" text="Settings" textFill="WHITE">
                <font>
                   <Font name="Minecraftia 2.0" size="14.0" />
                </font>
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
-               <padding>
-                  <Insets bottom="-10.0" left="5.0" right="5.0" top="3.0" />
-               </padding>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label fx:id="launcherOptionsTabButton" text="Launcher options" textFill="WHITE">
+            <Label id="tabButton" fx:id="launcherOptionsTabButton" alignment="CENTER" prefHeight="30.0" text="Launcher options" textFill="WHITE">
                <font>
                   <Font name="Minecraftia 2.0" size="14.0" />
                </font>
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
-               <padding>
-                  <Insets bottom="-10.0" left="5.0" right="5.0" top="3.0" />
-               </padding>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
          </children>
       </HBox>
-      <TabPane fx:id="tabPane" layoutY="205.0" prefHeight="435.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="205.0">
+      <TabPane fx:id="tabPane" layoutY="205.0" prefHeight="435.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="195.0">
         <tabs>
           <Tab fx:id="newsTab" styleClass="selected," text="News">
             <content>
@@ -175,8 +163,8 @@
             <Font name="Minecraftia 2.0" size="8.0" />
          </font>
       </Label>
-      <ListView fx:id="languagesList" focusTraversable="false" prefHeight="200.0" prefWidth="295.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0" />
-      <ListView fx:id="profilesList" focusTraversable="false" prefHeight="200.0" prefWidth="334.0" visible="false" AnchorPane.leftAnchor="305.0" AnchorPane.topAnchor="400.0" />
+      <ListView fx:id="languagesList" focusTraversable="false" prefHeight="200.0" prefWidth="295.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0" />
+      <ListView fx:id="profilesList" focusTraversable="false" prefHeight="200.0" prefWidth="334.0" visible="false" AnchorPane.leftAnchor="308.0" AnchorPane.topAnchor="405.0" />
       <AnchorPane fx:id="loginScreenPane" layoutY="170.0" prefHeight="470.0" prefWidth="950.0" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="170.0">
          <children>
             <Label layoutX="362.0" layoutY="79.0" text="Password" />

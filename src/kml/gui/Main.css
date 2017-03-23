@@ -1,6 +1,6 @@
 @font-face {
-    font-family: Minecraftia;
-    src: url("fonts/Minecraftia-Regular.ttf");
+    font-family: Press Start 2P;
+    src: url("fonts/PressStart2P.ttf");
 }
 
 .darkBackground {
@@ -11,12 +11,18 @@
     -fx-background-image: url("textures/background.png");
 }
 
-#languages, #switchAccount {
-    -fx-font: 8pt "Minecraftia";
+#tabButton {
+    -fx-font: 8pt "Press Start 2P";
+	-fx-font-smoothing-type: gray;
     -fx-text-fill: white;
 
-    -fx-font-weight: bold;
-    -fx-graphic-text-gap: 10px;
+    -fx-padding: 0 5px 0 5px;
+}
+
+#languages, #switchAccount {
+    -fx-font: 8pt "Press Start 2P";
+	-fx-font-smoothing-type: gray;
+    -fx-text-fill: white;
 }
 
 #languages {
@@ -28,7 +34,8 @@
 }
 
 #playButton {
-    -fx-font: 22pt "Minecraftia";
+    -fx-font: 16pt "Press Start 2P";
+	-fx-font-smoothing-type: gray;
     -fx-text-fill: white;
 
     -fx-background-image: url("textures/playbutton.png");
