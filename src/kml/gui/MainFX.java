@@ -107,18 +107,4 @@ public class MainFX {
             selection.select(launchOptionsTab);
         }
     }
-
-    @FXML
-    public void updatePlayButtonIcon(Event e) {
-        switch (e.getEventType().getName()) {
-            case "MOUSE_ENTERED":
-                playButton.getStyleClass().add("playButtonHover");
-                break;
-            case "MOUSE_EXITED":
-                playButton.getStyleClass().remove("playButtonHover");
-                break;
-        }
-    }
-
-
 }
