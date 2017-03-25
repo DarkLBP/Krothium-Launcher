@@ -84,10 +84,10 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/icon.png")).getImage());
-        contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/background.png")).getImage());
+        contentPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/light_background.png")).getImage());
         contentPanel.setLayout(new FlowLayout());
-        footerPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
-        headPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/login-background.png")).getImage());
+        footerPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/dark_background.png")).getImage());
+        headPanel.setImage(new ImageIcon(LoginTab.class.getResource("/kml/gui/textures/dark_background.png")).getImage());
         setContentPane(main);
         news.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         skins.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

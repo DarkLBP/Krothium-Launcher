@@ -2,214 +2,123 @@ package kml.gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.web.WebView;
-import kml.Kernel;
 
 /**
- * Created by darkl on 18/03/2017.
+ * @author DarkLBP
+ *         website https://krothium.com
  */
-public class MainFX
-{
-	/**
-	 * TAB CONTENTS
-	 */
-	public AnchorPane newsPane;
-	public WebView    webView;
-	public AnchorPane skinsPane;
-	public AnchorPane settingsPane;
-	public AnchorPane launcherOptionsPane;
+public class MainFX {
 
-	/**
-	 * LOGIN
-	 */
-	public AnchorPane    loginScreenPane; // By default it's hidden
-	public PasswordField passwordInput;
-	public TextField     textInput;
-	public Button        loginButton;
-	public Button        registerButton;
+    private Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
 
-	private Kernel kernel;
+    @FXML
+    private Label languageButton, switchAccountButton, progressText,
+            newsLabel, skinsLabel, settingsLabel, launchOptionsLabel;
 
-	/**
-	 * HEADER
-	 */
-	public Label           languagesButton;
-	public ListView<Label> languagesList;
+    @FXML
+    private Button playButton, profilesButton;
 
-	private Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
+    @FXML
+    private Tab progressTab, playTab, loginTab, newsTab,
+            skinsTab, settingsTab, launchOptionsTab, profileEditorTab;
 
+    @FXML
+    private ProgressBar progressBar;
 
-	public Label switchAccountButton;
+    @FXML
+    private TabPane gamePane, contentPane;
 
-	/**
-	 * CONTENT
-	 */
-	// These will trigger the tabchange
-	public HBox  navHBox;
-	public Label newsTabButton;
-	public Label skinsTabButton;
-	public Label settingsTabButton;
-	public Label launcherOptionsTabButton;
+    @FXML
+    private WebView webBrowser;
 
-	// Actual tabpane
-	public TabPane tabPane;
-	public Tab     newsTab;
-	public Tab     skinsTab;
-	public Tab     settingsTab;
-	public Tab     launcherOptionsTab;
+    @FXML
+    private ListView<Label> languagesList;
 
-	/**
-	 * FOOTER
-	 */
-	public Label            playButton;
-	public Label            profilesButton;
-	public ListView<String> profilesList;
-	public Label            versionLabel;
-
-	public void initialize()
-	{
-		setupTabs();
-		setupButtons();
-	}
-
-	private void setupButtons()
-	{
-		//START THE GAME :D
-		playButton.setOnMouseClicked(event -> {
-
-		});
+    public void initialize() {
+        webBrowser.getEngine().load("http://mcupdate.tumblr.com");
+        flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
+        flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
+        flag_pt = new Image("/kml/gui/textures/flags/flag_pt-pt.png");
+        flag_val = new Image("/kml/gui/textures/flags/flag_val-es.png");
+        flag_br = new Image("/kml/gui/textures/flags/flag_pt-br.png");
+        flag_hu = new Image("/kml/gui/textures/flags/flag_hu-hu.png");
+        final Label en = new Label("English - United States", new ImageView(flag_us));
+        final Label es = new Label("Español - España", new ImageView(flag_es));
+        final Label ca = new Label("Valencià - C. Valenciana", new ImageView(flag_val));
+        final Label pt = new Label("Português - Portugal", new ImageView(flag_pt));
+        final Label br = new Label("Português - Brasil", new ImageView(flag_br));
+        final Label hu = new Label("Hungarian - Magyar", new ImageView(flag_hu));
+        ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
+        languagesList.setItems(languageListItems);
+    }
 
 
-		//SELECTING PROFILES
-		profilesButton.setOnMouseClicked(event -> {
-			if (profilesList.isVisible()) {
-				profilesList.setVisible(false);
-			}
-			else {
-				profilesList.setVisible(true);
-			}
-		});
+    @FXML
+    public void launchGame() {
+        System.out.println("TO IMPLEMENT LAUNCH GAME");
+    }
 
-/*
-		for (Map.Entry<String, Profile> entrySet : kernel.getProfiles().getProfiles().entrySet()) {
+    @FXML
+    public void showLanguages() {
+        System.out.println("PASA");
+        languagesList.setVisible(true);
+    }
 
-		}
-*/
+    @FXML
+    public void switchAccount() {
+        System.out.println("TO IMPLEMENT SWITCH ACCOUNT");
+    }
 
-		languagesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+    @FXML
+    public void showProfiles() {
+        System.out.println("TO IMPLEMENT SHOW PROFILES");
+    }
 
-		});
+    @FXML
+    public void switchTab(Event e) {
+        SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
+        Tab oldTab = selection.getSelectedItem();
+        if (oldTab == newsTab) {
+            newsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == skinsTab) {
+            skinsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == settingsTab) {
+            settingsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == launchOptionsTab) {
+            launchOptionsLabel.getStyleClass().remove("selectedItem");
+        }
+        if (e.getSource() == newsLabel) {
+            newsLabel.getStyleClass().add("selectedItem");
+            selection.select(newsTab);
+        } else if (e.getSource() == skinsLabel) {
+            skinsLabel.getStyleClass().add("selectedItem");
+            selection.select(skinsTab);
+        } else if (e.getSource() == settingsLabel) {
+            settingsLabel.getStyleClass().add("selectedItem");
+            selection.select(settingsTab);
+        } else if (e.getSource() == launchOptionsLabel) {
+            launchOptionsLabel.getStyleClass().add("selectedItem");
+            selection.select(launchOptionsTab);
+        }
+    }
 
-		// SWITCH LANGUAGE
-		this.flag_es = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_es-es.png"));
-		this.flag_us = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_en-us.png"));
-		this.flag_pt = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_pt-pt.png"));
-		this.flag_val = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_val-es.png"));
-		this.flag_br = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_pt-br.png"));
-		this.flag_hu = new Image(LoginTab.class.getResourceAsStream("/kml/gui/textures/flags/flag_hu-hu.png"));
+    @FXML
+    public void updatePlayButtonIcon(Event e) {
+        switch (e.getEventType().getName()) {
+            case "MOUSE_ENTERED":
+                playButton.getStyleClass().add("playButtonHover");
+                break;
+            case "MOUSE_EXITED":
+                playButton.getStyleClass().remove("playButtonHover");
+                break;
+        }
+    }
 
-		final Label           en                = new Label("English - United States", new ImageView(flag_us));
-		final Label           es                = new Label("Español - España", new ImageView(flag_es));
-		final Label           ca                = new Label("Català (Valencià) - País Valencià", new ImageView(flag_val));
-		final Label           pt                = new Label("Português - Portugal", new ImageView(flag_pt));
-		final Label           br                = new Label("Português - Brasil", new ImageView(flag_br));
-		final Label           hu                = new Label("Hungarian - Magyar", new ImageView(flag_hu));
-		ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
-		languagesList.setItems(languageListItems);
 
-		languagesButton.setOnMouseClicked(event -> {
-			if (languagesList.isVisible()) {
-				languagesList.setVisible(false);
-			}
-			else {
-				languagesList.setVisible(true);
-			}
-		});
-
-		languagesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-/*
-			if (newValue.equals(en)) {
-				kernel.getSettings().setLocale("en-us");
-			}
-			else if (newValue.equals(es)) {
-				kernel.getSettings().setLocale("es-es");
-			}
-			else if (newValue.equals(ca)) {
-				kernel.getSettings().setLocale("val-es");
-			}
-			else if (newValue.equals(pt)) {
-				kernel.getSettings().setLocale("pt-pt");
-			}
-			else if (newValue.equals(br)) {
-				kernel.getSettings().setLocale("pt-br");
-			}
-			else if (newValue.equals(hu)) {
-				kernel.getSettings().setLocale("hu-hu");
-			}
-*/
-
-			languagesList.setVisible(false);
-		});
-
-		// SWITCH ACCOUNT
-		switchAccountButton.setOnMouseClicked(event -> {
-
-		});
-	}
-
-	private void setupTabs()
-	{
-		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
-
-		newsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem() == newsTab) return;
-
-			selectionModel.select(newsTab);
-			newsTabButton.getStyleClass().add("selected");
-
-			skinsTabButton.getStyleClass().remove("selected");
-			settingsTabButton.getStyleClass().remove("selected");
-			launcherOptionsTabButton.getStyleClass().remove("selected");
-		});
-		skinsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem() == skinsTab) return;
-
-			selectionModel.select(skinsTab);
-			skinsTabButton.getStyleClass().add("selected");
-
-			newsTabButton.getStyleClass().remove("selected");
-			settingsTabButton.getStyleClass().remove("selected");
-			launcherOptionsTabButton.getStyleClass().remove("selected");
-		});
-		settingsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem() == settingsTab) return;
-
-			selectionModel.select(settingsTab);
-			settingsTabButton.getStyleClass().add("selected");
-
-			newsTabButton.getStyleClass().remove("selected");
-			skinsTabButton.getStyleClass().remove("selected");
-			launcherOptionsTabButton.getStyleClass().remove("selected");
-		});
-		launcherOptionsTabButton.setOnMouseClicked(event -> {
-			if (selectionModel.getSelectedItem() == launcherOptionsTab) return;
-
-			selectionModel.select(launcherOptionsTab);
-			launcherOptionsTabButton.getStyleClass().add("selected");
-
-			newsTabButton.getStyleClass().remove("selected");
-			skinsTabButton.getStyleClass().remove("selected");
-			settingsTabButton.getStyleClass().remove("selected");
-		});
-	}
-
-	public void setKernel(Kernel kernel)
-	{
-		this.kernel = kernel;
-	}
 }

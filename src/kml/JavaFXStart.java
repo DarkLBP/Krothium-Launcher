@@ -9,7 +9,8 @@ import javafx.stage.Stage;
 import kml.gui.MainFX;
 
 /**
- * Created by darkl on 17/03/2017.
+ * @author DarkLBP
+ *         website https://krothium.com
  */
 public class JavaFXStart extends Application {
 
@@ -23,18 +24,16 @@ public class JavaFXStart extends Application {
         loader.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
         Parent root = loader.load();
 
-        String style = getClass().getResource("/kml/gui/Main.css").toExternalForm();
-        root.getStylesheets().addAll(style);
         primaryStage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
 
         primaryStage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
         primaryStage.setScene(new Scene(root));
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.setMaximized(false);
         primaryStage.show();
 
-	    MainFX mainFX = loader.getController();
-	    //mainFX.setKernel(new Kernel());
+        MainFX mainFX = loader.getController();
+        //mainFX.setKernel(new Kernel());
 
         /*Scene scene = new Scene(main, 950, 700);
         primaryStage.setScene(scene);

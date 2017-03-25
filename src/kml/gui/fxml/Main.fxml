@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
-      <StackPane prefHeight="25.0" prefWidth="200.0" style="-fx-background-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <StackPane id="topBar" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
-            <Label id="languages" fx:id="languagesButton" prefHeight="25.0" text="Languages" textFill="WHITE" StackPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font name="Minecraftia 2.0" size="12.0" />
-               </font>
+            <Label id="languageButton" fx:id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
                <StackPane.margin>
                   <Insets left="5.0" />
                </StackPane.margin>
@@ -32,148 +29,135 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label id="switchAccount" fx:id="switchAccountButton" prefHeight="25.0" text="Switch Account" textFill="WHITE" StackPane.alignment="CENTER_RIGHT">
-               <font>
-                  <Font name="Minecraftia 2.0" size="12.0" />
-               </font>
-               <StackPane.margin>
+            <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" text="Switch Account" StackPane.alignment="CENTER_RIGHT">
+               <padding>
                   <Insets right="5.0" />
-               </StackPane.margin>
+               </padding>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
          </children>
       </StackPane>
-      <StackPane layoutY="36.0" prefHeight="130.0" prefWidth="950.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <VBox id="header" alignment="CENTER" layoutY="40.0" maxHeight="170.0" minHeight="170.0" prefHeight="170.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
          <children>
-            <ImageView fitHeight="97.0" fitWidth="376.0" pickOnBounds="true">
+            <ImageView fitHeight="109.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../textures/logo.png" />
                </image>
             </ImageView>
+            <HBox alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
+               <children>
+                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" text="News">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="menuItem" />
+                        <String fx:value="selectedItem" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="skinsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Skins">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="settingsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Settings">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="launchOptionsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Launch Options">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </HBox>
          </children>
-      </StackPane>
-      <HBox fx:id="navHBox" alignment="CENTER" layoutY="165.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="darkBackground" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="155.0">
-         <children>
-            <Label id="tabButton" fx:id="newsTabButton" alignment="CENTER" prefHeight="30.0" prefWidth="65.0" styleClass="selected" text="News" textFill="WHITE">
-               <font>
-                  <Font name="Minecraftia 2.0" size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="15.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-            <Label id="tabButton" fx:id="skinsTabButton" alignment="CENTER" prefHeight="30.0" text="Skins" textFill="WHITE">
-               <font>
-                  <Font name="Minecraftia 2.0" size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="15.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-            <Label id="tabButton" fx:id="settingsTabButton" alignment="CENTER" prefHeight="30.0" text="Settings" textFill="WHITE">
-               <font>
-                  <Font name="Minecraftia 2.0" size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="15.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-            <Label id="tabButton" fx:id="launcherOptionsTabButton" alignment="CENTER" prefHeight="30.0" text="Launcher options" textFill="WHITE">
-               <font>
-                  <Font name="Minecraftia 2.0" size="14.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="15.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-         </children>
-      </HBox>
-      <TabPane fx:id="tabPane" layoutY="205.0" prefHeight="435.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="195.0">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </VBox>
+      <TabPane id="content" fx:id="contentPane" layoutY="210.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab fx:id="newsTab" styleClass="selected," text="News">
-            <content>
-              <AnchorPane fx:id="newsPane" minHeight="0.0" minWidth="0.0" prefHeight="414.0" prefWidth="950.0">
-                     <children>
-                        <WebView fx:id="webView" prefHeight="415.0" prefWidth="950.0" AnchorPane.bottomAnchor="-7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-          <Tab fx:id="skinsTab" text="Skins">
-            <content>
-              <AnchorPane fx:id="skinsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Label layoutX="424.0" layoutY="145.0" text="Skins" />
-                     </children></AnchorPane>
-            </content>
-          </Tab>
-            <Tab fx:id="settingsTab" text="Settings">
+          <Tab fx:id="newsTab" text="News Tab">
                <content>
-                  <AnchorPane fx:id="settingsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Label layoutX="461.0" layoutY="206.0" text="Settings" />
-                     </children></AnchorPane>
+                  <WebView fx:id="webBrowser" prefHeight="362.0" prefWidth="950.0" />
                </content>
             </Tab>
-            <Tab fx:id="launcherOptionsTab" text="Launcher options">
-               <content>
-                  <AnchorPane fx:id="launcherOptionsPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Label layoutX="429.0" layoutY="206.0" text="Launcher options" />
-                     </children></AnchorPane>
-               </content>
-            </Tab>
+            <Tab fx:id="skinsTab" text="Skins Tab" />
+            <Tab fx:id="settingsTab" text="Settings Tab" />
+            <Tab fx:id="launchOptionsTab" text="Launch Options Tab" />
+          <Tab fx:id="loginTab" text="Login Tab" />
+            <Tab fx:id="profileEditorTab" text="Profile Editor Tab" />
         </tabs>
       </TabPane>
-      <HBox alignment="CENTER" prefHeight="97.0" prefWidth="950.0" style="-fx-background-color: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="640.0">
-         <children>
-            <Label id="playButton" fx:id="playButton" alignment="CENTER" minHeight="65.0" minWidth="250.0" prefHeight="65.0" prefWidth="250.0" text="Play" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets bottom="70.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-            <Label id="profileButton" fx:id="profilesButton" minHeight="65.0" prefHeight="65.0" prefWidth="35.0">
-               <HBox.margin>
-                  <Insets bottom="70.0" />
-               </HBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Label>
-         </children>
-      </HBox>
-      <Label fx:id="versionLabel" text="1.0" textFill="#a8a8a8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0">
-         <font>
-            <Font name="Minecraftia 2.0" size="8.0" />
-         </font>
-      </Label>
-      <ListView fx:id="languagesList" focusTraversable="false" prefHeight="200.0" prefWidth="295.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="25.0" />
-      <ListView fx:id="profilesList" focusTraversable="false" prefHeight="200.0" prefWidth="334.0" visible="false" AnchorPane.leftAnchor="308.0" AnchorPane.topAnchor="405.0" />
-      <AnchorPane fx:id="loginScreenPane" layoutY="170.0" prefHeight="470.0" prefWidth="950.0" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="170.0">
-         <children>
-            <Label layoutX="362.0" layoutY="79.0" text="Password" />
-            <PasswordField fx:id="passwordInput" AnchorPane.leftAnchor="450.0" AnchorPane.topAnchor="75.0" />
-            <Button fx:id="loginButton" layoutX="387.0" layoutY="128.0" mnemonicParsing="false" text="Login" />
-            <Button fx:id="registerButton" layoutX="499.0" layoutY="128.0" mnemonicParsing="false" text="Register" />
-            <TextField fx:id="textInput" AnchorPane.leftAnchor="450.0" AnchorPane.topAnchor="35.0" />
-            <Label layoutX="372.0" layoutY="39.0" text="Email" />
-         </children>
-      </AnchorPane>
+      <TabPane id="footer" fx:id="gamePane" layoutY="560.0" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+        <tabs>
+          <Tab fx:id="playTab" text="Main Buttons">
+               <content>
+                  <HBox alignment="CENTER" maxHeight="120.0" minHeight="120.0" prefHeight="110.0" prefWidth="950.0">
+                     <children>
+                        <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="80.0" maxWidth="240.0" minHeight="70.0" minWidth="240.0" mnemonicParsing="false" onMouseClicked="#launchGame" onMousePressed="#updatePlayButtonIcon" prefHeight="80.0" prefWidth="240.0" text="PLAY" HBox.hgrow="NEVER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="40.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="40.0" HBox.hgrow="NEVER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </HBox>
+               </content>
+          </Tab>
+          <Tab fx:id="progressTab" text="Progress">
+               <content>
+                  <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label id="progressText" fx:id="progressText" text="Here is doing something...." />
+                        <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="871.0" progress="0.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="7.0" left="25.0" right="25.0" />
+                     </padding>
+                  </VBox>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <ListView fx:id="languagesList" maxHeight="245.0" maxWidth="300.0" minHeight="245.0" minWidth="300.0" prefHeight="245.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0" />
    </children>
 </AnchorPane>
