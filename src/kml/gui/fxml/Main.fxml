@@ -109,7 +109,7 @@
             <Insets top="10.0" />
          </padding>
       </VBox>
-      <TabPane id="content" fx:id="contentPane" layoutY="210.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0" VBox.vgrow="ALWAYS">
+      <TabPane id="content" fx:id="contentPane" layoutY="210.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0" VBox.vgrow="ALWAYS">
         <tabs>
           <Tab fx:id="newsTab" text="News Tab">
                <content>
@@ -123,41 +123,30 @@
             <Tab fx:id="profileEditorTab" text="Profile Editor Tab" />
         </tabs>
       </TabPane>
-      <TabPane id="footer" fx:id="gamePane" layoutY="560.0" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
-        <tabs>
-          <Tab fx:id="playTab" text="Main Buttons">
-               <content>
-                  <HBox alignment="CENTER" maxHeight="120.0" minHeight="120.0" prefHeight="110.0" prefWidth="950.0">
-                     <children>
-                        <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="80.0" maxWidth="240.0" minHeight="70.0" minWidth="240.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="80.0" prefWidth="240.0" text="PLAY" HBox.hgrow="NEVER">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
-                        <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="40.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="40.0" HBox.hgrow="NEVER">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
-                     </children>
-                  </HBox>
-               </content>
-          </Tab>
-          <Tab fx:id="progressTab" text="Progress">
-               <content>
-                  <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label id="progressText" fx:id="progressText" text="Here is doing something...." />
-                        <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="871.0" progress="0.0" />
-                     </children>
-                     <padding>
-                        <Insets bottom="7.0" left="25.0" right="25.0" />
-                     </padding>
-                  </VBox>
-               </content>
-          </Tab>
-        </tabs>
-      </TabPane>
+      <HBox id="footer" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <VBox fx:id="progressPane" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Label id="progressText" fx:id="progressText" text="Here is doing something...." />
+            <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="871.0" progress="0.0" />
+         </children>
+         <padding>
+            <Insets bottom="7.0" left="25.0" right="25.0" />
+         </padding>
+      </VBox>
+      <HBox fx:id="playPane" alignment="CENTER" maxHeight="120.0" minHeight="120.0" prefHeight="110.0" prefWidth="950.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="80.0" maxWidth="240.0" minHeight="70.0" minWidth="240.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="80.0" prefWidth="240.0" text="PLAY" HBox.hgrow="NEVER">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="40.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="40.0" HBox.hgrow="NEVER">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </HBox>
       <ListView fx:id="languagesList" maxHeight="245.0" maxWidth="300.0" minHeight="245.0" minWidth="300.0" prefHeight="245.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0" />
    </children>
 </AnchorPane>

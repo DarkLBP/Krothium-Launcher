@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
 /**
@@ -25,20 +27,27 @@ public class MainFX {
     private Button playButton, profilesButton;
 
     @FXML
-    private Tab progressTab, playTab, loginTab, newsTab,
-            skinsTab, settingsTab, launchOptionsTab, profileEditorTab;
+    private Tab loginTab, newsTab, skinsTab,
+            settingsTab, launchOptionsTab, profileEditorTab;
 
     @FXML
     private ProgressBar progressBar;
 
     @FXML
-    private TabPane gamePane, contentPane;
+    private TabPane contentPane;
 
     @FXML
     private WebView webBrowser;
 
     @FXML
     private ListView<Label> languagesList;
+
+    @FXML
+    private VBox progressPane;
+
+    @FXML
+    private HBox playPane;
+
 
     public void initialize() {
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
@@ -66,7 +75,6 @@ public class MainFX {
 
     @FXML
     public void showLanguages() {
-        System.out.println("PASA");
         languagesList.setVisible(true);
     }
 
