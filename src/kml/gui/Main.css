@@ -74,3 +74,6 @@
     -fx-font: 30px Savior1;
     -fx-text-fill: white;
 }
+.list-cell:hover {
+    -fx-background-color: -fx-selection-bar;
+}

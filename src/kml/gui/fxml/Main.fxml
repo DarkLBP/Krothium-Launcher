@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
       <StackPane id="topBar" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
@@ -39,14 +39,14 @@
             </Label>
          </children>
       </StackPane>
-      <VBox id="header" alignment="CENTER" layoutY="40.0" maxHeight="170.0" minHeight="170.0" prefHeight="170.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+      <VBox id="header" alignment="CENTER" layoutY="40.0" maxHeight="170.0" prefHeight="170.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
          <children>
             <ImageView fitHeight="109.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../textures/logo.png" />
                </image>
             </ImageView>
-            <HBox alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
+            <HBox fx:id="tabMenu" alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
                <children>
                   <Label fx:id="newsLabel" onMouseClicked="#switchTab" text="News">
                      <padding>
@@ -147,6 +147,9 @@
             </Button>
          </children>
       </HBox>
-      <ListView fx:id="languagesList" maxHeight="245.0" maxWidth="300.0" minHeight="245.0" minWidth="300.0" prefHeight="245.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0" />
+      <ListView fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="242.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></ListView>
    </children>
 </AnchorPane>

@@ -7,9 +7,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import kml.Kernel;
 
 /**
  * @author DarkLBP
@@ -46,11 +48,17 @@ public class MainFX {
     private VBox progressPane;
 
     @FXML
-    private HBox playPane;
+    private HBox playPane, tabMenu;
+
+    @FXML
+    private AnchorPane root;
+
+    private Kernel kernel;
 
 
     public void initialize() {
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
+        //tabMenu.setVisible(false);
         flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
         flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
         flag_pt = new Image("/kml/gui/textures/flags/flag_pt-pt.png");
@@ -58,11 +66,17 @@ public class MainFX {
         flag_br = new Image("/kml/gui/textures/flags/flag_pt-br.png");
         flag_hu = new Image("/kml/gui/textures/flags/flag_hu-hu.png");
         final Label en = new Label("English - United States", new ImageView(flag_us));
+        en.setId("en-us");
         final Label es = new Label("Español - España", new ImageView(flag_es));
+        es.setId("es-es");
         final Label ca = new Label("Valencià - C. Valenciana", new ImageView(flag_val));
+        ca.setId("val-es");
         final Label pt = new Label("Português - Portugal", new ImageView(flag_pt));
+        pt.setId("pt-pt");
         final Label br = new Label("Português - Brasil", new ImageView(flag_br));
+        br.setId("pt-br");
         final Label hu = new Label("Hungarian - Magyar", new ImageView(flag_hu));
+        hu.setId("hu-hu");
         ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
         languagesList.setItems(languageListItems);
     }
@@ -75,7 +89,11 @@ public class MainFX {
 
     @FXML
     public void showLanguages() {
-        languagesList.setVisible(true);
+        if (languagesList.isVisible()) {
+            languagesList.setVisible(false);
+        } else {
+            languagesList.setVisible(true);
+        }
     }
 
     @FXML
@@ -114,5 +132,36 @@ public class MainFX {
             launchOptionsLabel.getStyleClass().add("selectedItem");
             selection.select(launchOptionsTab);
         }
+    }
+
+    @FXML
+    public void hidePopup(Event e) {
+        if (e.getSource() == languagesList && languagesList.isVisible()) {
+            languagesList.setVisible(false);
+        }
+    }
+
+    @FXML
+    public void updateLanguage() {
+        Label selected = languagesList.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            kernel.getSettings().setLocale(selected.getId());
+        }
+        languagesList.setVisible(false);
+    }
+
+    public void setKernel(Kernel k) {
+        kernel = k;
+    }
+
+    public void setVisible(boolean visible) {
+        root.setVisible(visible);
+    }
+
+    public void showLoginPrompt(boolean showLoginPrompt) {
+        if (showLoginPrompt) {
+            contentPane.getSelectionModel().select(loginTab);
+        }
+
     }
 }

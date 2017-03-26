@@ -1,11 +1,19 @@
 package kml;
 
-import kml.gui.Main;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import kml.gui.MainFX;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.beans.IntrospectionException;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -27,13 +35,12 @@ public final class Kernel {
     private final Downloader downloader;
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
-    private final Main mainForm;
-
-    public Kernel() {
-        this(Utils.getWorkingDirectory());
+    private MainFX mainForm;
+    public Kernel(Stage stage) {
+        this(Utils.getWorkingDirectory(), stage);
     }
 
-    private Kernel(File workDir) {
+    private Kernel(File workDir, Stage stage) {
         this.workingDir = workDir;
         if (!this.workingDir.exists()) {
             this.workingDir.mkdirs();
@@ -80,7 +87,26 @@ public final class Kernel {
         this.loadVersions();
         this.loadProfiles();
         this.loadUsers();
-        this.mainForm = new Main(this);
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
+        Parent p;
+        try {
+            p = loader.load();
+        } catch (IOException e) {
+            p = null;
+            this.console.printError("Failed to initialize JavaFX GUI!");
+            this.console.printError(e.getMessage());
+            exitSafely();
+        }
+        stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME);
+        stage.setScene(new Scene(p));
+        stage.setResizable(true);
+        stage.setMaximized(false);
+        stage.setOnCloseRequest(e -> exitSafely());
+        stage.show();
+        mainForm = loader.getController();
+        mainForm.setKernel(this);
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
@@ -199,7 +225,7 @@ public final class Kernel {
         exitSafely();
     }
 
-    public Main getGUI() {
+    public MainFX getGUI() {
         return this.mainForm;
     }
 }

@@ -3,7 +3,6 @@ package kml;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
-import kml.gui.GameLog;
 import kml.objects.Library;
 import kml.objects.Profile;
 import kml.objects.User;
@@ -27,7 +26,7 @@ public class GameLauncher {
 
     private final Console console;
     private final Kernel kernel;
-    private final GameLog gameLog;
+   // private final GameLog gameLog;
     private Process process;
     private boolean error;
     private boolean started;
@@ -35,7 +34,7 @@ public class GameLauncher {
     public GameLauncher(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
-        this.gameLog = new GameLog(k);
+        //this.gameLog = new GameLog(k);
     }
 
     public void launch() throws GameLauncherException {
@@ -295,8 +294,8 @@ public class GameLauncher {
                 kernel.getGUI().setVisible(false);
             }
             if (kernel.getSettings().getShowGameLog()) {
-                gameLog.setVisible(true);
-                gameLog.refreshLocalizedStrings();
+                //gameLog.setVisible(true);
+                //gameLog.refreshLocalizedStrings();
             }
             Thread log_info = new Thread(() -> {
                 InputStreamReader isr = new InputStreamReader(GameLauncher.this.getInputStream(), Charset.forName("ISO-8859-1"));
@@ -306,7 +305,7 @@ public class GameLauncher {
                     while (GameLauncher.this.isRunning()) {
                         if (Objects.nonNull((lineRead = br.readLine()))) {
                             if (kernel.getSettings().getShowGameLog()) {
-                                gameLog.pushString(lineRead);
+                                //gameLog.pushString(lineRead);
                             }
                             console.printInfo(lineRead);
                         }
@@ -338,7 +337,7 @@ public class GameLauncher {
                     while (GameLauncher.this.isRunning()) {
                         if (Objects.nonNull((lineRead = br.readLine()))) {
                             if (kernel.getSettings().getShowGameLog()) {
-                                gameLog.pushString(lineRead);
+                               // gameLog.pushString(lineRead);
                             }
                             console.printInfo(lineRead);
                         }

@@ -1,6 +1,7 @@
 package kml;
 
-import kml.gui.Main;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import kml.handlers.BrowserHandler;
 
 import javax.swing.*;
@@ -14,23 +15,15 @@ import java.util.Properties;
  * @author DarkLBP
  *         website https://krothium.com
  */
-class Starter {
+public class Starter extends Application {
     public static void main(String[] args) throws IOException, FontFormatException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         if (args.length == 0) {
             if (existsResource()) {
                 bootFromResource(args);
             } else {
-                Font font = Font.createFont(Font.TRUETYPE_FONT, Starter.class.getResourceAsStream("/kml/gui/fonts/Minecraftia-Regular.ttf"));
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                ge.registerFont(font);
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                Kernel kernel = new Kernel();
-                Console console = kernel.getConsole();
-                console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
-                Utils.testNetwork();
                 URL.setURLStreamHandlerFactory(new BrowserHandler());
-                Main main = kernel.getGUI();
-                main.setVisible(true);
+                launch(args);
             }
         } else if (args.length >= 1) {
             String[] stubArgs = new String[args.length - 1];
@@ -98,5 +91,13 @@ class Starter {
             }
             StubLauncher.load(resource, passedArgs);
         }
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Kernel kernel = new Kernel(primaryStage);
+        Console console = kernel.getConsole();
+        console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+        Utils.testNetwork();
     }
 }

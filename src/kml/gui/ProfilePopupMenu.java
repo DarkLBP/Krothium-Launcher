@@ -28,7 +28,7 @@ public class ProfilePopupMenu {
             String action = event.getActionCommand();
 
             kernel.getProfiles().setSelectedProfile(event.getActionCommand());
-            kernel.getGUI().updatePlayButton();
+            //kernel.getGUI().updatePlayButton();
 
             //Update font
             for (JMenuItem menuItem : jMenuItems) {
