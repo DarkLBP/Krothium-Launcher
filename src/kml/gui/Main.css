@@ -9,8 +9,7 @@
     visibility: hidden;
     -fx-padding: 0;
 }
-.label {
-    -fx-font: 25px Savior1;
+* {
     -fx-font-family: Savior1;
 }
 #topBar {
@@ -23,7 +22,8 @@
     -fx-background-image: url("textures/light_background.png");
 }
 #languageButton, #switchAccountButton {
-     -fx-text-fill: white;
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
 }
 #languageButton:hover, #switchAccountButton:hover {
     -fx-text-fill: yellow;
@@ -35,7 +35,7 @@
     -fx-graphic: url("textures/logout.png");
 }
 .menuItem {
-    -fx-font: 30px Savior1;
+    -fx-font-size: 30px;
     -fx-text-fill: white;
 }
 .selectedItem {
@@ -51,7 +51,7 @@
     -fx-background-insets: 0;
 }
 #playButton {
-    -fx-font: 50px Savior1;
+    -fx-font-size: 50px;
     -fx-text-fill: white;
     -fx-background-image: url("textures/playbutton.png");
 }
@@ -71,9 +71,29 @@
     -fx-background-image: url("textures/profile_press.png");
 }
 #progressText {
-    -fx-font: 30px Savior1;
+    -fx-font-size: 30px;
     -fx-text-fill: white;
 }
 .list-cell:hover {
     -fx-background-color: -fx-selection-bar;
+}
+.loginComponent {
+    -fx-font-size: 30px;
+}
+#languagesList .label{
+    -fx-font-size: 25px;
+}
+.loginButton {
+    -fx-text-fill: white;
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+    -fx-background-insets: 0;
+    -fx-background-image: url("textures/button_normal.png");
+}
+.loginButton:hover {
+    -fx-background-image: url("textures/button_hover.png");
+}
+.text-field {
+    -fx-text-box-border: black;
 }

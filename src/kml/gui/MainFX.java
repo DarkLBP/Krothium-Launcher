@@ -79,6 +79,8 @@ public class MainFX {
         hu.setId("hu-hu");
         ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
         languagesList.setItems(languageListItems);
+        //newsLabel.getStyleClass().add("selectedItem");
+        contentPane.getSelectionModel().select(loginTab);
     }
 
 

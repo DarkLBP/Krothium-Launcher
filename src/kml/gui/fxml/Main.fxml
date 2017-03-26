@@ -6,9 +6,11 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -48,7 +50,7 @@
             </ImageView>
             <HBox fx:id="tabMenu" alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
                <children>
-                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" text="News">
+                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="News">
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
@@ -58,10 +60,6 @@
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
-                     <styleClass>
-                        <String fx:value="menuItem" />
-                        <String fx:value="selectedItem" />
-                     </styleClass>
                   </Label>
                   <Label fx:id="skinsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Skins">
                      <padding>
@@ -119,7 +117,45 @@
             <Tab fx:id="skinsTab" text="Skins Tab" />
             <Tab fx:id="settingsTab" text="Settings Tab" />
             <Tab fx:id="launchOptionsTab" text="Launch Options Tab" />
-          <Tab fx:id="loginTab" text="Login Tab" />
+          <Tab fx:id="loginTab" text="Login Tab">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label id="loginLabel" layoutX="148.0" layoutY="37.0" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Krothium Username or Email:" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
+                        <TextField layoutX="148.0" layoutY="70.0" prefHeight="31.0" prefWidth="653.0" styleClass="loginComponent" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
+                        <Label layoutX="148.0" layoutY="133.0" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Password:" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
+                        <PasswordField layoutX="148.0" layoutY="164.0" prefHeight="49.0" prefWidth="656.0" styleClass="loginComponent" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
+                        <HBox alignment="CENTER" layoutX="148.0" layoutY="223.0" prefHeight="100.0" prefWidth="656.0" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="146.0">
+                           <children>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="197.0" text="LOGIN">
+                                 <styleClass>
+                                    <String fx:value="loginComponent" />
+                                    <String fx:value="loginButton" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <HBox.margin>
+                                    <Insets right="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="197.0" text="REGISTER">
+                                 <styleClass>
+                                    <String fx:value="loginComponent" />
+                                    <String fx:value="loginButton" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+               </content></Tab>
             <Tab fx:id="profileEditorTab" text="Profile Editor Tab" />
         </tabs>
       </TabPane>
@@ -147,7 +183,7 @@
             </Button>
          </children>
       </HBox>
-      <ListView fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="242.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="242.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
