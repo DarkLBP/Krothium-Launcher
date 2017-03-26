@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
       <StackPane id="topBar" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
@@ -176,7 +176,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="40.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="40.0" HBox.hgrow="NEVER">
+            <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="46.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="43.0" HBox.hgrow="NEVER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
