@@ -290,9 +290,7 @@ public class GameLauncher {
         pb.directory(workingDir);
         try {
             this.process = pb.start();
-            if (!kernel.getSettings().getKeepLauncherOpen()) {
-                kernel.getGUI().setVisible(false);
-            }
+
             if (kernel.getSettings().getShowGameLog()) {
                 //gameLog.setVisible(true);
                 //gameLog.refreshLocalizedStrings();
@@ -321,12 +319,6 @@ public class GameLauncher {
                 started = false;
                 console.printInfo("Deleteting natives dir.");
                 Utils.deleteDirectory(nativesDir);
-                if (GameLauncher.this.hasError()) {
-                    JOptionPane.showMessageDialog(null, Language.get(15), Language.get(16), JOptionPane.ERROR_MESSAGE);
-                }
-                if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()) {
-                    kernel.exitSafely();
-                }
             });
             log_info.start();
             Thread log_error = new Thread(() -> {
@@ -371,7 +363,7 @@ public class GameLauncher {
         return false;
     }
 
-    private boolean hasError() {
+    public boolean hasError() {
         boolean current = this.error;
         this.error = false;
         return current;

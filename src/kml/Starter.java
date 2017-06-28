@@ -95,9 +95,7 @@ public class Starter extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Kernel kernel = new Kernel(primaryStage);
-        Console console = kernel.getConsole();
-        console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         Utils.testNetwork();
+        Kernel kernel = new Kernel(primaryStage, getHostServices());
     }
 }

@@ -1,5 +1,7 @@
 package kml;
 
+import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import kml.exceptions.AuthenticationException;
 import kml.gui.MainFX;
 import org.json.JSONObject;
 
@@ -35,12 +38,13 @@ public final class Kernel {
     private final Downloader downloader;
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
+    private final HostServices hostServices;
     private MainFX mainForm;
-    public Kernel(Stage stage) {
-        this(Utils.getWorkingDirectory(), stage);
+    public Kernel(Stage stage, HostServices hs) {
+        this(Utils.getWorkingDirectory(), stage, hs);
     }
 
-    private Kernel(File workDir, Stage stage) {
+    private Kernel(File workDir, Stage stage, HostServices hs) {
         this.workingDir = workDir;
         if (!this.workingDir.exists()) {
             this.workingDir.mkdirs();
@@ -77,12 +81,14 @@ public final class Kernel {
                 warnJavaFX();
             }
         }
+        console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
         this.settings = new Settings(this);
         this.downloader = new Downloader(this);
         this.authentication = new Authentication(this);
         this.gameLauncher = new GameLauncher(this);
+        this.hostServices = hs;
         this.loadSettings();
         this.loadVersions();
         this.loadProfiles();
@@ -106,7 +112,22 @@ public final class Kernel {
         stage.setOnCloseRequest(e -> exitSafely());
         stage.show();
         mainForm = loader.getController();
-        mainForm.setKernel(this);
+        mainForm.initialize(this, stage);
+        try {
+            if (authentication.hasSelectedUser()) {
+                authentication.refresh();
+            } else {
+                console.printInfo("No user is selected.");
+            }
+        } catch (AuthenticationException ex) {
+            console.printInfo("Couldn't refresh your session.");
+        } finally {
+            if (authentication.isAuthenticated()) {
+                mainForm.showLoginPrompt(false);
+            } else {
+                mainForm.showLoginPrompt(true);
+            }
+        }
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
@@ -126,6 +147,10 @@ public final class Kernel {
 
     public Console getConsole() {
         return this.console;
+    }
+
+    public HostServices getHostServices() {
+        return this.hostServices;
     }
 
     public File getWorkingDir() {
@@ -200,7 +225,7 @@ public final class Kernel {
         this.saveProfiles();
         this.console.printInfo("Shutting down launcher...");
         this.console.close();
-        System.exit(0);
+        Platform.exit();
     }
 
     public String checkForUpdates() {

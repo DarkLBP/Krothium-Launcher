@@ -25,6 +25,7 @@ public class Downloader {
     private final Kernel kernel;
     private double downloaded, validated, total;
     private boolean downloading;
+    private String currentFile = "";
 
     public Downloader(Kernel k) {
         this.kernel = k;
@@ -222,6 +223,7 @@ public class Downloader {
                     URL url = dw.getURL();
                     int tries = 0;
                     console.printInfo("Downloading " + path.getName() + " from " + url.toString());
+                    currentFile = path.getName();
                     while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)) {
                         tries++;
                     }
@@ -252,5 +254,9 @@ public class Downloader {
 
     public boolean isDownloading() {
         return this.downloading;
+    }
+
+    public String getCurrentFile() {
+        return currentFile;
     }
 }

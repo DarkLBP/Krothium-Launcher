@@ -21,6 +21,7 @@
 #content {
     -fx-background-image: url("textures/light_background.png");
 }
+
 #languageButton, #switchAccountButton {
     -fx-font-size: 25px;
     -fx-text-fill: white;
@@ -96,4 +97,20 @@
 }
 .text-field {
     -fx-text-box-border: black;
+}
+
+.title {
+    -fx-font-size: 37px;
+}
+
+.text-5 {
+    -fx-font-size: 28px;
+}
+
+.toggle-disabled {
+    -fx-graphic: url("textures/checkbox_disabled.png");
+}
+
+.toggle-enabled {
+    -fx-graphic: url("textures/checkbox_enabled.png");
 }
