@@ -46,7 +46,8 @@ public class MainFX {
     @FXML
     private Label languageButton, switchAccountButton, progressText,
             newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
-            keepLauncherOpen, outputLog;
+            keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
+            advancedSettings;
 
     @FXML
     private Button playButton, profilesButton;
@@ -116,6 +117,9 @@ public class MainFX {
         Settings st = kernel.getSettings();
         toggleLabel(keepLauncherOpen, st.getKeepLauncherOpen());
         toggleLabel(outputLog, st.getShowGameLog());
+        toggleLabel(enableSnapshots, st.getEnableSnapshots());
+        toggleLabel(historicalVersions, st.getEnableHistorical());
+        toggleLabel(advancedSettings, st.getEnableAdvanced());
     }
 
     @FXML
@@ -339,6 +343,15 @@ public class MainFX {
         } else if (source == outputLog) {
             s.setShowGameLog(!s.getShowGameLog());
             toggleLabel(source, s.getShowGameLog());
+        } else if (source == enableSnapshots) {
+            s.setEnableSnapshots(!s.getEnableSnapshots());
+            toggleLabel(source, s.getEnableSnapshots());
+        } else if (source == historicalVersions) {
+            s.setEnableHistorical(!s.getEnableHistorical());
+            toggleLabel(source, s.getEnableHistorical());
+        } else if (source == advancedSettings) {
+            s.setEnableAdvanced(!s.getEnableAdvanced());
+            toggleLabel(source, s.getEnableAdvanced());
         }
     }
 

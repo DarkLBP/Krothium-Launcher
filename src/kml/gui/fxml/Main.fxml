@@ -151,7 +151,70 @@
                      </children>
                   </VBox>
                </content></Tab>
-            <Tab fx:id="launchOptionsTab" text="Launch Options Tab" />
+            <Tab fx:id="launchOptionsTab" text="Launch Options Tab">
+               <content>
+                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="enableSnapshots" onMouseClicked="#updateSettings" text="Enable Snapshots">
+                           <styleClass>
+                              <String fx:value="text-5" />
+                              <String fx:value="toggle-disabled" />
+                           </styleClass>
+                           <graphic>
+                              <Label text="Label">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label fx:id="historicalVersions" onMouseClicked="#updateSettings" text="Historical versions">
+                           <styleClass>
+                              <String fx:value="text-5" />
+                              <String fx:value="toggle-disabled" />
+                           </styleClass>
+                           <graphic>
+                              <Label text="Label">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                           </graphic>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label fx:id="advancedSettings" onMouseClicked="#updateSettings" text="Advanced settings">
+                           <styleClass>
+                              <String fx:value="text-5" />
+                              <String fx:value="toggle-disabled" />
+                           </styleClass>
+                           <graphic>
+                              <Label text="Label">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </HBox>
+               </content></Tab>
           <Tab fx:id="loginTab" text="Login Tab">
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -218,7 +281,7 @@
             </Button>
          </children>
       </HBox>
-      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="242.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="300.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
