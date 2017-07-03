@@ -123,7 +123,7 @@ public class Downloader {
                     this.total += size;
                     processedHashes.add(hash);
                     if (!localValid) {
-                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash);
+                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash, object);
                         urls.add(d);
                     } else {
                         validated += size;
@@ -222,8 +222,12 @@ public class Downloader {
                     File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
                     URL url = dw.getURL();
                     int tries = 0;
-                    console.printInfo("Downloading " + path.getName() + " from " + url.toString());
-                    currentFile = path.getName();
+                    if (dw.hasFakePath()) {
+                        currentFile = dw.getFakePath();
+                    } else {
+                        currentFile = path.getName();
+                    }
+                    console.printInfo("Downloading " + currentFile + " from " + url.toString());
                     while (!Utils.downloadFile(url, fullPath) && (tries < Constants.DOWNLOAD_TRIES)) {
                         tries++;
                     }

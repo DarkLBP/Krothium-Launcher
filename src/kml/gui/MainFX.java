@@ -136,6 +136,7 @@ public class MainFX {
         Downloader d = kernel.getDownloader();
         GameLauncher gl = kernel.getGameLauncher();
         Console console = kernel.getConsole();
+        //Begin download and game launch task
         Task runTask = new Task() {
             @Override
             protected Object call() throws Exception {

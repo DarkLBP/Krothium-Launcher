@@ -96,7 +96,7 @@ public final class Version {
                     sha1 = client.getString("sha1");
                 }
                 File path = new File("versions" + File.separator + this.id + File.separator + this.id + ".jar");
-                Downloadable d = new Downloadable(url, size, path, sha1);
+                Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("client", d);
             }
             if (downloads.has("server")) {
@@ -114,7 +114,7 @@ public final class Version {
                     sha1 = server.getString("sha1");
                 }
                 File path = new File("versions" + File.separator + id + File.separator + id + "_server.jar");
-                Downloadable d = new Downloadable(url, size, path, sha1);
+                Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("server", d);
             }
             if (downloads.has("windows_server")) {
@@ -132,7 +132,7 @@ public final class Version {
                     sha1 = windows_server.getString("sha1");
                 }
                 File path = new File("versions" + File.separator + id + File.separator + id + "_server.exe");
-                Downloadable d = new Downloadable(url, size, path, sha1);
+                Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("server", d);
             }
         }
@@ -199,7 +199,7 @@ public final class Version {
         this.relativeJSON = new File("versions" + File.separator + this.id + File.separator + this.id + ".json");
         if (this.hasClientDownload() && this.hasJar()) {
             Downloadable d = this.getClientDownload();
-            Downloadable dnew = new Downloadable(d.getURL(), d.getSize(), this.relativeJar, d.getHash());
+            Downloadable dnew = new Downloadable(d.getURL(), d.getSize(), this.relativeJar, d.getHash(), null);
             this.downloads.remove("client");
             this.downloads.put("client", dnew);
         }

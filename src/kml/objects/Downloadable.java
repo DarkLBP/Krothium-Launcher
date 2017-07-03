@@ -14,12 +14,14 @@ public class Downloadable {
     private final URL url;
     private final File relPath;
     private final String hash;
+    private final String fakePath;
 
-    public Downloadable(URL url, long size, File path, String hash) {
+    public Downloadable(URL url, long size, File path, String hash, String fakePath) {
         this.url = url;
         this.size = size;
         this.relPath = path;
         this.hash = hash;
+        this.fakePath = fakePath;
     }
 
     public long getSize() {
@@ -48,5 +50,13 @@ public class Downloadable {
 
     public boolean hasSize() {
         return (this.size != -1);
+    }
+
+    public boolean hasFakePath() {
+        return this.fakePath != null;
+    }
+
+    public String getFakePath() {
+        return this.fakePath;
     }
 }

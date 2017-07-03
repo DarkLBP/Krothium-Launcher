@@ -113,7 +113,7 @@ public final class Library {
                 if (artifact.has("sha1")) {
                     sha1 = artifact.getString("sha1");
                 }
-                Downloadable d = new Downloadable(url, size, this.relativePath, sha1);
+                Downloadable d = new Downloadable(url, size, this.relativePath, sha1, null);
                 this.downloads.put("artifact", d);
             }
             if (downloads.has("classifiers")) {
@@ -135,7 +135,7 @@ public final class Library {
                             sha1 = download.getString("sha1");
                         }
                         File relPath = new File(this.relativePath.toString().replace(".jar", "-" + current + ".jar"));
-                        Downloadable d = new Downloadable(url, size, relPath, sha1);
+                        Downloadable d = new Downloadable(url, size, relPath, sha1, null);
                         this.downloads.put("classifier", d);
                     }
                 }
@@ -145,7 +145,7 @@ public final class Library {
                 if (this.isNative() && this.natives.containsKey(Utils.getPlatform())) {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null);
+                        Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null, null);
                         this.downloads.put("classifier", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
@@ -153,7 +153,7 @@ public final class Library {
                 } else if (this.hasURL()) {
                     try {
                         URL url = new URL(this.url + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativePath, null);
+                        Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
@@ -161,7 +161,7 @@ public final class Library {
                 } else {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativePath, null);
+                        Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.printError("Invalid " + this.name + " url.");
