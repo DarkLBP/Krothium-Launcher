@@ -338,10 +338,271 @@ public class Utils {
         try {
             Image img = ImageIO.read(Constants.PROFILE_ICONS);
             switch (p) {
-                case GRASS:
+                case LEAVES_OAK:
+                    blockX = 0;
+                    blockY = 0;
+                    break;
+                case BEDROCK:
+                    blockX = 1;
+                    blockY = 0;
+                    break;
+                case CLAY:
+                    blockX = 2;
+                    blockY = 0;
+                    break;
+                case DIAMOND_BLOCK:
+                    blockX = 3;
+                    blockY = 0;
+                    break;
+                case END_STONE:
+                    blockX = 4;
+                    blockY = 0;
+                    break;
+                case GRAVEL:
+                    blockX = 5;
+                    blockY = 0;
+                    break;
+                case LOG_BIRCH:
+                    blockX = 6;
+                    blockY = 0;
+                    break;
+                case PLANKS_OAK:
+                    blockX = 7;
+                    blockY = 0;
+                    break;
+                case TNT:
+                    blockX = 8;
+                    blockY = 0;
+                    break;
+                case BRICK:
+                    blockX = 0;
+                    blockY = 1;
+                    break;
+                case CHEST:
+                    blockX = 1;
+                    blockY = 1;
+                    break;
+                case COAL_BLOCK:
+                    blockX = 2;
+                    blockY = 1;
+                    break;
+                case DIAMOND_ORE:
+                    blockX = 3;
+                    blockY = 1;
+                    break;
+                case FARMLAND:
+                    blockX = 4;
+                    blockY = 1;
+                    break;
+                case HARDENED_CLAY:
+                    blockX = 5;
+                    blockY = 1;
+                    break;
+                case LOG_DARKOAK:
+                    blockX = 6;
+                    blockY = 1;
+                    break;
+                case PLANKS_SPRUCE:
+                    blockX = 7;
+                    blockY = 1;
+                    break;
+                case WOOL:
+                    blockX = 8;
+                    blockY = 1;
+                    break;
+                case COAL_ORE:
+                    blockX = 0;
+                    blockY = 2;
+                    break;
+                case COBBLESTONE:
+                    blockX = 1;
+                    blockY = 2;
+                    break;
+                case CRAFTING_TABLE: //Default for Latest Snapshot
+                    blockX = 2;
+                    blockY = 2;
+                    break;
+                case DIRT:
+                    blockX = 3;
+                    blockY = 2;
+                    break;
+                case FURNACE: //Default for custom profiles
+                    blockX = 4;
+                    blockY = 2;
+                    break;
+                case ICE_PACKED:
+                    blockX = 5;
+                    blockY = 2;
+                    break;
+                case LOG_JUNGLE:
+                    blockX = 6;
+                    blockY = 2;
+                    break;
+                case QUARTZ_ORE:
+                    blockX = 7;
+                    blockY = 2;
+                    break;
+                case DIRT_PODZOL:
+                    blockX = 0;
+                    blockY = 3;
+                    break;
+                case DIRT_SNOW:
+                    blockX = 1;
+                    blockY = 3;
+                    break;
+                case EMERALD_BLOCK:
+                    blockX = 2;
+                    blockY = 3;
+                    break;
+                case EMERALD_ORE:
+                    blockX = 3;
+                    blockY = 3;
+                    break;
+                case FURNACE_ON:
+                    blockX = 4;
+                    blockY = 3;
+                    break;
+                case IRON_BLOCK:
+                    blockX = 5;
+                    blockY = 3;
+                    break;
+                case LOG_OAK:
+                    blockX = 6;
+                    blockY = 3;
+                    break;
+                case RED_SAND:
+                    blockX = 7;
+                    blockY = 3;
+                    break;
+                case GLASS:
+                    blockX = 0;
+                    blockY = 4;
+                    break;
+                case GLOWSTONE:
+                    blockX = 1;
+                    blockY = 4;
+                    break;
+                case GOLD_BLOCK:
+                    blockX = 2;
+                    blockY = 4;
+                    break;
+                case GOLD_ORE:
+                    blockX = 3;
+                    blockY = 4;
+                    break;
+                case GRASS: //Default for Latest Release
                     blockX = 4;
                     blockY = 4;
                     break;
+                case IRON_ORE:
+                    blockX = 5;
+                    blockY = 4;
+                    break;
+                case LOG_SPRUCE:
+                    blockX = 6;
+                    blockY = 4;
+                    break;
+                case RED_SANDSTONE:
+                    blockX = 7;
+                    blockY = 4;
+                    break;
+                case LAPIS_ORE:
+                    blockX = 0;
+                    blockY = 5;
+                    break;
+                case LEAVES_BIRCH:
+                    blockX = 1;
+                    blockY = 5;
+                    break;
+                case LEAVES_JUNGLE:
+                    blockX = 2;
+                    blockY = 5;
+                    break;
+                case BOOKSHELF:
+                    blockX = 3;
+                    blockY = 5;
+                    break;
+                case LEAVES_SPRUCE:
+                    blockX = 4;
+                    blockY = 5;
+                    break;
+                case LOG_ACACIA:
+                    blockX = 5;
+                    blockY = 5;
+                    break;
+                case MYCELIUM:
+                    blockX = 6;
+                    blockY = 5;
+                    break;
+                case REDSTONE_BLOCK:
+                    blockX = 7;
+                    blockY = 5;
+                    break;
+                case NETHER_BRICK:
+                    blockX = 0;
+                    blockY = 6;
+                    break;
+                case NETHERRACK:
+                    blockX = 1;
+                    blockY = 6;
+                    break;
+                case OBSIDIAN:
+                    blockX = 2;
+                    blockY = 6;
+                    break;
+                case PLANKS_ACACIA:
+                    blockX = 3;
+                    blockY = 6;
+                    break;
+                case PLANKS_BIRCH:
+                    blockX = 4;
+                    blockY = 6;
+                    break;
+                case PLANKS_DARKOAK:
+                    blockX = 5;
+                    blockY = 6;
+                    break;
+                case PLANKS_JUNGLE:
+                    blockX = 6;
+                    blockY = 6;
+                    break;
+                case REDSTONE_ORE:
+                    blockX = 7;
+                    blockY = 6;
+                    break;
+                case SAND:
+                    blockX = 0;
+                    blockY = 7;
+                    break;
+                case SANDSTONE:
+                    blockX = 1;
+                    blockY = 7;
+                    break;
+                case SNOW:
+                    blockX = 2;
+                    blockY = 7;
+                    break;
+                case SOUL_SAND:
+                    blockX = 3;
+                    blockY = 7;
+                    break;
+                case STONE:
+                    blockX = 4;
+                    blockY = 7;
+                    break;
+                case STONE_ANDESITE:
+                    blockX = 5;
+                    blockY = 7;
+                    break;
+                case STONE_DIORITE:
+                    blockX = 6;
+                    blockY = 7;
+                    break;
+                case STONE_GRANITE:
+                    blockX = 7;
+                    blockY = 7;
+                    break;
+
             }
             g.drawImage(img, 0, 0, 32, 32, blockX * 136, blockY * 136, blockX * 136 + 136, blockY * 136 + 136, null);
         } catch (IOException e) {
