@@ -77,7 +77,7 @@ public class MainFX {
     private VBox progressPane;
 
     @FXML
-    private HBox playPane, tabMenu;
+    private HBox playPane, tabMenu, profilePopup;
 
     @FXML
     private AnchorPane root;
@@ -135,6 +135,10 @@ public class MainFX {
 
         //Load profile list
         loadProfileList();
+
+        //Make transparent areas to not target mouse events
+        playPane.pickOnBoundsProperty().setValue(false);
+        profilePopup.pickOnBoundsProperty().setValue(false);
     }
 
     @FXML

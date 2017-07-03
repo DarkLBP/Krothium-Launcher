@@ -279,7 +279,7 @@
             <Insets bottom="7.0" left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <HBox fx:id="playPane" alignment="CENTER" maxHeight="120.0" minHeight="120.0" prefHeight="110.0" prefWidth="950.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="100.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="80.0" maxWidth="240.0" minHeight="70.0" minWidth="240.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="80.0" prefWidth="240.0" text="PLAY" HBox.hgrow="NEVER">
                <cursor>
@@ -297,9 +297,9 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
-      <HBox alignment="CENTER" prefHeight="231.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="profilePopup" alignment="TOP_CENTER" maxWidth="950.0" prefHeight="215.0" prefWidth="950.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" prefHeight="173.0" prefWidth="450.0" visible="false">
+            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" visible="false">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
