@@ -165,7 +165,6 @@ public class MainFX {
             l2.setId(p.getID());
             l2.setOnMouseClicked(this::selectProfile);
             if (kernel.getProfiles().getSelectedProfile().equals(p.getID())) {
-                System.out.println("PASA");
                 l.getStyleClass().add("selectedProfile");
                 l2.getStyleClass().add("selectedProfile");
             }

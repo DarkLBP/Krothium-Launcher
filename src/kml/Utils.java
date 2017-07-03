@@ -333,7 +333,7 @@ public class Utils {
         if (ICON_CACHE.containsKey(p)) {
             return ICON_CACHE.get(p);
         }
-        BufferedImage bImg = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bImg = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bImg.createGraphics();
         int blockX = 0;
         int blockY = 0;
@@ -605,7 +605,7 @@ public class Utils {
                     blockY = 7;
                     break;
             }
-            g.drawImage(img, 0, 0, 32, 32, blockX * 136, blockY * 136, blockX * 136 + 136, blockY * 136 + 136, null);
+            g.drawImage(img, 0, 0, 64, 64, blockX * 136, blockY * 136, blockX * 136 + 136, blockY * 136 + 136, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
