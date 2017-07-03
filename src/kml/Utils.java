@@ -136,12 +136,21 @@ public class Utils {
                 return true;
             }
             InputStream in = null;
+            String ETag = null;
             if (url.getProtocol().equalsIgnoreCase("http")) {
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 in = con.getInputStream();
+                ETag = con.getHeaderField("ETag");
             } else if (url.getProtocol().equalsIgnoreCase("https")) {
                 HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
                 in = con.getInputStream();
+                ETag = con.getHeaderField("ETag");
+            }
+            if (output.exists() && output.isFile()) {
+                //Match ETAG with existing file
+                if (verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+                    return true;
+                }
             }
             if (Objects.isNull(in)) {
                 in = url.openConnection().getInputStream();
@@ -181,18 +190,21 @@ public class Utils {
         }
     }
 
-    public static boolean verifyChecksum(File file, String sha) {
+    public static boolean verifyChecksum(File file, String hash, String method) {
+        if (hash == null || method == null) {
+            return false;
+        }
         try {
-            String fileHash = calculateChecksum(file);
-            return sha.equals(fileHash);
+            String fileHash = calculateChecksum(file, method);
+            return hash.equals(fileHash);
         } catch (Exception ex) {
             return false;
         }
     }
 
-    public static String calculateChecksum(File file) {
+    public static String calculateChecksum(File file, String method) {
         try {
-            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            MessageDigest sha1 = MessageDigest.getInstance(method);
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[8192];
             int read;

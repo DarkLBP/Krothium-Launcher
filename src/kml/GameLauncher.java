@@ -183,7 +183,7 @@ public class GameLauncher {
                         String sha = asset.getString("hash");
                         boolean valid = false;
                         if (assetFile.exists()) {
-                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha)) {
+                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha, "SHA-1")) {
                                 valid = true;
                             }
                         }

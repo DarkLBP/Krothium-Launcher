@@ -60,11 +60,20 @@ public class Downloader {
         this.total = 0;
         console.printInfo("Fetching asset urls..");
         File indexJSON = null;
-        if (v.hasAssetIndex()) {
-            AssetIndex index = v.getAssetIndex();
-            String assetID = index.getID();
-            indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
-            URL assetsURL = index.getURL();
+        URL assetsURL;
+        String assetID;
+        //Fetch asset index
+        if (v.hasAssetIndex() || v.hasAssets()) {
+            if (v.hasAssetIndex()) {
+                AssetIndex index = v.getAssetIndex();
+                assetID = index.getID();
+                indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
+                assetsURL = index.getURL();
+            } else {
+                assetID = v.getAssets();
+                assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetID + ".json"); //Might be deprecated soon
+                indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
+            }
             if (!Constants.USE_LOCAL) {
                 int tries = 0;
                 while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)) {
@@ -74,22 +83,10 @@ public class Downloader {
                     console.printError("Failed to download asset index for version " + assetID);
                 }
             }
-        } else if (v.hasAssets()) {
-            String assetIndex = v.getAssets();
-            URL assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetIndex + ".json");
-            indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetIndex + ".json");
-            if (!Constants.USE_LOCAL) {
-                int tries = 0;
-                while (!Utils.downloadFile(assetsURL, indexJSON) && (tries < Constants.DOWNLOAD_TRIES)) {
-                    tries++;
-                }
-                if (tries == Constants.DOWNLOAD_TRIES) {
-                    console.printError("Failed to download asset index for version " + assetIndex);
-                }
-            }
         } else {
             console.printInfo("Version " + v.getID() + " does not have any valid assets.");
         }
+        //Fetch assets
         if (Objects.nonNull(indexJSON)) {
             JSONObject root;
             try {
@@ -102,12 +99,10 @@ public class Downloader {
                 throw new DownloaderException("Failed to read asset index json file.");
             }
             JSONObject objects = root.getJSONObject("objects");
-            Set keys = objects.keySet();
-            Iterator it2 = keys.iterator();
+            Set<String> keys = objects.keySet();
             List<String> processedHashes = new ArrayList<>();
-            while (it2.hasNext()) {
-                String object = it2.next().toString();
-                JSONObject o = objects.getJSONObject(object);
+            for (String key : keys) {
+                JSONObject o = objects.getJSONObject(key);
                 String hash = o.getString("hash");
                 long size = o.getLong("size");
                 URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + "/" + hash);
@@ -115,7 +110,7 @@ public class Downloader {
                 File fullPath = new File(kernel.getWorkingDir() + File.separator + relPath);
                 boolean localValid = false;
                 if (fullPath.exists() && fullPath.isFile()) {
-                    if (fullPath.length() == size) {
+                    if (fullPath.length() == size && Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
                         localValid = true;
                     }
                 }
@@ -123,7 +118,7 @@ public class Downloader {
                     this.total += size;
                     processedHashes.add(hash);
                     if (!localValid) {
-                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash, object);
+                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
                         urls.add(d);
                     } else {
                         validated += size;
@@ -151,8 +146,8 @@ public class Downloader {
                     }
                 }
                 if (destPath.exists() && destPath.isFile()) {
-                    if (destPath.length() == jarSize && Utils.verifyChecksum(destPath, jarSHA1)) {
-                        localValid = true;
+                    if (destPath.length() == jarSize && d.hasHash()) {
+                        localValid = Utils.verifyChecksum(destPath, jarSHA1, "SHA-1");
                     }
                 }
                 if (!localValid) {
@@ -178,7 +173,7 @@ public class Downloader {
                         if (completePath.isFile()) {
                             if (a.hasSize()) {
                                 if (a.hasHash() && completePath.length() == a.getSize()) {
-                                    valid = Utils.verifyChecksum(completePath, a.getHash());
+                                    valid = Utils.verifyChecksum(completePath, a.getHash(), "SHA-1");
                                 }
                             } else {
                                 valid = true;
@@ -199,7 +194,7 @@ public class Downloader {
                     boolean valid = false;
                     if (completePath.exists()) {
                         if (completePath.isFile()) {
-                            valid = !(c.hasHash() && completePath.length() == c.getSize()) || Utils.verifyChecksum(completePath, c.getHash());
+                            valid = !(c.hasHash() && completePath.length() == c.getSize()) || Utils.verifyChecksum(completePath, c.getHash(), "SHA-1");
                         }
                     }
                     this.total += c.getSize();
@@ -216,6 +211,7 @@ public class Downloader {
         if (urls.isEmpty()) {
             console.printInfo("Nothing to download.");
         } else {
+            //Download required files
             for (final Downloadable dw : urls) {
                 Runnable thread = () -> {
                     File path = dw.getRelativePath();
@@ -249,11 +245,11 @@ public class Downloader {
         this.downloading = false;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         if (!this.downloading) {
             return 0;
         }
-        return (int) ((this.downloaded + this.validated) / this.total * 100);
+        return (this.downloaded + this.validated) / this.total * 100;
     }
 
     public boolean isDownloading() {

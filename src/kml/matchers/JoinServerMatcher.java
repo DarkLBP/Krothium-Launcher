@@ -39,7 +39,7 @@ public class JoinServerMatcher implements URLMatcher {
                 File f = new File(file);
                 if (f.exists() && f.isFile()) {
                     JSONObject obj = new JSONObject();
-                    String checksum = Utils.calculateChecksum(f);
+                    String checksum = Utils.calculateChecksum(f, "SHA-1");
                     if (Objects.nonNull(checksum)) {
                         obj.put("name", f.getName());
                         obj.put("hash", checksum);
@@ -54,7 +54,7 @@ public class JoinServerMatcher implements URLMatcher {
                     for (File mod : mods) {
                         if (mod.isFile()) {
                             JSONObject obj = new JSONObject();
-                            String checksum = Utils.calculateChecksum(mod);
+                            String checksum = Utils.calculateChecksum(mod, "SHA-1");
                             if (Objects.nonNull(checksum)) {
                                 obj.put("name", mod.getName());
                                 obj.put("hash", checksum);
