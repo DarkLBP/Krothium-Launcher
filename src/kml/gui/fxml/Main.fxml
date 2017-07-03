@@ -216,10 +216,13 @@
                               <Insets top="5.0" />
                            </padding>
                         </HBox>
-                        <ListView maxHeight="600.0" maxWidth="700.0" prefHeight="294.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
+                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" prefHeight="294.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets bottom="50.0" top="10.0" />
                            </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ListView>
                      </children>
                   </VBox>
@@ -294,5 +297,14 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
+      <HBox alignment="CENTER" prefHeight="170.0" prefWidth="450.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" prefHeight="170.0" prefWidth="450.0" visible="false">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ListView>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

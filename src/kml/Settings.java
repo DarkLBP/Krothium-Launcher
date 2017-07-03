@@ -120,7 +120,6 @@ public class Settings {
 
     public void setEnableSnapshots(boolean b) {
         this.enableSnapshots = b;
-        kernel.getProfiles().updateSessionProfiles();
     }
 
     public JSONObject toJSON() {

@@ -28,10 +28,15 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kml.*;
+import kml.enums.ProfileIcon;
+import kml.enums.ProfileType;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
+import kml.objects.Profile;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -66,7 +71,7 @@ public class MainFX {
     private WebView webBrowser;
 
     @FXML
-    private ListView<Label> languagesList;
+    private ListView<Label> languagesList, profileList, profilePopupList;
 
     @FXML
     private VBox progressPane;
@@ -115,9 +120,11 @@ public class MainFX {
         hu.setId("hu-hu");
         ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
         languagesList.setItems(languageListItems);
+
         //Set news tab as default selected
         contentPane.getSelectionModel().select(newsTab);
         newsLabel.getStyleClass().add("selectedItem");
+
         //Update settings labels
         Settings st = kernel.getSettings();
         toggleLabel(keepLauncherOpen, st.getKeepLauncherOpen());
@@ -125,6 +132,54 @@ public class MainFX {
         toggleLabel(enableSnapshots, st.getEnableSnapshots());
         toggleLabel(historicalVersions, st.getEnableHistorical());
         toggleLabel(advancedSettings, st.getEnableAdvanced());
+
+        //Load profile list
+        loadProfileList();
+    }
+
+    @FXML
+    public void loadProfileList() {
+        Profiles ps = kernel.getProfiles();
+        Set<String> profiles = ps.getProfiles().keySet();
+        ObservableList<Label> profileListItems = FXCollections.observableArrayList();
+        ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
+        Label l;
+        Label l2;
+        for (String id : profiles) {
+            Profile p = ps.getProfile(id);
+            if (p.getType() == ProfileType.RELEASE) {
+                l = new Label("Latest Release", new ImageView(Utils.getProfileIcon(ProfileIcon.GRASS)));
+                l2 = new Label("Latest Release", new ImageView(Utils.getProfileIcon(ProfileIcon.GRASS)));
+            } else if (p.getType() == ProfileType.SNAPSHOT) {
+                l = new Label("Latest Snapshot", new ImageView(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE)));
+                l2 = new Label("Latest Snapshot", new ImageView(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE)));
+            } else {
+                String name = p.hasName() ? p.getName() : "Unnamed Profile";
+                ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
+                l = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
+                l2 = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
+            }
+            l.getStyleClass().add("text-4");
+            l.setId(p.getID());
+            l2.getStyleClass().add("text-4");
+            l2.setId(p.getID());
+            l2.setOnMouseClicked(this::selectProfile);
+            if (kernel.getProfiles().getSelectedProfile().equals(p.getID())) {
+                System.out.println("PASA");
+                l.getStyleClass().add("selectedProfile");
+                l2.getStyleClass().add("selectedProfile");
+            }
+            profileListItems.add(l);
+            profileListItems2.add(l2);
+        }
+        profileList.setItems(profileListItems);
+        profilePopupList.setItems(profileListItems2);
+    }
+
+    private void selectProfile(MouseEvent e) {
+        Label label = (Label)e.getSource();
+        kernel.getProfiles().setSelectedProfile(label.getId());
+        loadProfileList();
     }
 
     @FXML
@@ -226,7 +281,11 @@ public class MainFX {
 
     @FXML
     public void showProfiles() {
-        System.out.println("TO IMPLEMENT SHOW PROFILES");
+        if (profilePopupList.isVisible()) {
+            profilePopupList.setVisible(false);
+        } else {
+            profilePopupList.setVisible(true);
+        }
     }
 
     @FXML
@@ -259,8 +318,9 @@ public class MainFX {
 
     @FXML
     public void hidePopup(Event e) {
-        if (languagesList.isVisible()) {
-            languagesList.setVisible(false);
+        ListView ls = (ListView)e.getSource();
+        if (ls.isVisible()) {
+            ls.setVisible(false);
         }
     }
 
@@ -353,6 +413,8 @@ public class MainFX {
         } else if (source == enableSnapshots) {
             s.setEnableSnapshots(!s.getEnableSnapshots());
             toggleLabel(source, s.getEnableSnapshots());
+            kernel.getProfiles().updateSessionProfiles();
+            loadProfileList();
         } else if (source == historicalVersions) {
             s.setEnableHistorical(!s.getEnableHistorical());
             toggleLabel(source, s.getEnableHistorical());

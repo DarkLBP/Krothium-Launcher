@@ -103,6 +103,10 @@
     -fx-font-size: 37px;
 }
 
+.text-4 {
+    -fx-font-size: 32px;
+}
+
 .text-5 {
     -fx-font-size: 28px;
 }
@@ -113,4 +117,8 @@
 
 .toggle-enabled {
     -fx-graphic: url("textures/checkbox_enabled.png");
+}
+
+.selectedProfile {
+    -fx-text-fill: darkblue;
 }

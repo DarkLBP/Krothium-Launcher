@@ -1,5 +1,6 @@
 package kml;
 
+import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 import kml.objects.Profile;
 import org.json.JSONObject;
@@ -114,6 +115,7 @@ public class Profiles {
                     String gameDir = null;
                     String javaDir = null;
                     String javaArgs = null;
+                    ProfileIcon icon = null;
                     Map<String, Integer> resolution = new HashMap<>();
                     if (o.has("name")) {
                         name = o.getString("name");
@@ -148,9 +150,12 @@ public class Profiles {
                             console.printError("Profile " + ((Objects.nonNull(name)) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution);
+                    if (o.has("icon")) {
+                        icon = ProfileIcon.valueOf(o.getString("icon").toUpperCase());
+                    }
+                    Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, icon);
                     if (Objects.isNull(first)) {
-                        first = name;
+                        first = key;
                     }
                     if (!this.existsProfile(p)) {
                         this.addProfile(p);
@@ -194,7 +199,10 @@ public class Profiles {
 
     public boolean setSelectedProfile(String p) {
         if (this.existsProfile(p)) {
-            this.getProfile(p).setLastUsed(new Timestamp(System.currentTimeMillis()));
+            Profile profile = this.getProfile(p);
+            if (profile.getType() == ProfileType.CUSTOM) {
+                this.getProfile(p).setLastUsed(new Timestamp(System.currentTimeMillis()));
+            }
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;

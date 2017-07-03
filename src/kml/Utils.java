@@ -1,5 +1,6 @@
 package kml;
 
+import javafx.embed.swing.SwingFXUtils;
 import kml.enums.OS;
 import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javafx.scene.image.Image;
 
 /**
  * @author DarkLBP
@@ -31,7 +33,7 @@ import java.util.Set;
  */
 
 public class Utils {
-    private static final HashMap<ProfileIcon, ImageIcon> ICON_CACHE = new HashMap<>();
+    private static final HashMap<ProfileIcon, Image> ICON_CACHE = new HashMap<>();
 
     public static boolean ignoreHTTPSCert() {
         try {
@@ -327,7 +329,7 @@ public class Utils {
         return conversion;
     }
 
-    public static ImageIcon getProfileIcon(ProfileIcon p) {
+    public static Image getProfileIcon(ProfileIcon p) {
         if (ICON_CACHE.containsKey(p)) {
             return ICON_CACHE.get(p);
         }
@@ -336,7 +338,7 @@ public class Utils {
         int blockX = 0;
         int blockY = 0;
         try {
-            Image img = ImageIO.read(Constants.PROFILE_ICONS);
+            java.awt.Image img = ImageIO.read(Constants.PROFILE_ICONS);
             switch (p) {
                 case LEAVES_OAK:
                     blockX = 0;
@@ -602,14 +604,13 @@ public class Utils {
                     blockX = 7;
                     blockY = 7;
                     break;
-
             }
             g.drawImage(img, 0, 0, 32, 32, blockX * 136, blockY * 136, blockX * 136 + 136, blockY * 136 + 136, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ImageIcon icon = new ImageIcon(bImg);
-        ICON_CACHE.put(p, icon);
-        return icon;
+        Image img = SwingFXUtils.toFXImage(bImg, null);
+        ICON_CACHE.put(p, img);
+        return img;
     }
 }

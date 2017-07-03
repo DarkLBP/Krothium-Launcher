@@ -25,16 +25,20 @@ public class Profile {
     private File gameDir, javaDir;
     private Timestamp created, lastUsed;
     private Map<String, Integer> resolution = new HashMap<>();
-    private JLabel listItem;
-    private JMenuItem menuItem;
+    private ProfileIcon icon;
 
     public Profile(ProfileType type) {
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
-        this.lastUsed = new Timestamp(0);
+        if (type == ProfileType.RELEASE) {
+            this.lastUsed = new Timestamp(1);
+        } else if (type == ProfileType.SNAPSHOT) {
+            this.lastUsed = new Timestamp(0);
+        }
     }
 
-    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution) {
+    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId,
+                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon) {
         if (Objects.isNull(id)) {
             this.id = UUID.randomUUID().toString().replaceAll("-", "");
         } else {
@@ -93,6 +97,8 @@ public class Profile {
                 }
             }
         }
+
+        this.icon = icon;
     }
 
     public String getID() {
@@ -108,7 +114,7 @@ public class Profile {
     }
 
     public boolean hasName() {
-        return Objects.nonNull(this.name);
+        return Objects.nonNull(this.name) && !this.name.isEmpty();
     }
 
     public ProfileType getType() {
@@ -217,57 +223,16 @@ public class Profile {
         }
     }
 
-    public JMenuItem getMenuItem() {
-        if (Objects.isNull(this.menuItem)) {
-            if (this.hasName()) {
-                this.menuItem = new JMenuItem(this.getName());
-            } else if (this.getType() == ProfileType.RELEASE) {
-                this.menuItem = new JMenuItem(Language.get(59));
-            } else if (this.getType() == ProfileType.SNAPSHOT) {
-                this.menuItem = new JMenuItem(Language.get(60));
-            } else {
-                this.menuItem = new JMenuItem(Language.get(70));
-            }
-            this.menuItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-        } else {
-            if (this.hasName() && !this.getName().equals(this.listItem.getText())) {
-                this.menuItem.setText(this.getName());
-            } else if (this.getType() == ProfileType.RELEASE && !listItem.getText().equals(Language.get(59))) {
-                this.menuItem.setText(Language.get(59));
-            } else if (this.getType() == ProfileType.SNAPSHOT && !listItem.getText().equals(Language.get(60))) {
-                this.menuItem.setText(Language.get(60));
-            } else if (!this.hasName() && this.getType() == ProfileType.CUSTOM) {
-                this.menuItem.setText(Language.get(70));
-            }
-        }
-        this.menuItem.setIconTextGap(25);
-        return this.menuItem;
+    public boolean hasIcon() {
+        return this.icon != null;
     }
 
-    public JLabel getListItem() {
-        if (Objects.isNull(this.listItem)) {
-            if (this.hasName()) {
-                this.listItem = new JLabel(this.getName());
-            } else if (this.getType() == ProfileType.RELEASE) {
-                this.listItem = new JLabel(Language.get(59));
-            } else if (this.getType() == ProfileType.SNAPSHOT) {
-                this.listItem = new JLabel(Language.get(60));
-            } else {
-                this.listItem = new JLabel(Language.get(70));
-            }
-            this.listItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-        } else {
-            if (this.hasName() && !this.getName().equals(this.listItem.getText())) {
-                this.listItem.setText(this.getName());
-            } else if (this.getType() == ProfileType.RELEASE && !listItem.getText().equals(Language.get(59))) {
-                this.listItem.setText(Language.get(59));
-            } else if (this.getType() == ProfileType.SNAPSHOT && !listItem.getText().equals(Language.get(60))) {
-                this.listItem.setText(Language.get(60));
-            } else if (!this.hasName() && this.getType() == ProfileType.CUSTOM) {
-                this.listItem.setText(Language.get(70));
-            }
-        }
-        return this.listItem;
+    public ProfileIcon getIcon() {
+        return this.icon;
+    }
+
+    public void setIcon(ProfileIcon icon) {
+        this.icon = icon;
     }
 
     public String toString() {
