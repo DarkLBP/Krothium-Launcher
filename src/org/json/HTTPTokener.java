@@ -27,7 +27,6 @@ SOFTWARE.
 /**
  * The HTTPTokener extends the JSONTokener to provide additional methods
  * for the parsing of HTTP headers.
- *
  * @author JSON.org
  * @version 2015-12-09
  */
@@ -35,7 +34,6 @@ public class HTTPTokener extends JSONTokener {
 
     /**
      * Construct an HTTPTokener from a string.
-     *
      * @param string A source string.
      */
     public HTTPTokener(String string) {
@@ -45,9 +43,8 @@ public class HTTPTokener extends JSONTokener {
 
     /**
      * Get the next token or string. This is used in parsing HTTP headers.
-     *
-     * @return A String.
      * @throws JSONException
+     * @return A String.
      */
     public String nextToken() throws JSONException {
         char c;
@@ -55,11 +52,10 @@ public class HTTPTokener extends JSONTokener {
         StringBuilder sb = new StringBuilder();
         do {
             c = next();
-        }
-        while (Character.isWhitespace(c));
+        } while (Character.isWhitespace(c));
         if (c == '"' || c == '\'') {
             q = c;
-            for (; ; ) {
+            for (;;) {
                 c = next();
                 if (c < ' ') {
                     throw syntaxError("Unterminated string.");
@@ -70,7 +66,7 @@ public class HTTPTokener extends JSONTokener {
                 sb.append(c);
             }
         }
-        for (; ; ) {
+        for (;;) {
             if (c == 0 || Character.isWhitespace(c)) {
                 return sb.toString();
             }

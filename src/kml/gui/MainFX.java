@@ -87,10 +87,14 @@ public class MainFX {
     private Stage stage;
 
     public void initialize(Kernel k, Stage s) {
+        //Require to exit using Platform.exit()
         Platform.setImplicitExit(false);
+        //Set kernel and stage
         kernel = k;
         stage = s;
+        //Load news tab website
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
+        //Prepare language list
         flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
         flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
         flag_pt = new Image("/kml/gui/textures/flags/flag_pt-pt.png");
@@ -111,9 +115,10 @@ public class MainFX {
         hu.setId("hu-hu");
         ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
         languagesList.setItems(languageListItems);
+        //Set news tab as default selected
         contentPane.getSelectionModel().select(newsTab);
         newsLabel.getStyleClass().add("selectedItem");
-        //Update label icons
+        //Update settings labels
         Settings st = kernel.getSettings();
         toggleLabel(keepLauncherOpen, st.getKeepLauncherOpen());
         toggleLabel(outputLog, st.getShowGameLog());
@@ -312,7 +317,7 @@ public class MainFX {
         }
     }
 
-    public void setVisible(boolean b) {
+    private void setVisible(boolean b) {
         if (b) {
             stage.show();
         } else {
@@ -320,8 +325,9 @@ public class MainFX {
         }
     }
 
-
+    @FXML
     public void register() {
+        //Open register page
         kernel.getHostServices().showDocument("https://krothium.com/register");
     }
 
@@ -356,7 +362,7 @@ public class MainFX {
     }
 
     //Changes the label icon
-    public void toggleLabel(Label label, boolean state) {
+    private void toggleLabel(Label label, boolean state) {
         if (state) {
             label.getStyleClass().remove("toggle-disabled");
             label.getStyleClass().add("toggle-enabled");

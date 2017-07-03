@@ -24,19 +24,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map.Entry;
 
 /**
  * Convert an HTTP header to a JSONObject and back.
- *
  * @author JSON.org
  * @version 2015-12-09
  */
 public class HTTP {
 
-    /**
-     * Carriage return/line feed.
-     */
+    /** Carriage return/line feed. */
     public static final String CRLF = "\r\n";
 
     /**
@@ -66,21 +64,20 @@ public class HTTP {
      * ...}</pre>
      * It does no further checking or conversion. It does not parse dates.
      * It does not do '%' transforms on URLs.
-     *
      * @param string An HTTP header string.
      * @return A JSONObject containing the elements and attributes
      * of the XML string.
      * @throws JSONException
      */
     public static JSONObject toJSONObject(String string) throws JSONException {
-        JSONObject jo = new JSONObject();
-        HTTPTokener x = new HTTPTokener(string);
-        String token;
+        JSONObject     jo = new JSONObject();
+        HTTPTokener    x = new HTTPTokener(string);
+        String         token;
 
         token = x.nextToken();
-        if (token.toUpperCase().startsWith("HTTP")) {
+        if (token.toUpperCase(Locale.ROOT).startsWith("HTTP")) {
 
-            // Response
+// Response
 
             jo.put("HTTP-Version", token);
             jo.put("Status-Code", x.nextToken());
@@ -89,14 +86,14 @@ public class HTTP {
 
         } else {
 
-            // Request
+// Request
 
             jo.put("Method", token);
             jo.put("Request-URI", x.nextToken());
             jo.put("HTTP-Version", x.nextToken());
         }
 
-        // Fields
+// Fields
 
         while (x.more()) {
             String name = x.nextTo(':');
@@ -123,16 +120,13 @@ public class HTTP {
      * }</pre>
      * Any other members of the JSONObject will be output as HTTP fields.
      * The result will end with two CRLF pairs.
-     *
      * @param jo A JSONObject
      * @return An HTTP header string.
      * @throws JSONException if the object does not contain enough
-     *                       information.
+     *  information.
      */
     public static String toString(JSONObject jo) throws JSONException {
-        Iterator<String> keys = jo.keys();
-        String string;
-        StringBuilder sb = new StringBuilder();
+        StringBuilder       sb = new StringBuilder();
         if (jo.has("Status-Code") && jo.has("Reason-Phrase")) {
             sb.append(jo.getString("HTTP-Version"));
             sb.append(' ');
@@ -151,12 +145,14 @@ public class HTTP {
             throw new JSONException("Not enough material for an HTTP header.");
         }
         sb.append(CRLF);
-        while (keys.hasNext()) {
-            string = keys.next();
-            if (!"HTTP-Version".equals(string) && !"Status-Code".equals(string) && !"Reason-Phrase".equals(string) && !"Method".equals(string) && !"Request-URI".equals(string) && !jo.isNull(string)) {
-                sb.append(string);
+        for (final Entry<String,?> entry : jo.entrySet()) {
+        	final String key = entry.getKey();
+            if (!"HTTP-Version".equals(key)      && !"Status-Code".equals(key) &&
+                    !"Reason-Phrase".equals(key) && !"Method".equals(key) &&
+                    !"Request-URI".equals(key)   && !JSONObject.NULL.equals(entry.getValue())) {
+                sb.append(key);
                 sb.append(": ");
-                sb.append(jo.getString(string));
+                sb.append(jo.optString(key));
                 sb.append(CRLF);
             }
         }
