@@ -229,13 +229,29 @@
                </content></Tab>
           <Tab fx:id="loginTab" text="Login Tab">
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label id="loginLabel" layoutX="148.0" layoutY="37.0" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Krothium Username or Email:" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
-                        <TextField fx:id="username" layoutX="148.0" layoutY="70.0" onKeyPressed="#triggerAuthenticate" prefHeight="31.0" prefWidth="653.0" styleClass="loginComponent" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
-                        <Label layoutX="148.0" layoutY="133.0" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Password:" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
-                        <PasswordField fx:id="password" layoutX="148.0" layoutY="164.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="loginComponent" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="147.0" />
-                        <HBox alignment="CENTER" layoutX="148.0" layoutY="223.0" prefHeight="100.0" prefWidth="656.0" AnchorPane.leftAnchor="148.0" AnchorPane.rightAnchor="146.0">
+                        <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Krothium Username or Email:">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="31.0" prefWidth="653.0" styleClass="loginComponent">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </TextField>
+                        <Label prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Password:">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="loginComponent">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </PasswordField>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="656.0">
                            <children>
                               <Button mnemonicParsing="false" onMouseClicked="#authenticate" prefHeight="50.0" prefWidth="197.0" text="LOGIN">
                                  <styleClass>
@@ -264,7 +280,10 @@
                            </children>
                         </HBox>
                      </children>
-                  </AnchorPane>
+                     <padding>
+                        <Insets top="15.0" />
+                     </padding>
+                  </VBox>
                </content></Tab>
             <Tab fx:id="profileEditorTab" text="Profile Editor Tab" />
         </tabs>

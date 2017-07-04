@@ -163,11 +163,33 @@ public class MainFX {
                 l = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
                 l2 = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
             }
+            String verID;
+            if (p.getType() == ProfileType.CUSTOM) {
+                verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
+                if (verID != null) {
+                    switch (verID) {
+                        case "latest-release":
+                            verID = kernel.getVersions().getLatestRelease();
+                            break;
+                        case "latest-snapshot":
+                            verID = kernel.getVersions().getLatestSnapshot();
+                            break;
+                    }
+                }
+            } else if (p.getType() == ProfileType.RELEASE) {
+                verID = kernel.getVersions().getLatestRelease();
+            } else {
+                verID = kernel.getVersions().getLatestSnapshot();
+            }
             l.getStyleClass().add("text-4");
             l.setId(p.getID());
             l2.getStyleClass().add("text-4");
             l2.setId(p.getID());
             l2.setOnMouseClicked(this::selectProfile);
+            if (verID != null) {
+                l.setText(l2.getText() + "\n" + verID);
+                l2.setText(l2.getText() + "\n" + verID);
+            }
             if (kernel.getProfiles().getSelectedProfile().equals(p.getID())) {
                 l.getStyleClass().add("selectedProfile");
                 l2.getStyleClass().add("selectedProfile");
