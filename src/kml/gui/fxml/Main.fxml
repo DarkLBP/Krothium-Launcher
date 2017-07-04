@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
@@ -231,6 +232,43 @@
                <content>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
+                        <VBox fx:id="existingPanel" alignment="TOP_CENTER" prefHeight="69.0" prefWidth="950.0">
+                           <children>
+                              <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Existing Users:" />
+                              <HBox alignment="CENTER_LEFT" maxWidth="650.0" prefHeight="45.0" prefWidth="650.0">
+                                 <children>
+                                    <ComboBox fx:id="existingUsers" prefHeight="39.0" prefWidth="288.0" />
+                                    <Button maxHeight="49.0" mnemonicParsing="false" onMouseClicked="#refresh" prefHeight="49.0" prefWidth="146.0" text="LOGIN">
+                                       <styleClass>
+                                          <String fx:value="loginComponent" />
+                                          <String fx:value="loginButton" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="209.0" text="LOGOUT">
+                                       <styleClass>
+                                          <String fx:value="loginComponent" />
+                                          <String fx:value="loginButton" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </VBox>
                         <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Krothium Username or Email:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
@@ -243,7 +281,7 @@
                         </TextField>
                         <Label prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Password:">
                            <VBox.margin>
-                              <Insets left="15.0" right="15.0" />
+                              <Insets left="15.0" right="15.0" top="10.0" />
                            </VBox.margin>
                         </Label>
                         <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="loginComponent">

@@ -26,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import kml.*;
 import kml.enums.ProfileIcon;
@@ -34,6 +35,7 @@ import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Profile;
+import kml.objects.User;
 
 import java.util.Map;
 import java.util.Set;
@@ -74,7 +76,7 @@ public class MainFX {
     private ListView<Label> languagesList, profileList, profilePopupList;
 
     @FXML
-    private VBox progressPane;
+    private VBox progressPane, existingPanel;
 
     @FXML
     private HBox playPane, tabMenu, profilePopup;
@@ -88,17 +90,23 @@ public class MainFX {
     @FXML
     private PasswordField password;
 
+    @FXML
+    private ComboBox<Label> existingUsers;
+
     private Kernel kernel;
     private Stage stage;
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
         Platform.setImplicitExit(false);
+
         //Set kernel and stage
         kernel = k;
         stage = s;
+
         //Load news tab website
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
+
         //Prepare language list
         flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
         flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
@@ -139,12 +147,34 @@ public class MainFX {
         //Make transparent areas to not target mouse events
         playPane.pickOnBoundsProperty().setValue(false);
         profilePopup.pickOnBoundsProperty().setValue(false);
+
+        //Set existing users cell factory to mirror labels
+        existingUsers.setCellFactory(new Callback<ListView<Label>, ListCell<Label>>() {
+            @Override
+            public ListCell<Label> call(ListView<Label> param) {
+                return new ListCell<Label>() {
+                    @Override
+                    protected void updateItem(Label item, boolean empty) {
+                        if (item != null) {
+                            Label l = new Label();
+                            l.setText(item.getText());
+                            l.setId(item.getId());
+                            l.getStyleClass().add("text-5");
+                            super.updateItem(l, empty);
+                            setGraphic(l);
+                        }
+                    }
+                };
+            }
+        });
+
     }
 
     @FXML
     public void loadProfileList() {
         Profiles ps = kernel.getProfiles();
         Set<String> profiles = ps.getProfiles().keySet();
+        //For some reason using the same label for both lists one list appear the items blank
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
         ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
         Label l;
@@ -163,6 +193,7 @@ public class MainFX {
                 l = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
                 l2 = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
             }
+            //Fetch Minecraft version used by the profile
             String verID;
             if (p.getType() == ProfileType.CUSTOM) {
                 verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
@@ -187,6 +218,7 @@ public class MainFX {
             l2.setId(p.getID());
             l2.setOnMouseClicked(this::selectProfile);
             if (verID != null) {
+                //If profile has any known version just show it below the profile name
                 l.setText(l2.getText() + "\n" + verID);
                 l2.setText(l2.getText() + "\n" + verID);
             }
@@ -202,6 +234,7 @@ public class MainFX {
     }
 
     private void selectProfile(MouseEvent e) {
+        //Select profile and refresh list
         Label label = (Label)e.getSource();
         kernel.getProfiles().setSelectedProfile(label.getId());
         loadProfileList();
@@ -221,6 +254,7 @@ public class MainFX {
             @Override
             protected Object call() throws Exception {
                 if (!d.isDownloading() && !gl.isRunning()) {
+                    //Keep track of the progress
                     Timeline task = new Timeline();
                     KeyFrame frame = new KeyFrame(Duration.millis(250), event -> {
                         progressBar.setProgress(d.getProgress() / 100.0);
@@ -236,6 +270,7 @@ public class MainFX {
                         progressPane.setVisible(false);
                         playPane.setVisible(true);
                         playButton.setDisable(true);
+                        //Keep track of the game process
                         Timeline task2 = new Timeline();
                         KeyFrame frame2 = new KeyFrame(Duration.millis(250), event -> {
                             if (!gl.isStarted()) {
@@ -302,6 +337,7 @@ public class MainFX {
         Authentication a = kernel.getAuthentication();
         a.setSelectedUser(null);
         showLoginPrompt(true);
+        updateExistingUsers();
     }
 
     @FXML
@@ -358,6 +394,29 @@ public class MainFX {
         languagesList.setVisible(false);
     }
 
+    public void updateExistingUsers() {
+        Authentication a = kernel.getAuthentication();
+        if (a.getUsers().size() > 0 && !a.hasSelectedUser()) {
+            existingPanel.setVisible(true);
+            existingPanel.setManaged(true);
+            ObservableList<Label> users = FXCollections.observableArrayList();
+            Map<String, User> us = a.getUsers();
+            Set<String> keys = us.keySet();
+            for (String key : keys) {
+                Label user = new Label();
+                user.setId(key);
+                user.getStyleClass().add("text-5");
+                user.setText(us.get(key).getDisplayName());
+                users.add(user);
+            }
+            existingUsers.setItems(users);
+        } else {
+            existingPanel.setVisible(false);
+            existingPanel.setManaged(false);
+        }
+
+    }
+
     public void showLoginPrompt(boolean showLoginPrompt) {
         if (showLoginPrompt) {
             contentPane.getSelectionModel().select(loginTab);
@@ -366,9 +425,7 @@ public class MainFX {
             switchAccountButton.setVisible(false);
             playPane.setVisible(false);
             Authentication a = kernel.getAuthentication();
-            if (a.getUsers().size() > 0 && !a.hasSelectedUser()) {
-
-            }
+            updateExistingUsers();
         } else {
             contentPane.getSelectionModel().select(newsTab);
             tabMenu.setVisible(true);
@@ -392,6 +449,8 @@ public class MainFX {
             try {
                 Authentication auth = kernel.getAuthentication();
                 auth.authenticate(username.getText(), password.getText());
+                username.setText("");
+                password.setText("");
                 showLoginPrompt(false);
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
@@ -400,6 +459,47 @@ public class MainFX {
                 a.show();
                 password.setText("");
             }
+        }
+    }
+
+    //Refresh existing user
+    public void refresh() {
+        Label selected = existingUsers.getSelectionModel().getSelectedItem();
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        if (selected == null) {
+            a.setContentText("Select a user first!");
+            a.show();
+        } else {
+            Authentication auth = kernel.getAuthentication();
+            try {
+                auth.setSelectedUser(selected.getId());
+                auth.refresh();
+                showLoginPrompt(false);
+            } catch (AuthenticationException ex) {
+                a.setAlertType(Alert.AlertType.ERROR);
+                a.setHeaderText("We could not log you back with that user!");
+                a.setContentText(ex.getMessage());
+                a.show();
+                updateExistingUsers();
+            }
+        }
+    }
+
+    //Logout existing user
+    public void logout() {
+        Label selected = existingUsers.getSelectionModel().getSelectedItem();
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        if (selected == null) {
+            a.setContentText("Select a user first!");
+            a.show();
+        } else {
+            Authentication auth = kernel.getAuthentication();
+            auth.logOut(selected.getId());
+            updateExistingUsers();
         }
     }
 

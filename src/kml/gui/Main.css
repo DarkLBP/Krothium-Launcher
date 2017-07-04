@@ -88,7 +88,7 @@
     -fx-text-fill: white;
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
-    -fx-background-size: cover;
+    -fx-background-size: 100% 100%;
     -fx-background-insets: 0;
     -fx-background-image: url("textures/button_normal.png");
 }
