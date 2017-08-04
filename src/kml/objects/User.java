@@ -40,4 +40,9 @@ public class User {
     public String getUsername() {
         return this.userName;
     }
+
+    @Override
+    public String toString() {
+        return this.displayName;
+    }
 }

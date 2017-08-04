@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -217,7 +218,7 @@
                               <Insets top="10.0" />
                            </padding>
                         </HBox>
-                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" prefHeight="294.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
+                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" onMouseClicked="#loadEditor" prefHeight="294.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets bottom="50.0" top="10.0" />
                            </VBox.margin>
@@ -234,14 +235,14 @@
                      <children>
                         <VBox fx:id="existingPanel" alignment="TOP_CENTER" prefHeight="69.0" prefWidth="950.0">
                            <children>
-                              <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Existing Users:" />
+                              <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Existing Users:" />
                               <HBox alignment="CENTER_LEFT" maxWidth="650.0" prefHeight="45.0" prefWidth="650.0">
                                  <children>
-                                    <ComboBox fx:id="existingUsers" prefHeight="39.0" prefWidth="288.0" />
+                                    <ComboBox fx:id="existingUsers" prefHeight="39.0" prefWidth="288.0" styleClass="text-5" />
                                     <Button maxHeight="49.0" mnemonicParsing="false" onMouseClicked="#refresh" prefHeight="49.0" prefWidth="146.0" text="LOGIN">
                                        <styleClass>
-                                          <String fx:value="loginComponent" />
-                                          <String fx:value="loginButton" />
+                                          <String fx:value="text-5" />
+                                          <String fx:value="button" />
                                        </styleClass>
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
@@ -250,11 +251,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="209.0" text="LOGOUT">
-                                       <styleClass>
-                                          <String fx:value="loginComponent" />
-                                          <String fx:value="loginButton" />
-                                       </styleClass>
+                                    <Button mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="209.0" styleClass="text-5" text="LOGOUT">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
@@ -269,33 +266,29 @@
                               <Insets bottom="10.0" />
                            </VBox.margin>
                         </VBox>
-                        <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Krothium Username or Email:">
+                        <Label id="loginLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Krothium Username or Email:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="31.0" prefWidth="653.0" styleClass="loginComponent">
+                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="31.0" prefWidth="653.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </TextField>
-                        <Label prefHeight="23.0" prefWidth="655.0" styleClass="loginComponent" text="Password:">
+                        <Label prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Password:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="loginComponent">
+                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </PasswordField>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="656.0">
                            <children>
-                              <Button mnemonicParsing="false" onMouseClicked="#authenticate" prefHeight="50.0" prefWidth="197.0" text="LOGIN">
-                                 <styleClass>
-                                    <String fx:value="loginComponent" />
-                                    <String fx:value="loginButton" />
-                                 </styleClass>
+                              <Button mnemonicParsing="false" onMouseClicked="#authenticate" prefHeight="50.0" prefWidth="197.0" styleClass="text-5" text="LOGIN">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -303,11 +296,7 @@
                                     <Insets right="5.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onMouseClicked="#register" prefHeight="50.0" prefWidth="197.0" text="REGISTER">
-                                 <styleClass>
-                                    <String fx:value="loginComponent" />
-                                    <String fx:value="loginButton" />
-                                 </styleClass>
+                              <Button mnemonicParsing="false" onMouseClicked="#register" prefHeight="50.0" prefWidth="197.0" styleClass="text-5" text="REGISTER">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -323,7 +312,86 @@
                      </padding>
                   </VBox>
                </content></Tab>
-            <Tab fx:id="profileEditorTab" text="Profile Editor Tab" />
+            <Tab fx:id="profileEditorTab" text="Profile Editor Tab">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <StackPane maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label styleClass="text-5" text="Name" StackPane.alignment="CENTER_LEFT" />
+                              <TextField fx:id="profileName" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" promptText="My configuration" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label styleClass="text-5" text="Version" StackPane.alignment="CENTER_LEFT" />
+                              <ComboBox fx:id="versionList" maxWidth="450.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label text="Resolution" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Spinner fx:id="resW" maxWidth="135.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="315.0" />
+                                 </StackPane.margin>
+                              </Spinner>
+                              <Label maxWidth="10.0" styleClass="text-4" text="X" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="290.0" />
+                                 </StackPane.margin>
+                              </Label>
+                              <Spinner fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="140.0" />
+                                 </StackPane.margin>
+                              </Spinner>
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label text="Game directory" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                              <TextField fx:id="gameDir" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="110.0" layoutY="145.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label text="Java executable" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                              <TextField fx:id="javaExec" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="110.0" layoutY="190.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label text="JVM arguments" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                              </Label>
+                              <TextField fx:id="javaArgs" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                     </children>
+                  </VBox>
+               </content></Tab>
         </tabs>
       </TabPane>
       <HBox id="footer" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
@@ -350,18 +418,18 @@
             </Button>
          </children>
       </HBox>
-      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor></ListView>
       <HBox fx:id="profilePopup" alignment="TOP_CENTER" maxWidth="950.0" prefHeight="215.0" prefWidth="950.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" visible="false">
+            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" visible="false">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ListView>
          </children>
       </HBox>
+      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></ListView>
    </children>
 </AnchorPane>

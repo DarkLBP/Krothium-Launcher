@@ -85,13 +85,19 @@ public class MainFX {
     private AnchorPane root;
 
     @FXML
-    private TextField username;
+    private TextField username, profileName,javaExec, gameDir, javaArgs;
+
+    @FXML
+    private Spinner<Integer> resH, resW;
 
     @FXML
     private PasswordField password;
 
     @FXML
-    private ComboBox<Label> existingUsers;
+    private ComboBox<User> existingUsers;
+
+    @FXML
+    private ComboBox<String> versionList;
 
     private Kernel kernel;
     private Stage stage;
@@ -148,26 +154,6 @@ public class MainFX {
         playPane.pickOnBoundsProperty().setValue(false);
         profilePopup.pickOnBoundsProperty().setValue(false);
 
-        //Set existing users cell factory to mirror labels
-        existingUsers.setCellFactory(new Callback<ListView<Label>, ListCell<Label>>() {
-            @Override
-            public ListCell<Label> call(ListView<Label> param) {
-                return new ListCell<Label>() {
-                    @Override
-                    protected void updateItem(Label item, boolean empty) {
-                        if (item != null) {
-                            Label l = new Label();
-                            l.setText(item.getText());
-                            l.setId(item.getId());
-                            l.getStyleClass().add("text-5");
-                            super.updateItem(l, empty);
-                            setGraphic(l);
-                        }
-                    }
-                };
-            }
-        });
-
     }
 
     @FXML
@@ -216,7 +202,6 @@ public class MainFX {
             l.setId(p.getID());
             l2.getStyleClass().add("text-4");
             l2.setId(p.getID());
-            l2.setOnMouseClicked(this::selectProfile);
             if (verID != null) {
                 //If profile has any known version just show it below the profile name
                 l.setText(l2.getText() + "\n" + verID);
@@ -233,10 +218,11 @@ public class MainFX {
         profilePopupList.setItems(profileListItems2);
     }
 
+    @FXML
     private void selectProfile(MouseEvent e) {
         //Select profile and refresh list
-        Label label = (Label)e.getSource();
-        kernel.getProfiles().setSelectedProfile(label.getId());
+        ListView<Label> profiles = (ListView<Label>)e.getSource();
+        kernel.getProfiles().setSelectedProfile(profiles.getSelectionModel().getSelectedItem().getId());
         loadProfileList();
     }
 
@@ -379,6 +365,7 @@ public class MainFX {
 
     @FXML
     public void hidePopup(Event e) {
+        System.out.println("PASA");
         ListView ls = (ListView)e.getSource();
         if (ls.isVisible()) {
             ls.setVisible(false);
@@ -394,20 +381,43 @@ public class MainFX {
         languagesList.setVisible(false);
     }
 
+    //Load profile editor for clicked profile
+    @FXML
+    public void loadEditor() {
+        Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+        if (selectedElement != null) {
+            this.contentPane.getSelectionModel().select(profileEditorTab);
+            Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
+
+            if (p.hasName()){
+                profileName.setText(p.getName());
+            }
+            if (p.hasResolution()) {
+                resH.getValueFactory().setValue(p.getResolutionHeight());
+                resW.getValueFactory().setValue(p.getResolutionWidth());
+            }
+            if (p.hasGameDir()) {
+                gameDir.setText(p.getGameDir().getAbsolutePath());
+            }
+            if (p.hasJavaDir()){
+                javaExec.setText(p.getJavaDir().getAbsolutePath());
+            }
+            if (p.hasJavaArgs()) {
+                javaArgs.setText(p.getJavaArgs());
+            }
+        }
+    }
+
     public void updateExistingUsers() {
         Authentication a = kernel.getAuthentication();
         if (a.getUsers().size() > 0 && !a.hasSelectedUser()) {
             existingPanel.setVisible(true);
             existingPanel.setManaged(true);
-            ObservableList<Label> users = FXCollections.observableArrayList();
+            ObservableList<User> users = FXCollections.observableArrayList();
             Map<String, User> us = a.getUsers();
             Set<String> keys = us.keySet();
             for (String key : keys) {
-                Label user = new Label();
-                user.setId(key);
-                user.getStyleClass().add("text-5");
-                user.setText(us.get(key).getDisplayName());
-                users.add(user);
+                users.add(us.get(key));
             }
             existingUsers.setItems(users);
         } else {
@@ -464,7 +474,7 @@ public class MainFX {
 
     //Refresh existing user
     public void refresh() {
-        Label selected = existingUsers.getSelectionModel().getSelectedItem();
+        User selected = existingUsers.getSelectionModel().getSelectedItem();
         Alert a = new Alert(Alert.AlertType.WARNING);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
@@ -474,7 +484,7 @@ public class MainFX {
         } else {
             Authentication auth = kernel.getAuthentication();
             try {
-                auth.setSelectedUser(selected.getId());
+                auth.setSelectedUser(selected.getUserID());
                 auth.refresh();
                 showLoginPrompt(false);
             } catch (AuthenticationException ex) {
@@ -489,7 +499,7 @@ public class MainFX {
 
     //Logout existing user
     public void logout() {
-        Label selected = existingUsers.getSelectionModel().getSelectedItem();
+        User selected = existingUsers.getSelectionModel().getSelectedItem();
         Alert a = new Alert(Alert.AlertType.WARNING);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
@@ -498,7 +508,7 @@ public class MainFX {
             a.show();
         } else {
             Authentication auth = kernel.getAuthentication();
-            auth.logOut(selected.getId());
+            auth.logOut(selected.getUserID());
             updateExistingUsers();
         }
     }

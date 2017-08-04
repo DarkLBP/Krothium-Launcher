@@ -78,13 +78,11 @@
 .list-cell:hover {
     -fx-background-color: -fx-selection-bar;
 }
-.loginComponent {
-    -fx-font-size: 30px;
-}
+
 #languagesList .label{
     -fx-font-size: 25px;
 }
-.loginButton {
+.button {
     -fx-text-fill: white;
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
@@ -92,7 +90,7 @@
     -fx-background-insets: 0;
     -fx-background-image: url("textures/button_normal.png");
 }
-.loginButton:hover {
+.button:hover {
     -fx-background-image: url("textures/button_hover.png");
 }
 .text-field {
@@ -109,6 +107,10 @@
 
 .text-5 {
     -fx-font-size: 28px;
+}
+
+.text-6 {
+    -fx-font-size: 20px;
 }
 
 .toggle-disabled {

@@ -12,7 +12,7 @@ import java.net.URLConnection;
  * @author DarkLBP
  *         website https://krothium.com
  */
-class HttpHandler extends sun.net.www.protocol.http.Handler {
+class HttpHandler extends java.net.URLStreamHandler{
 
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
