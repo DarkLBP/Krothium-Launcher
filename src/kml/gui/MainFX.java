@@ -153,7 +153,6 @@ public class MainFX {
         //Make transparent areas to not target mouse events
         playPane.pickOnBoundsProperty().setValue(false);
         profilePopup.pickOnBoundsProperty().setValue(false);
-
     }
 
     @FXML
@@ -337,6 +336,10 @@ public class MainFX {
 
     @FXML
     public void switchTab(Event e) {
+        switchTab(e.getSource());
+    }
+
+    private void switchTab(Object source) {
         SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
         Tab oldTab = selection.getSelectedItem();
         if (oldTab == newsTab) {
@@ -345,27 +348,30 @@ public class MainFX {
             skinsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == settingsTab) {
             settingsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == launchOptionsTab) {
+        } else if (oldTab == launchOptionsTab && source != profileEditorTab) {
+            launchOptionsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == profileEditorTab) {
             launchOptionsLabel.getStyleClass().remove("selectedItem");
         }
-        if (e.getSource() == newsLabel) {
+        if (source == newsLabel) {
             newsLabel.getStyleClass().add("selectedItem");
             selection.select(newsTab);
-        } else if (e.getSource() == skinsLabel) {
+        } else if (source == skinsLabel) {
             skinsLabel.getStyleClass().add("selectedItem");
             selection.select(skinsTab);
-        } else if (e.getSource() == settingsLabel) {
+        } else if (source == settingsLabel) {
             settingsLabel.getStyleClass().add("selectedItem");
             selection.select(settingsTab);
-        } else if (e.getSource() == launchOptionsLabel) {
+        } else if (source == launchOptionsLabel) {
             launchOptionsLabel.getStyleClass().add("selectedItem");
             selection.select(launchOptionsTab);
+        } else if (source == profileEditorTab) {
+            selection.select(profileEditorTab);
         }
     }
 
     @FXML
     public void hidePopup(Event e) {
-        System.out.println("PASA");
         ListView ls = (ListView)e.getSource();
         if (ls.isVisible()) {
             ls.setVisible(false);
@@ -386,9 +392,8 @@ public class MainFX {
     public void loadEditor() {
         Label selectedElement = profileList.getSelectionModel().getSelectedItem();
         if (selectedElement != null) {
-            this.contentPane.getSelectionModel().select(profileEditorTab);
+            switchTab(profileEditorTab);
             Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
-
             if (p.hasName()){
                 profileName.setText(p.getName());
             }
