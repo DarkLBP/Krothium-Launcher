@@ -23,12 +23,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import kml.*;
+import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 import kml.exceptions.AuthenticationException;
@@ -48,13 +50,11 @@ import java.util.TimerTask;
  */
 public class MainFX {
 
-    private Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
-
     @FXML
     private Label languageButton, switchAccountButton, progressText,
             newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
-            advancedSettings;
+            advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel;
 
     @FXML
     private Button playButton, profilesButton;
@@ -99,6 +99,9 @@ public class MainFX {
     @FXML
     private ComboBox<String> versionList;
 
+    @FXML
+    private StackPane versionBlock, javaArgsBlock, javaExecBlock;
+
     private Kernel kernel;
     private Stage stage;
 
@@ -114,6 +117,7 @@ public class MainFX {
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
 
         //Prepare language list
+        Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
         flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
         flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
         flag_pt = new Image("/kml/gui/textures/flags/flag_pt-pt.png");
@@ -153,10 +157,16 @@ public class MainFX {
         //Make transparent areas to not target mouse events
         playPane.pickOnBoundsProperty().setValue(false);
         profilePopup.pickOnBoundsProperty().setValue(false);
+
+        //Prepare Spinners
+        resH.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+        resW.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+        resW.setEditable(true);
+        resH.setEditable(true);
     }
 
     @FXML
-    public void loadProfileList() {
+    private void loadProfileList() {
         Profiles ps = kernel.getProfiles();
         Set<String> profiles = ps.getProfiles().keySet();
         //For some reason using the same label for both lists one list appear the items blank
@@ -397,21 +407,102 @@ public class MainFX {
             if (p.hasName()){
                 profileName.setText(p.getName());
             }
+            if (p.getType() != ProfileType.CUSTOM) {
+                versionBlock.setVisible(false);
+                versionBlock.setManaged(false);
+            } else {
+                versionBlock.setVisible(true);
+                versionBlock.setManaged(true);
+            }
             if (p.hasResolution()) {
+                toggleEditorOption(resolutionLabel, true);
                 resH.getValueFactory().setValue(p.getResolutionHeight());
                 resW.getValueFactory().setValue(p.getResolutionWidth());
+            } else {
+                toggleEditorOption(resolutionLabel, false);
+                resW.getValueFactory().setValue(854);
+                resH.getValueFactory().setValue(480);
             }
             if (p.hasGameDir()) {
+                toggleEditorOption(gameDirLabel, true);
                 gameDir.setText(p.getGameDir().getAbsolutePath());
+            } else {
+                toggleEditorOption(gameDirLabel, false);
+                gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
             }
-            if (p.hasJavaDir()){
-                javaExec.setText(p.getJavaDir().getAbsolutePath());
+            if (kernel.getSettings().getEnableAdvanced()) {
+                javaExecBlock.setVisible(true);
+                javaExecBlock.setManaged(true);
+                javaArgsBlock.setVisible(true);
+                javaArgsBlock.setManaged(true);
+                if (p.hasJavaDir()){
+                    toggleEditorOption(javaExecLabel, true);
+                    javaExec.setText(p.getJavaDir().getAbsolutePath());
+                } else {
+                    toggleEditorOption(javaExecLabel, false);
+                    javaExec.setText(Utils.getJavaDir());
+                }
+                if (p.hasJavaArgs()) {
+                    toggleEditorOption(javaArgsLabel, true);
+                    javaArgs.setText(p.getJavaArgs());
+                } else {
+                    toggleEditorOption(javaArgsLabel, false);
+                    StringBuilder jA = new StringBuilder();
+                    if (Utils.getOSArch().equals(OSArch.OLD)) {
+                        jA.append("-Xmx512M");
+                    } else {
+                        jA.append("-Xmx1G");
+                    }
+                    jA.append(" -XX:+UseConcMarkSweepGC");
+                    jA.append(" -XX:+CMSIncrementalMode");
+                    jA.append(" -XX:-UseAdaptiveSizePolicy");
+                    jA.append(" -Xmn128M");
+                    javaArgs.setText(jA.toString());
+                }
+            } else {
+                javaExecBlock.setVisible(false);
+                javaExecBlock.setManaged(false);
+                javaArgsBlock.setVisible(false);
+                javaArgsBlock.setManaged(false);
             }
-            if (p.hasJavaArgs()) {
-                javaArgs.setText(p.getJavaArgs());
-            }
+
         }
     }
+
+    //Toggle editor options
+    private void toggleEditorOption(Object src, boolean newState) {
+        if (src instanceof Label) {
+            Label l = (Label)src;
+            if (newState) {
+                l.getStyleClass().remove("toggle-disabled");
+                l.getStyleClass().add("toggle-enabled");
+            } else {
+                l.getStyleClass().remove("toggle-enabled");
+                l.getStyleClass().add("toggle-disabled");
+            }
+        }
+        if (src == resolutionLabel) {
+            resW.setDisable(!newState);
+            resH.setDisable(!newState);
+        } else if (src == gameDirLabel) {
+            gameDir.setDisable(!newState);
+        } else if (src == javaExecLabel) {
+            javaExec.setDisable(!newState);
+        } else if (src == javaArgsLabel) {
+            javaArgs.setDisable(!newState);
+        }
+    }
+
+    /*
+        Update editor when clicking labels
+        This method fetches the adjacent sibling to determine if is disabled
+     */
+    @FXML
+    public void updateEditor(MouseEvent e) {
+        Label l = (Label)e.getSource();
+        toggleEditorOption(l, l.getParent().getChildrenUnmodifiable().get(1).isDisable());
+    }
+
 
     public void updateExistingUsers() {
         Authentication a = kernel.getAuthentication();

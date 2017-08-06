@@ -322,7 +322,7 @@
                               <TextField fx:id="profileName" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" promptText="My configuration" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
                            </children>
                         </StackPane>
-                        <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                        <StackPane fx:id="versionBlock" layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
                               <Label styleClass="text-5" text="Version" StackPane.alignment="CENTER_LEFT" />
                               <ComboBox fx:id="versionList" maxWidth="450.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
@@ -330,7 +330,7 @@
                         </StackPane>
                         <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
-                              <Label text="Resolution" StackPane.alignment="CENTER_LEFT">
+                              <Label fx:id="resolutionLabel" onMouseClicked="#updateEditor" text="Resolution" StackPane.alignment="CENTER_LEFT">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
@@ -358,33 +358,42 @@
                         </StackPane>
                         <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
-                              <Label text="Game directory" StackPane.alignment="CENTER_LEFT">
+                              <Label fx:id="gameDirLabel" onMouseClicked="#updateEditor" text="Game directory" StackPane.alignment="CENTER_LEFT">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
                                  </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <TextField fx:id="gameDir" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
                            </children>
                         </StackPane>
-                        <StackPane layoutX="110.0" layoutY="145.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                        <StackPane fx:id="javaExecBlock" layoutX="110.0" layoutY="145.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
-                              <Label text="Java executable" StackPane.alignment="CENTER_LEFT">
+                              <Label fx:id="javaExecLabel" onMouseClicked="#updateEditor" text="Java executable" StackPane.alignment="CENTER_LEFT">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
                                  </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <TextField fx:id="javaExec" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
                            </children>
                         </StackPane>
-                        <StackPane layoutX="110.0" layoutY="190.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                        <StackPane fx:id="javaArgsBlock" layoutX="110.0" layoutY="190.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
-                              <Label text="JVM arguments" StackPane.alignment="CENTER_LEFT">
+                              <Label fx:id="javaArgsLabel" onMouseClicked="#updateEditor" text="JVM arguments" StackPane.alignment="CENTER_LEFT">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
                                  </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <TextField fx:id="javaArgs" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
                            </children>
