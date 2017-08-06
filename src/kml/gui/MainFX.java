@@ -209,9 +209,7 @@ public class MainFX {
             } else {
                 verID = kernel.getVersions().getLatestSnapshot();
             }
-            l.getStyleClass().add("text-5");
             l.setId(p.getID());
-            l2.getStyleClass().add("text-5");
             l2.setId(p.getID());
             if (verID != null) {
                 //If profile has any known version just show it below the profile name

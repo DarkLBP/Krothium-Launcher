@@ -71,9 +71,6 @@
     -fx-background-color: -fx-selection-bar;
 }
 
-#languagesList .label{
-    -fx-font-size: 18px;
-}
 .button {
     -fx-text-fill: white;
     -fx-background-repeat: stretch;

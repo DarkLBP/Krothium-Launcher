@@ -242,7 +242,7 @@
                               <Insets top="10.0" />
                            </padding>
                         </HBox>
-                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" onMouseClicked="#loadEditor" prefHeight="294.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
+                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" onMouseClicked="#loadEditor" prefHeight="294.0" prefWidth="700.0" styleClass="text-5" VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets bottom="50.0" top="10.0" />
                            </VBox.margin>
@@ -464,14 +464,14 @@
       </HBox>
       <HBox fx:id="profilePopup" alignment="TOP_CENTER" maxWidth="950.0" prefHeight="215.0" prefWidth="950.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" visible="false">
+            <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ListView>
          </children>
       </HBox>
-      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <ListView id="languagesList" fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
