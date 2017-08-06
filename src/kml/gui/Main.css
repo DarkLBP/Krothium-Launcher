@@ -1,6 +1,6 @@
 @font-face {
-    font-family: Savior1;
-    src: url("fonts/Savior1.ttf");
+    font-family: "VCR OSD Mono";
+    src: url("fonts/VCR_OSD_MONO_1.001.ttf");
 }
 .tab {
     -fx-padding: 0;
@@ -10,7 +10,7 @@
     -fx-padding: 0;
 }
 * {
-    -fx-font-family: Savior1;
+    -fx-font-family: "VCR OSD Mono";
 }
 #topBar {
     -fx-background-color: black;
@@ -22,10 +22,10 @@
     -fx-background-image: url("textures/light_background.png");
 }
 
-#languageButton, #switchAccountButton {
-    -fx-font-size: 25px;
+.color-alt {
     -fx-text-fill: white;
 }
+
 #languageButton:hover, #switchAccountButton:hover {
     -fx-text-fill: yellow;
 }
@@ -35,10 +35,7 @@
 #switchAccountButton {
     -fx-graphic: url("textures/logout.png");
 }
-.menuItem {
-    -fx-font-size: 30px;
-    -fx-text-fill: white;
-}
+
 .selectedItem {
     -fx-background-image: url("textures/menu_label.png");
     -fx-background-repeat: stretch;
@@ -52,8 +49,6 @@
     -fx-background-insets: 0;
 }
 #playButton {
-    -fx-font-size: 50px;
-    -fx-text-fill: white;
     -fx-background-image: url("textures/playbutton.png");
 }
 #playButton:hover {
@@ -71,16 +66,13 @@
 #profilesButton:pressed {
     -fx-background-image: url("textures/profile_press.png");
 }
-#progressText {
-    -fx-font-size: 30px;
-    -fx-text-fill: white;
-}
+
 .list-cell:hover {
     -fx-background-color: -fx-selection-bar;
 }
 
 #languagesList .label{
-    -fx-font-size: 25px;
+    -fx-font-size: 18px;
 }
 .button {
     -fx-text-fill: white;
@@ -97,20 +89,28 @@
     -fx-text-box-border: black;
 }
 
-.title {
-    -fx-font-size: 37px;
+.text-1 {
+    -fx-font-size: 27.5px;
+}
+
+.text-2 {
+    -fx-font-size: 25px;
+}
+
+.text-3 {
+    -fx-font-size: 22.5px;
 }
 
 .text-4 {
-    -fx-font-size: 32px;
+    -fx-font-size: 20px;
 }
 
 .text-5 {
-    -fx-font-size: 28px;
+    -fx-font-size: 17.5px;
 }
 
 .text-6 {
-    -fx-font-size: 20px;
+    -fx-font-size: 15px;
 }
 
 .toggle-disabled {

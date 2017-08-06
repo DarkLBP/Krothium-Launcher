@@ -23,7 +23,7 @@
 
 <AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
-      <StackPane id="topBar" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
+      <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
             <Label id="languageButton" fx:id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
                <StackPane.margin>
@@ -32,6 +32,10 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <styleClass>
+                  <String fx:value="color-alt" />
+                  <String fx:value="text-5" />
+               </styleClass>
             </Label>
             <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" text="Switch Account" StackPane.alignment="CENTER_RIGHT">
                <padding>
@@ -40,19 +44,23 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <styleClass>
+                  <String fx:value="text-5" />
+                  <String fx:value="color-alt" />
+               </styleClass>
             </Label>
          </children>
       </StackPane>
-      <VBox id="header" alignment="CENTER" layoutY="40.0" prefHeight="170.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+      <VBox id="header" alignment="CENTER" layoutY="35.0" prefHeight="150.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
          <children>
-            <ImageView fitHeight="109.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="100.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../textures/logo.png" />
                </image>
             </ImageView>
             <HBox fx:id="tabMenu" alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
                <children>
-                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="News">
+                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" text="News">
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
@@ -62,8 +70,12 @@
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
                   </Label>
-                  <Label fx:id="skinsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Skins">
+                  <Label fx:id="skinsLabel" onMouseClicked="#switchTab" text="Skins">
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
@@ -73,8 +85,12 @@
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
                   </Label>
-                  <Label fx:id="settingsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Settings">
+                  <Label fx:id="settingsLabel" onMouseClicked="#switchTab" text="Settings">
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
@@ -84,8 +100,12 @@
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
                   </Label>
-                  <Label fx:id="launchOptionsLabel" onMouseClicked="#switchTab" styleClass="menuItem" text="Launch Options">
+                  <Label fx:id="launchOptionsLabel" onMouseClicked="#switchTab" text="Launch Options">
                      <padding>
                         <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
                      </padding>
@@ -95,6 +115,10 @@
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
                   </Label>
                </children>
                <VBox.margin>
@@ -106,10 +130,10 @@
             <Insets />
          </VBox.margin>
          <padding>
-            <Insets top="10.0" />
+            <Insets top="5.0" />
          </padding>
       </VBox>
-      <TabPane id="content" fx:id="contentPane" layoutY="210.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0" VBox.vgrow="ALWAYS">
+      <TabPane id="content" fx:id="contentPane" layoutY="185.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="426.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="185.0" VBox.vgrow="ALWAYS">
         <tabs>
           <Tab fx:id="newsTab" text="News Tab">
                <content>
@@ -121,12 +145,12 @@
                <content>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <Label prefHeight="36.0" prefWidth="522.0" styleClass="title" text="LAUNCHER SETTINGS" wrapText="true">
+                        <Label prefHeight="36.0" prefWidth="560.0" styleClass="text-2" text="LAUNCHER SETTINGS" wrapText="true">
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="keepLauncherOpen" onMouseClicked="#updateSettings" prefHeight="29.0" prefWidth="529.0" text="Keep the launcher open when the game is running" wrapText="true">
+                        <Label fx:id="keepLauncherOpen" onMouseClicked="#updateSettings" prefHeight="29.0" prefWidth="562.0" text="Keep the launcher open when the game is running" wrapText="true">
                            <styleClass>
                               <String fx:value="text-5" />
                               <String fx:value="toggle-disabled" />
@@ -138,7 +162,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Label>
-                        <Label fx:id="outputLog" onMouseClicked="#updateSettings" prefHeight="29.0" prefWidth="528.0" text="Open output log when the game starts" wrapText="true">
+                        <Label fx:id="outputLog" onMouseClicked="#updateSettings" prefHeight="29.0" prefWidth="564.0" text="Open output log when the game starts" wrapText="true">
                            <styleClass>
                               <String fx:value="text-5" />
                               <String fx:value="toggle-disabled" />
@@ -271,7 +295,7 @@
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="31.0" prefWidth="653.0" styleClass="text-5">
+                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="653.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
@@ -281,7 +305,7 @@
                               <Insets left="15.0" right="15.0" top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="49.0" prefWidth="656.0" styleClass="text-5">
+                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="656.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
@@ -325,7 +349,7 @@
                         <StackPane fx:id="versionBlock" layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
                               <Label styleClass="text-5" text="Version" StackPane.alignment="CENTER_LEFT" />
-                              <ComboBox fx:id="versionList" maxWidth="450.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                              <ComboBox fx:id="versionList" maxWidth="450.0" prefHeight="33.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
                            </children>
                         </StackPane>
                         <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
@@ -339,9 +363,9 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Label>
-                              <Spinner fx:id="resW" maxWidth="135.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                              <Spinner fx:id="resW" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
-                                    <Insets right="315.0" />
+                                    <Insets right="313.0" />
                                  </StackPane.margin>
                               </Spinner>
                               <Label maxWidth="10.0" styleClass="text-4" text="X" StackPane.alignment="CENTER_RIGHT">
@@ -349,9 +373,9 @@
                                     <Insets right="290.0" />
                                  </StackPane.margin>
                               </Label>
-                              <Spinner fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                              <Spinner fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
-                                    <Insets right="140.0" />
+                                    <Insets right="142.0" />
                                  </StackPane.margin>
                               </Spinner>
                            </children>
@@ -399,35 +423,46 @@
                            </children>
                         </StackPane>
                      </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
                   </VBox>
                </content></Tab>
         </tabs>
       </TabPane>
-      <HBox id="footer" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-      <VBox fx:id="progressPane" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox id="footer" prefHeight="90.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <VBox fx:id="progressPane" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label id="progressText" fx:id="progressText" text="Here is doing something...." />
+            <Label id="progressText" fx:id="progressText" text="Here is doing something....">
+               <styleClass>
+                  <String fx:value="text-4" />
+                  <String fx:value="color-alt" />
+               </styleClass></Label>
             <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="871.0" progress="0.0" />
          </children>
          <padding>
             <Insets bottom="7.0" left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="100.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="80.0" maxWidth="240.0" minHeight="70.0" minWidth="240.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="80.0" prefWidth="240.0" text="PLAY" HBox.hgrow="NEVER">
+            <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="70.0" prefWidth="220.0" text="PLAY" HBox.hgrow="NEVER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <styleClass>
+                  <String fx:value="color-alt" />
+                  <String fx:value="text-1" />
+               </styleClass>
             </Button>
-            <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="80.0" maxWidth="46.0" minHeight="80.0" minWidth="40.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="80.0" prefWidth="43.0" HBox.hgrow="NEVER">
+            <Button id="profilesButton" fx:id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
          </children>
       </HBox>
-      <HBox fx:id="profilePopup" alignment="TOP_CENTER" maxWidth="950.0" prefHeight="215.0" prefWidth="950.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="profilePopup" alignment="TOP_CENTER" maxWidth="950.0" prefHeight="215.0" prefWidth="950.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="181.0" prefWidth="450.0" snapToPixel="false" visible="false">
                <cursor>

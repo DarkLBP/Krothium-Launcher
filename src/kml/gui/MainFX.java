@@ -33,11 +33,13 @@ import kml.*;
 import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
+import kml.enums.VersionType;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Profile;
 import kml.objects.User;
+import kml.objects.VersionMeta;
 
 import java.util.Map;
 import java.util.Set;
@@ -207,9 +209,9 @@ public class MainFX {
             } else {
                 verID = kernel.getVersions().getLatestSnapshot();
             }
-            l.getStyleClass().add("text-4");
+            l.getStyleClass().add("text-5");
             l.setId(p.getID());
-            l2.getStyleClass().add("text-4");
+            l2.getStyleClass().add("text-5");
             l2.setId(p.getID());
             if (verID != null) {
                 //If profile has any known version just show it below the profile name
@@ -404,16 +406,59 @@ public class MainFX {
         if (selectedElement != null) {
             switchTab(profileEditorTab);
             Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
-            if (p.hasName()){
-                profileName.setText(p.getName());
+            if (p.getType() != ProfileType.CUSTOM) {
+                profileName.setEditable(false);
+                if (p.getType() == ProfileType.RELEASE) {
+                    profileName.setText("Latest Release");
+                } else {
+                    profileName.setText("Latest Snapshot");
+                }
+            } else {
+                profileName.setEditable(true);
+                if (p.hasName()){
+                    profileName.setText(p.getName());
+                } else {
+                    profileName.setText("");
+                }
             }
+
             if (p.getType() != ProfileType.CUSTOM) {
                 versionBlock.setVisible(false);
                 versionBlock.setManaged(false);
             } else {
                 versionBlock.setVisible(true);
                 versionBlock.setManaged(true);
+                ObservableList<String> vers = FXCollections.observableArrayList();
+                vers.add("Latest Release");
+                if (kernel.getSettings().getEnableSnapshots()) {
+                    vers.add("Latest Snapshot");
+                }
+                for (VersionMeta v : kernel.getVersions().getVersions().values()) {
+                    if (v.getType() == VersionType.RELEASE) {
+                        vers.add(v.getID());
+                    } else if (v.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) {
+                        vers.add(v.getID());
+                    } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && kernel.getSettings().getEnableHistorical()) {
+                        vers.add(v.getID());
+                    }
+                }
+                versionList.setItems(vers);
+                if (p.hasVersion()) {
+                    String versionID = p.getVersionID();
+                    if (versionID.equalsIgnoreCase("lastest-release")) {
+                        versionList.getSelectionModel().select(0);
+                    } else if (versionID.equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) {
+                        versionList.getSelectionModel().select(1);
+                    } else if (kernel.getVersions().getVersions().keySet().contains(p.getVersionID())) {
+                        versionList.getSelectionModel().select(p.getVersionID());
+                    } else {
+                        versionList.getSelectionModel().select(0);
+                    }
+                } else {
+                    versionList.getSelectionModel().select(0);
+                }
             }
+
             if (p.hasResolution()) {
                 toggleEditorOption(resolutionLabel, true);
                 resH.getValueFactory().setValue(p.getResolutionHeight());
