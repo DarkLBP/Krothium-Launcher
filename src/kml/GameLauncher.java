@@ -1,15 +1,22 @@
 package kml;
 
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
+import kml.gui.OutputFX;
 import kml.objects.Library;
 import kml.objects.Profile;
 import kml.objects.User;
 import kml.objects.Version;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -26,7 +33,6 @@ public class GameLauncher {
 
     private final Console console;
     private final Kernel kernel;
-   // private final GameLog gameLog;
     private Process process;
     private boolean error;
     private boolean started;
@@ -34,7 +40,6 @@ public class GameLauncher {
     public GameLauncher(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
-        //this.gameLog = new GameLog(k);
     }
 
     public void launch() throws GameLauncherException {
@@ -290,20 +295,40 @@ public class GameLauncher {
         pb.directory(workingDir);
         try {
             this.process = pb.start();
-
+            final OutputFX[] out = new OutputFX[1];
             if (kernel.getSettings().getShowGameLog()) {
-                //gameLog.setVisible(true);
-                //gameLog.refreshLocalizedStrings();
+                Platform.runLater(() -> {
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/kml/gui/fxml/Output.fxml"));
+                    Parent parent;
+                    try {
+                        parent = loader.load();
+                    } catch (IOException e) {
+                        parent = null;
+                        this.console.printError("Failed to initialize Output GUI!");
+                        this.console.printError(e.getMessage());
+                    }
+                    Stage stage = new Stage();
+                    stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " - Game Output");
+                    stage.setScene(new Scene(parent));
+                    stage.setResizable(true);
+                    stage.setMaximized(false);
+                    stage.show();
+                    out[0] = loader.getController();
+                });
             }
             Thread log_info = new Thread(() -> {
                 InputStreamReader isr = new InputStreamReader(GameLauncher.this.getInputStream(), Charset.forName("ISO-8859-1"));
                 BufferedReader br = new BufferedReader(isr);
-                String lineRead;
                 try {
                     while (GameLauncher.this.isRunning()) {
-                        if (Objects.nonNull((lineRead = br.readLine()))) {
+                        final String lineRead = br.readLine();
+                        if (Objects.nonNull(lineRead)) {
                             if (kernel.getSettings().getShowGameLog()) {
-                                //gameLog.pushString(lineRead);
+                                Platform.runLater(() -> {
+                                    out[0].pushString(lineRead);
+                                });
                             }
                             console.printInfo(lineRead);
                         }
@@ -324,12 +349,14 @@ public class GameLauncher {
             Thread log_error = new Thread(() -> {
                 InputStreamReader isr = new InputStreamReader(GameLauncher.this.getErrorStream(), Charset.forName("ISO-8859-1"));
                 BufferedReader br = new BufferedReader(isr);
-                String lineRead;
                 try {
                     while (GameLauncher.this.isRunning()) {
-                        if (Objects.nonNull((lineRead = br.readLine()))) {
+                        final String lineRead = br.readLine();
+                        if (Objects.nonNull(lineRead)) {
                             if (kernel.getSettings().getShowGameLog()) {
-                               // gameLog.pushString(lineRead);
+                                Platform.runLater(() -> {
+                                    out[0].pushString(lineRead);
+                                });
                             }
                             console.printInfo(lineRead);
                         }
