@@ -34,6 +34,8 @@ public class Profile {
             this.lastUsed = new Timestamp(1);
         } else if (type == ProfileType.SNAPSHOT) {
             this.lastUsed = new Timestamp(0);
+        } else {
+            this.lastUsed = new Timestamp(0);
         }
     }
 

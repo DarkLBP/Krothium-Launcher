@@ -293,6 +293,9 @@ public class Profiles {
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
             }
+            if (p.hasIcon()) {
+                prof.put("icon", p.getIcon().name().toLowerCase());
+            }
             profiles.put(p.getID(), prof);
         }
         o.put("profiles", profiles);

@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,10 +42,8 @@ import kml.objects.Profile;
 import kml.objects.User;
 import kml.objects.VersionMeta;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.File;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -53,13 +52,13 @@ import java.util.TimerTask;
 public class MainFX {
 
     @FXML
-    private Label languageButton, switchAccountButton, progressText,
+    private Label switchAccountButton, progressText,
             newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel;
 
     @FXML
-    private Button playButton, profilesButton;
+    private Button playButton, deleteButton, changeIcon;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -78,13 +77,13 @@ public class MainFX {
     private ListView<Label> languagesList, profileList, profilePopupList;
 
     @FXML
+    private ListView<ImageView> iconList;
+
+    @FXML
     private VBox progressPane, existingPanel;
 
     @FXML
     private HBox playPane, tabMenu, profilePopup;
-
-    @FXML
-    private AnchorPane root;
 
     @FXML
     private TextField username, profileName,javaExec, gameDir, javaArgs;
@@ -102,7 +101,11 @@ public class MainFX {
     private ComboBox<String> versionList;
 
     @FXML
-    private StackPane versionBlock, javaArgsBlock, javaExecBlock;
+    private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
+
+    @FXML
+    private ImageView profileIcon;
+
 
     private Kernel kernel;
     private Stage stage;
@@ -165,6 +168,9 @@ public class MainFX {
         resW.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
         resW.setEditable(true);
         resH.setEditable(true);
+
+        //Load icons
+        loadIcons();
     }
 
     @FXML
@@ -174,7 +180,11 @@ public class MainFX {
         //For some reason using the same label for both lists one list appear the items blank
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
         ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
-        Label l;
+
+        //Add "Add New Profile" item
+        Label l = new Label("Add New Profile", new ImageView(new Image("/kml/gui/textures/add.png")));
+        profileListItems.add(l);
+
         Label l2;
         for (String id : profiles) {
             Profile p = ps.getProfile(id);
@@ -227,12 +237,27 @@ public class MainFX {
         profilePopupList.setItems(profileListItems2);
     }
 
+    private void loadIcons() {
+        ObservableList<ImageView> icons = FXCollections.observableArrayList();
+        for (ProfileIcon p : ProfileIcon.values()) {
+            if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
+                ImageView imv = new ImageView(Utils.getProfileIcon(p));
+                imv.setFitHeight(64);
+                imv.setFitWidth(64);
+                imv.setId(p.name());
+                icons.add(imv);
+            }
+        }
+        iconList.setItems(icons);
+    }
+
     @FXML
     private void selectProfile(MouseEvent e) {
         //Select profile and refresh list
         ListView<Label> profiles = (ListView<Label>)e.getSource();
         kernel.getProfiles().setSelectedProfile(profiles.getSelectionModel().getSelectedItem().getId());
         loadProfileList();
+        profilePopupList.setVisible(false);
     }
 
     @FXML
@@ -341,6 +366,20 @@ public class MainFX {
             profilePopupList.setVisible(false);
         } else {
             profilePopupList.setVisible(true);
+            profilePopupList.getSelectionModel().clearSelection();
+        }
+    }
+
+    @FXML
+    public void showIcons() {
+        if (iconList.isVisible()) {
+            iconList.setVisible(false);
+        } else {
+            //Calculate change icon button position on scene
+            Bounds b = changeIcon.localToScene(changeIcon.getBoundsInLocal());
+            iconList.setTranslateX(b.getMinX());
+            iconList.setTranslateY(b.getMaxY());
+            iconList.setVisible(true);
         }
     }
 
@@ -375,6 +414,7 @@ public class MainFX {
         } else if (source == launchOptionsLabel) {
             launchOptionsLabel.getStyleClass().add("selectedItem");
             selection.select(launchOptionsTab);
+            profileList.getSelectionModel().clearSelection();
         } else if (source == profileEditorTab) {
             selection.select(profileEditorTab);
         }
@@ -397,118 +437,277 @@ public class MainFX {
         languagesList.setVisible(false);
     }
 
+    @FXML
+    public void updateIcon() {
+        ImageView selected = iconList.getSelectionModel().getSelectedItem();
+        profileIcon.setImage(selected.getImage());
+        profileIcon.setId(selected.getId());
+        iconList.setVisible(false);
+    }
+
     //Load profile editor for clicked profile
     @FXML
     public void loadEditor() {
-        Label selectedElement = profileList.getSelectionModel().getSelectedItem();
-        if (selectedElement != null) {
-            switchTab(profileEditorTab);
-            Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
-            if (p.getType() != ProfileType.CUSTOM) {
-                profileName.setEditable(false);
-                if (p.getType() == ProfileType.RELEASE) {
-                    profileName.setText("Latest Release");
-                } else {
-                    profileName.setText("Latest Snapshot");
-                }
-            } else {
-                profileName.setEditable(true);
-                if (p.hasName()){
-                    profileName.setText(p.getName());
-                } else {
-                    profileName.setText("");
-                }
-            }
-
-            if (p.getType() != ProfileType.CUSTOM) {
-                versionBlock.setVisible(false);
-                versionBlock.setManaged(false);
-            } else {
-                versionBlock.setVisible(true);
-                versionBlock.setManaged(true);
-                ObservableList<String> vers = FXCollections.observableArrayList();
-                vers.add("Latest Release");
-                if (kernel.getSettings().getEnableSnapshots()) {
-                    vers.add("Latest Snapshot");
-                }
-                for (VersionMeta v : kernel.getVersions().getVersions().values()) {
-                    if (v.getType() == VersionType.RELEASE) {
-                        vers.add(v.getID());
-                    } else if (v.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) {
-                        vers.add(v.getID());
-                    } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && kernel.getSettings().getEnableHistorical()) {
-                        vers.add(v.getID());
-                    }
-                }
-                versionList.setItems(vers);
-                if (p.hasVersion()) {
-                    String versionID = p.getVersionID();
-                    if (versionID.equalsIgnoreCase("lastest-release")) {
-                        versionList.getSelectionModel().select(0);
-                    } else if (versionID.equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) {
-                        versionList.getSelectionModel().select(1);
-                    } else if (kernel.getVersions().getVersions().keySet().contains(p.getVersionID())) {
-                        versionList.getSelectionModel().select(p.getVersionID());
-                    } else {
-                        versionList.getSelectionModel().select(0);
-                    }
-                } else {
-                    versionList.getSelectionModel().select(0);
-                }
-            }
-
-            if (p.hasResolution()) {
-                toggleEditorOption(resolutionLabel, true);
-                resH.getValueFactory().setValue(p.getResolutionHeight());
-                resW.getValueFactory().setValue(p.getResolutionWidth());
-            } else {
-                toggleEditorOption(resolutionLabel, false);
-                resW.getValueFactory().setValue(854);
-                resH.getValueFactory().setValue(480);
-            }
-            if (p.hasGameDir()) {
-                toggleEditorOption(gameDirLabel, true);
-                gameDir.setText(p.getGameDir().getAbsolutePath());
-            } else {
-                toggleEditorOption(gameDirLabel, false);
-                gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
-            }
+        if (profileList.getSelectionModel().getSelectedIndex() == 0) {
+            profileName.setEditable(true);
+            profileName.setText("");
+            deleteButton.setVisible(false);
+            versionBlock.setVisible(true);
+            versionBlock.setManaged(true);
+            iconBlock.setVisible(true);
+            iconBlock.setManaged(true);
+            loadVersionList();
+            versionList.getSelectionModel().select(0);
+            profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.FURNACE));
             if (kernel.getSettings().getEnableAdvanced()) {
                 javaExecBlock.setVisible(true);
                 javaExecBlock.setManaged(true);
                 javaArgsBlock.setVisible(true);
                 javaArgsBlock.setManaged(true);
-                if (p.hasJavaDir()){
-                    toggleEditorOption(javaExecLabel, true);
-                    javaExec.setText(p.getJavaDir().getAbsolutePath());
+                toggleEditorOption(javaExecLabel, false);
+                javaExec.setText(Utils.getJavaDir());
+                toggleEditorOption(javaArgsLabel, false);
+                StringBuilder jA = new StringBuilder();
+                if (Utils.getOSArch().equals(OSArch.OLD)) {
+                    jA.append("-Xmx512M");
                 } else {
-                    toggleEditorOption(javaExecLabel, false);
-                    javaExec.setText(Utils.getJavaDir());
+                    jA.append("-Xmx1G");
                 }
-                if (p.hasJavaArgs()) {
-                    toggleEditorOption(javaArgsLabel, true);
-                    javaArgs.setText(p.getJavaArgs());
-                } else {
-                    toggleEditorOption(javaArgsLabel, false);
-                    StringBuilder jA = new StringBuilder();
-                    if (Utils.getOSArch().equals(OSArch.OLD)) {
-                        jA.append("-Xmx512M");
-                    } else {
-                        jA.append("-Xmx1G");
-                    }
-                    jA.append(" -XX:+UseConcMarkSweepGC");
-                    jA.append(" -XX:+CMSIncrementalMode");
-                    jA.append(" -XX:-UseAdaptiveSizePolicy");
-                    jA.append(" -Xmn128M");
-                    javaArgs.setText(jA.toString());
-                }
+                jA.append(" -XX:+UseConcMarkSweepGC");
+                jA.append(" -XX:+CMSIncrementalMode");
+                jA.append(" -XX:-UseAdaptiveSizePolicy");
+                jA.append(" -Xmn128M");
+                javaArgs.setText(jA.toString());
             } else {
                 javaExecBlock.setVisible(false);
                 javaExecBlock.setManaged(false);
                 javaArgsBlock.setVisible(false);
                 javaArgsBlock.setManaged(false);
             }
+            toggleEditorOption(resolutionLabel, false);
+            resW.getValueFactory().setValue(854);
+            resH.getValueFactory().setValue(480);
 
+            toggleEditorOption(gameDirLabel, false);
+            gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
+        } else {
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+            if (selectedElement != null) {
+                Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
+                if (p.getType() != ProfileType.CUSTOM) {
+                    profileName.setEditable(false);
+                    deleteButton.setVisible(false);
+                    if (p.getType() == ProfileType.RELEASE) {
+                        profileName.setText("Latest Release");
+                        profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.GRASS));
+                    } else {
+                        profileName.setText("Latest Snapshot");
+                        profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                    }
+                    versionBlock.setVisible(false);
+                    versionBlock.setManaged(false);
+                    iconBlock.setVisible(false);
+                    iconBlock.setManaged(false);
+                } else {
+                    if (p.hasIcon()) {
+                        profileIcon.setImage(Utils.getProfileIcon(p.getIcon()));
+                    } else {
+                        profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.FURNACE));
+                    }
+                    profileName.setEditable(true);
+                    deleteButton.setVisible(true);
+                    if (p.hasName()){
+                        profileName.setText(p.getName());
+                    } else {
+                        profileName.setText("");
+                    }
+                    versionBlock.setVisible(true);
+                    versionBlock.setManaged(true);
+                    iconBlock.setVisible(true);
+                    iconBlock.setManaged(true);
+                    loadVersionList();
+                    if (p.hasVersion()) {
+                        String versionID = p.getVersionID();
+                        if (versionID.equalsIgnoreCase("lastest-release")) {
+                            versionList.getSelectionModel().select(0);
+                        } else if (versionID.equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) {
+                            versionList.getSelectionModel().select(1);
+                        } else if (versionList.getItems().contains(p.getVersionID())) {
+                            versionList.getSelectionModel().select(p.getVersionID());
+                        } else {
+                            versionList.getSelectionModel().select(0);
+                        }
+                    } else {
+                        versionList.getSelectionModel().select(0);
+                    }
+                }
+
+                if (p.hasResolution()) {
+                    toggleEditorOption(resolutionLabel, true);
+                    resH.getValueFactory().setValue(p.getResolutionHeight());
+                    resW.getValueFactory().setValue(p.getResolutionWidth());
+                } else {
+                    toggleEditorOption(resolutionLabel, false);
+                    resW.getValueFactory().setValue(854);
+                    resH.getValueFactory().setValue(480);
+                }
+                if (p.hasGameDir()) {
+                    toggleEditorOption(gameDirLabel, true);
+                    gameDir.setText(p.getGameDir().getAbsolutePath());
+                } else {
+                    toggleEditorOption(gameDirLabel, false);
+                    gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
+                }
+                if (kernel.getSettings().getEnableAdvanced()) {
+                    javaExecBlock.setVisible(true);
+                    javaExecBlock.setManaged(true);
+                    javaArgsBlock.setVisible(true);
+                    javaArgsBlock.setManaged(true);
+                    if (p.hasJavaDir()){
+                        toggleEditorOption(javaExecLabel, true);
+                        javaExec.setText(p.getJavaDir().getAbsolutePath());
+                    } else {
+                        toggleEditorOption(javaExecLabel, false);
+                        javaExec.setText(Utils.getJavaDir());
+                    }
+                    if (p.hasJavaArgs()) {
+                        toggleEditorOption(javaArgsLabel, true);
+                        javaArgs.setText(p.getJavaArgs());
+                    } else {
+                        toggleEditorOption(javaArgsLabel, false);
+                        StringBuilder jA = new StringBuilder();
+                        if (Utils.getOSArch().equals(OSArch.OLD)) {
+                            jA.append("-Xmx512M");
+                        } else {
+                            jA.append("-Xmx1G");
+                        }
+                        jA.append(" -XX:+UseConcMarkSweepGC");
+                        jA.append(" -XX:+CMSIncrementalMode");
+                        jA.append(" -XX:-UseAdaptiveSizePolicy");
+                        jA.append(" -Xmn128M");
+                        javaArgs.setText(jA.toString());
+                    }
+                } else {
+                    javaExecBlock.setVisible(false);
+                    javaExecBlock.setManaged(false);
+                    javaArgsBlock.setVisible(false);
+                    javaArgsBlock.setManaged(false);
+                }
+            }
+        }
+        switchTab(profileEditorTab);
+    }
+
+    private void loadVersionList() {
+        ObservableList<String> vers = FXCollections.observableArrayList();
+        vers.add("Latest Release");
+        if (kernel.getSettings().getEnableSnapshots()) {
+            vers.add("Latest Snapshot");
+        }
+        for (VersionMeta v : kernel.getVersions().getVersions().values()) {
+            if (v.getType() == VersionType.RELEASE) {
+                vers.add(v.getID());
+            } else if (v.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) {
+                vers.add(v.getID());
+            } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && kernel.getSettings().getEnableHistorical()) {
+                vers.add(v.getID());
+            }
+        }
+        versionList.setItems(vers);
+    }
+
+    @FXML
+    public void saveProfile() {
+        Profile target;
+        if (profileList.getSelectionModel().getSelectedIndex() == 0) {
+            target = new Profile(ProfileType.CUSTOM);
+            kernel.getProfiles().addProfile(target);
+        } else {
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+            target = kernel.getProfiles().getProfile(selectedElement.getId());
+        }
+        if (target.getType() == ProfileType.CUSTOM) {
+            if (!profileName.getText().isEmpty()) {
+                target.setName(profileName.getText());
+            } else {
+                target.setName(null);
+            }
+            if (versionList.getSelectionModel().getSelectedIndex() == 0) {
+                target.setVersionID("latest-release");
+            } else if (versionList.getSelectionModel().getSelectedIndex() == 1 && kernel.getSettings().getEnableSnapshots()) {
+                target.setVersionID("latest-snapshot");
+            } else {
+                target.setVersionID(versionList.getSelectionModel().getSelectedItem());
+            }
+            try {
+                target.setIcon(ProfileIcon.valueOf(profileIcon.getId()));
+            } catch (IllegalArgumentException ex) {
+                target.setIcon(null);
+            }
+        }
+        if (!resW.isDisabled()) {
+            target.setResolution(resW.getValue(), resH.getValue());
+        } else {
+            target.setResolution(-1, -1);
+        }
+        if (!gameDir.isDisabled() && !gameDir.getText().isEmpty()) {
+            target.setGameDir(new File(gameDir.getText()));
+        } else {
+            target.setGameDir(null);
+        }
+        if (kernel.getSettings().getEnableAdvanced()) {
+            if (!javaExec.isDisabled() && !javaExec.getText().isEmpty()) {
+                target.setJavaDir(new File(javaExec.getText()));
+            } else {
+                target.setJavaDir(null);
+            }
+            if (!javaArgs.isDisabled() && !javaArgs.getText().isEmpty()) {
+                target.setJavaArgs(javaArgs.getText());
+            } else {
+                target.setJavaDir(null);
+            }
+        }
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        a.setContentText("Profile save successfully!");
+        a.showAndWait();
+        loadProfileList();
+        switchTab(launchOptionsLabel);
+    }
+
+    @FXML
+    public void cancelProfile() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        a.setContentText("Are you sure you want to cancel?\nAny saved changes won't be applied!");
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            switchTab(launchOptionsLabel);
+        }
+    }
+
+    @FXML
+    public void deleteProfile() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        a.setContentText("Are you sure you want to delete this profile?\nThis action cannot be undone!");
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+            if (kernel.getProfiles().deleteProfile(selectedElement.getId())) {
+                a.setAlertType(Alert.AlertType.INFORMATION);
+                a.setContentText("Profile deleted successfully.");
+                a.showAndWait();
+            } else {
+                a.setAlertType(Alert.AlertType.ERROR);
+                a.setContentText("Failed to delete the profile.");
+                a.showAndWait();
+            }
+            loadProfileList();
+            switchTab(launchOptionsLabel);
         }
     }
 

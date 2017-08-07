@@ -26,6 +26,10 @@
     -fx-text-fill: white;
 }
 
+.color-warn {
+    -fx-text-fill: red;
+}
+
 #languageButton:hover, #switchAccountButton:hover {
     -fx-text-fill: yellow;
 }
@@ -72,7 +76,6 @@
 }
 
 .button {
-    -fx-text-fill: white;
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
     -fx-background-size: 100% 100%;
