@@ -254,9 +254,12 @@ public class MainFX {
 
     @FXML
     private void selectProfile(MouseEvent e) {
+        if (profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
+            //Nothing has been selected
+            return;
+        }
         //Select profile and refresh list
-        ListView<Label> profiles = (ListView<Label>)e.getSource();
-        kernel.getProfiles().setSelectedProfile(profiles.getSelectionModel().getSelectedItem().getId());
+        kernel.getProfiles().setSelectedProfile(profilePopupList.getSelectionModel().getSelectedItem().getId());
         loadProfileList();
         profilePopupList.setVisible(false);
     }
@@ -441,6 +444,10 @@ public class MainFX {
 
     @FXML
     public void updateLanguage() {
+        if (languagesList.getSelectionModel().getSelectedIndex() == -1) {
+            //Nothing has been selected
+            return;
+        }
         Label selected = languagesList.getSelectionModel().getSelectedItem();
         if (selected != null) {
             kernel.getSettings().setLocale(selected.getId());
@@ -459,6 +466,10 @@ public class MainFX {
     //Load profile editor for clicked profile
     @FXML
     public void loadEditor() {
+        if (profileList.getSelectionModel().getSelectedIndex() == -1) {
+            //Nothing has been selected
+            return;
+        }
         if (profileList.getSelectionModel().getSelectedIndex() == 0) {
             profileName.setEditable(true);
             profileName.setText("");
