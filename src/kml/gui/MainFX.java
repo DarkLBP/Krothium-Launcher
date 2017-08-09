@@ -813,7 +813,6 @@ public class MainFX {
                 username.setText("");
                 password.setText("");
                 showLoginPrompt(false);
-                accountButton.setText(auth.getSelectedUser().getDisplayName() + " ▼"); //Set account button the current user
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("Failed to authenticate");
@@ -839,7 +838,6 @@ public class MainFX {
                 auth.setSelectedUser(selected.getUserID());
                 auth.refresh();
                 showLoginPrompt(false);
-                accountButton.setText(auth.getSelectedUser().getDisplayName() + " ▼"); //Set account button the current user
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("We could not log you back with that user!");
