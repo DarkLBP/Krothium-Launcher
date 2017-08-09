@@ -15,9 +15,16 @@
 #topBar {
     -fx-background-color: black;
 }
+
 #header, #footer {
     -fx-background-image: url("textures/dark_background.png");
 }
+
+#switchAccountButton{
+    -fx-background-color: black;
+    -fx-graphic: url("textures/logout.png");
+}
+
 #content {
     -fx-background-image: url("textures/light_background.png");
 }
@@ -30,14 +37,12 @@
     -fx-text-fill: red;
 }
 
-#languageButton:hover, #switchAccountButton:hover {
+.highlight:hover {
     -fx-text-fill: yellow;
 }
+
 #languageButton {
     -fx-graphic: url("textures/language.png");
-}
-#switchAccountButton {
-    -fx-graphic: url("textures/logout.png");
 }
 
 .selectedItem {

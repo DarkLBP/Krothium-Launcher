@@ -15,6 +15,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -52,10 +53,10 @@ import java.util.*;
 public class MainFX {
 
     @FXML
-    private Label switchAccountButton, progressText,
-            newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
+    private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
-            advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel;
+            advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
+            switchAccountButton;
 
     @FXML
     private Button playButton, deleteButton, changeIcon;
@@ -354,6 +355,7 @@ public class MainFX {
 
     @FXML
     public void switchAccount() {
+        showAccountOptions();
         Authentication a = kernel.getAuthentication();
         a.setSelectedUser(null);
         showLoginPrompt(true);
@@ -380,6 +382,15 @@ public class MainFX {
             iconList.setTranslateX(b.getMinX());
             iconList.setTranslateY(b.getMaxY());
             iconList.setVisible(true);
+        }
+    }
+
+    @FXML
+    public void showAccountOptions() {
+        if (switchAccountButton.isVisible()) {
+            switchAccountButton.setVisible(false);
+        } else {
+            switchAccountButton.setVisible(true);
         }
     }
 
@@ -422,7 +433,7 @@ public class MainFX {
 
     @FXML
     public void hidePopup(Event e) {
-        ListView ls = (ListView)e.getSource();
+        Node ls = (Node)e.getSource();
         if (ls.isVisible()) {
             ls.setVisible(false);
         }
@@ -770,7 +781,7 @@ public class MainFX {
             contentPane.getSelectionModel().select(loginTab);
             tabMenu.setVisible(false);
             tabMenu.setManaged(false);
-            switchAccountButton.setVisible(false);
+            accountButton.setVisible(false);
             playPane.setVisible(false);
             Authentication a = kernel.getAuthentication();
             updateExistingUsers();
@@ -778,8 +789,10 @@ public class MainFX {
             contentPane.getSelectionModel().select(newsTab);
             tabMenu.setVisible(true);
             tabMenu.setManaged(true);
-            switchAccountButton.setVisible(true);
+            accountButton.setVisible(true);
             playPane.setVisible(true);
+            //Set account name for current user
+            accountButton.setText(kernel.getAuthentication().getSelectedUser().getDisplayName() + " ▼");
         }
     }
 
@@ -800,6 +813,7 @@ public class MainFX {
                 username.setText("");
                 password.setText("");
                 showLoginPrompt(false);
+                accountButton.setText(auth.getSelectedUser().getDisplayName() + " ▼"); //Set account button the current user
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("Failed to authenticate");
@@ -825,6 +839,7 @@ public class MainFX {
                 auth.setSelectedUser(selected.getUserID());
                 auth.refresh();
                 showLoginPrompt(false);
+                accountButton.setText(auth.getSelectedUser().getDisplayName() + " ▼"); //Set account button the current user
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("We could not log you back with that user!");
@@ -863,6 +878,12 @@ public class MainFX {
     public void register() {
         //Open register page
         kernel.getHostServices().showDocument("https://krothium.com/register");
+    }
+
+    @FXML
+    public void openHelp() {
+        //Open help page
+        kernel.getHostServices().showDocument("https://krothium.com/forum/12-soporte/");
     }
 
     @FXML
