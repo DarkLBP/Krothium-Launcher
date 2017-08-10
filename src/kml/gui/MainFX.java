@@ -56,7 +56,7 @@ public class MainFX {
     private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
-            switchAccountButton;
+            switchAccountButton, languageButton;
 
     @FXML
     private Button playButton, deleteButton, changeIcon;
@@ -123,6 +123,7 @@ public class MainFX {
         webBrowser.getEngine().load("http://mcupdate.tumblr.com");
 
         //Prepare language list
+        String locale = kernel.getSettings().getLocale();
         Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
         flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
         flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
@@ -132,17 +133,35 @@ public class MainFX {
         flag_hu = new Image("/kml/gui/textures/flags/flag_hu-hu.png");
         final Label en = new Label("English - United States", new ImageView(flag_us));
         en.setId("en-us");
+        if (locale.equalsIgnoreCase(en.getId())) {
+            languageButton.setText(en.getText());
+        }
         final Label es = new Label("Español - España", new ImageView(flag_es));
         es.setId("es-es");
-        final Label ca = new Label("Valencià - C. Valenciana", new ImageView(flag_val));
-        ca.setId("val-es");
+        if (locale.equalsIgnoreCase(es.getId())) {
+            languageButton.setText(es.getText());
+        }
+        final Label val = new Label("Valencià - C. Valenciana", new ImageView(flag_val));
+        val.setId("val-es");
+        if (locale.equalsIgnoreCase(val.getId())) {
+            languageButton.setText(val.getText());
+        }
         final Label pt = new Label("Português - Portugal", new ImageView(flag_pt));
         pt.setId("pt-pt");
+        if (locale.equalsIgnoreCase(pt.getId())) {
+            languageButton.setText(pt.getText());
+        }
         final Label br = new Label("Português - Brasil", new ImageView(flag_br));
         br.setId("pt-br");
+        if (locale.equalsIgnoreCase(br.getId())) {
+            languageButton.setText(br.getText());
+        }
         final Label hu = new Label("Hungarian - Magyar", new ImageView(flag_hu));
         hu.setId("hu-hu");
-        ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, ca, pt, br, hu);
+        if (locale.equalsIgnoreCase(hu.getId())) {
+            languageButton.setText(hu.getText());
+        }
+        ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, val, pt, br, hu);
         languagesList.setItems(languageListItems);
 
         //Set news tab as default selected
@@ -253,7 +272,7 @@ public class MainFX {
     }
 
     @FXML
-    private void selectProfile(MouseEvent e) {
+    private void selectProfile() {
         if (profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
@@ -449,9 +468,8 @@ public class MainFX {
             return;
         }
         Label selected = languagesList.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            kernel.getSettings().setLocale(selected.getId());
-        }
+        languageButton.setText(selected.getText());
+        kernel.getSettings().setLocale(selected.getId());
         languagesList.setVisible(false);
     }
 

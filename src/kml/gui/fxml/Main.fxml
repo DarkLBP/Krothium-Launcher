@@ -25,7 +25,7 @@
    <children>
       <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
-            <Label id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
+            <Label id="languageButton" fx:id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
                <StackPane.margin>
                   <Insets left="5.0" />
                </StackPane.margin>
