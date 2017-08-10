@@ -1,18 +1,16 @@
 package kml;
 
-import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import kml.enums.OS;
 import kml.enums.OSArch;
 import kml.enums.ProfileIcon;
 
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -333,12 +331,12 @@ public class Utils {
         if (ICON_CACHE.containsKey(p)) {
             return ICON_CACHE.get(p);
         }
-        BufferedImage bImg = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bImg.createGraphics();
+        WritableImage wi = new WritableImage(136, 136);
+        PixelWriter pw = wi.getPixelWriter();
         int blockX = 0;
         int blockY = 0;
         try {
-            java.awt.Image img = ImageIO.read(Constants.PROFILE_ICONS);
+            PixelReader pr = Constants.PROFILE_ICONS.getPixelReader();
             switch (p) {
                 case LEAVES_OAK:
                     blockX = 0;
@@ -605,12 +603,12 @@ public class Utils {
                     blockY = 7;
                     break;
             }
-            g.drawImage(img, 0, 0, 64, 64, blockX * 136, blockY * 136, blockX * 136 + 136, blockY * 136 + 136, null);
-        } catch (IOException e) {
+
+            pw.setPixels(0, 0, 136, 136, pr,blockX * 136, blockY * 136);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        Image img = SwingFXUtils.toFXImage(bImg, null);
-        ICON_CACHE.put(p, img);
-        return img;
+        ICON_CACHE.put(p, wi);
+        return wi;
     }
 }

@@ -1,5 +1,6 @@
 package kml;
 
+import javafx.scene.image.Image;
 import kml.matchers.*;
 
 import java.net.URL;
@@ -38,7 +39,7 @@ public class Constants {
     public static final URL REALMS_EDITWORLD_URL = Utils.stringToURL("https://mc.krothium.com/realms/editworld");
     public static final URL REALMS_REGIONS_URL = Utils.stringToURL("https://mc.krothium.com/realms/regions");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
-    public static final URL PROFILE_ICONS = Constants.class.getResource("/kml/gui/textures/profile-icons.png");
+    public static final Image PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
     public static final URLMatcher[] HTTP_MATCHERS = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher(), new CheckServerMatcher()};
     public static final URLMatcher[] HTTPS_MATCHERS = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new AuthenticateMatcher(), new RefreshMatcher(), new ValidateMatcher(), new RealmsMatcher()};
     public static final int DOWNLOAD_TRIES = 5;

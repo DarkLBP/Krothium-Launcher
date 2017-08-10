@@ -209,16 +209,37 @@ public class MainFX {
         for (String id : profiles) {
             Profile p = ps.getProfile(id);
             if (p.getType() == ProfileType.RELEASE) {
-                l = new Label("Latest Release", new ImageView(Utils.getProfileIcon(ProfileIcon.GRASS)));
-                l2 = new Label("Latest Release", new ImageView(Utils.getProfileIcon(ProfileIcon.GRASS)));
+                Image img = Utils.getProfileIcon(ProfileIcon.GRASS);
+                ImageView iv = new ImageView(img);
+                iv.setFitWidth(64);
+                iv.setFitHeight(64);
+                ImageView iv2 = new ImageView(img);
+                iv2.setFitWidth(64);
+                iv2.setFitHeight(64);
+                l = new Label("Latest Release", iv);
+                l2 = new Label("Latest Release", iv2);
             } else if (p.getType() == ProfileType.SNAPSHOT) {
-                l = new Label("Latest Snapshot", new ImageView(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE)));
-                l2 = new Label("Latest Snapshot", new ImageView(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE)));
+                Image img = Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE);
+                ImageView iv = new ImageView(img);
+                iv.setFitWidth(64);
+                iv.setFitHeight(64);
+                ImageView iv2 = new ImageView(img);
+                iv2.setFitWidth(64);
+                iv2.setFitHeight(64);
+                l = new Label("Latest Snapshot", iv);
+                l2 = new Label("Latest Snapshot", iv2);
             } else {
                 String name = p.hasName() ? p.getName() : "Unnamed Profile";
                 ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
-                l = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
-                l2 = new Label(name, new ImageView(Utils.getProfileIcon(pi)));
+                Image img = Utils.getProfileIcon(pi);
+                ImageView iv = new ImageView(img);
+                iv.setFitWidth(64);
+                iv.setFitHeight(64);
+                ImageView iv2 = new ImageView(img);
+                iv2.setFitWidth(64);
+                iv2.setFitHeight(64);
+                l = new Label(name, iv);
+                l2 = new Label(name, iv2);
             }
             //Fetch Minecraft version used by the profile
             String verID;
