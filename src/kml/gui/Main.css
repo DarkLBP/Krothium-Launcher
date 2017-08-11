@@ -94,6 +94,10 @@
     -fx-text-box-border: black;
 }
 
+.text-unicode {
+    -fx-font-size: 80px;
+}
+
 .text-1 {
     -fx-font-size: 27.5px;
 }

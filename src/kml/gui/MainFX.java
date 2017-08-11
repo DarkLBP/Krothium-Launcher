@@ -3,33 +3,24 @@ package kml.gui;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import kml.*;
 import kml.enums.OSArch;
@@ -40,8 +31,11 @@ import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
 import kml.objects.Profile;
+import kml.objects.Slide;
 import kml.objects.User;
 import kml.objects.VersionMeta;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.*;
@@ -56,7 +50,7 @@ public class MainFX {
     private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
-            switchAccountButton, languageButton;
+            switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward;
 
     @FXML
     private Button playButton, deleteButton, changeIcon;
@@ -70,9 +64,6 @@ public class MainFX {
 
     @FXML
     private TabPane contentPane;
-
-    @FXML
-    private WebView webBrowser;
 
     @FXML
     private ListView<Label> languagesList, profileList, profilePopupList;
@@ -105,11 +96,13 @@ public class MainFX {
     private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
 
     @FXML
-    private ImageView profileIcon;
+    private ImageView profileIcon, slideshow;
 
 
     private Kernel kernel;
     private Stage stage;
+    private ArrayList<Slide> slides = new ArrayList<>();
+    private int currentSlide;
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
@@ -119,8 +112,8 @@ public class MainFX {
         kernel = k;
         stage = s;
 
-        //Load news tab website
-        webBrowser.getEngine().load("http://mcupdate.tumblr.com");
+        //Load news slideshow
+        loadSlideshow();
 
         //Prepare language list
         String locale = kernel.getSettings().getLocale();
@@ -191,6 +184,81 @@ public class MainFX {
 
         //Load icons
         loadIcons();
+    }
+
+    private void loadSlideshow() {
+        try {
+            String response = Utils.readURL(Constants.NEWS_URL);
+            if (response == null) {
+                kernel.getConsole().printError("Failed to fetch news.");
+            }
+            JSONObject root = new JSONObject(response);
+            JSONArray entries = root.getJSONArray("entries");
+            for (int i = 0; i < entries.length(); i++) {
+                JSONObject entry = entries.getJSONObject(i);
+                boolean isDemo = false;
+                JSONArray tags = entry.getJSONArray("tags");
+                for (int j = 0; j < tags.length(); j++) {
+                    if (tags.getString(j).equalsIgnoreCase("demo")) {
+                        isDemo = true;
+                        break;
+                    }
+                }
+                if (isDemo) {
+                    continue;
+                }
+                JSONObject content = entry.getJSONObject("content").getJSONObject("en-us");
+                Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"));
+                slides.add(s);
+            }
+        } catch (Exception ex) {
+            kernel.getConsole().printError("Couldn't parse news data. (" + ex.getMessage() + ")");
+        }
+        if (slides.size() > 0) {
+            Slide s = slides.get(0);
+            slideshow.setImage(s.getImage());
+            newsTitle.setText(s.getTitle());
+            newsText.setText(s.getText());
+        } else {
+            slideBack.setVisible(false);
+            slideForward.setVisible(false);
+        }
+    }
+
+    @FXML
+    public void changeSlide(MouseEvent e) {
+        if (slides.isEmpty()) {
+            //No slides
+            return;
+        }
+        Label source = (Label)e.getSource();
+        if (source == slideBack) {
+            if (currentSlide == 0) {
+                currentSlide = slides.size() - 1;
+            } else {
+                currentSlide--;
+            }
+        } else if (source == slideForward) {
+            if (currentSlide == slides.size() - 1) {
+                currentSlide = 0;
+            } else {
+                currentSlide++;
+            }
+        }
+        Slide s = slides.get(currentSlide);
+        slideshow.setImage(s.getImage());
+        newsTitle.setText(s.getTitle());
+        newsText.setText(s.getText());
+    }
+
+    @FXML
+    public void performSlideAction() {
+        if (slides.isEmpty()) {
+            //No slides
+            return;
+        }
+        Slide s = slides.get(currentSlide);
+        kernel.getHostServices().showDocument(s.getAction());
     }
 
     @FXML
@@ -496,6 +564,10 @@ public class MainFX {
 
     @FXML
     public void updateIcon() {
+        if (iconList.getSelectionModel().getSelectedIndex() == -1) {
+            //Nothing has been selected
+            return;
+        }
         ImageView selected = iconList.getSelectionModel().getSelectedItem();
         profileIcon.setImage(selected.getImage());
         profileIcon.setId(selected.getId());
