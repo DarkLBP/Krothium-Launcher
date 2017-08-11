@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -200,7 +201,80 @@
                   </VBox>
                </content>
             </Tab>
-            <Tab fx:id="skinsTab" text="Skins Tab" />
+            <Tab fx:id="skinsTab" text="Skins Tab">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="425.0" prefWidth="950.0">
+                           <children>
+                              <VBox prefHeight="425.0" prefWidth="163.0">
+                                 <children>
+                                    <ImageView fx:id="skinPreview" fitHeight="185.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </ImageView>
+                                    <ImageView fx:id="capePreview" fitHeight="185.0" fitWidth="160.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets right="15.0" />
+                                 </HBox.margin>
+                              </VBox>
+                              <VBox prefHeight="240.0" prefWidth="289.0">
+                                 <children>
+                                    <Label prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="PLAYER MODEL">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <RadioButton mnemonicParsing="false" prefHeight="33.0" prefWidth="104.0" styleClass="text-5" text="Classic" />
+                                    <RadioButton mnemonicParsing="false" prefHeight="35.0" prefWidth="267.0" styleClass="text-5" text="Slim" />
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="SKIN" />
+                                    <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                    </Button>
+                                    <Button layoutX="10.0" layoutY="151.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-warn" />
+                                       </styleClass>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Label layoutX="10.0" layoutY="125.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="CAPE">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button layoutX="10.0" layoutY="151.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                    </Button>
+                                    <Button layoutX="10.0" layoutY="200.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-warn" />
+                                       </styleClass>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content></Tab>
             <Tab fx:id="settingsTab" text="Settings Tab">
                <content>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">

@@ -96,7 +96,7 @@ public class MainFX {
     private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
 
     @FXML
-    private ImageView profileIcon, slideshow;
+    private ImageView profileIcon, slideshow, skinPreview, capePreview;
 
 
     private Kernel kernel;
