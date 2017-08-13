@@ -214,22 +214,29 @@
                                     <Insets right="25.0" />
                                  </HBox.margin>
                                  <children>
-                                    <HBox alignment="CENTER" minWidth="301.0" prefHeight="341.0" prefWidth="301.0">
+                                    <StackPane minWidth="300.0" prefHeight="306.0" prefWidth="244.0">
                                        <children>
-                                          <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡀">
+                                          <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡀" StackPane.alignment="CENTER_LEFT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Label>
-                                          <ImageView fx:id="skinPreview" fitHeight="306.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true" />
-                                          <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡂">
+                                          <ImageView fx:id="skinPreview" fitHeight="306.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                                          <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡂" StackPane.alignment="CENTER_RIGHT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Label>
                                        </children>
-                                    </HBox>
-                                    <CheckBox mnemonicParsing="false" styleClass="text-5" text="Include cape in preview" />
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </StackPane>
+                                    <CheckBox mnemonicParsing="false" styleClass="text-5" text="Include cape in preview">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                  </children>
                               </VBox>
                               <VBox prefHeight="240.0" prefWidth="289.0">
