@@ -190,11 +190,12 @@ public class MainFX {
         loadIcons();
 
         //For skin preview for testing purposes
-        Image skin = new Image("http://textures.minecraft.net/texture/a116e69a845e227f7ca1fdde8c357c8c821ebd4ba619382ea4a1f87d4ae94");
-        skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, false), 10);
-        skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin), 10);
-        skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, false), 10);
-        skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin), 10);
+        Image skin = new Image("http://textures.minecraft.net/texture/cbc265cdba3c086778b22bcefb47fcd2f5738916a233fd1d514062fec4210");
+        Image cape = new Image("http://textures.minecraft.net/texture/efd61c3c4ac88f1a3468fbdeef45cec89e5afb87b97a1a845bfb3c64fd0b883");
+        skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, cape, false), 10);
+        skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin, cape), 10);
+        skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, cape, false), 10);
+        skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin, cape), 10);
         skinPreview.setImage(skinPreviews[0]);
     }
 

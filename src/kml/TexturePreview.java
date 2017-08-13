@@ -10,9 +10,9 @@ import javafx.scene.paint.Color;
  */
 public class TexturePreview {
 
-    public static Image generateFront(Image i, boolean slim) {
-        double h = i.getHeight();
-        PixelReader pr = i.getPixelReader();
+    public static Image generateFront(Image skin, Image cape, boolean slim) {
+        double h = skin.getHeight();
+        PixelReader pr = skin.getPixelReader();
         WritableImage wi = new WritableImage(slim && h == 64 ? 14 : 16, 32);
         PixelWriter pw = wi.getPixelWriter();
         if (h == 64) { // New format
@@ -59,12 +59,18 @@ public class TexturePreview {
             //Left Leg
             renderLayerInverse(8, 20, 4, 12, pr, pw, 4, 20);
         }
+
+        if (cape != null) {
+            PixelReader pr2 = cape.getPixelReader();
+            pw.setPixels(slim && h == 64 ? 2 : 3, 20, 1, 4, pr2, 12, 1);
+            pw.setPixels(slim && h == 64 ? 11 : 12, 20, 1, 4, pr2, 21, 1);
+        }
         return wi;
     }
 
-    public static Image generateBack(Image i, boolean slim) {
-        double h = i.getHeight();
-        PixelReader pr = i.getPixelReader();
+    public static Image generateBack(Image skin, Image cape, boolean slim) {
+        double h = skin.getHeight();
+        PixelReader pr = skin.getPixelReader();
         WritableImage wi = new WritableImage(slim && h == 64 ? 14 : 16, 32);
         PixelWriter pw = wi.getPixelWriter();
         if (h == 64) { // New format
@@ -111,12 +117,18 @@ public class TexturePreview {
             //Left Leg
             renderLayerInverse(4, 20, 4, 12, pr, pw, 12, 20);
         }
+
+        if (cape != null) {
+            PixelReader pr2 = cape.getPixelReader();
+            pw.setPixels(slim && h == 64 ? 2 : 3, 8, 10, 16, pr2, 1, 1);
+        }
+
         return wi;
     }
 
-    public static Image generateLeft(Image i) {
-        double h = i.getHeight();
-        PixelReader pr = i.getPixelReader();
+    public static Image generateLeft(Image skin, Image cape) {
+        double h = skin.getHeight();
+        PixelReader pr = skin.getPixelReader();
         WritableImage wi = new WritableImage(8, 32);
         PixelWriter pw = wi.getPixelWriter();
         if (h == 64) { // New format
@@ -145,12 +157,18 @@ public class TexturePreview {
             //Left Leg
             renderLayerInverse(2, 20, 4, 12, pr, pw, 0, 20);
         }
+
+        if (cape != null) {
+            PixelReader pr2 = cape.getPixelReader();
+            pw.setPixels(6, 8, 1, 16, pr2, 0, 1);
+        }
+
         return wi;
     }
 
-    public static Image generateRight(Image i) {
-        double h = i.getHeight();
-        PixelReader pr = i.getPixelReader();
+    public static Image generateRight(Image skin, Image cape) {
+        double h = skin.getHeight();
+        PixelReader pr = skin.getPixelReader();
         WritableImage wi = new WritableImage(8, 32);
         PixelWriter pw = wi.getPixelWriter();
         if (h == 64) { // New format
@@ -179,6 +197,12 @@ public class TexturePreview {
             //Right Leg
             pw.setPixels(2, 20, 4, 12, pr, 0, 20);
         }
+
+        if (cape != null) {
+            PixelReader pr2 = cape.getPixelReader();
+            pw.setPixels(1, 8, 1, 16, pr2, 11, 1);
+        }
+
         return wi;
     }
 
