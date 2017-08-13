@@ -141,7 +141,7 @@ public class TexturePreview {
             //Hat
             renderLayer(0, 0, 8, 8, pr, pw, 48, 8);
             //Left Arm
-            renderLayerInverse(2, 8, 4, 12, pr, pw,40, 20);
+            renderLayerInverse(2, 8, 4, 12, pr, pw, 40, 20);
             //Left Leg
             renderLayerInverse(2, 20, 4, 12, pr, pw, 0, 20);
         }
@@ -183,11 +183,12 @@ public class TexturePreview {
     }
 
     private static void renderLayer(int dstx, int dsty, int w, int h, PixelReader pr, PixelWriter pw, int srcx, int srcy) {
+        Color background = pr.getColor(0, 0);
         int x_origin = dstx;
         for (int y = srcy; y < srcy + h; y++){
             for (int x = srcx; x < srcx + w; x++) {
                 Color c = pr.getColor(x, y);
-                if (c.getOpacity() == 1) {
+                if (c.getOpacity() == 1 && !c.equals(background)) {
                     pw.setColor(dstx, dsty, c);
                 }
                 dstx++;

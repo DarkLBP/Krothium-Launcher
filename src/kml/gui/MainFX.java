@@ -50,7 +50,8 @@ public class MainFX {
     private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
-            switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward;
+            switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
+            rotateLeft;
 
     @FXML
     private Button playButton, deleteButton, changeIcon;
@@ -102,6 +103,8 @@ public class MainFX {
     private Stage stage;
     private ArrayList<Slide> slides = new ArrayList<>();
     private int currentSlide;
+    private int currentPreview = 0; // 0 = front / 1 = right / 2 = back / 3 = left
+    private Image[] skinPreviews = new Image[4];
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
@@ -110,6 +113,8 @@ public class MainFX {
         //Set kernel and stage
         kernel = k;
         stage = s;
+
+        Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
 
         //Load news slideshow
         loadSlideshow();
@@ -183,6 +188,14 @@ public class MainFX {
 
         //Load icons
         loadIcons();
+
+        //For skin preview for testing purposes
+        Image skin = new Image("http://textures.minecraft.net/texture/a116e69a845e227f7ca1fdde8c357c8c821ebd4ba619382ea4a1f87d4ae94");
+        skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, false), 10);
+        skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin), 10);
+        skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, false), 10);
+        skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin), 10);
+        skinPreview.setImage(skinPreviews[0]);
     }
 
     private void loadSlideshow() {
@@ -258,6 +271,28 @@ public class MainFX {
         }
         Slide s = slides.get(currentSlide);
         kernel.getHostServices().showDocument(s.getAction());
+    }
+
+    @FXML
+    public void rotatePreview(MouseEvent e) {
+        Label src = (Label)e.getSource();
+        if (src == rotateRight) {
+            if (currentPreview < 3) {
+                currentPreview++;
+                skinPreview.setImage(skinPreviews[currentPreview]);
+            } else {
+                currentPreview = 0;
+                skinPreview.setImage(skinPreviews[currentPreview]);
+            }
+        } else if (src == rotateLeft) {
+            if (currentPreview > 0) {
+                currentPreview--;
+                skinPreview.setImage(skinPreviews[currentPreview]);
+            } else {
+                currentPreview = 3;
+                skinPreview.setImage(skinPreviews[currentPreview]);
+            }
+        }
     }
 
     @FXML
