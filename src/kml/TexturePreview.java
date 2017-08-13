@@ -1,101 +1,212 @@
 package kml;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
+import javafx.scene.image.*;
+import javafx.scene.paint.Color;
+
 
 /**
  * @author DarkLBP
  *         website https://krothium.com
  */
 public class TexturePreview {
-    private static Image generateComboSkin(Image i, int s, int sep) {
-        BufferedImage bImg = new BufferedImage((16 * 2 + sep) * s, 32 * s, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bImg.createGraphics();
-        int sep_index = (sep + 16) * s;
-        int h = i.getHeight(null);
-        if (h == 32) { // 32*64 format
-            //FRONT
+
+    public static Image generateFront(Image i, boolean slim) {
+        double h = i.getHeight();
+        PixelReader pr = i.getPixelReader();
+        WritableImage wi = new WritableImage(slim && h == 64 ? 14 : 16, 32);
+        PixelWriter pw = wi.getPixelWriter();
+        if (h == 64) { // New format
+            //MAIN ZONES
             //Head
-            g.drawImage(i, 4 * s, 0, 12 * s, 8 * s, 8, 8, 16, 16, null);
-            //Left Arm
-            g.drawImage(i, 0, 8 * s, 4 * s, 20 * s, 44, 20, 48, 32, null);
+            pw.setPixels(slim ? 3 : 4, 0, 8, 8, pr, 8, 8);
             //Right Arm
-            g.drawImage(i, 12 * s, 8 * s, 16 * s, 20 * s, 48, 20, 44, 32, null);
+            pw.setPixels(0, 8, slim ? 3 : 4, 12, pr, 44, 20);
+            //Left Arm
+            pw.setPixels(slim ? 11 : 12, 8, slim ? 3 : 4, 12, pr, 36, 52);
             //Body
-            g.drawImage(i, 4 * s, 8 * s, 12 * s, 20 * s, 20, 20, 28, 32, null);
-            //Left Leg
-            g.drawImage(i, 4 * s, 20 * s, 8 * s, 32 * s, 4, 20, 8, 32, null);
+            pw.setPixels(slim ? 3 : 4, 8, 8, 12, pr, 20, 20);
             //Right Leg
-            g.drawImage(i, 8 * s, 20 * s, 12 * s, 32 * s, 8, 20, 4, 32, null);
-            //Hat
-            g.drawImage(i, 4 * s, 0, 12 * s, 8 * s, 40, 8, 48, 16, null);
-            //Back
+            pw.setPixels(slim ? 3 : 4, 20, 4, 12, pr, 4, 20);
+            //Left Leg
+            pw.setPixels(slim ? 7 : 8, 20, 4, 12, pr, 20, 52);
+
+            //EXTRA ZONES
             //Head
-            g.drawImage(i, (sep_index + 4 * s), 0, (sep_index + 12 * s), 8 * s, 24, 8, 32, 16, null);
-            //Left Arm
-            g.drawImage(i, (sep_index), 8 * s, (sep_index + 4 * s), 20 * s, 44, 20, 48, 32, null);
+            renderLayer(slim ? 3 : 4, 0, 8, 8, pr, pw, 40, 8);
             //Right Arm
-            g.drawImage(i, (sep_index + 12 * s), 8 * s, (sep_index + 16 * s), 20 * s, 48, 20, 44, 32, null);
+            renderLayer(0, 8, slim ? 3 : 4, 12, pr, pw, 44, 36);
+            //Left Arm
+            renderLayer(slim ? 11 : 12, 8, slim ? 3 : 4, 12, pr, pw, 52, 52);
             //Body
-            g.drawImage(i, (sep_index + 4 * s), 8 * s, (sep_index + 12 * s), 20 * s, 32, 20, 40, 32, null);
-            //Left Leg
-            g.drawImage(i, (sep_index + 4 * s), 20 * s, (sep_index + 8 * s), 32 * s, 16, 20, 12, 32, null);
+            renderLayer(slim ? 3 : 4, 8, 8, 12, pr, pw, 20, 36);
             //Right Leg
-            g.drawImage(i, (sep_index + 8 * s), 20 * s, (sep_index + 12 * s), 32 * s, 12, 20, 16, 32, null);
-            //Hat
-            g.drawImage(i, (sep_index + 4 * s), 0, (sep_index + 12 * s), 8 * s, 56, 8, 64, 16, null);
-        } else if (h == 64) { // 64*64 format
-            //FRONT
+            renderLayer(slim ? 3 : 4, 20, 4, 12, pr, pw, 4, 36);
+            //Left Leg
+            renderLayer(slim ? 7 : 8, 20, 4, 12, pr, pw, 4, 52);
+        } else if (h == 32) {
             //Head
-            g.drawImage(i, 4 * s, 0, 12 * s, 8 * s, 8, 8, 16, 16, null);
-            //Left Arm
-            g.drawImage(i, 0, 8 * s, 4 * s, 20 * s, 44, 20, 48, 32, null);
-            //Right Arm
-            g.drawImage(i, 12 * s, 8 * s, 16 * s, 20 * s, 36, 52, 40, 64, null);
-            //Body
-            g.drawImage(i, 4 * s, 8 * s, 12 * s, 20 * s, 20, 20, 28, 32, null);
-            //Left Leg
-            g.drawImage(i, 4 * s, 20 * s, 8 * s, 32 * s, 4, 20, 8, 32, null);
-            //Right Leg
-            g.drawImage(i, 8 * s, 20 * s, 12 * s, 32 * s, 20, 52, 24, 64, null);
+            pw.setPixels(4, 0, 8, 8, pr, 8, 8);
             //Hat
-            g.drawImage(i, 4 * s, 0, 12 * s, 8 * s, 40, 8, 48, 16, null);
-            //BACK
-            //Head
-            g.drawImage(i, (sep_index + 4 * s), 0, (sep_index + 12 * s), 8 * s, 24, 8, 32, 16, null);
-            //Left Arm
-            g.drawImage(i, (sep_index), 8 * s, (sep_index + 4 * s), 20 * s, 44, 52, 48, 64, null);
+            renderLayer(4, 0, 8, 8, pr, pw, 40, 8);
             //Right Arm
-            g.drawImage(i, (sep_index + 12 * s), 8 * s, (sep_index + 16 * s), 20 * s, 52, 20, 56, 32, null);
+            pw.setPixels(0, 8, 4, 12, pr, 44, 20);
+            //Left Arm
+            renderLayerInverse(12, 8, 4, 12, pr, pw,44, 20);
             //Body
-            g.drawImage(i, (sep_index + 4 * s), 8 * s, (sep_index + 12 * s), 20 * s, 32, 20, 40, 32, null);
-            //Left Leg
-            g.drawImage(i, (sep_index + 4 * s), 20 * s, (sep_index + 8 * s), 32 * s, 28, 52, 32, 64, null);
+            pw.setPixels(4, 8, 8, 12, pr, 20, 20);
             //Right Leg
-            g.drawImage(i, (sep_index + 8 * s), 20 * s, (sep_index + 12 * s), 32 * s, 12, 20, 16, 32, null);
-            //Hat
-            g.drawImage(i, (sep_index + 4 * s), 0, (sep_index + 12 * s), 8 * s, 56, 8, 64, 16, null);
+            pw.setPixels(4, 20, 4, 12, pr, 4, 20);
+            //Left Leg
+            renderLayerInverse(8, 20, 4, 12, pr, pw, 4, 20);
         }
-        return bImg;
+        return wi;
     }
 
-    public static Image generateComboSkin(URL u, int s, int sep) throws IOException {
-        return generateComboSkin(ImageIO.read(u), s, sep);
+    public static Image generateBack(Image i, boolean slim) {
+        double h = i.getHeight();
+        PixelReader pr = i.getPixelReader();
+        WritableImage wi = new WritableImage(slim && h == 64 ? 14 : 16, 32);
+        PixelWriter pw = wi.getPixelWriter();
+        if (h == 64) { // New format
+            //MAIN ZONES
+            //Head
+            pw.setPixels(slim ? 3 : 4, 0, 8, 8, pr, 24, 8);
+            //Right Arm
+            pw.setPixels(slim ? 11 : 12, 8, slim ? 3 : 4, 12, pr, slim ? 51 : 52, 20);
+            //Left Arm
+            pw.setPixels(0, 8, slim ? 3 : 4, 12, pr, slim ? 43 : 44, 52);
+            //Body
+            pw.setPixels(slim ? 3 : 4, 8, 8, 12, pr, 32, 20);
+            //Right Leg
+            pw.setPixels(slim ? 7 : 8, 20, 4, 12, pr, 12, 20);
+            //Left Leg
+            pw.setPixels(slim ? 3 : 4, 20, 4, 12, pr, 28, 52);
+
+            //EXTRA ZONES
+            //Head
+            renderLayer(slim ? 3 : 4, 0, 8, 8, pr, pw, 56, 8);
+            //Right Arm
+            renderLayer(slim ? 11 : 12, 8, slim ? 3 : 4, 12, pr, pw, slim ? 51 : 52, 36);
+            //Left Arm
+            renderLayer(0, 8, slim ? 3 : 4, 12, pr, pw, slim ? 59 : 60, 52);
+            //Body
+            renderLayer(slim ? 3 : 4, 8, 8, 12, pr, pw, 32, 36);
+            //Right Leg
+            renderLayer(slim ? 7 : 8, 20, 4, 12, pr, pw, 12, 36);
+            //Left Leg
+            renderLayer(slim ? 3 : 4, 20, 4, 12, pr, pw, 12, 52);
+        } else if (h == 32) { //Legacy format
+            //Head
+            pw.setPixels(4, 0, 8, 8, pr, 24, 8);
+            //Hat
+            renderLayer(4, 0, 8, 8, pr, pw, 56, 8);
+            //Right Arm
+            pw.setPixels(12, 8, 4, 12, pr, 52, 20);
+            //Left Arm
+            renderLayerInverse(0, 8, 4, 12, pr, pw,52, 20);
+            //Body
+            pw.setPixels(4, 8, 8, 12, pr, 32, 20);
+            //Right Leg
+            pw.setPixels(8, 20, 4, 12, pr, 12, 20);
+            //Left Leg
+            renderLayerInverse(4, 20, 4, 12, pr, pw, 12, 20);
+        }
+        return wi;
     }
 
-    private static Image generateComboCape(Image i, int s, int sep) {
-        BufferedImage bImg = new BufferedImage((10 * 2 + sep) * s, 16 * s, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bImg.createGraphics();
-        int sep_index = (sep + 10) * s;
-        g.drawImage(i, 0, 0, 10 * s, 16 * s, 1, 1, 11, 17, null);
-        g.drawImage(i, (sep_index), 0, (sep_index + 10 * s), 16 * s, 12, 1, 22, 17, null);
-        return bImg;
+    public static Image generateLeft(Image i) {
+        double h = i.getHeight();
+        PixelReader pr = i.getPixelReader();
+        WritableImage wi = new WritableImage(8, 32);
+        PixelWriter pw = wi.getPixelWriter();
+        if (h == 64) { // New format
+            //MAIN ZONES
+            //Head
+            pw.setPixels(0, 0, 8, 8, pr, 16, 8);
+            //Left Arm
+            pw.setPixels(2, 8, 4, 12, pr, 40, 52);
+            //Left Leg
+            pw.setPixels(2, 20, 4, 12, pr, 24, 52);
+
+            //EXTRA ZONES
+            //Head
+            renderLayer(0, 0, 8, 8, pr, pw, 48, 8);
+            //Left Arm
+            renderLayer(2, 8, 4, 12, pr, pw, 56, 52);
+            //Left Leg
+            renderLayer(2, 20, 4, 12, pr, pw, 8, 52);
+        } else if (h == 32) { //Legacy format
+            //Head
+            pw.setPixels(0, 0, 8, 8, pr, 16, 8);
+            //Hat
+            renderLayer(0, 0, 8, 8, pr, pw, 48, 8);
+            //Left Arm
+            renderLayerInverse(2, 8, 4, 12, pr, pw,40, 20);
+            //Left Leg
+            renderLayerInverse(2, 20, 4, 12, pr, pw, 0, 20);
+        }
+        return wi;
     }
 
-    public static Image generateComboCape(URL u, int s, int sep) throws IOException {
-        return generateComboCape(ImageIO.read(u), s, sep);
+    public static Image generateRight(Image i) {
+        double h = i.getHeight();
+        PixelReader pr = i.getPixelReader();
+        WritableImage wi = new WritableImage(8, 32);
+        PixelWriter pw = wi.getPixelWriter();
+        if (h == 64) { // New format
+            //MAIN ZONES
+            //Head
+            pw.setPixels(0, 0, 8, 8, pr, 0, 8);
+            //Right Arm
+            pw.setPixels(2, 8, 4, 12, pr, 40, 20);
+            //Right Leg
+            pw.setPixels(2, 20, 4, 12, pr, 0, 20);
+
+            //EXTRA ZONES
+            //Head
+            renderLayer(0, 0, 8, 8, pr, pw, 32, 8);
+            //Right Arm
+            renderLayer(2, 8, 4, 12, pr, pw, 40, 36);
+            //Right Leg
+            renderLayer(2, 20, 4, 12, pr, pw, 0, 36);
+        } else if (h == 32) { //Legacy format
+            //Head
+            pw.setPixels(0, 0, 8, 8, pr, 0, 8);
+            //Hat
+            renderLayer(0, 0, 8, 8, pr, pw, 32, 8);
+            //Right Arm
+            pw.setPixels(2, 8, 4, 12, pr,40, 20);
+            //Right Leg
+            pw.setPixels(2, 20, 4, 12, pr, 0, 20);
+        }
+        return wi;
+    }
+
+    private static void renderLayer(int dstx, int dsty, int w, int h, PixelReader pr, PixelWriter pw, int srcx, int srcy) {
+        int x_origin = dstx;
+        for (int y = srcy; y < srcy + h; y++){
+            for (int x = srcx; x < srcx + w; x++) {
+                Color c = pr.getColor(x, y);
+                if (c.getOpacity() == 1) {
+                    pw.setColor(dstx, dsty, c);
+                }
+                dstx++;
+            }
+            dsty++;
+            dstx = x_origin;
+        }
+    }
+
+    private static void renderLayerInverse(int dstx, int dsty, int w, int h, PixelReader pr, PixelWriter pw, int srcx, int srcy) {
+        int x_origin = dstx;
+        for (int y = srcy; y < srcy + h; y++){
+            for (int x = srcx + w - 1; x >= srcx; x--) {
+                Color c = pr.getColor(x, y);
+                pw.setColor(dstx, dsty, c);
+                dstx++;
+            }
+            dsty++;
+            dstx = x_origin;
+        }
     }
 }

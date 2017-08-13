@@ -207,19 +207,11 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="425.0" prefWidth="950.0">
                            <children>
-                              <VBox prefHeight="425.0" prefWidth="163.0">
-                                 <children>
-                                    <ImageView fx:id="skinPreview" fitHeight="185.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true">
-                                       <VBox.margin>
-                                          <Insets bottom="5.0" />
-                                       </VBox.margin>
-                                    </ImageView>
-                                    <ImageView fx:id="capePreview" fitHeight="185.0" fitWidth="160.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
+                              <ImageView fx:id="skinPreview" fitHeight="295.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                  <HBox.margin>
-                                    <Insets right="15.0" />
+                                    <Insets right="10.0" />
                                  </HBox.margin>
-                              </VBox>
+                              </ImageView>
                               <VBox prefHeight="240.0" prefWidth="289.0">
                                  <children>
                                     <Label prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="PLAYER MODEL">
