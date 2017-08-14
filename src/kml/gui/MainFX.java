@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kml.*;
@@ -38,6 +39,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -51,10 +55,10 @@ public class MainFX {
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
-            rotateLeft;
+            rotateLeft, includeCape;
 
     @FXML
-    private Button playButton, deleteButton, changeIcon;
+    private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -99,12 +103,17 @@ public class MainFX {
     @FXML
     private ImageView profileIcon, slideshow, skinPreview;
 
+    @FXML
+    private RadioButton skinClassic, skinSlim;
+
+
     private Kernel kernel;
     private Stage stage;
     private ArrayList<Slide> slides = new ArrayList<>();
     private int currentSlide;
     private int currentPreview = 0; // 0 = front / 1 = right / 2 = back / 3 = left
     private Image[] skinPreviews = new Image[4];
+    private Image skin, cape, alex, steve;
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
@@ -189,14 +198,308 @@ public class MainFX {
         //Load icons
         loadIcons();
 
-        //For skin preview for testing purposes
-        Image skin = new Image("http://textures.minecraft.net/texture/cbc265cdba3c086778b22bcefb47fcd2f5738916a233fd1d514062fec4210");
-        Image cape = new Image("http://textures.minecraft.net/texture/efd61c3c4ac88f1a3468fbdeef45cec89e5afb87b97a1a845bfb3c64fd0b883");
-        skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, cape, false), 10);
-        skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin, cape), 10);
-        skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, cape, false), 10);
-        skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin, cape), 10);
-        skinPreview.setImage(skinPreviews[0]);
+        //Load placeholder skins
+        alex = new Image("/kml/gui/textures/alex.png");
+        steve = new Image("/kml/gui/textures/steve.png");
+
+        //Load skin preview
+        parseRemoteTextures();
+
+    }
+
+    private void parseRemoteTextures() {
+        try {
+            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + kernel.getAuthentication().getSelectedUser().getProfileID());
+            JSONObject root = new JSONObject(Utils.readURL(profileURL));
+            JSONArray properties = root.getJSONArray("properties");
+            for (int i = 0; i < properties.length(); i++) {
+                JSONObject property = properties.getJSONObject(i);
+                if (property.getString("name").equalsIgnoreCase("textures")) {
+                    JSONObject data = new JSONObject(new String(Base64.getDecoder().decode(property.getString("value")), Charset.forName("UTF-8")));
+                    JSONObject textures = data.getJSONObject("textures");
+                    skin = null;
+                    cape = null;
+                    boolean slim = false;
+                    if (textures.has("SKIN")) {
+                        JSONObject skinData = textures.getJSONObject("SKIN");
+                        if (skinData.has("metadata")) {
+                            if (skinData.getJSONObject("metadata").getString("model").equalsIgnoreCase("slim")) {
+                                slim = true;
+                            }
+                        }
+                        skin = new Image(textures.getJSONObject("SKIN").getString("url"));
+                    }
+                    if (skin == null || skin.getHeight() == 0 && !slim) {
+                        skin = steve;
+                        deleteSkin.setDisable(true);
+                    } else if (skin.getHeight() == 0) {
+                        skin = alex;
+                        deleteSkin.setDisable(true);
+                    } else {
+                        deleteSkin.setDisable(false);
+                    }
+                    if (textures.has("CAPE")) {
+                        cape = new Image(textures.getJSONObject("CAPE").getString("url"));
+                        includeCape.setDisable(false);
+                        deleteCape.setDisable(false);
+                    } else {
+                        includeCape.setDisable(true);
+                        deleteCape.setDisable(true);
+                    }
+                    if (slim) {
+                        skinSlim.setSelected(true);
+                    } else {
+                        skinClassic.setSelected(true);
+                    }
+                    updatePreview();
+                }
+            }
+        } catch (Exception ex) {
+            kernel.getConsole().printError("Failed to parse remote profile textures. (" + ex.getMessage() + ")");
+        }
+    }
+
+    @FXML
+    public void toggleCapePreview() {
+        if (includeCape.getStyleClass().contains("toggle-enabled")) {
+            includeCape.getStyleClass().remove("toggle-enabled");
+            includeCape.getStyleClass().add("toggle-disabled");
+        } else {
+            includeCape.getStyleClass().add("toggle-enabled");
+            includeCape.getStyleClass().remove("toggle-disabled");
+        }
+        updatePreview();
+    }
+
+    @FXML
+    public void toggleSkinType() {
+        if (deleteSkin.isDisabled()) {
+            if (skinClassic.isSelected()) {
+                skin = steve;
+            } else {
+                skin = alex;
+            }
+            updatePreview();
+        }
+    }
+
+    //Update cape skin preview
+    private void updatePreview() {
+        boolean slim = skinSlim.isSelected();
+        if (includeCape.getStyleClass().contains("toggle-enabled")) {
+            skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, cape, slim), 10);
+            skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin, cape), 10);
+            skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, cape, slim), 10);
+            skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin, cape), 10);
+        } else {
+            skinPreviews[0] = Utils.resampleImage(TexturePreview.generateFront(skin, null, slim), 10);
+            skinPreviews[1] = Utils.resampleImage(TexturePreview.generateRight(skin, null), 10);
+            skinPreviews[2] = Utils.resampleImage(TexturePreview.generateBack(skin, null, slim), 10);
+            skinPreviews[3] = Utils.resampleImage(TexturePreview.generateLeft(skin, null), 10);
+        }
+        skinPreview.setImage(skinPreviews[currentPreview]);
+    }
+
+    @FXML
+    private void changeSkin() {
+        FileChooser chooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Skin File", "*.png");
+        chooser.getExtensionFilters().add(filter);
+        File selected = chooser.showOpenDialog(null);
+        if (selected != null) {
+            if (selected.length() > 131072) {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                Stage s = (Stage) error.getDialogPane().getScene().getWindow();
+                s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                kernel.getConsole().printError("Skin file exceeds 128KB file size limit.");
+                error.setContentText("Skin file exceeds 128KB file size limit.");
+                error.showAndWait();
+            } else {
+                HashMap<String, String> params = new HashMap<>();
+                try {
+                    byte[] data = Files.readAllBytes(selected.toPath());
+                    params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
+                    params.put("Client-Token", kernel.getAuthentication().getClientToken());
+                    if (skinSlim.isSelected()) {
+                        params.put("Skin-Type", "alex");
+                    } else {
+                        params.put("Skin-Type", "steve");
+                    }
+                    params.put("Content-Type", "image/png");
+                    String r = Utils.sendPost(Constants.CHANGESKIN_URL, data, params);
+                    if (!r.equals("OK")) {
+                        kernel.getConsole().printError("Failed to change the skin.");
+                        kernel.getConsole().printError(r);
+                        Alert error = new Alert(Alert.AlertType.ERROR);
+                        Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                        s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        error.setContentText("Failed to change the cape.");
+                        error.showAndWait();
+                    }
+                    else {
+                        Alert correct = new Alert(Alert.AlertType.INFORMATION);
+                        Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
+                        s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        correct.setContentText("Skin changed successfully.");
+                        kernel.getConsole().printInfo("Skin changed successfully!");
+                        correct.showAndWait();
+                        parseRemoteTextures();
+                    }
+                } catch (Exception ex) {
+                    kernel.getConsole().printError("Failed to change the skin.");
+                    kernel.getConsole().printError(ex.getMessage());
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    error.setContentText("Failed to change the skin.");
+                    error.showAndWait();
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void changeCape() {
+        FileChooser chooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Cape File", "*.png");
+        chooser.getExtensionFilters().add(filter);
+        File selected = chooser.showOpenDialog(null);
+        if (selected != null) {
+            if (selected.length() > 131072) {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                Stage s = (Stage) error.getDialogPane().getScene().getWindow();
+                s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                kernel.getConsole().printError("Cape file exceeds 128KB file size limit.");
+                error.setContentText("Cape file exceeds 128KB file size limit.");
+                error.showAndWait();
+            } else {
+                HashMap<String, String> params = new HashMap<>();
+                try {
+                    byte[] data = Files.readAllBytes(selected.toPath());
+                    params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
+                    params.put("Client-Token", kernel.getAuthentication().getClientToken());
+                    params.put("Content-Type", "image/png");
+                    String r = Utils.sendPost(Constants.CHANGECAPE_URL, data, params);
+                    if (!r.equals("OK")) {
+                        kernel.getConsole().printError("Failed to change the cape.");
+                        kernel.getConsole().printError(r);
+                        Alert error = new Alert(Alert.AlertType.ERROR);
+                        Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                        s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        error.setContentText("Failed to change the cape.");
+                        error.showAndWait();
+                    }
+                    else {
+                        Alert correct = new Alert(Alert.AlertType.INFORMATION);
+                        Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
+                        s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        correct.setContentText("Cape changed successfully.");
+                        kernel.getConsole().printInfo("Cape changed successfully!");
+                        correct.showAndWait();
+                        parseRemoteTextures();
+                    }
+                } catch (Exception ex) {
+                    kernel.getConsole().printError("Failed to change the cape.");
+                    kernel.getConsole().printError(ex.getMessage());
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    error.setContentText("Failed to change the cape.");
+                    error.showAndWait();
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void deleteSkin() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        a.setContentText("Are you sure you want to delete the skin?");
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
+            params.put("Client-Token", kernel.getAuthentication().getClientToken());
+            try {
+                String r = Utils.sendPost(Constants.CHANGESKIN_URL, new byte[0], params);
+                if (!r.equals("OK")) {
+                    kernel.getConsole().printError("Failed to delete the cape.");
+                    kernel.getConsole().printError(r);
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    error.setContentText("Failed to delete the skin.");
+                    error.showAndWait();
+                }
+                else {
+                    Alert correct = new Alert(Alert.AlertType.INFORMATION);
+                    Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    correct.setContentText("Skin deleted successfully.");
+                    kernel.getConsole().printInfo("Skin deleted successfully!");
+                    correct.showAndWait();
+                    parseRemoteTextures();
+                }
+            }
+            catch (Exception ex) {
+                kernel.getConsole().printError("Failed to delete the sin.");
+                kernel.getConsole().printError(ex.getMessage());
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                error.setContentText("Failed to delete the skin.");
+                error.showAndWait();
+            }
+            params.clear();
+        }
+    }
+
+    @FXML
+    private void deleteCape() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        a.setContentText("Are you sure you want to delete the cape?");
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK){
+            HashMap<String, String> params = new HashMap<>();
+            params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
+            params.put("Client-Token", kernel.getAuthentication().getClientToken());
+            try {
+                String r = Utils.sendPost(Constants.CHANGECAPE_URL, new byte[0], params);
+                if (!r.equals("OK")) {
+                    kernel.getConsole().printError("Failed to delete the cape.");
+                    kernel.getConsole().printError(r);
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    error.setContentText("Failed to delete the cape.");
+                    error.showAndWait();
+                }
+                else {
+                    Alert correct = new Alert(Alert.AlertType.INFORMATION);
+                    Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
+                    s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    correct.setContentText("Cape deleted successfully.");
+                    kernel.getConsole().printInfo("Cape deleted successfully!");
+                    correct.showAndWait();
+                    parseRemoteTextures();
+                }
+            }
+            catch (Exception ex) {
+                kernel.getConsole().printError("Failed to delete the cape.");
+                kernel.getConsole().printError(ex.getMessage());
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
+                s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                error.setContentText("Failed to delete the cape.");
+                error.showAndWait();
+            }
+            params.clear();
+
+        }
     }
 
     private void loadSlideshow() {

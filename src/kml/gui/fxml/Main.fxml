@@ -5,7 +5,6 @@
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -232,11 +231,18 @@
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </StackPane>
-                                    <CheckBox mnemonicParsing="false" styleClass="text-5" text="Include cape in preview">
+                                    <Label fx:id="includeCape" onMouseClicked="#toggleCapePreview" text="Show cape in preview">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>
-                                    </CheckBox>
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="toggle-enabled" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
                                  </children>
                               </VBox>
                               <VBox prefHeight="240.0" prefWidth="289.0">
@@ -246,19 +252,25 @@
                                           <Insets bottom="5.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <RadioButton mnemonicParsing="false" prefHeight="33.0" prefWidth="104.0" styleClass="text-5" text="Classic">
+                                    <RadioButton fx:id="skinClassic" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="33.0" prefWidth="104.0" selected="true" styleClass="text-5" text="Classic">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="skinType" />
                                        </toggleGroup></RadioButton>
-                                    <RadioButton mnemonicParsing="false" prefHeight="35.0" prefWidth="267.0" styleClass="text-5" text="Slim" toggleGroup="$skinType" />
-                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="SKIN" />
-                                    <Button mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                    <RadioButton fx:id="skinSlim" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="35.0" prefWidth="267.0" styleClass="text-5" text="Slim" toggleGroup="$skinType" />
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="SKIN">
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin></Label>
+                                    <Button mnemonicParsing="false" onMouseClicked="#changeSkin" prefHeight="44.0" prefWidth="201.0" text="SELECT">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-alt" />
                                        </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
-                                    <Button layoutX="10.0" layoutY="151.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                    <Button fx:id="deleteSkin" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#deleteSkin" prefHeight="44.0" prefWidth="201.0" text="DELETE">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-warn" />
@@ -266,19 +278,25 @@
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                     <Label layoutX="10.0" layoutY="125.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="CAPE">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button layoutX="10.0" layoutY="151.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                    <Button fx:id="changeCape" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#changeCape" prefHeight="44.0" prefWidth="201.0" text="SELECT">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-alt" />
                                        </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
-                                    <Button layoutX="10.0" layoutY="200.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                    <Button fx:id="deleteCape" layoutX="10.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#deleteCape" prefHeight="44.0" prefWidth="201.0" text="DELETE">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-warn" />
@@ -286,6 +304,9 @@
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                  </children>
                               </VBox>
