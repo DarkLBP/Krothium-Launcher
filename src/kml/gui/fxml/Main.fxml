@@ -738,7 +738,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ListView>
-      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" />
          </padding>

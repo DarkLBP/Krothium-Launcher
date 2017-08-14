@@ -897,6 +897,9 @@ public class MainFX {
         if (switchAccountButton.isVisible()) {
             switchAccountButton.setVisible(false);
         } else {
+            Bounds b = accountButton.localToScene(accountButton.getBoundsInLocal());
+            switchAccountButton.setTranslateX(b.getMinX() - 5);
+            switchAccountButton.setTranslateY(b.getMaxY() + 5);
             switchAccountButton.setVisible(true);
         }
     }
