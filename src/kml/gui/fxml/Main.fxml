@@ -163,7 +163,7 @@
                <content>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Label fx:id="slideBack" onMouseClicked="#changeSlide" styleClass="text-unicode" text="🡀">
                                  <cursor>
@@ -679,17 +679,17 @@
         </tabs>
       </TabPane>
       <HBox id="footer" prefHeight="90.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-      <VBox fx:id="progressPane" alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox fx:id="progressPane" prefHeight="90.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="610.0">
          <children>
             <Label id="progressText" fx:id="progressText" text="Here is doing something....">
                <styleClass>
                   <String fx:value="text-4" />
                   <String fx:value="color-alt" />
                </styleClass></Label>
-            <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="30.0" prefWidth="871.0" progress="0.0" />
+            <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="29.0" prefHeight="29.0" prefWidth="900.0" progress="0.0" />
          </children>
          <padding>
-            <Insets bottom="7.0" left="25.0" right="25.0" />
+            <Insets left="25.0" right="25.0" top="10.0" />
          </padding>
       </VBox>
       <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -740,6 +740,15 @@
             <String fx:value="color-alt" />
             <String fx:value="highlight" />
          </styleClass>
+      </Label>
+      <Label fx:id="versionLabel" onMouseClicked="#openNews" text="Version" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
+         <styleClass>
+            <String fx:value="color-alt" />
+            <String fx:value="text-6" />
+         </styleClass>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Label>
    </children>
 </AnchorPane>

@@ -55,7 +55,7 @@ public class MainFX {
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
-            rotateLeft, includeCape;
+            rotateLeft, includeCape, versionLabel;
 
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape;
@@ -80,7 +80,7 @@ public class MainFX {
     private VBox progressPane, existingPanel;
 
     @FXML
-    private HBox playPane, tabMenu, profilePopup;
+    private HBox playPane, tabMenu, profilePopup, slideshowBox;
 
     @FXML
     private TextField username, profileName,javaExec, gameDir, javaArgs;
@@ -124,6 +124,9 @@ public class MainFX {
         stage = s;
 
         Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
+
+        //Update version label
+        versionLabel.setText(Constants.KERNEL_BUILD_NAME);
 
         //Load news slideshow
         loadSlideshow();
@@ -536,8 +539,8 @@ public class MainFX {
             newsTitle.setText(s.getTitle());
             newsText.setText(s.getText());
         } else {
-            slideBack.setVisible(false);
-            slideForward.setVisible(false);
+            slideshowBox.setVisible(false);
+            slideshowBox.setManaged(false);
         }
     }
 
@@ -1342,6 +1345,12 @@ public class MainFX {
     public void openHelp() {
         //Open help page
         kernel.getHostServices().showDocument("https://krothium.com/forum/12-soporte/");
+    }
+
+    @FXML
+    public void openNews() {
+        //Open news page
+        kernel.getHostServices().showDocument("https://krothium.com/forum/3-noticias/");
     }
 
     @FXML
