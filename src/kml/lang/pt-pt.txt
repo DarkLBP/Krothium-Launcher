@@ -1,5 +1,5 @@
 //en-US language file by DarkLBP (https://krothium.com)
-IDIOMA
+Ajuda
 TERMINAR SESSÃO
 Notícias
 Skins
@@ -21,8 +21,8 @@ ENTRAR
 REGISTRE-SE
 Impossível iniciar sessão!
 Erro
-Mudar Skin
-Eliminar Skin
+Mudar
+Arquivo PNG de Capa (128KB MAX)
 Mudar Capa
 Eliminar Cape
 Tipo de skin:
@@ -41,7 +41,7 @@ Skin alterada com sucesso!
 Capa alterada com sucesso!
 Falha ao alterar o skin!
 Falha ao alterar o capa!
-Arquivo PNG de Skin / Cape (128KB MAX)
+Arquivo PNG de Skin (128KB MAX)
 DEFINIÇÕES DO LAUNCHER
 Manter o launcher aberto enquanto o jovo estiver a ser executado
 Abrir o registo de saída quando o jogo começár

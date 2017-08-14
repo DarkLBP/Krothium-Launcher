@@ -40,7 +40,7 @@
                   <String fx:value="highlight" />
                </styleClass>
             </Label>
-            <HBox alignment="CENTER_RIGHT" maxWidth="200.0" prefHeight="100.0" prefWidth="200.0" StackPane.alignment="CENTER_RIGHT">
+            <HBox alignment="CENTER_RIGHT" maxWidth="282.0" prefHeight="35.0" prefWidth="282.0" StackPane.alignment="CENTER_RIGHT">
                <children>
                   <Label fx:id="accountButton" onMouseClicked="#showAccountOptions" text="Account ▼">
                      <padding>
@@ -55,7 +55,7 @@
                         <String fx:value="highlight" />
                      </styleClass>
                   </Label>
-                  <Label layoutX="862.0" layoutY="18.0" onMouseClicked="#openHelp" text="Help">
+                  <Label fx:id="helpButton" layoutX="862.0" layoutY="18.0" onMouseClicked="#openHelp" text="Help">
                      <padding>
                         <Insets right="5.0" />
                      </padding>

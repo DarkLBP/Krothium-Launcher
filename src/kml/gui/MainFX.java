@@ -56,7 +56,7 @@ public class MainFX {
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
             rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
-            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel;
+            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton;
 
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
@@ -213,6 +213,7 @@ public class MainFX {
     }
 
     public void localizeElements() {
+        helpButton.setText(Language.get(2));
         logoutButton.setText(Language.get(3));
         newsLabel.setText(Language.get(4));
         skinsLabel.setText(Language.get(5));
@@ -224,6 +225,7 @@ public class MainFX {
         loginButton.setText(Language.get(20));
         loginExisting.setText(Language.get(20));
         registerButton.setText(Language.get(21));
+        changeIcon.setText(Language.get(24));
         skinLabel.setText(Language.get(29));
         capeLabel.setText(Language.get(30));
         launcherSettings.setText(Language.get(45));
@@ -355,7 +357,7 @@ public class MainFX {
     @FXML
     private void changeSkin() {
         FileChooser chooser = new FileChooser();
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Skin File", "*.png");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(Language.get(44), "*.png");
         chooser.getExtensionFilters().add(filter);
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
@@ -385,14 +387,14 @@ public class MainFX {
                         Alert error = new Alert(Alert.AlertType.ERROR);
                         Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                         s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        error.setContentText("Failed to change the cape.");
+                        error.setContentText(Language.get(42));
                         error.showAndWait();
                     }
                     else {
                         Alert correct = new Alert(Alert.AlertType.INFORMATION);
                         Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
                         s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        correct.setContentText("Skin changed successfully.");
+                        correct.setContentText(Language.get(40));
                         kernel.getConsole().printInfo("Skin changed successfully!");
                         correct.showAndWait();
                         parseRemoteTextures();
@@ -403,7 +405,7 @@ public class MainFX {
                     Alert error = new Alert(Alert.AlertType.ERROR);
                     Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    error.setContentText("Failed to change the skin.");
+                    error.setContentText(Language.get(42));
                     error.showAndWait();
                 }
             }
@@ -413,7 +415,7 @@ public class MainFX {
     @FXML
     private void changeCape() {
         FileChooser chooser = new FileChooser();
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Cape File", "*.png");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(Language.get(25), "*.png");
         chooser.getExtensionFilters().add(filter);
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
@@ -438,15 +440,15 @@ public class MainFX {
                         Alert error = new Alert(Alert.AlertType.ERROR);
                         Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                         s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        error.setContentText("Failed to change the cape.");
+                        error.setContentText(Language.get(43));
                         error.showAndWait();
                     }
                     else {
                         Alert correct = new Alert(Alert.AlertType.INFORMATION);
                         Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
                         s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        correct.setContentText("Cape changed successfully.");
-                        kernel.getConsole().printInfo("Cape changed successfully!");
+                        correct.setContentText(Language.get(41));
+                        kernel.getConsole().printInfo("Cape changed successfully.");
                         correct.showAndWait();
                         parseRemoteTextures();
                     }
@@ -456,7 +458,7 @@ public class MainFX {
                     Alert error = new Alert(Alert.AlertType.ERROR);
                     Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    error.setContentText("Failed to change the cape.");
+                    error.setContentText(Language.get(43));
                     error.showAndWait();
                 }
             }
@@ -468,7 +470,7 @@ public class MainFX {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        a.setContentText("Are you sure you want to delete the skin?");
+        a.setContentText(Language.get(31));
         Optional<ButtonType> result = a.showAndWait();
         if (result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
@@ -477,31 +479,31 @@ public class MainFX {
             try {
                 String r = Utils.sendPost(Constants.CHANGESKIN_URL, new byte[0], params);
                 if (!r.equals("OK")) {
-                    kernel.getConsole().printError("Failed to delete the cape.");
+                    kernel.getConsole().printError("Failed to delete the skin.");
                     kernel.getConsole().printError(r);
                     Alert error = new Alert(Alert.AlertType.ERROR);
                     Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    error.setContentText("Failed to delete the skin.");
+                    error.setContentText(Language.get(33));
                     error.showAndWait();
                 }
                 else {
                     Alert correct = new Alert(Alert.AlertType.INFORMATION);
                     Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    correct.setContentText("Skin deleted successfully.");
+                    correct.setContentText(Language.get(34));
                     kernel.getConsole().printInfo("Skin deleted successfully!");
                     correct.showAndWait();
                     parseRemoteTextures();
                 }
             }
             catch (Exception ex) {
-                kernel.getConsole().printError("Failed to delete the sin.");
+                kernel.getConsole().printError("Failed to delete the skin.");
                 kernel.getConsole().printError(ex.getMessage());
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                 s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                error.setContentText("Failed to delete the skin.");
+                error.setContentText(Language.get(33));
                 error.showAndWait();
             }
             params.clear();
@@ -513,7 +515,7 @@ public class MainFX {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        a.setContentText("Are you sure you want to delete the cape?");
+        a.setContentText(Language.get(36));
         Optional<ButtonType> result = a.showAndWait();
         if (result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
@@ -527,14 +529,14 @@ public class MainFX {
                     Alert error = new Alert(Alert.AlertType.ERROR);
                     Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    error.setContentText("Failed to delete the cape.");
+                    error.setContentText(Language.get(38));
                     error.showAndWait();
                 }
                 else {
                     Alert correct = new Alert(Alert.AlertType.INFORMATION);
                     Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
                     s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    correct.setContentText("Cape deleted successfully.");
+                    correct.setContentText(Language.get(39));
                     kernel.getConsole().printInfo("Cape deleted successfully!");
                     correct.showAndWait();
                     parseRemoteTextures();
@@ -546,7 +548,7 @@ public class MainFX {
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
                 s2.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                error.setContentText("Failed to delete the cape.");
+                error.setContentText(Language.get(38));
                 error.showAndWait();
             }
             params.clear();
@@ -1039,6 +1041,7 @@ public class MainFX {
                 } else {
                     if (p.hasIcon()) {
                         profileIcon.setImage(Utils.getProfileIcon(p.getIcon()));
+                        profileIcon.setId(p.getIcon().name());
                     } else {
                         profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.FURNACE));
                     }
@@ -1199,7 +1202,7 @@ public class MainFX {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        a.setContentText("Profile save successfully!");
+        a.setContentText(Language.get(57));
         a.showAndWait();
         loadProfileList();
         switchTab(launchOptionsLabel);
@@ -1210,7 +1213,7 @@ public class MainFX {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        a.setContentText("Are you sure you want to cancel?\nAny saved changes won't be applied!");
+        a.setContentText(Language.get(55));
         Optional<ButtonType> result = a.showAndWait();
         if (result.get() == ButtonType.OK) {
             switchTab(launchOptionsLabel);
@@ -1222,7 +1225,7 @@ public class MainFX {
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        a.setContentText("Are you sure you want to delete this profile?\nThis action cannot be undone!");
+        a.setContentText(Language.get(61));
         Optional<ButtonType> result = a.showAndWait();
         if (result.get() == ButtonType.OK) {
             Label selectedElement = profileList.getSelectionModel().getSelectedItem();

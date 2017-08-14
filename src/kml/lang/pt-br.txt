@@ -1,5 +1,5 @@
 ﻿//pt-br language file by FelipeStealth (https://krothium.com/profile/18575-felipestealth/)
-IDIOMA
+Ajuda
 SAIR DA CONTA
 Notícias
 Skins
@@ -21,8 +21,8 @@ ENTRAR
 REGISTRE-SE
 Impossível entrar!
 Erro
-Mudar Skin
-Excluir Skin
+Mudar
+Arquivo PNG de Capa (128KB MAX)
 Mudar Capa
 Excluir Capa
 Tipo de skin:
@@ -41,7 +41,7 @@ Skin alterada com sucesso!
 Capa alterada com sucesso!
 Falha ao alterar o skin!
 Falha ao alterar o capa!
-Arquivo PNG de Skin / Capa (128KB MAX)
+Arquivo PNG de Skin (128KB MAX)
 CONFIGURAÇÕES DO LAUNCHER
 Manter o launcher aberto enquanto o jovo estiver sendo executado
 Abrir o registo de saída quando o jogo começar

@@ -1,5 +1,5 @@
 //en-US language file by DarkLBP (https://krothium.com)
-LANGUAGE
+Help
 LOGOUT
 News
 Skins
@@ -21,8 +21,8 @@ LOGIN
 REGISTER
 Unnable to login!
 Error
-Change Skin
-Delete Skin
+Change
+Cape PNG File (128KB MAX)
 Change Cape
 Delete Cape
 Skin type:
@@ -41,7 +41,7 @@ Skin changed successfully!
 Cape changed successfully!
 Failed to change the skin!
 Failed to change the cape!
-Skin / Cape PNG File (128KB MAX)
+Skin PNG File (128KB MAX)
 LAUNCHER SETTINGS
 Keep the launcher open when the game is running
 Open output log when the game starts

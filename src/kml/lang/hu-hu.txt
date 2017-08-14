@@ -1,5 +1,5 @@
 //hu-HU language file by TryHardDood (https://github.com/TryHardDood)
-NYELV
+Segítség
 KIJELENTKEZÉS
 Hírek
 Skinek
@@ -21,8 +21,8 @@ BEJELENTKEZÉS
 REGISZTRÁCIÓ
 Sikertelen bejelentkezés!
 Hiba
-Skin változtatása
-Skin törlése
+Változtatása
+Köpeny PNG fájl (128KB MAX)
 Köpeny változtatása
 Köpeny törlése
 Skin típusa:
@@ -41,7 +41,7 @@ Skin sikeresen megváltoztatva!
 Köpeny sikeresen megváltoztatva!
 Nem sikerült a skin megváltoztatása!
 Nem sikerült a köpeny megváltoztatása!
-Skin / Köpeny PNG fájl (128KB MAX)
+Skin PNG fájl (128KB MAX)
 INDÍTÓ BEÁLLÍTÁSOK
 Indító nyitvatartása mikor a játék fut
 Kimeneti log fájl menyitása játék indításakor
