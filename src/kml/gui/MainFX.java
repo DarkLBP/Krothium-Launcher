@@ -83,7 +83,7 @@ public class MainFX {
     private VBox progressPane, existingPanel;
 
     @FXML
-    private HBox playPane, tabMenu, profilePopup, slideshowBox;
+    private HBox playPane, tabMenu, slideshowBox;
 
     @FXML
     private TextField username, profileName,javaExec, gameDir, javaArgs;
@@ -192,7 +192,6 @@ public class MainFX {
 
         //Make transparent areas to not target mouse events
         playPane.pickOnBoundsProperty().setValue(false);
-        profilePopup.pickOnBoundsProperty().setValue(false);
 
         //Prepare Spinners
         resH.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -874,6 +873,9 @@ public class MainFX {
         if (profilePopupList.isVisible()) {
             profilePopupList.setVisible(false);
         } else {
+            Bounds b = playButton.localToScene(playButton.getBoundsInLocal());
+            profilePopupList.setTranslateX(b.getMinX() - 100);
+            profilePopupList.setTranslateY(b.getMinY() - 180);
             profilePopupList.setVisible(true);
             profilePopupList.getSelectionModel().clearSelection();
         }
