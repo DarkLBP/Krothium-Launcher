@@ -26,8 +26,8 @@ Skin törlése
 Köpeny változtatása
 Köpeny törlése
 Skin típusa:
-Skin:
-Köpeny:
+SKIN
+KÖPENY
 Biztosan törölni szeretnéd a skined?
 Skin törlés
 Nem sikerült törölni a skinedet!
@@ -48,10 +48,10 @@ Kimeneti log fájl menyitása játék indításakor
 Fejleszői kiadások engedéyezése
 Régi verziók engedélyezése
 Haladó beállítások
-Új Profil
-Mentés
+Új Profil Hozzáadása
+Mentés Profil
 Mégse
-Törlés
+Törlés Profil
 Biztos vagy benne? A változtatások nem lesznek elmentve!
 Megerősítés
 Profil sikeresen elmentve!
@@ -61,11 +61,11 @@ Legújabb fejlesztői kiadás
 Biztosan törölni szeretnéd ezt a profilt?
 Profil törlés
 Név:
-Verzió:
-Felbontás:
-Játék mappája:
-Java executable:
-JVM argumentumok:
+Verzió
+Felbontás
+Játék mappája
+Java executable
+JVM argumentumok
 Játék kimenet
 Névtelen Profil
 A fejlesztői kiatások nem biztos, hogy stabil kiadások így tönkretehetik a világodat.
@@ -84,3 +84,10 @@ Letöltés nem sikerült
 Nem sikerült elindítani a letöltési folyamatot! Nézd meg a log fájlokat bővebb információkért.
 Felhasználók:
 Account váltása
+VÁLASZT
+TÖRÖL
+MODELL JÁTÉKOS
+Klasszikus
+Vékony
+Ikon
+Mutat móteny a előnézet

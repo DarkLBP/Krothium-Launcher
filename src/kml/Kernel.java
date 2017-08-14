@@ -110,24 +110,9 @@ public final class Kernel {
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.setOnCloseRequest(e -> exitSafely());
-        stage.show();
         mainForm = loader.getController();
         mainForm.initialize(this, stage);
-        try {
-            if (authentication.hasSelectedUser()) {
-                authentication.refresh();
-            } else {
-                console.printInfo("No user is selected.");
-            }
-        } catch (AuthenticationException ex) {
-            console.printInfo("Couldn't refresh your session.");
-        } finally {
-            if (authentication.isAuthenticated()) {
-                mainForm.showLoginPrompt(false);
-            } else {
-                mainForm.showLoginPrompt(true);
-            }
-        }
+        stage.show();
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {

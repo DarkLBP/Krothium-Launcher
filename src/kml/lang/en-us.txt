@@ -26,8 +26,8 @@ Delete Skin
 Change Cape
 Delete Cape
 Skin type:
-Skin:
-Cape:
+SKIN
+CAPE
 Are you sure you want to delete your skin?
 Skin deletion
 Failed to delete the skin!
@@ -48,10 +48,10 @@ Open output log when the game starts
 Enable snapshots
 Historical versions
 Advanced settings
-New Profile
-Save
+Add New Profile
+Save Profile
 Cancel
-Delete
+Delete Profile
 Are you sure? Any change made won't be saved!
 Confirmation
 Profile saved successfully!
@@ -60,12 +60,12 @@ Latest Release
 Latest Snapshot
 Are you sure you want to delete this profile?
 Profile deletion
-Name:
-Version:
-Resolution:
-Game directory:
-Java executable:
-JVM arguments:
+Name
+Version
+Resolution
+Game directory
+Java executable
+JVM arguments
 Game Output
 Unnamed Profile
 Snapshots are development versions which are not guaranteed to be stable and may corrupt your world.
@@ -84,3 +84,10 @@ Download failed
 Failed to perform game download task! Check the logs for more information.
 Existing Users:
 Switch Account
+SELECT
+DELETE
+PLAYER MODEL
+Classic
+Slim
+Icon
+Show cape in preview

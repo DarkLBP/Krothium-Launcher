@@ -12,11 +12,11 @@ public class Language {
     public static void loadLang(String lang) {
         String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
         if (Objects.nonNull(data)) {
-            langData = data.split("\n");
+            langData = data.split("\r\n");
         } else {
             data = Utils.readURL(Language.class.getResource("/kml/lang/en-us.txt"));
             if (Objects.nonNull(langData)) {
-                langData = data.split("\n");
+                langData = data.split("\r\n");
             }
         }
     }

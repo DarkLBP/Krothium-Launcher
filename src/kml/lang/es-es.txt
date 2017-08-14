@@ -26,8 +26,8 @@ Eliminar Skin
 Cambiar Capa
 Eliminar Capa
 Tipo de skin:
-Skin:
-Capa:
+SKIN
+CAPA
 ¿Estás seguro de que quieres eliminar tu skin?
 Eliminación de skin
 ¡Fallo al eliminar la skin!
@@ -48,10 +48,10 @@ Abrir el registro de salida al iniciar el juego
 Habilitar snapshots
 Versiones históricas
 Ajustes avanzados
-Nuevo Perfil
-Guardar
+Añadir Nuevo Perfil
+Guardar Perfil
 Cancelar
-Eliminar
+Eliminar Perfil
 ¿Estás seguro? ¡Cualquier cambio hecho no se guardará!
 Confirmación
 ¡Perfil guardado exitosamente!
@@ -60,12 +60,12 @@ Guardado
 Última Snapshot
 ¿Estás seguro de que quieres eliminar este perfil?
 Eliminación del perfil
-Nombre:
-Versión:
-Resolución:
-Directorio del juego:
-Ejecutable de Java:
-Argumentos JVM:
+Nombre
+Versión
+Resolución
+Directorio del juego
+Ejecutable de Java
+Argumentos JVM
 Salida del Juego
 Perfil sin Nombre
 Las snapshots son versiones de prueba en desarrollo, no podemos garantizar la estabilidad y podrían dañar tu mundo.
@@ -84,3 +84,10 @@ Descarga fallida
 ¡Fallo al ejecutar la tarea de descarga del juego! Comprueba los registros para más información.
 Usuarios Existentes:
 Cambiar Cuenta
+SELECCIONAR
+ELIMINAR
+MODELO DEL JUGADOR
+Clásico
+Delgado
+Icono
+Mostrar capa en la previsualización

@@ -55,10 +55,13 @@ public class MainFX {
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
-            rotateLeft, includeCape, versionLabel;
+            rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
+            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel;
 
     @FXML
-    private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape;
+    private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
+            loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
+            selectCape;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -123,6 +126,9 @@ public class MainFX {
         kernel = k;
         stage = s;
 
+        //Refresh session
+        refreshSession();
+
         Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
 
         //Update version label
@@ -174,7 +180,6 @@ public class MainFX {
         languagesList.setItems(languageListItems);
 
         //Set news tab as default selected
-        contentPane.getSelectionModel().select(newsTab);
         newsLabel.getStyleClass().add("selectedItem");
 
         //Update settings labels
@@ -184,9 +189,6 @@ public class MainFX {
         toggleLabel(enableSnapshots, st.getEnableSnapshots());
         toggleLabel(historicalVersions, st.getEnableHistorical());
         toggleLabel(advancedSettings, st.getEnableAdvanced());
-
-        //Load profile list
-        loadProfileList();
 
         //Make transparent areas to not target mouse events
         playPane.pickOnBoundsProperty().setValue(false);
@@ -205,9 +207,56 @@ public class MainFX {
         alex = new Image("/kml/gui/textures/alex.png");
         steve = new Image("/kml/gui/textures/steve.png");
 
-        //Load skin preview
-        parseRemoteTextures();
+        //Localize elements
+        localizeElements();
 
+    }
+
+    public void localizeElements() {
+        logoutButton.setText(Language.get(3));
+        newsLabel.setText(Language.get(4));
+        skinsLabel.setText(Language.get(5));
+        settingsLabel.setText(Language.get(6));
+        launchOptionsLabel.setText(Language.get(7));
+        playButton.setText(Language.get(12));
+        usernameLabel.setText(Language.get(18));
+        passwordLabel.setText(Language.get(19));
+        loginButton.setText(Language.get(20));
+        loginExisting.setText(Language.get(20));
+        registerButton.setText(Language.get(21));
+        skinLabel.setText(Language.get(29));
+        capeLabel.setText(Language.get(30));
+        launcherSettings.setText(Language.get(45));
+        keepLauncherOpen.setText(Language.get(46));
+        outputLog.setText(Language.get(47));
+        enableSnapshots.setText(Language.get(48));
+        historicalVersions.setText(Language.get(49));
+        advancedSettings.setText(Language.get(50));
+        saveButton.setText(Language.get(52));
+        cancelButton.setText(Language.get(53));
+        deleteButton.setText(Language.get(54));
+        nameLabel.setText(Language.get(63));
+        profileVersionLabel.setText(Language.get(64));
+        resolutionLabel.setText(Language.get(65));
+        gameDirLabel.setText(Language.get(66));
+        javaExecLabel.setText(Language.get(67));
+        javaArgsLabel.setText(Language.get(68));
+        existingLabel.setText(Language.get(85));
+        switchAccountButton.setText(Language.get(86));
+        selectSkin.setText(Language.get(87));
+        selectCape.setText(Language.get(87));
+        deleteSkin.setText(Language.get(88));
+        deleteCape.setText(Language.get(88));
+        modelLabel.setText(Language.get(89));
+        skinClassic.setText(Language.get(90));
+        skinSlim.setText(Language.get(91));
+        iconLabel.setText(Language.get(92));
+        includeCape.setText(Language.get(93));
+        //Load profile list
+        loadProfileList();
+
+        //Load version list
+        loadVersionList();
     }
 
     private void parseRemoteTextures() {
@@ -611,7 +660,7 @@ public class MainFX {
         ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
 
         //Add "Add New Profile" item
-        Label l = new Label("Add New Profile", new ImageView(new Image("/kml/gui/textures/add.png")));
+        Label l = new Label(Language.get(51), new ImageView(new Image("/kml/gui/textures/add.png")));
         profileListItems.add(l);
 
         Label l2;
@@ -625,8 +674,8 @@ public class MainFX {
                 ImageView iv2 = new ImageView(img);
                 iv2.setFitWidth(64);
                 iv2.setFitHeight(64);
-                l = new Label("Latest Release", iv);
-                l2 = new Label("Latest Release", iv2);
+                l = new Label(Language.get(59), iv);
+                l2 = new Label(Language.get(59), iv2);
             } else if (p.getType() == ProfileType.SNAPSHOT) {
                 Image img = Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE);
                 ImageView iv = new ImageView(img);
@@ -635,10 +684,10 @@ public class MainFX {
                 ImageView iv2 = new ImageView(img);
                 iv2.setFitWidth(64);
                 iv2.setFitHeight(64);
-                l = new Label("Latest Snapshot", iv);
-                l2 = new Label("Latest Snapshot", iv2);
+                l = new Label(Language.get(60), iv);
+                l2 = new Label(Language.get(60), iv2);
             } else {
-                String name = p.hasName() ? p.getName() : "Unnamed Profile";
+                String name = p.hasName() ? p.getName() : Language.get(70);
                 ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
                 Image img = Utils.getProfileIcon(pi);
                 ImageView iv = new ImageView(img);
@@ -742,6 +791,9 @@ public class MainFX {
                         gl.launch();
                         progressPane.setVisible(false);
                         playPane.setVisible(true);
+                        Platform.runLater(() -> {
+                            playButton.setText(Language.get(14));
+                        });
                         playButton.setDisable(true);
                         //Keep track of the game process
                         Timeline task2 = new Timeline();
@@ -763,6 +815,7 @@ public class MainFX {
                                     kernel.exitSafely();
                                 }
                                 playButton.setDisable(false);
+                                playButton.setText(Language.get(12));
                             }
                         }));
                         task2.getKeyFrames().add(frame2);
@@ -901,6 +954,7 @@ public class MainFX {
         languageButton.setText(selected.getText());
         kernel.getSettings().setLocale(selected.getId());
         languagesList.setVisible(false);
+        localizeElements();
     }
 
     @FXML
@@ -972,10 +1026,10 @@ public class MainFX {
                     profileName.setEditable(false);
                     deleteButton.setVisible(false);
                     if (p.getType() == ProfileType.RELEASE) {
-                        profileName.setText("Latest Release");
+                        profileName.setText(Language.get(59));
                         profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.GRASS));
                     } else {
-                        profileName.setText("Latest Snapshot");
+                        profileName.setText(Language.get(60));
                         profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
                     }
                     versionBlock.setVisible(false);
@@ -1074,9 +1128,9 @@ public class MainFX {
 
     private void loadVersionList() {
         ObservableList<String> vers = FXCollections.observableArrayList();
-        vers.add("Latest Release");
+        vers.add(Language.get(59));
         if (kernel.getSettings().getEnableSnapshots()) {
-            vers.add("Latest Snapshot");
+            vers.add(Language.get(60));
         }
         for (VersionMeta v : kernel.getVersions().getVersions().values()) {
             if (v.getType() == VersionType.RELEASE) {
@@ -1088,6 +1142,7 @@ public class MainFX {
             }
         }
         versionList.setItems(vers);
+        versionList.getSelectionModel().select(0);
     }
 
     @FXML
@@ -1276,12 +1331,32 @@ public class MainFX {
                 username.setText("");
                 password.setText("");
                 showLoginPrompt(false);
+                parseRemoteTextures();
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("Failed to authenticate");
                 a.setContentText(ex.getMessage());
                 a.show();
                 password.setText("");
+            }
+        }
+    }
+
+    public void refreshSession() {
+        try {
+            if (kernel.getAuthentication().hasSelectedUser()) {
+                kernel.getAuthentication().refresh();
+            } else {
+                kernel.getConsole().printInfo("No user is selected.");
+            }
+        } catch (AuthenticationException ex) {
+            kernel.getConsole().printInfo("Couldn't refresh your session.");
+        } finally {
+            if (kernel.getAuthentication().isAuthenticated()) {
+                showLoginPrompt(false);
+                parseRemoteTextures();
+            } else {
+                showLoginPrompt(true);
             }
         }
     }
@@ -1301,6 +1376,7 @@ public class MainFX {
                 auth.setSelectedUser(selected.getUserID());
                 auth.refresh();
                 showLoginPrompt(false);
+                parseRemoteTextures();
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
                 a.setHeaderText("We could not log you back with that user!");
