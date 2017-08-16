@@ -40,7 +40,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -126,6 +125,20 @@ public class MainFX {
         kernel = k;
         stage = s;
 
+        //Check for updates
+        Task t = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                Platform.runLater(() -> {
+                    checkForUpdates();
+                });
+                return null;
+            }
+        };
+        Thread updateThread = new Thread(t);
+        updateThread.start();
+
+
         //Refresh session
         refreshSession();
 
@@ -208,7 +221,26 @@ public class MainFX {
 
         //Localize elements
         localizeElements();
+    }
 
+    private void checkForUpdates() {
+        String update = kernel.checkForUpdates();
+        if (update != null) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            Stage s = (Stage) confirm.getDialogPane().getScene().getWindow();
+            s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+            confirm.setHeaderText(Language.get(11));
+            confirm.setContentText(Language.get(10));
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                try {
+                    kernel.getHostServices().showDocument(Utils.fromBase64(update));
+                }
+                catch (Exception e) {
+                    kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+                }
+            }
+        }
     }
 
     public void localizeElements() {
@@ -255,7 +287,6 @@ public class MainFX {
         includeCape.setText(Language.get(93));
         //Load profile list
         loadProfileList();
-
         //Load version list
         loadVersionList();
     }
@@ -268,7 +299,7 @@ public class MainFX {
             for (int i = 0; i < properties.length(); i++) {
                 JSONObject property = properties.getJSONObject(i);
                 if (property.getString("name").equalsIgnoreCase("textures")) {
-                    JSONObject data = new JSONObject(new String(Base64.getDecoder().decode(property.getString("value")), Charset.forName("UTF-8")));
+                    JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
                     JSONObject textures = data.getJSONObject("textures");
                     skin = null;
                     cape = null;
@@ -809,7 +840,7 @@ public class MainFX {
                                     Alert a = new Alert(Alert.AlertType.ERROR);
                                     Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                                     s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                                    a.setContentText("The game has crashed!");
+                                    a.setContentText(Language.get(15));
                                     a.showAndWait();
                                 }
                                 if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()) {
@@ -831,14 +862,14 @@ public class MainFX {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        a.setContentText("Failed to perform game download task: " + e);
+                        a.setContentText(Language.get(84));
                         a.showAndWait();
                         console.printError("Failed to perform game download task: " + e);
                     } catch (GameLauncherException e) {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                        a.setContentText("Failed to perform game launch task: " + e);
+                        a.setContentText(Language.get(82));
                         a.showAndWait();
                         console.printError("Failed to perform game launch task: " + e);
                     }
@@ -1295,6 +1326,7 @@ public class MainFX {
                 users.add(us.get(key));
             }
             existingUsers.setItems(users);
+            existingUsers.getSelectionModel().select(0);
         } else {
             existingPanel.setVisible(false);
             existingPanel.setManaged(false);
@@ -1372,26 +1404,20 @@ public class MainFX {
     //Refresh existing user
     public void refresh() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
-        Alert a = new Alert(Alert.AlertType.WARNING);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-        if (selected == null) {
-            a.setContentText("Select a user first!");
+        Authentication auth = kernel.getAuthentication();
+        try {
+            auth.setSelectedUser(selected.getUserID());
+            auth.refresh();
+            showLoginPrompt(false);
+            parseRemoteTextures();
+        } catch (AuthenticationException ex) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            Stage s = (Stage) a.getDialogPane().getScene().getWindow();
+            s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+            a.setHeaderText("We could not log you back with that user!");
+            a.setContentText(ex.getMessage());
             a.show();
-        } else {
-            Authentication auth = kernel.getAuthentication();
-            try {
-                auth.setSelectedUser(selected.getUserID());
-                auth.refresh();
-                showLoginPrompt(false);
-                parseRemoteTextures();
-            } catch (AuthenticationException ex) {
-                a.setAlertType(Alert.AlertType.ERROR);
-                a.setHeaderText("We could not log you back with that user!");
-                a.setContentText(ex.getMessage());
-                a.show();
-                updateExistingUsers();
-            }
+            updateExistingUsers();
         }
     }
 

@@ -10,7 +10,6 @@ import kml.enums.ProfileIcon;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,10 +18,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 import javafx.scene.image.Image;
 
 /**
@@ -320,9 +317,9 @@ public class Utils {
         }
         String conversion;
         try {
-            conversion = new String(DatatypeConverter.parseBase64Binary(st), StandardCharsets.UTF_8);
+            conversion = new String(Base64.getDecoder().decode(st), StandardCharsets.UTF_8);
         } catch (Exception ex) {
-            conversion = null;
+            conversion = "";
         }
         return conversion;
     }

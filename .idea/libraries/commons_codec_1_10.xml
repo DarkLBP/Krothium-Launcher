@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="realms-1.10.13">
+  <library name="commons-codec-1.10">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../realms-1.10.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../commons-codec-1.10.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

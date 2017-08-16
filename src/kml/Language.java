@@ -23,10 +23,10 @@ public class Language {
 
     public static String get(int line) {
         if (langData.length == 0) {
-            return null;
+            return "";
         } else if (line <= langData.length) {
             return langData[line - 1];
         }
-        return null;
+        return "";
     }
 }
