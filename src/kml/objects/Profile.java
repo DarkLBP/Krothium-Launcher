@@ -28,10 +28,11 @@ public class Profile implements Comparable<Profile>{
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
         if (type == ProfileType.RELEASE) {
-            this.lastUsed = new Timestamp(1);
+            this.lastUsed = new Timestamp(0);
         } else if (type == ProfileType.SNAPSHOT) {
             this.lastUsed = new Timestamp(0);
         } else {
+            this.created = new Timestamp(System.currentTimeMillis());
             this.lastUsed = new Timestamp(0);
         }
     }
@@ -237,7 +238,19 @@ public class Profile implements Comparable<Profile>{
 
     @Override
     public int compareTo(Profile o) {
-        int timeCompare = o.lastUsed.compareTo(this.lastUsed);
+        if (this.equals(o)) {
+            return 0;
+        }
+        if (this.type == ProfileType.RELEASE && o.type == ProfileType.SNAPSHOT) {
+            return -1;
+        } else if (this.type == ProfileType.SNAPSHOT && o.type == ProfileType.RELEASE) {
+            return 1;
+        } else if (o.type != ProfileType.CUSTOM && this.type == ProfileType.CUSTOM) {
+            return 1;
+        } else if (this.type != ProfileType.CUSTOM && o.type == ProfileType.CUSTOM) {
+            return -1;
+        }
+        int timeCompare = this.created.compareTo(o.created);
         if (timeCompare == 0) {
             return this.id.compareTo(o.id);
         }
