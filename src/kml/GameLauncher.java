@@ -89,13 +89,10 @@ public class GameLauncher {
         }
         if (!p.hasJavaArgs()) {
             if (Utils.getOSArch().equals(OSArch.OLD)) {
-                gameArgs.add("-Xmx512M");
-            } else {
                 gameArgs.add("-Xmx1G");
+            } else {
+                gameArgs.add("-Xmx2G");
             }
-            gameArgs.add("-XX:+UseConcMarkSweepGC");
-            gameArgs.add("-XX:+CMSIncrementalMode");
-            gameArgs.add("-XX:-UseAdaptiveSizePolicy");
             gameArgs.add("-Xmn128M");
         } else {
             String javaArgs = p.getJavaArgs();

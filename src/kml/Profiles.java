@@ -226,28 +226,35 @@ public class Profiles {
         return this.snapshotProfile;
     }
 
-    public void updateSessionProfiles() {
+    public boolean updateSessionProfiles() {
+        boolean change = false;
         if (kernel.getAuthentication().isAuthenticated()) {
             if (!hasReleaseProfile()) {
                 Profile release = new Profile(ProfileType.RELEASE);
                 addProfile(release);
                 setSelectedProfile(release.getID());
+                change = true;
             }
             if (!hasSnapshotProfile() && kernel.getSettings().getEnableSnapshots()) {
                 Profile snapshot = new Profile(ProfileType.SNAPSHOT);
                 addProfile(snapshot);
+                change = true;
             }
             if (hasSnapshotProfile() && !kernel.getSettings().getEnableSnapshots()) {
                 deleteProfile(getSnapshotProfile());
+                change = true;
             }
         } else {
             if (hasReleaseProfile()) {
                 deleteProfile(getReleaseProfile());
+                change = true;
             }
             if (hasSnapshotProfile()) {
                 deleteProfile(getSnapshotProfile());
+                change = true;
             }
         }
+        return change;
     }
 
     public JSONObject toJSON() {

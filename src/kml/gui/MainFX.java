@@ -1029,13 +1029,10 @@ public class MainFX {
                 toggleEditorOption(javaArgsLabel, false);
                 StringBuilder jA = new StringBuilder();
                 if (Utils.getOSArch().equals(OSArch.OLD)) {
-                    jA.append("-Xmx512M");
-                } else {
                     jA.append("-Xmx1G");
+                } else {
+                    jA.append("-Xmx2G");
                 }
-                jA.append(" -XX:+UseConcMarkSweepGC");
-                jA.append(" -XX:+CMSIncrementalMode");
-                jA.append(" -XX:-UseAdaptiveSizePolicy");
                 jA.append(" -Xmn128M");
                 javaArgs.setText(jA.toString());
             } else {
@@ -1328,7 +1325,7 @@ public class MainFX {
 
     }
 
-    public void showLoginPrompt(boolean showLoginPrompt) {
+    private void showLoginPrompt(boolean showLoginPrompt) {
         if (showLoginPrompt) {
             contentPane.getSelectionModel().select(loginTab);
             tabMenu.setVisible(false);
@@ -1364,7 +1361,9 @@ public class MainFX {
                 auth.authenticate(username.getText(), password.getText());
                 username.setText("");
                 password.setText("");
-                kernel.getProfiles().updateSessionProfiles();
+                if (kernel.getProfiles().updateSessionProfiles()) {
+                    loadProfileList();
+                }
                 showLoginPrompt(false);
                 parseRemoteTextures();
             } catch (AuthenticationException ex) {
@@ -1381,6 +1380,9 @@ public class MainFX {
         try {
             if (kernel.getAuthentication().hasSelectedUser()) {
                 kernel.getAuthentication().refresh();
+                if (kernel.getProfiles().updateSessionProfiles()) {
+                    loadProfileList();
+                }
             } else {
                 kernel.getConsole().printInfo("No user is selected.");
             }
@@ -1403,6 +1405,9 @@ public class MainFX {
         try {
             auth.setSelectedUser(selected.getUserID());
             auth.refresh();
+            if (kernel.getProfiles().updateSessionProfiles()) {
+                loadProfileList();
+            }
             showLoginPrompt(false);
             parseRemoteTextures();
         } catch (AuthenticationException ex) {
