@@ -1364,6 +1364,7 @@ public class MainFX {
                 auth.authenticate(username.getText(), password.getText());
                 username.setText("");
                 password.setText("");
+                kernel.getProfiles().updateSessionProfiles();
                 showLoginPrompt(false);
                 parseRemoteTextures();
             } catch (AuthenticationException ex) {

@@ -118,8 +118,6 @@ public class Authentication {
             this.selectedAccount = userID;
             this.selectedProfile = profileID;
             this.authenticated = true;
-            kernel.getProfiles().updateSessionProfiles();
-            kernel.getGUI().showLoginPrompt(false);
         } else {
             this.authenticated = false;
             if (r.has("errorMessage")) {
@@ -169,7 +167,6 @@ public class Authentication {
                 u.updateAccessToken(r.getString("accessToken"));
             }
             this.authenticated = true;
-            kernel.getProfiles().updateSessionProfiles();
         } else {
             this.authenticated = false;
             this.removeUser(this.selectedAccount);
@@ -183,51 +180,6 @@ public class Authentication {
         }
     }
 
-    public void validate() throws AuthenticationException {
-        if (Objects.isNull(this.selectedAccount)) {
-            throw new AuthenticationException("No user is selected.");
-        }
-        JSONObject request = new JSONObject();
-        JSONObject agent = new JSONObject();
-        User u = this.getUser(this.selectedAccount);
-        agent.put("name", "Minecraft");
-        agent.put("version", 1);
-        request.put("accessToken", Objects.nonNull(u) ? u.getAccessToken() : null);
-        request.put("clientToken", this.clientToken);
-        Map<String, String> postParams = new HashMap<>();
-        postParams.put("Content-Type", "application/json; charset=utf-8");
-        postParams.put("Content-Length", String.valueOf(request.toString().length()));
-        String response;
-        try {
-            response = Utils.sendPost(Constants.VALIDATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
-        } catch (IOException ex) {
-            if (Constants.USE_LOCAL) {
-                this.authenticated = true;
-                console.printInfo("Authenticated locally.");
-                return;
-            } else {
-                throw new AuthenticationException("Failed to send request to authentication server: " + ex);
-            }
-        }
-        if (response.isEmpty()) {
-            this.authenticated = true;
-            kernel.getProfiles().updateSessionProfiles();
-        } else {
-            this.authenticated = false;
-            JSONObject o = new JSONObject(response);
-            if (o.has("error")) {
-                this.removeUser(this.selectedAccount);
-                if (o.has("errorMessage")) {
-                    throw new AuthenticationException(o.getString("errorMessage"));
-                } else if (o.has("cause")) {
-                    throw new AuthenticationException(o.getString("error") + " caused by " + o.getString("cause"));
-                } else {
-                    throw new AuthenticationException(o.getString("error"));
-                }
-            }
-        }
-    }
-
     public boolean isAuthenticated() {
         return this.authenticated;
     }
@@ -236,9 +188,6 @@ public class Authentication {
         return this.clientToken;
     }
 
-    public void setClientToken(String clientToken) {
-        this.clientToken = clientToken;
-    }
 
     public void fetchUsers() {
         console.printInfo("Loading user data.");

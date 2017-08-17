@@ -15,7 +15,6 @@ public class Constants {
     public static final String KERNEL_BUILD_NAME = "2.3.2";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
-    public static final URL VALIDATE_URL = Utils.stringToURL("https://mc.krothium.com/validate");
     public static final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
     public static final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
     public static final URL GETLATEST_URL = Utils.stringToURL("https://mc.krothium.com/latestversion");
