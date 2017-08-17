@@ -136,11 +136,11 @@ public class MainFX {
         Thread updateThread = new Thread(t);
         updateThread.start();
 
+        //Load icon map
+        Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
 
         //Refresh session
         refreshSession();
-
-        Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
 
         //Update version label
         versionLabel.setText(Constants.KERNEL_BUILD_NAME);
@@ -344,11 +344,9 @@ public class MainFX {
     @FXML
     public void toggleCapePreview() {
         if (includeCape.getStyleClass().contains("toggle-enabled")) {
-            includeCape.getStyleClass().remove("toggle-enabled");
-            includeCape.getStyleClass().add("toggle-disabled");
+            toggleLabel(includeCape, false);
         } else {
-            includeCape.getStyleClass().add("toggle-enabled");
-            includeCape.getStyleClass().remove("toggle-disabled");
+            toggleLabel(includeCape, true);
         }
         updatePreview();
     }
@@ -684,7 +682,6 @@ public class MainFX {
     @FXML
     private void loadProfileList() {
         Profiles ps = kernel.getProfiles();
-        Set<String> profiles = ps.getProfiles().keySet();
         //For some reason using the same label for both lists one list appear the items blank
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
         ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
@@ -694,8 +691,7 @@ public class MainFX {
         profileListItems.add(l);
 
         Label l2;
-        for (String id : profiles) {
-            Profile p = ps.getProfile(id);
+        for (Profile p : ps.getProfiles()) {
             if (p.getType() == ProfileType.RELEASE) {
                 Image img = Utils.getProfileIcon(ProfileIcon.GRASS);
                 ImageView iv = new ImageView(img);
@@ -755,7 +751,7 @@ public class MainFX {
                 l.setText(l2.getText() + "\n" + verID);
                 l2.setText(l2.getText() + "\n" + verID);
             }
-            if (kernel.getProfiles().getSelectedProfile().equals(p.getID())) {
+            if (kernel.getProfiles().getSelectedProfile().equals(p)) {
                 l.getStyleClass().add("selectedProfile");
                 l2.getStyleClass().add("selectedProfile");
             }
@@ -787,7 +783,7 @@ public class MainFX {
             return;
         }
         //Select profile and refresh list
-        kernel.getProfiles().setSelectedProfile(profilePopupList.getSelectionModel().getSelectedItem().getId());
+        kernel.getProfiles().setSelectedProfile(kernel.getProfiles().getProfile(profilePopupList.getSelectionModel().getSelectedItem().getId()));
         loadProfileList();
         profilePopupList.setVisible(false);
     }
@@ -1256,7 +1252,7 @@ public class MainFX {
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Label selectedElement = profileList.getSelectionModel().getSelectedItem();
-            if (kernel.getProfiles().deleteProfile(selectedElement.getId())) {
+            if (kernel.getProfiles().deleteProfile(kernel.getProfiles().getProfile(selectedElement.getId()))) {
                 a.setAlertType(Alert.AlertType.INFORMATION);
                 a.setContentText("Profile deleted successfully.");
                 a.showAndWait();
@@ -1274,13 +1270,7 @@ public class MainFX {
     private void toggleEditorOption(Object src, boolean newState) {
         if (src instanceof Label) {
             Label l = (Label)src;
-            if (newState) {
-                l.getStyleClass().remove("toggle-disabled");
-                l.getStyleClass().add("toggle-enabled");
-            } else {
-                l.getStyleClass().remove("toggle-enabled");
-                l.getStyleClass().add("toggle-disabled");
-            }
+            toggleLabel(l, newState);
         }
         if (src == resolutionLabel) {
             resW.setDisable(!newState);

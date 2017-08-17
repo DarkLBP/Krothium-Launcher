@@ -15,7 +15,7 @@ import java.util.UUID;
  *         website https://krothium.com
  */
 
-public class Profile {
+public class Profile implements Comparable<Profile>{
     private final String id;
     private String name, javaArgs, lastVersionId;
     private ProfileType type;
@@ -188,10 +188,6 @@ public class Profile {
         return this.created;
     }
 
-    public void setCreated(Timestamp created) {
-        this.created = created;
-    }
-
     public boolean hasResolution() {
         return Objects.nonNull(this.resolution) && (this.resolution.size() == 2);
     }
@@ -234,7 +230,26 @@ public class Profile {
         this.icon = icon;
     }
 
+    @Override
     public String toString() {
-        return "[Name: " + getName() + " | UUID: " + getID() + "]";
+        return this.id;
+    }
+
+    @Override
+    public int compareTo(Profile o) {
+        int timeCompare = o.lastUsed.compareTo(this.lastUsed);
+        if (timeCompare == 0) {
+            return this.id.compareTo(o.id);
+        }
+        return timeCompare;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Profile) {
+            Profile p = (Profile)obj;
+            return this.id.equalsIgnoreCase(p.id);
+        }
+        return false;
     }
 }

@@ -15,31 +15,31 @@ import java.util.*;
  */
 
 public class Profiles {
-    private final Map<String, Profile> profiles = new HashMap<>();
+    private final TreeSet<Profile> profiles = new TreeSet<>();
     private final Console console;
     private final Kernel kernel;
-    private String selected, releaseProfile, snapshotProfile;
+    private Profile selected, releaseProfile, snapshotProfile;
 
     public Profiles(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
     }
 
-    public Map<String, Profile> getProfiles() {
+    public TreeSet<Profile> getProfiles() {
         return this.profiles;
     }
 
     public boolean addProfile(Profile p) {
-        if (!this.existsProfile(p)) {
+        if (!profiles.contains(p)) {
             if (p.getType() != ProfileType.CUSTOM) {
                 if (!hasReleaseProfile() && p.getType() == ProfileType.RELEASE) {
-                    releaseProfile = p.getID();
-                    profiles.put(p.getID(), p);
+                    releaseProfile = p;
+                    profiles.add(p);
                     console.printInfo("Profile " + p + " added");
                     return true;
                 } else if (!hasSnapshotProfile() && p.getType() == ProfileType.SNAPSHOT) {
-                    snapshotProfile = p.getID();
-                    profiles.put(p.getID(), p);
+                    snapshotProfile = p;
+                    profiles.add(p);
                     console.printInfo("Profile " + p + " added");
                     return true;
                 } else {
@@ -47,7 +47,7 @@ public class Profiles {
                     return false;
                 }
             } else {
-                profiles.put(p.getID(), p);
+                profiles.add(p);
                 console.printInfo("Profile " + p + " added");
                 return true;
             }
@@ -56,15 +56,14 @@ public class Profiles {
         return false;
     }
 
-    public boolean deleteProfile(String p) {
-        if (this.existsProfile(p)) {
+    public boolean deleteProfile(Profile p) {
+        if (profiles.contains(p)) {
             if (Objects.nonNull(this.selected) && this.selected.equals(p)) {
                 console.printInfo("Profile " + p + " is selected and is going to be removed.");
                 profiles.remove(p);
                 console.printInfo("Profile " + p + " deleted.");
-                if (this.profileCount() > 0) {
-                    Set keySet = this.profiles.keySet();
-                    this.setSelectedProfile(keySet.toArray()[0].toString());
+                if (profiles.size() > 0) {
+                    this.setSelectedProfile(profiles.first());
                 } else {
                     this.selected = null;
                 }
@@ -82,14 +81,6 @@ public class Profiles {
         }
         console.printError("Profile " + p + " doesn't exist.");
         return false;
-    }
-
-    private boolean existsProfile(Profile p) {
-        return this.profiles.containsKey(p.getName());
-    }
-
-    public boolean existsProfile(String p) {
-        return this.profiles.containsKey(p);
     }
 
     public void fetchProfiles() {
@@ -157,7 +148,7 @@ public class Profiles {
                     if (Objects.isNull(first)) {
                         first = key;
                     }
-                    if (!this.existsProfile(p)) {
+                    if (!profiles.contains(p)) {
                         this.addProfile(p);
                         if (p.getLastUsed().compareTo(latestUsedMillis) > 0) {
                             latestUsedMillis = p.getLastUsed();
@@ -165,12 +156,12 @@ public class Profiles {
                         }
                     }
                 }
-                if (this.profileCount() > 0) {
+                if (profiles.size() > 0) {
                     if (Objects.nonNull(latestUsedID)) {
-                        this.setSelectedProfile(latestUsedID);
+                        this.setSelectedProfile(getProfile(latestUsedID));
                     } else {
                         console.printInfo("No profile is selected! Using first loaded (" + first + ")");
-                        this.setSelectedProfile(first);
+                        this.setSelectedProfile(getProfile(first));
                     }
                 }
             } catch (Exception ex) {
@@ -182,26 +173,24 @@ public class Profiles {
         }
     }
 
-    public Profile getProfile(String p) {
-        if (profiles.containsKey(p)) {
-            return profiles.get(p);
+    //Get profile by ID
+    public Profile getProfile(String id) {
+        for (Profile p : profiles) {
+            if (p.getID().equalsIgnoreCase(id)) {
+                return p;
+            }
         }
         return null;
     }
 
-    private int profileCount() {
-        return profiles.size();
-    }
-
-    public String getSelectedProfile() {
+    public Profile getSelectedProfile() {
         return this.selected;
     }
 
-    public boolean setSelectedProfile(String p) {
-        if (this.existsProfile(p)) {
-            Profile profile = this.getProfile(p);
-            if (profile.getType() == ProfileType.CUSTOM) {
-                this.getProfile(p).setLastUsed(new Timestamp(System.currentTimeMillis()));
+    public boolean setSelectedProfile(Profile p) {
+        if (profiles.contains(p)) {
+            if (p.getType() == ProfileType.CUSTOM) {
+                p.setLastUsed(new Timestamp(System.currentTimeMillis()));
             }
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
@@ -218,11 +207,11 @@ public class Profiles {
         return Objects.nonNull(this.snapshotProfile);
     }
 
-    private String getReleaseProfile() {
+    private Profile getReleaseProfile() {
         return this.releaseProfile;
     }
 
-    private String getSnapshotProfile() {
+    private Profile getSnapshotProfile() {
         return this.snapshotProfile;
     }
 
@@ -232,7 +221,7 @@ public class Profiles {
             if (!hasReleaseProfile()) {
                 Profile release = new Profile(ProfileType.RELEASE);
                 addProfile(release);
-                setSelectedProfile(release.getID());
+                setSelectedProfile(release);
                 change = true;
             }
             if (!hasSnapshotProfile() && kernel.getSettings().getEnableSnapshots()) {
@@ -260,10 +249,7 @@ public class Profiles {
     public JSONObject toJSON() {
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();
-        Set s = this.profiles.keySet();
-        for (Object value : s) {
-            String key = value.toString();
-            Profile p = this.profiles.get(key);
+        for (Profile p : this.profiles) {
             JSONObject prof = new JSONObject();
             if (p.hasName()) {
                 prof.put("name", p.getName());
