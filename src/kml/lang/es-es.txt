@@ -1,5 +1,5 @@
 //es-ES language file by DarkLBP (https://krothium.com)
-IDIOMA
+Ayuda
 CERRAR SESIÓN
 Noticias
 Skins
@@ -21,13 +21,13 @@ ENTRAR
 REGISTRARSE
 ¡Imposible iniciar sesión!
 Error
-Cambiar Skin
-Eliminar Skin
+Cambiar
+Archivo PNG de Capa (128KB MAX)
 Cambiar Capa
 Eliminar Capa
 Tipo de skin:
-Skin:
-Capa:
+SKIN
+CAPA
 ¿Estás seguro de que quieres eliminar tu skin?
 Eliminación de skin
 ¡Fallo al eliminar la skin!
@@ -41,17 +41,17 @@ Skin cambiada exitosamente!
 Capa cambiada exitosamente!
 ¡Fallo al cambiar la skin!
 ¡Fallo al cambiar la capa!
-Archivo PNG de Skin / Capa (128KB MAX)
+Archivo PNG de Skin (128KB MAX)
 AJUSTES DEL LANZADOR
 Mantener el lanzador abierto mientras se ejecuta el juego
 Abrir el registro de salida al iniciar el juego
 Habilitar snapshots
 Versiones históricas
 Ajustes avanzados
-Nuevo Perfil
-Guardar
+Añadir Nuevo Perfil
+Guardar Perfil
 Cancelar
-Eliminar
+Eliminar Perfil
 ¿Estás seguro? ¡Cualquier cambio hecho no se guardará!
 Confirmación
 ¡Perfil guardado exitosamente!
@@ -60,12 +60,12 @@ Guardado
 Última Snapshot
 ¿Estás seguro de que quieres eliminar este perfil?
 Eliminación del perfil
-Nombre:
-Versión:
-Resolución:
-Directorio del juego:
-Ejecutable de Java:
-Argumentos JVM:
+Nombre
+Versión
+Resolución
+Directorio del juego
+Ejecutable de Java
+Argumentos JVM
 Salida del Juego
 Perfil sin Nombre
 Las snapshots son versiones de prueba en desarrollo, no podemos garantizar la estabilidad y podrían dañar tu mundo.
@@ -84,3 +84,10 @@ Descarga fallida
 ¡Fallo al ejecutar la tarea de descarga del juego! Comprueba los registros para más información.
 Usuarios Existentes:
 Cambiar Cuenta
+SELECCIONAR
+ELIMINAR
+MODELO DEL JUGADOR
+Clásico
+Delgado
+Icono
+Mostrar capa en la previsualización

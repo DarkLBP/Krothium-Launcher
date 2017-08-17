@@ -1,5 +1,5 @@
 //ca language file by DarkLBP (https://krothium.com)
-IDIOMA
+Ajuda
 TANCAR SESSIÓ
 Novetats
 Skins
@@ -21,13 +21,13 @@ ENTRAR
 REGISTRAR-SE
 Imposible inciar sessió!
 Error
-Canviar Skin
-Eliminar Skin
+Canviar
+Arxiu PNG de Capa (128KB MAX)
 Canviar Capa
 Eliminar Capa
 Tipus de skin:
-Skin:
-Capa:
+SKIN
+CAPA
 Estás segur de que vols eliminar la teua skin?
 Eliminació de skin
 Fallada al eliminar la skin!
@@ -41,17 +41,17 @@ Skin canviada amb èxit!
 Capa canviada amb èxit!
 Fallada al eliminar la skin!
 Fallada al eliminar la capa!
-Arxiu PNG de Skin / Capa (128KB MAX)
+Arxiu PNG de Skin (128KB MAX)
 AJUSTOS DEL LLANÇADOR
 Mantindre el llançador obert mentres s'executa el joc
 Obrir el registre de eixida al iniciar el joc
 Habilitar snapshots
 Versions històriques
 Ajustos avançats
-Nou Perfil
-Guardar
+Afegir Nou Perfil
+Guardar Perfil
 Cancel-lar
-Eliminar
+Eliminar Perfil
 Estás segur? Qualsevol canvi fet no es guardat!
 Confirmació
 Perfil guardat amb èxit!
@@ -60,12 +60,12 @@ Guardat
 Última Snapshot
 Estás segur de que vols eliminar este perfil?
 Eliminació de perfil
-Nom:
-Versió:
-Resolució:
-Directori del joc:
-Executable de Java:
-Arguments JVM:
+Nom
+Versió
+Resolució
+Directori del joc
+Executable de Java
+Arguments JVM
 Eixida del Joc
 Perfil sense Nom
 Les snapshots son versions de prova en desenvolupament, no podem garantir la estabilitat i podrien danyar el teu món.
@@ -84,3 +84,10 @@ Descàrrega fallida
 !Fallada al executar la tasca de descàrrega del joc! Comprova els registres per a mes informació.
 Usuaris Existents:
 Canviar Compte
+SELECCIONAR
+ELIMINAR
+MODEL DEL JUGADOR
+Clàssic
+Prim
+Icona
+Mostrar capa a la vista prèvia

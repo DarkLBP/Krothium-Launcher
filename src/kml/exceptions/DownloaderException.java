@@ -5,7 +5,8 @@ package kml.exceptions;
  *         website https://krothium.com
  */
 
-public class DownloaderException extends Exception
-{
-	public DownloaderException(final String message) {super(message);}
+public class DownloaderException extends Exception {
+    public DownloaderException(final String message) {
+        super(message);
+    }
 }

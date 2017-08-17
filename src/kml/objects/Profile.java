@@ -1,11 +1,8 @@
 package kml.objects;
 
-import kml.Language;
-import kml.Utils;
 import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 
-import javax.swing.*;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -18,244 +15,254 @@ import java.util.UUID;
  *         website https://krothium.com
  */
 
-public class Profile
-{
-	private final String id;
-	private       String name, javaArgs, lastVersionId;
-	private ProfileType type;
-	private File        gameDir, javaDir;
-	private Timestamp created, lastUsed;
-	private Map<String, Integer> resolution = new HashMap<>();
-	private JLabel    listItem;
-	private JMenuItem menuItem;
+public class Profile implements Comparable<Profile>{
+    private final String id;
+    private String name, javaArgs, lastVersionId;
+    private ProfileType type;
+    private File gameDir, javaDir;
+    private Timestamp created, lastUsed;
+    private Map<String, Integer> resolution = new HashMap<>();
+    private ProfileIcon icon;
 
-	public Profile(ProfileType type)
-	{
-		this.id = UUID.randomUUID().toString().replaceAll("-", "");
-		this.type = type;
-		this.lastUsed = new Timestamp(0);
-	}
+    public Profile(ProfileType type) {
+        this.id = UUID.randomUUID().toString().replaceAll("-", "");
+        this.type = type;
+        if (type == ProfileType.RELEASE) {
+            this.lastUsed = new Timestamp(0);
+        } else if (type == ProfileType.SNAPSHOT) {
+            this.lastUsed = new Timestamp(0);
+        } else {
+            this.created = new Timestamp(System.currentTimeMillis());
+            this.lastUsed = new Timestamp(0);
+        }
+    }
 
-	public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId, String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution)
-	{
-		if (Objects.isNull(id)) {
-			this.id = UUID.randomUUID().toString().replaceAll("-", "");
-		}
-		else {
-			this.id = id;
-		}
-		this.name = name;
+    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId,
+                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon) {
+        if (Objects.isNull(id)) {
+            this.id = UUID.randomUUID().toString().replaceAll("-", "");
+        } else {
+            this.id = id;
+        }
+        this.name = name;
 
-		this.lastVersionId = lastVersionId;
-		if (Objects.nonNull(gameDir)) {
-			this.gameDir = new File(gameDir);
-			if (!this.gameDir.exists() || !this.gameDir.isDirectory()) {
-				this.gameDir = null;
-			}
-		}
-		if (Objects.nonNull(javaDir)) {
-			this.javaDir = new File(javaDir);
-			if (!this.javaDir.exists() || !this.javaDir.isFile()) {
-				this.javaDir = null;
-			}
-		}
-		this.javaArgs = javaArgs;
-		this.resolution = resolution;
-		if (Objects.isNull(lastUsed)) {
-			this.lastUsed = new Timestamp(0);
-		}
-		else {
-			try {
-				this.lastUsed = Timestamp.valueOf(lastUsed.replace("T", " ").replace("Z", ""));
-			}
-			catch (Exception ex) {
-				this.lastUsed = new Timestamp(0);
-			}
-		}
-		if (Objects.isNull(type)) {
-			this.type = ProfileType.CUSTOM;
-		}
-		else {
-			type = type.toLowerCase();
-			switch (type) {
-				case "latest-release":
-					this.type = ProfileType.RELEASE;
-					break;
-				case "latest-snapshot":
-					this.type = ProfileType.SNAPSHOT;
-					break;
-				default:
-					this.type = ProfileType.CUSTOM;
-			}
-		}
+        this.lastVersionId = lastVersionId;
+        if (Objects.nonNull(gameDir)) {
+            this.gameDir = new File(gameDir);
+            if (!this.gameDir.exists() || !this.gameDir.isDirectory()) {
+                this.gameDir = null;
+            }
+        }
+        if (Objects.nonNull(javaDir)) {
+            this.javaDir = new File(javaDir);
+            if (!this.javaDir.exists() || !this.javaDir.isFile()) {
+                this.javaDir = null;
+            }
+        }
+        this.javaArgs = javaArgs;
+        this.resolution = resolution;
+        if (Objects.isNull(lastUsed)) {
+            this.lastUsed = new Timestamp(0);
+        } else {
+            try {
+                this.lastUsed = Timestamp.valueOf(lastUsed.replace("T", " ").replace("Z", ""));
+            } catch (Exception ex) {
+                this.lastUsed = new Timestamp(0);
+            }
+        }
+        if (Objects.isNull(type)) {
+            this.type = ProfileType.CUSTOM;
+        } else {
+            type = type.toLowerCase();
+            switch (type) {
+                case "latest-release":
+                    this.type = ProfileType.RELEASE;
+                    break;
+                case "latest-snapshot":
+                    this.type = ProfileType.SNAPSHOT;
+                    break;
+                default:
+                    this.type = ProfileType.CUSTOM;
+            }
+        }
 
-		if (this.type == ProfileType.CUSTOM) {
-			if (Objects.isNull(created)) {
-				this.created = new Timestamp(0);
-			}
-			else {
-				try {
-					this.created = Timestamp.valueOf(created.replace("T", " ").replace("Z", ""));
-				}
-				catch (Exception ex) {
-					this.created = new Timestamp(0);
-				}
-			}
-		}
-	}
+        if (this.type == ProfileType.CUSTOM) {
+            if (Objects.isNull(created)) {
+                this.created = new Timestamp(0);
+            } else {
+                try {
+                    this.created = Timestamp.valueOf(created.replace("T", " ").replace("Z", ""));
+                } catch (Exception ex) {
+                    this.created = new Timestamp(0);
+                }
+            }
+        }
 
-	public String getID() {return this.id;}
+        this.icon = icon;
+    }
 
-	public String getName() {return this.name;}
+    public String getID() {
+        return this.id;
+    }
 
-	public void setName(String newName) {this.name = newName;}
+    public String getName() {
+        return this.name;
+    }
 
-	public boolean hasName() {return Objects.nonNull(this.name);}
+    public void setName(String newName) {
+        this.name = newName;
+    }
 
-	public ProfileType getType() {return this.type;}
+    public boolean hasName() {
+        return Objects.nonNull(this.name) && !this.name.isEmpty();
+    }
 
-	public void setType(ProfileType type) {this.type = type;}
+    public ProfileType getType() {
+        return this.type;
+    }
 
-	public String getVersionID() {return this.lastVersionId;}
+    public void setType(ProfileType type) {
+        this.type = type;
+    }
 
-	public void setVersionID(String ver) {this.lastVersionId = ver;}
+    public String getVersionID() {
+        return this.lastVersionId;
+    }
 
-	public boolean hasVersion() {return Objects.nonNull(this.lastVersionId);}
+    public void setVersionID(String ver) {
+        this.lastVersionId = ver;
+    }
 
-	public File getGameDir() {return this.gameDir;}
+    public boolean hasVersion() {
+        return Objects.nonNull(this.lastVersionId);
+    }
 
-	public void setGameDir(File dir) {this.gameDir = dir;}
+    public File getGameDir() {
+        return this.gameDir;
+    }
 
-	public boolean hasGameDir() {return Objects.nonNull(this.gameDir);}
+    public void setGameDir(File dir) {
+        this.gameDir = dir;
+    }
 
-	public File getJavaDir() {return this.javaDir;}
+    public boolean hasGameDir() {
+        return Objects.nonNull(this.gameDir);
+    }
 
-	public void setJavaDir(File dir) {this.javaDir = dir;}
+    public File getJavaDir() {
+        return this.javaDir;
+    }
 
-	public boolean hasJavaDir() {return Objects.nonNull(this.javaDir);}
+    public void setJavaDir(File dir) {
+        this.javaDir = dir;
+    }
 
-	public String getJavaArgs() {return this.javaArgs;}
+    public boolean hasJavaDir() {
+        return Objects.nonNull(this.javaDir);
+    }
 
-	public void setJavaArgs(String args) {this.javaArgs = args;}
+    public String getJavaArgs() {
+        return this.javaArgs;
+    }
 
-	public boolean hasJavaArgs() {return Objects.nonNull(this.javaArgs);}
+    public void setJavaArgs(String args) {
+        this.javaArgs = args;
+    }
 
-	public Timestamp getLastUsed() {return lastUsed;}
+    public boolean hasJavaArgs() {
+        return Objects.nonNull(this.javaArgs);
+    }
 
-	public void setLastUsed(Timestamp used) {this.lastUsed = used;}
+    public Timestamp getLastUsed() {
+        return lastUsed;
+    }
 
-	public boolean hasCreated() {return Objects.nonNull(this.created);}
+    public void setLastUsed(Timestamp used) {
+        this.lastUsed = used;
+    }
 
-	public Timestamp getCreated() {return this.created;}
+    public boolean hasCreated() {
+        return Objects.nonNull(this.created);
+    }
 
-	public void setCreated(Timestamp created) {this.created = created;}
+    public Timestamp getCreated() {
+        return this.created;
+    }
 
-	public boolean hasResolution()
-	{
-		return Objects.nonNull(this.resolution) && (this.resolution.size() == 2);
-	}
+    public boolean hasResolution() {
+        return Objects.nonNull(this.resolution) && (this.resolution.size() == 2);
+    }
 
-	public int getResolutionHeight()
-	{
-		if (resolution.containsKey("height")) {
-			return resolution.get("height");
-		}
-		return 0;
-	}
+    public int getResolutionHeight() {
+        if (resolution.containsKey("height")) {
+            return resolution.get("height");
+        }
+        return 0;
+    }
 
-	public int getResolutionWidth()
-	{
-		if (resolution.containsKey("width")) {
-			return resolution.get("width");
-		}
-		return 0;
-	}
+    public int getResolutionWidth() {
+        if (resolution.containsKey("width")) {
+            return resolution.get("width");
+        }
+        return 0;
+    }
 
-	public void setResolution(int w, int h)
-	{
-		if (w < 0 || h < 0) {
-			resolution = null;
-		}
-		else {
-			if (Objects.isNull(resolution)) {
-				resolution = new HashMap<>();
-			}
-			resolution.put("width", w);
-			resolution.put("height", h);
-		}
-	}
+    public void setResolution(int w, int h) {
+        if (w < 0 || h < 0) {
+            resolution = null;
+        } else {
+            if (Objects.isNull(resolution)) {
+                resolution = new HashMap<>();
+            }
+            resolution.put("width", w);
+            resolution.put("height", h);
+        }
+    }
 
-	public JMenuItem getMenuItem()
-	{
-		if (Objects.isNull(this.menuItem)) {
-			if (this.hasName()) {
-				this.menuItem = new JMenuItem(this.getName());
-			}
-			else if (this.getType() == ProfileType.RELEASE) {
-				this.menuItem = new JMenuItem(Language.get(59));
-			}
-			else if (this.getType() == ProfileType.SNAPSHOT) {
-				this.menuItem = new JMenuItem(Language.get(60));
-			}
-			else {
-				this.menuItem = new JMenuItem(Language.get(70));
-			}
-			this.menuItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-		}
-		else {
-			if (this.hasName() && !this.getName().equals(this.listItem.getText())) {
-				this.menuItem.setText(this.getName());
-			}
-			else if (this.getType() == ProfileType.RELEASE && !listItem.getText().equals(Language.get(59))) {
-				this.menuItem.setText(Language.get(59));
-			}
-			else if (this.getType() == ProfileType.SNAPSHOT && !listItem.getText().equals(Language.get(60))) {
-				this.menuItem.setText(Language.get(60));
-			}
-			else if (!this.hasName() && this.getType() == ProfileType.CUSTOM) {
-				this.menuItem.setText(Language.get(70));
-			}
-		}
-		this.menuItem.setIconTextGap(25);
-		return this.menuItem;
-	}
+    public boolean hasIcon() {
+        return this.icon != null;
+    }
 
-	public JLabel getListItem()
-	{
-		if (Objects.isNull(this.listItem)) {
-			if (this.hasName()) {
-				this.listItem = new JLabel(this.getName());
-			}
-			else if (this.getType() == ProfileType.RELEASE) {
-				this.listItem = new JLabel(Language.get(59));
-			}
-			else if (this.getType() == ProfileType.SNAPSHOT) {
-				this.listItem = new JLabel(Language.get(60));
-			}
-			else {
-				this.listItem = new JLabel(Language.get(70));
-			}
-			this.listItem.setIcon(Utils.getProfileIcon(ProfileIcon.GRASS));
-		}
-		else {
-			if (this.hasName() && !this.getName().equals(this.listItem.getText())) {
-				this.listItem.setText(this.getName());
-			}
-			else if (this.getType() == ProfileType.RELEASE && !listItem.getText().equals(Language.get(59))) {
-				this.listItem.setText(Language.get(59));
-			}
-			else if (this.getType() == ProfileType.SNAPSHOT && !listItem.getText().equals(Language.get(60))) {
-				this.listItem.setText(Language.get(60));
-			}
-			else if (!this.hasName() && this.getType() == ProfileType.CUSTOM) {
-				this.listItem.setText(Language.get(70));
-			}
-		}
-		return this.listItem;
-	}
+    public ProfileIcon getIcon() {
+        return this.icon;
+    }
 
-	public String toString()
-	{
-		return "[Name: " + getName() + " | UUID: " + getID() + "]";
-	}
+    public void setIcon(ProfileIcon icon) {
+        this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        return this.id;
+    }
+
+    @Override
+    public int compareTo(Profile o) {
+        if (this.equals(o)) {
+            return 0;
+        }
+        if (this.type == ProfileType.RELEASE && o.type == ProfileType.SNAPSHOT) {
+            return -1;
+        } else if (this.type == ProfileType.SNAPSHOT && o.type == ProfileType.RELEASE) {
+            return 1;
+        } else if (o.type != ProfileType.CUSTOM && this.type == ProfileType.CUSTOM) {
+            return 1;
+        } else if (this.type != ProfileType.CUSTOM && o.type == ProfileType.CUSTOM) {
+            return -1;
+        }
+        int timeCompare = this.created.compareTo(o.created);
+        if (timeCompare == 0) {
+            return this.id.compareTo(o.id);
+        }
+        return timeCompare;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Profile) {
+            Profile p = (Profile)obj;
+            return this.id.equalsIgnoreCase(p.id);
+        }
+        return false;
+    }
 }

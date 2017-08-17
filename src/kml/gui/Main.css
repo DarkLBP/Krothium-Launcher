@@ -1,0 +1,135 @@
+@font-face {
+    font-family: "VCR OSD Mono";
+    src: url("fonts/VCR_OSD_MONO_1.001.ttf");
+}
+.tab {
+    -fx-padding: 0;
+}
+.tab-pane .tab-header-area {
+    visibility: hidden;
+    -fx-padding: 0;
+}
+* {
+    -fx-font-family: "VCR OSD Mono";
+}
+#topBar {
+    -fx-background-color: black;
+}
+
+#header, #footer {
+    -fx-background-image: url("textures/dark_background.png");
+}
+
+#switchAccountButton{
+    -fx-background-color: black;
+    -fx-graphic: url("textures/logout.png");
+}
+
+#content {
+    -fx-background-image: url("textures/light_background.png");
+}
+
+.color-alt {
+    -fx-text-fill: white;
+}
+
+.color-warn {
+    -fx-text-fill: red;
+}
+
+.highlight:hover {
+    -fx-text-fill: yellow;
+}
+
+#languageButton {
+    -fx-graphic: url("textures/language.png");
+}
+
+.selectedItem {
+    -fx-background-image: url("textures/menu_label.png");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}
+#playButton, #profilesButton {
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+    -fx-background-insets: 0;
+}
+#playButton {
+    -fx-background-image: url("textures/playbutton.png");
+}
+#playButton:hover {
+    -fx-background-image: url("textures/playbutton_hover.png");
+}
+#playButton:pressed {
+    -fx-background-image: url("textures/playbutton_press.png");
+}
+#profilesButton {
+    -fx-background-image: url("textures/profile.png");
+}
+#profilesButton:hover {
+    -fx-background-image: url("textures/profile_hover.png");
+}
+#profilesButton:pressed {
+    -fx-background-image: url("textures/profile_press.png");
+}
+
+.list-cell:hover {
+    -fx-background-color: -fx-selection-bar;
+}
+
+.button {
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: 100% 100%;
+    -fx-background-insets: 0;
+    -fx-background-image: url("textures/button_normal.png");
+}
+.button:hover {
+    -fx-background-image: url("textures/button_hover.png");
+}
+.text-field {
+    -fx-text-box-border: black;
+}
+
+.text-unicode {
+    -fx-font-size: 80px;
+}
+
+.text-1 {
+    -fx-font-size: 27.5px;
+}
+
+.text-2 {
+    -fx-font-size: 25px;
+}
+
+.text-3 {
+    -fx-font-size: 22.5px;
+}
+
+.text-4 {
+    -fx-font-size: 20px;
+}
+
+.text-5 {
+    -fx-font-size: 17.5px;
+}
+
+.text-6 {
+    -fx-font-size: 15px;
+}
+
+.toggle-disabled {
+    -fx-graphic: url("textures/checkbox_disabled.png");
+}
+
+.toggle-enabled {
+    -fx-graphic: url("textures/checkbox_enabled.png");
+}
+
+.selectedProfile {
+    -fx-text-fill: darkblue;
+}

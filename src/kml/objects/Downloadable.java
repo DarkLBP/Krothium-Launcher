@@ -9,32 +9,54 @@ import java.util.Objects;
  *         website https://krothium.com
  */
 
-public class Downloadable
-{
-	private final long   size;
-	private final URL    url;
-	private final File   relPath;
-	private final String hash;
+public class Downloadable {
+    private final long size;
+    private final URL url;
+    private final File relPath;
+    private final String hash;
+    private final String fakePath;
 
-	public Downloadable(URL url, long size, File path, String hash)
-	{
-		this.url = url;
-		this.size = size;
-		this.relPath = path;
-		this.hash = hash;
-	}
+    public Downloadable(URL url, long size, File path, String hash, String fakePath) {
+        this.url = url;
+        this.size = size;
+        this.relPath = path;
+        this.hash = hash;
+        this.fakePath = fakePath;
+    }
 
-	public long getSize() {return this.size;}
+    public long getSize() {
+        return this.size;
+    }
 
-	public boolean hasURL() {return Objects.nonNull(this.url);}
+    public boolean hasURL() {
+        return Objects.nonNull(this.url);
+    }
 
-	public URL getURL() {return this.url;}
+    public URL getURL() {
+        return this.url;
+    }
 
-	public File getRelativePath() {return this.relPath;}
+    public File getRelativePath() {
+        return this.relPath;
+    }
 
-	public String getHash() {return this.hash;}
+    public String getHash() {
+        return this.hash;
+    }
 
-	public boolean hasHash() {return Objects.nonNull(this.hash);}
+    public boolean hasHash() {
+        return Objects.nonNull(this.hash);
+    }
 
-	public boolean hasSize() {return (this.size != -1);}
+    public boolean hasSize() {
+        return (this.size != -1);
+    }
+
+    public boolean hasFakePath() {
+        return this.fakePath != null;
+    }
+
+    public String getFakePath() {
+        return this.fakePath;
+    }
 }

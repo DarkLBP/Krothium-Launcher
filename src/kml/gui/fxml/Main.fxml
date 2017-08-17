@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+   <children>
+      <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
+         <children>
+            <Label id="languageButton" fx:id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
+               <StackPane.margin>
+                  <Insets left="5.0" />
+               </StackPane.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <styleClass>
+                  <String fx:value="color-alt" />
+                  <String fx:value="text-5" />
+                  <String fx:value="highlight" />
+               </styleClass>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" maxWidth="282.0" prefHeight="35.0" prefWidth="282.0" StackPane.alignment="CENTER_RIGHT">
+               <children>
+                  <Label fx:id="accountButton" onMouseClicked="#showAccountOptions" text="Account ▼">
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="text-5" />
+                        <String fx:value="color-alt" />
+                        <String fx:value="highlight" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="helpButton" layoutX="862.0" layoutY="18.0" onMouseClicked="#openHelp" text="Help">
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="text-5" />
+                        <String fx:value="color-alt" />
+                        <String fx:value="highlight" />
+                     </styleClass>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
+      <VBox id="header" alignment="CENTER" layoutY="35.0" prefHeight="150.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+         <children>
+            <ImageView fitHeight="100.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../textures/logo.png" />
+               </image>
+            </ImageView>
+            <HBox fx:id="tabMenu" alignment="CENTER" maxHeight="25.0" prefHeight="25.0">
+               <children>
+                  <Label fx:id="newsLabel" onMouseClicked="#switchTab" text="News">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="skinsLabel" onMouseClicked="#switchTab" text="Skins">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="settingsLabel" onMouseClicked="#switchTab" text="Settings">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
+                  </Label>
+                  <Label fx:id="launchOptionsLabel" onMouseClicked="#switchTab" text="Launch Options">
+                     <padding>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-4" />
+                     </styleClass>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+      </VBox>
+      <TabPane id="content" fx:id="contentPane" layoutY="185.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="426.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="0.0" tabMaxWidth="0.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="185.0" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab fx:id="newsTab" text="News Tab">
+               <content>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="slideBack" onMouseClicked="#changeSlide" styleClass="text-unicode" text="🡀">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Label>
+                              <ImageView fx:id="slideshow" fitHeight="253.0" fitWidth="615.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ImageView>
+                              <Label fx:id="slideForward" onMouseClicked="#changeSlide" styleClass="text-unicode" text="🡂">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="newsTitle" onMouseClicked="#performSlideAction" styleClass="text-3" text="No news available">
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label fx:id="newsText" onMouseClicked="#performSlideAction" styleClass="text-5" text="No news available to show">
+                           <VBox.margin>
+                              <Insets bottom="25.0" />
+                           </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab fx:id="skinsTab" text="Skins Tab">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="425.0" prefWidth="950.0">
+                           <children>
+                              <VBox alignment="TOP_CENTER" prefHeight="416.0" prefWidth="245.0">
+                                 <HBox.margin>
+                                    <Insets right="25.0" />
+                                 </HBox.margin>
+                                 <children>
+                                    <StackPane minWidth="300.0" prefHeight="306.0" prefWidth="244.0">
+                                       <children>
+                                          <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡀" StackPane.alignment="CENTER_LEFT">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                          <ImageView fx:id="skinPreview" fitHeight="306.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                                          <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡂" StackPane.alignment="CENTER_RIGHT">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </StackPane>
+                                    <Label fx:id="includeCape" alignment="TOP_LEFT" onMouseClicked="#toggleCapePreview" prefHeight="55.0" prefWidth="300.0" text="Show cape in preview" wrapText="true">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="toggle-enabled" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="240.0" prefWidth="289.0">
+                                 <children>
+                                    <Label fx:id="modelLabel" prefHeight="26.0" prefWidth="287.0" styleClass="text-3" text="PLAYER MODEL">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <RadioButton fx:id="skinClassic" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="33.0" prefWidth="264.0" selected="true" styleClass="text-5" text="Classic">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="skinType" />
+                                       </toggleGroup></RadioButton>
+                                    <RadioButton fx:id="skinSlim" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="35.0" prefWidth="267.0" styleClass="text-5" text="Slim" toggleGroup="$skinType" />
+                                    <Label fx:id="skinLabel" layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="SKIN">
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin></Label>
+                                    <Button fx:id="selectSkin" mnemonicParsing="false" onMouseClicked="#changeSkin" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                    <Button fx:id="deleteSkin" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#deleteSkin" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-warn" />
+                                       </styleClass>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                    <Label fx:id="capeLabel" layoutX="10.0" layoutY="125.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="CAPE">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="selectCape" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#changeCape" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                    <Button fx:id="deleteCape" layoutX="10.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#deleteCape" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-warn" />
+                                       </styleClass>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </Button>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content></Tab>
+            <Tab fx:id="settingsTab" text="Settings Tab">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <padding>
+                        <Insets top="15.0" />
+                     </padding>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="launcherSettings" alignment="CENTER" styleClass="text-2" text="LAUNCHER SETTINGS" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="keepLauncherOpen" alignment="CENTER" onMouseClicked="#updateSettings" text="Keep the launcher open when the game is running">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="outputLog" alignment="CENTER" onMouseClicked="#updateSettings" text="Open output log when the game starts">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets left="180.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content></Tab>
+            <Tab fx:id="launchOptionsTab" text="Launch Options Tab">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox alignment="TOP_CENTER" prefHeight="49.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="enableSnapshots" onMouseClicked="#updateSettings" text="Enable Snapshots">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <graphic>
+                                    <Label text="Label">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="toggle-disabled" />
+                                       </styleClass>
+                                    </Label>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Label fx:id="historicalVersions" onMouseClicked="#updateSettings" text="Historical versions">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <graphic>
+                                    <Label text="Label">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="toggle-disabled" />
+                                       </styleClass>
+                                    </Label>
+                                 </graphic>
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Label fx:id="advancedSettings" onMouseClicked="#updateSettings" text="Advanced settings">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <graphic>
+                                    <Label text="Label">
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="toggle-disabled" />
+                                       </styleClass>
+                                    </Label>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </HBox>
+                        <ListView fx:id="profileList" maxHeight="600.0" maxWidth="700.0" onMouseClicked="#loadEditor" prefHeight="294.0" prefWidth="700.0" styleClass="text-5" VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets bottom="50.0" top="10.0" />
+                           </VBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ListView>
+                     </children>
+                  </VBox>
+               </content></Tab>
+          <Tab fx:id="loginTab" text="Login Tab">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <VBox fx:id="existingPanel" alignment="TOP_CENTER" prefHeight="69.0" prefWidth="950.0">
+                           <children>
+                              <Label id="loginLabel" fx:id="existingLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Existing Users:" />
+                              <HBox alignment="CENTER_LEFT" maxWidth="650.0" prefHeight="45.0" prefWidth="650.0">
+                                 <children>
+                                    <ComboBox fx:id="existingUsers" prefHeight="39.0" prefWidth="288.0" styleClass="text-5" />
+                                    <Button fx:id="loginExisting" maxHeight="49.0" mnemonicParsing="false" onMouseClicked="#refresh" prefHeight="49.0" prefWidth="146.0" text="LOGIN">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                    </Button>
+                                    <Button fx:id="logoutButton" mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="209.0" text="LOGOUT">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                       <styleClass>
+                                          <String fx:value="text-5" />
+                                          <String fx:value="color-alt" />
+                                       </styleClass>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </VBox>
+                        <Label id="loginLabel" fx:id="usernameLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Krothium Username or Email:">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" top="15.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="653.0" styleClass="text-5">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </TextField>
+                        <Label fx:id="passwordLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Password:">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" top="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="656.0" styleClass="text-5">
+                           <VBox.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </VBox.margin>
+                        </PasswordField>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="656.0">
+                           <children>
+                              <Button fx:id="loginButton" mnemonicParsing="false" onMouseClicked="#authenticate" prefHeight="50.0" prefWidth="197.0" text="LOGIN">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <HBox.margin>
+                                    <Insets right="5.0" />
+                                 </HBox.margin>
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="color-alt" />
+                                 </styleClass>
+                              </Button>
+                              <Button fx:id="registerButton" mnemonicParsing="false" onMouseClicked="#register" prefHeight="50.0" prefWidth="197.0" text="REGISTER">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="color-alt" />
+                                 </styleClass>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets top="15.0" />
+                     </padding>
+                  </VBox>
+               </content></Tab>
+            <Tab fx:id="profileEditorTab" text="Profile Editor Tab">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <StackPane maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="nameLabel" styleClass="text-5" text="Name" StackPane.alignment="CENTER_LEFT" />
+                              <TextField fx:id="profileName" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" promptText="My configuration" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="iconBlock" layoutX="110.0" layoutY="15.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="iconLabel" styleClass="text-5" text="Icon" StackPane.alignment="CENTER_LEFT" />
+                              <ImageView fx:id="profileIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="410.0" />
+                                 </StackPane.margin>
+                              </ImageView>
+                              <Button fx:id="changeIcon" mnemonicParsing="false" onMouseClicked="#showIcons" prefHeight="34.0" prefWidth="112.0" text="Change" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="290.0" />
+                                 </StackPane.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="color-alt" />
+                                    <String fx:value="text-5" />
+                                 </styleClass>
+                              </Button>
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="versionBlock" layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="profileVersionLabel" styleClass="text-5" text="Version" StackPane.alignment="CENTER_LEFT" />
+                              <ComboBox fx:id="versionList" maxWidth="450.0" prefHeight="33.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="resolutionLabel" onMouseClicked="#updateEditor" text="Resolution" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <Spinner fx:id="resW" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="313.0" />
+                                 </StackPane.margin>
+                              </Spinner>
+                              <Label maxWidth="10.0" styleClass="text-4" text="X" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="290.0" />
+                                 </StackPane.margin>
+                              </Label>
+                              <Spinner fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="142.0" />
+                                 </StackPane.margin>
+                              </Spinner>
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="gameDirLabel" onMouseClicked="#updateEditor" text="Game directory" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <TextField fx:id="gameDir" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="javaExecBlock" layoutX="110.0" layoutY="145.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="javaExecLabel" onMouseClicked="#updateEditor" text="Java executable" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <TextField fx:id="javaExec" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane fx:id="javaArgsBlock" layoutX="110.0" layoutY="190.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                           <children>
+                              <Label fx:id="javaArgsLabel" onMouseClicked="#updateEditor" text="JVM arguments" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="toggle-disabled" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                              <TextField fx:id="javaArgs" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
+                        </StackPane>
+                        <StackPane maxWidth="750.0" prefHeight="50.0" prefWidth="750.0">
+                           <children>
+                              <Button fx:id="deleteButton" mnemonicParsing="false" onMouseClicked="#deleteProfile" prefHeight="45.0" prefWidth="209.0" text="Delete Profile" StackPane.alignment="CENTER_LEFT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="color-warn" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Button fx:id="saveButton" layoutX="10.0" layoutY="20.0" mnemonicParsing="false" onMouseClicked="#saveProfile" prefHeight="45.0" prefWidth="209.0" text="Save Profile" StackPane.alignment="CENTER_RIGHT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="color-alt" />
+                                 </styleClass>
+                                 <StackPane.margin>
+                                    <Insets right="175.0" />
+                                 </StackPane.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Button fx:id="cancelButton" layoutX="336.0" layoutY="20.0" mnemonicParsing="false" onMouseClicked="#cancelProfile" prefHeight="45.0" prefWidth="170.0" text="Cancel" StackPane.alignment="CENTER_RIGHT">
+                                 <styleClass>
+                                    <String fx:value="text-5" />
+                                    <String fx:value="color-alt" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </StackPane>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </content></Tab>
+        </tabs>
+      </TabPane>
+      <HBox id="footer" prefHeight="90.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <VBox fx:id="progressPane" maxHeight="90.0" minHeight="90.0" prefHeight="90.0" prefWidth="950.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Label id="progressText" fx:id="progressText" text="Here is doing something....">
+               <styleClass>
+                  <String fx:value="text-4" />
+                  <String fx:value="color-alt" />
+               </styleClass>
+               <padding>
+                  <Insets top="10.0" />
+               </padding></Label>
+            <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="29.0" prefHeight="29.0" prefWidth="900.0" progress="0.0" />
+         </children>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </VBox>
+      <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="70.0" prefWidth="220.0" text="PLAY" HBox.hgrow="NEVER">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <styleClass>
+                  <String fx:value="color-alt" />
+                  <String fx:value="text-1" />
+               </styleClass>
+            </Button>
+            <Button id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </HBox>
+      <ListView fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></ListView>
+      <ListView fx:id="iconList" maxWidth="110.0" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="110.0" visible="false">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ListView>
+      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <styleClass>
+            <String fx:value="text-5" />
+            <String fx:value="color-alt" />
+            <String fx:value="highlight" />
+         </styleClass>
+      </Label>
+      <Label fx:id="versionLabel" onMouseClicked="#openNews" text="Version" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
+         <styleClass>
+            <String fx:value="color-alt" />
+            <String fx:value="text-6" />
+         </styleClass>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Label>
+      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ListView>
+   </children>
+</AnchorPane>
