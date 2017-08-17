@@ -1,7 +1,5 @@
 package kml;
 
-import java.util.Objects;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -11,11 +9,11 @@ public class Language {
 
     public static void loadLang(String lang) {
         String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
-        if (Objects.nonNull(data)) {
+        if (data != null) {
             langData = data.split("\r\n");
         } else {
             data = Utils.readURL(Language.class.getResource("/kml/lang/en-us.txt"));
-            if (Objects.nonNull(langData)) {
+            if (data != null) {
                 langData = data.split("\r\n");
             }
         }

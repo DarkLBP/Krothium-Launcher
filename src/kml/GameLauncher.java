@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import kml.enums.OSArch;
@@ -326,9 +325,7 @@ public class GameLauncher {
                         final String lineRead = br.readLine();
                         if (Objects.nonNull(lineRead)) {
                             if (kernel.getSettings().getShowGameLog()) {
-                                Platform.runLater(() -> {
-                                    out[0].pushString(lineRead);
-                                });
+                                Platform.runLater(() -> out[0].pushString(lineRead));
                             }
                             console.printInfo(lineRead);
                         }
@@ -354,9 +351,7 @@ public class GameLauncher {
                         final String lineRead = br.readLine();
                         if (Objects.nonNull(lineRead)) {
                             if (kernel.getSettings().getShowGameLog()) {
-                                Platform.runLater(() -> {
-                                    out[0].pushString(lineRead);
-                                });
+                                Platform.runLater(() -> out[0].pushString(lineRead));
                             }
                             console.printInfo(lineRead);
                         }

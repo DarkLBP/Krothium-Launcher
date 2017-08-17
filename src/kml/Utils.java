@@ -1,5 +1,6 @@
 package kml;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -19,8 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
 import java.util.*;
-
-import javafx.scene.image.Image;
 
 /**
  * @author DarkLBP
@@ -145,7 +144,7 @@ public class Utils {
             }
             if (output.exists() && output.isFile()) {
                 //Match ETAG with existing file
-                if (verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+                if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
                     return true;
                 }
             }
@@ -312,7 +311,7 @@ public class Utils {
     }
 
     public static String fromBase64(String st) {
-        if (Objects.isNull(st) || st.isEmpty()) {
+        if (st == null || st.isEmpty()) {
             return null;
         }
         String conversion;
@@ -612,11 +611,10 @@ public class Utils {
     public static Image resampleImage(Image input, int scaleFactor) {
         final int W = (int) input.getWidth();
         final int H = (int) input.getHeight();
-        final int S = scaleFactor;
 
         WritableImage output = new WritableImage(
-                W * S,
-                H * S
+                W * scaleFactor,
+                H * scaleFactor
         );
 
         PixelReader reader = input.getPixelReader();
@@ -625,9 +623,9 @@ public class Utils {
         for (int y = 0; y < H; y++) {
             for (int x = 0; x < W; x++) {
                 final int argb = reader.getArgb(x, y);
-                for (int dy = 0; dy < S; dy++) {
-                    for (int dx = 0; dx < S; dx++) {
-                        writer.setArgb(x * S + dx, y * S + dy, argb);
+                for (int dy = 0; dy < scaleFactor; dy++) {
+                    for (int dx = 0; dx < scaleFactor; dx++) {
+                        writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb);
                     }
                 }
             }

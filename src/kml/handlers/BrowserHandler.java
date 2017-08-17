@@ -12,8 +12,8 @@ import java.net.URLStreamHandlerFactory;
  */
 public class BrowserHandler implements URLStreamHandlerFactory {
     public static String USER_AGENT;
-    private AdsHandler ADS_HANDLER;
-    private AdsHandlerSecure ADS_HANDLER_SECURE;
+    private final AdsHandler ADS_HANDLER;
+    private final AdsHandlerSecure ADS_HANDLER_SECURE;
 
     public BrowserHandler() {
         String userAgent = "Mozilla/5.0 %s AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";

@@ -111,10 +111,10 @@ public class MainFX {
 
     private Kernel kernel;
     private Stage stage;
-    private ArrayList<Slide> slides = new ArrayList<>();
+    private final ArrayList<Slide> slides = new ArrayList<>();
     private int currentSlide;
     private int currentPreview = 0; // 0 = front / 1 = right / 2 = back / 3 = left
-    private Image[] skinPreviews = new Image[4];
+    private final Image[] skinPreviews = new Image[4];
     private Image skin, cape, alex, steve;
 
     public void initialize(Kernel k, Stage s) {
@@ -129,9 +129,7 @@ public class MainFX {
         Task t = new Task() {
             @Override
             protected Object call() throws Exception {
-                Platform.runLater(() -> {
-                    checkForUpdates();
-                });
+                Platform.runLater(() -> checkForUpdates());
                 return null;
             }
         };
@@ -232,7 +230,7 @@ public class MainFX {
             confirm.setHeaderText(Language.get(11));
             confirm.setContentText(Language.get(10));
             Optional<ButtonType> result = confirm.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
                     kernel.getHostServices().showDocument(Utils.fromBase64(update));
                 }
@@ -243,7 +241,7 @@ public class MainFX {
         }
     }
 
-    public void localizeElements() {
+    private void localizeElements() {
         helpButton.setText(Language.get(2));
         logoutButton.setText(Language.get(3));
         newsLabel.setText(Language.get(4));
@@ -502,7 +500,7 @@ public class MainFX {
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
         a.setContentText(Language.get(31));
         Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.isPresent() && result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
             params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", kernel.getAuthentication().getClientToken());
@@ -547,7 +545,7 @@ public class MainFX {
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
         a.setContentText(Language.get(36));
         Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.isPresent() && result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
             params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", kernel.getAuthentication().getClientToken());
@@ -823,9 +821,7 @@ public class MainFX {
                         gl.launch();
                         progressPane.setVisible(false);
                         playPane.setVisible(true);
-                        Platform.runLater(() -> {
-                            playButton.setText(Language.get(14));
-                        });
+                        Platform.runLater(() -> playButton.setText(Language.get(14)));
                         playButton.setDisable(true);
                         //Keep track of the game process
                         Timeline task2 = new Timeline();
@@ -854,9 +850,7 @@ public class MainFX {
                         task2.setCycleCount(Timeline.INDEFINITE);
                         task2.play();
                         if (!kernel.getSettings().getKeepLauncherOpen()) {
-                            Platform.runLater(() -> {
-                                setVisible(false);
-                            });
+                            Platform.runLater(() -> setVisible(false));
                         }
                     } catch (DownloaderException e) {
                         Alert a = new Alert(Alert.AlertType.ERROR);
@@ -1251,7 +1245,7 @@ public class MainFX {
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
         a.setContentText(Language.get(55));
         Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             switchTab(launchOptionsLabel);
         }
     }
@@ -1263,7 +1257,7 @@ public class MainFX {
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
         a.setContentText(Language.get(61));
         Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             Label selectedElement = profileList.getSelectionModel().getSelectedItem();
             if (kernel.getProfiles().deleteProfile(selectedElement.getId())) {
                 a.setAlertType(Alert.AlertType.INFORMATION);
@@ -1314,7 +1308,7 @@ public class MainFX {
     }
 
 
-    public void updateExistingUsers() {
+    private void updateExistingUsers() {
         Authentication a = kernel.getAuthentication();
         if (a.getUsers().size() > 0 && !a.hasSelectedUser()) {
             existingPanel.setVisible(true);
@@ -1382,7 +1376,7 @@ public class MainFX {
         }
     }
 
-    public void refreshSession() {
+    private void refreshSession() {
         try {
             if (kernel.getAuthentication().hasSelectedUser()) {
                 kernel.getAuthentication().refresh();

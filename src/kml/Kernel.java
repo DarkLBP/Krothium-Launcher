@@ -2,14 +2,11 @@ package kml;
 
 import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import kml.exceptions.AuthenticationException;
 import kml.gui.MainFX;
 import org.json.JSONObject;
 
@@ -39,7 +36,7 @@ public final class Kernel {
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
-    private MainFX mainForm;
+    private final MainFX mainForm;
     public Kernel(Stage stage, HostServices hs) {
         this(Utils.getWorkingDirectory(), stage, hs);
     }
