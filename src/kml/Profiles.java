@@ -87,7 +87,7 @@ public class Profiles {
         console.printInfo("Fetching profiles.");
         File launcherProfiles = kernel.getConfigFile();
         String latestUsedID = null;
-        Timestamp latestUsedMillis = new Timestamp(0);
+        Timestamp latestUsedMillis = new Timestamp(-1);
         if (launcherProfiles.exists()) {
             try {
                 JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
@@ -292,7 +292,6 @@ public class Profiles {
             profiles.put(p.getID(), prof);
         }
         o.put("profiles", profiles);
-        o.put("selectedProfile", this.selected);
         return o;
     }
 }
