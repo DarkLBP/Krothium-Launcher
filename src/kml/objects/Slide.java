@@ -4,14 +4,13 @@ import javafx.scene.image.Image;
 
 public class Slide {
     private final String action;
-    private final String image;
-    private Image imageCache;
+    private final Image image;
     private final String title;
     private final String text;
 
     public Slide(String action, String image, String title, String text) {
         this.action = action;
-        this.image = image;
+        this.image = new Image(image, true);
         this.title = title;
         this.text = text;
     }
@@ -21,10 +20,7 @@ public class Slide {
     }
 
     public Image getImage() {
-        if (imageCache == null) {
-            imageCache = new Image(image);
-        }
-        return imageCache;
+        return image;
     }
 
     public String getTitle() {

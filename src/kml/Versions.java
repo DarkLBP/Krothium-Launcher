@@ -107,6 +107,7 @@ public class Versions {
             console.printInfo("Remote version list loaded.");
         } catch (Exception ex) {
             console.printError("Failed to fetch remote version list.");
+            console.printError(ex.getMessage());
         }
         console.printInfo("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;

@@ -101,7 +101,7 @@ public final class Kernel {
             this.console.printError(e.getMessage());
             exitSafely();
         }
-        stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+        stage.getIcons().add(Constants.APPLICATION_ICON);
         stage.setTitle("Krothium Minecraft Launcher");
         stage.setScene(new Scene(p));
         stage.setResizable(false);

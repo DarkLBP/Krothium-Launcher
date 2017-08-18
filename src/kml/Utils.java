@@ -156,7 +156,7 @@ public class Utils {
                 parent.mkdirs();
             }
             FileOutputStream fo = new FileOutputStream(output);
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[16384];
             int read;
             while ((read = in.read(buffer)) != -1) {
                 fo.write(buffer, 0, read);
@@ -173,13 +173,13 @@ public class Utils {
         try {
             StringBuilder content = new StringBuilder();
             URLConnection con = url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")));
-            String line;
-            while (Objects.nonNull((line = bufferedReader.readLine()))) {
-                content.append(line);
-                content.append(System.lineSeparator());
+            Reader reader = new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8"));
+            char[] buffer = new char[16384];
+            int charsRead;
+            while ((charsRead = reader.read(buffer)) != -1) {
+                content.append(buffer);
             }
-            bufferedReader.close();
+            reader.close();
             return content.toString();
         } catch (Exception ex) {
             return null;
