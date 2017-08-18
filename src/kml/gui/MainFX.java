@@ -127,15 +127,7 @@ public class MainFX {
         stage = s;
 
         //Check for updates
-        Task t = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                Platform.runLater(() -> checkForUpdates());
-                return null;
-            }
-        };
-        Thread updateThread = new Thread(t);
-        updateThread.start();
+        checkForUpdates();
 
         //Load icon map
         Constants.PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
@@ -147,6 +139,10 @@ public class MainFX {
         versionLabel.setText(Constants.KERNEL_BUILD_NAME);
 
         //Load news slideshow
+        slideshowBox.setVisible(false);
+        slideshowBox.setManaged(false);
+        newsTitle.setText("Loading news...");
+        newsText.setText("Please wait a moment...");
         loadSlideshow();
 
         //Prepare language list
@@ -211,7 +207,6 @@ public class MainFX {
         resW.setEditable(true);
         resH.setEditable(true);
 
-        //Load icons
         loadIcons();
 
         //Load placeholder skins
@@ -228,6 +223,7 @@ public class MainFX {
     }
 
     private void checkForUpdates() {
+        kernel.getConsole().printInfo("Checking for updates...");
         String update = kernel.checkForUpdates();
         if (update != null) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -593,6 +589,7 @@ public class MainFX {
     }
 
     private void loadSlideshow() {
+        kernel.getConsole().printInfo("Loading news slideshow...");
         try {
             String response = Utils.readURL(Constants.NEWS_URL);
             if (response == null) {
@@ -618,16 +615,21 @@ public class MainFX {
                 slides.add(s);
             }
         } catch (Exception ex) {
+            newsTitle.setText("News Unavailable");
+            newsText.setText("Failed to fetch the latest news");
             kernel.getConsole().printError("Couldn't parse news data. (" + ex.getMessage() + ")");
+            return;
         }
         if (slides.size() > 0) {
+            slideshowBox.setVisible(true);
+            slideshowBox.setManaged(true);
             Slide s = slides.get(0);
             slideshow.setImage(s.getImage());
             newsTitle.setText(s.getTitle());
             newsText.setText(s.getText());
         } else {
-            slideshowBox.setVisible(false);
-            slideshowBox.setManaged(false);
+            newsTitle.setText("No news available");
+            newsText.setText("No news available to show");
         }
     }
 
@@ -773,6 +775,7 @@ public class MainFX {
     }
 
     private void loadIcons() {
+        kernel.getConsole().printInfo("Loading icons...");
         ObservableList<ImageView> icons = FXCollections.observableArrayList();
         for (ProfileIcon p : ProfileIcon.values()) {
             if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
