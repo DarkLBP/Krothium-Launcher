@@ -6,35 +6,35 @@ Skins
 Settings
 Launch Options
 Are you sure you want to logout?
-Logout
+
 A new launcher version is available! Do you want to download it?
 New version available
 PLAY
-DOWNLOADING
+Downloading
 PLAYING
 The game has crashed! Check the logs for more information.
 Game crashed
-Select profile...
+
 Krothium Username or Email:
 Password:
 LOGIN
 REGISTER
-Unnable to login!
-Error
+Failed to log in
+
 Change
 Cape PNG File (128KB MAX)
-Change Cape
-Delete Cape
-Skin type:
+
+
+
 SKIN
 CAPE
 Are you sure you want to delete your skin?
-Skin deletion
+
 Failed to delete the skin!
 Skin deleted successfully!
-Success
+
 Are you sure you want to delete your cape?
-Cape deletion
+
 Failed to delete the cape!
 Cape deleted successfully!
 Skin changed successfully!
@@ -53,13 +53,13 @@ Save Profile
 Cancel
 Delete Profile
 Are you sure? Any change made won't be saved!
-Confirmation
+
 Profile saved successfully!
-Saved
+
 Latest Release
 Latest Snapshot
 Are you sure you want to delete this profile?
-Profile deletion
+
 Name
 Version
 Resolution
@@ -70,14 +70,14 @@ Game Output
 Unnamed Profile
 Snapshots are development versions which are not guaranteed to be stable and may corrupt your world.
 You're advised to run them in separate directories or create regular backups.
-This enables selecting old alpha and bveta versions when you add a new launch option.
+This enables selecting old alpha and beta versions when you add a new launch option.
 These are out of date and may be unstable. Any bugs, crashes, missing features or similar will not be fixed.
 It is strongly recommended you run these versions in separate directories to avoid world corruption.
 This enables changing advanced Java settings when you add a new launch option.
 Changing these may cause the game to malfunction.
-Information
+
 PLAY OFFLINE
-AUTHENTICATING
+
 Launch failed
 Failed to perform game launch task! Check the logs for more information.
 Download failed

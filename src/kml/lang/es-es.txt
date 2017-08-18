@@ -6,35 +6,35 @@ Skins
 Ajustes
 Opciones de lanzamiento
 ¿Estás seguro de que quieres cerrar la sesión?
-Cerrar sesión
+
 ¡Una nueva versión del lanzador está disponible! ¿Quieres descargarla?
 Nueva versión disponible
 JUGAR
-DESCARGANDO
+Descargando
 JUGANDO
 ¡El juego ha crasheado! Comprueba los registros para mas información.
 El juego ha crasheado
-Seleccionar perfil...
+
 Usuario o Email de Krothium:
 Contraseña:
 ENTRAR
 REGISTRARSE
-¡Imposible iniciar sesión!
-Error
+¡Imposible iniciar sesión
+
 Cambiar
 Archivo PNG de Capa (128KB MAX)
-Cambiar Capa
-Eliminar Capa
-Tipo de skin:
+
+
+
 SKIN
 CAPA
 ¿Estás seguro de que quieres eliminar tu skin?
-Eliminación de skin
+
 ¡Fallo al eliminar la skin!
 ¡Skin eliminada exitosamente!
-Éxito
+
 ¿Estás seguro de que quieres eliminar tu capa?
-Eliminación de skin
+
 ¡Fallo al eliminar la capa!
 Capa eliminada exitosamente!
 Skin cambiada exitosamente!
@@ -53,13 +53,13 @@ Guardar Perfil
 Cancelar
 Eliminar Perfil
 ¿Estás seguro? ¡Cualquier cambio hecho no se guardará!
-Confirmación
+
 ¡Perfil guardado exitosamente!
-Guardado
+
 Último Lanzamiento
 Última Snapshot
 ¿Estás seguro de que quieres eliminar este perfil?
-Eliminación del perfil
+
 Nombre
 Versión
 Resolución
@@ -75,9 +75,9 @@ Dichas versiones están desactualizadas y podrían ser inestables. Cualquier err
 Es muy recomendable ejecutar estas versiones en directorios separados para evitar que se produzcan daños en los mundos guardados.
 Esto te permite modificar ajustes avanzados de Java cuando añadas una nueva opción de lanzamiento.
 Estos cambios podrían causar un mal funcionamiento del juego.
-Información
+
 JUGAR SIN LÍNEA
-AUTENTICANDO
+
 Ejecución fallida
 ¡Fallo al ejecutar la tarea de ejecución del juego! Comprueba los registros para más información.
 Descarga fallida

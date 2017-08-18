@@ -6,35 +6,35 @@ Skinek
 Beállítások
 Indítási opciók
 Biztosan kiszeretnél jelentkezni?
-Kijelentkezés
+
 Új indító verzió elérhető! Leszeretnéd tölteni?
 Új verzió elérhető
 INDÍTÁS
-LETÖLTÉS
+Letöltés
 JÁTÉKBAN
 A játék összeomlott! Nézd meg a log fájlokat további információkért.
 Játék összeomlott
-Válassz profilt...
+
 Krothium Felhasználónév vagy Email:
 Jelszó:
 BEJELENTKEZÉS
 REGISZTRÁCIÓ
-Sikertelen bejelentkezés!
-Hiba
+Sikertelen bejelentkezés
+
 Változtatása
 Köpeny PNG fájl (128KB MAX)
-Köpeny változtatása
-Köpeny törlése
-Skin típusa:
+
+
+
 SKIN
 KÖPENY
 Biztosan törölni szeretnéd a skined?
-Skin törlés
+
 Nem sikerült törölni a skinedet!
 Skin sikeresen törölve!
-Siker
+
 Biztosan törölni szeretnéd a köpenyed?
-Köpeny törlés
+
 Nem sikerült törölni a köpenyed!
 Köpeny sikeresen törölve!
 Skin sikeresen megváltoztatva!
@@ -53,13 +53,13 @@ Mentés Profil
 Mégse
 Törlés Profil
 Biztos vagy benne? A változtatások nem lesznek elmentve!
-Megerősítés
+
 Profil sikeresen elmentve!
-Elmentve
+
 Legújabb verzió
 Legújabb fejlesztői kiadás
 Biztosan törölni szeretnéd ezt a profilt?
-Profil törlés
+
 Név:
 Verzió
 Felbontás
@@ -75,9 +75,9 @@ Ezek nagyon régiek és nem támogatottak. Hibák, összeomlások nem lesznek ja
 Ajánlott, hogy külön mappába futtasd ezeket, hogy elkerüld a világaid korruptálását.
 Ez engedélyezi a haladó JAVA beállításokat.
 Ezek a beállítások a játék elindíthatalanságát is okozhatják.
-Információk
+
 OFFLINE JÁTÉK
-BEJELENTKEZÉS
+
 Nem sikerült elindítani
 Nem sikerült elindítani az indítási folyamatot! Nézd meg a log fájlokat bővebb információkért.
 Letöltés nem sikerült

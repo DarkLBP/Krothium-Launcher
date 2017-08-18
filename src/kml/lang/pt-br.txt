@@ -6,35 +6,35 @@ Skins
 Configurações
 Opções de início
 Tem certeza de que deseja sair da sua conta?
-Sair da conta
+
 Uma nova versão do launcher está disponível! Deseja fazer o download?
 Nova versão disponível
 JOGAR
-BAIXANDO
+Baixando
 JOGANDO
 O jogo crashou! Verifique os logs para obter mais informações.
 O jogo crashou
-Selecionar perfil...
+
 Nome de usuário do Krothium ou Email:
 Senha:
 ENTRAR
 REGISTRE-SE
-Impossível entrar!
-Erro
+Impossível entrar
+
 Mudar
 Arquivo PNG de Capa (128KB MAX)
-Mudar Capa
-Excluir Capa
-Tipo de skin:
+
+
+
 SKIN
 CAPA
 Tem certeza de que deseja excluir sua skin?
-Excluir skin
+
 Não foi possível excluir a skin!
 Skin excluída com sucesso!
-Sucesso
+
 Tem certeza de que deseja excluir sua capa?
-Excluir capa
+
 Não foi possível excluir a capa!
 Capa excluída com sucesso!
 Skin alterada com sucesso!
@@ -53,13 +53,13 @@ Salvar Perfil
 Cancelar
 Excluir Perfil
 Você tem certeza? Qualquer alteração feita não será salva!
-Confirmação
+
 Perfil salvo com sucesso!
-Salvo
+
 Versão mais recente
 Snapshot mais recente
 Tem a certesa que deseja excluir este perfil?
-Excluir perfil
+
 Nome
 Versão
 Resolução
@@ -75,9 +75,9 @@ Estas versões antigas e podem ser instáveis. Quaisquer bugs, crashes, opções
 É altamente recomendado que execute-os em diretórios separados ou criar backups regulares.
 Isto habilita as configurações avançadas de Java quando você adicionar uma nova opção de inicialização.
 Alterando estes, pode causar mau funcionamento ao jogo.
-Informação
+
 JOGAR OFFLINE
-AUTENTICANDO
+
 Falha no lançamento
 Falha ao executar a tarefa de lançamento do jogo! Verifique os logs para obter mais informações.
 Falha no download

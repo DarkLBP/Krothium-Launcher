@@ -6,35 +6,35 @@ Skins
 Ajustos
 Opcions de llançament
 Estás segur de que vols tancar la sessió?
-Tancar sessió
+
 Una nova versió del llançador está disponible! Vols descarregar-la?
 Nova versió disponible
 JUGAR
-DESCARREGANT
+Descarregant
 JUGANT
 El joc ha crashejat! Comprova els registres per a mes informació.
 Joc crashejat
-Seleccionar perfil...
+
 Usuari o Email de Krothium:
 Contrasenya:
 ENTRAR
 REGISTRAR-SE
-Imposible inciar sessió!
-Error
+Imposible inciar sessió
+
 Canviar
 Arxiu PNG de Capa (128KB MAX)
-Canviar Capa
-Eliminar Capa
-Tipus de skin:
+
+
+
 SKIN
 CAPA
 Estás segur de que vols eliminar la teua skin?
-Eliminació de skin
+
 Fallada al eliminar la skin!
 Skin eliminada amb èxit!
-Èxit
+
 Estás segur de que vols eliminar la teua capa?
-Eliminació de capa
+
 Fallada al eliminar la capa!
 Capa eliminada amb èxit!
 Skin canviada amb èxit!
@@ -53,13 +53,13 @@ Guardar Perfil
 Cancel-lar
 Eliminar Perfil
 Estás segur? Qualsevol canvi fet no es guardat!
-Confirmació
+
 Perfil guardat amb èxit!
-Guardat
+
 Últim Llançament
 Última Snapshot
 Estás segur de que vols eliminar este perfil?
-Eliminació de perfil
+
 Nom
 Versió
 Resolució
@@ -75,9 +75,9 @@ Estes versions estan desactualitzades i podrien ser inestables. Qualsevol error,
 Es molt recomanable executar estes versions en directoris separats per evitar que es produïsquen danys en els móns guardats.
 Això et permet modificar ajustos avançats de Java quan afegisques una nova opció de llançament.
 Aquestos canvis podrien causar un mal funcionament del joc.
-Informació
+
 JUGAR SENSE LÍNEA
-AUTENTICANT
+
 Execució fallida
 !Fallada al executar la tasca d'execució del joc! Comprova els registres per a mes informació.
 Descàrrega fallida

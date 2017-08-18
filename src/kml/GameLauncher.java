@@ -306,7 +306,7 @@ public class GameLauncher {
                     }
                     Stage stage = new Stage();
                     stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " - Game Output");
+                    stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " - " + Language.get(69));
                     stage.setScene(new Scene(parent));
                     stage.setResizable(true);
                     stage.setMaximized(false);

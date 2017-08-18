@@ -1,5 +1,6 @@
 package kml.gui;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -217,6 +218,11 @@ public class MainFX {
         alex = new Image("/kml/gui/textures/alex.png");
         steve = new Image("/kml/gui/textures/steve.png");
 
+        //If offline mode make play button bigger for language support
+        if (Constants.USE_LOCAL) {
+            playButton.setMinWidth(320);
+        }
+
         //Localize elements
         localizeElements();
     }
@@ -248,7 +254,11 @@ public class MainFX {
         skinsLabel.setText(Language.get(5));
         settingsLabel.setText(Language.get(6));
         launchOptionsLabel.setText(Language.get(7));
-        playButton.setText(Language.get(12));
+        if (Constants.USE_LOCAL) {
+            playButton.setText(Language.get(79));
+        } else {
+            playButton.setText(Language.get(12));
+        }
         usernameLabel.setText(Language.get(18));
         passwordLabel.setText(Language.get(19));
         loginButton.setText(Language.get(20));
@@ -806,7 +816,7 @@ public class MainFX {
                     Timeline task = new Timeline();
                     KeyFrame frame = new KeyFrame(Duration.millis(250), event -> {
                         progressBar.setProgress(d.getProgress() / 100.0);
-                        progressText.setText("Downloading " + d.getCurrentFile() + "...");
+                        progressText.setText(Language.get(13) + " " + d.getCurrentFile() + "...");
                     });
                     task.getKeyFrames().add(frame);
                     task.setCycleCount(Timeline.INDEFINITE);
@@ -832,6 +842,7 @@ public class MainFX {
                                     Alert a = new Alert(Alert.AlertType.ERROR);
                                     Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                                     s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                                    a.setHeaderText(Language.get(14));
                                     a.setContentText(Language.get(15));
                                     a.showAndWait();
                                 }
@@ -839,7 +850,11 @@ public class MainFX {
                                     kernel.exitSafely();
                                 }
                                 playButton.setDisable(false);
-                                playButton.setText(Language.get(12));
+                                if (Constants.USE_LOCAL) {
+                                    playButton.setText(Language.get(79));
+                                } else {
+                                    playButton.setText(Language.get(12));
+                                }
                             }
                         }));
                         task2.getKeyFrames().add(frame2);
@@ -852,6 +867,7 @@ public class MainFX {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        a.setHeaderText(Language.get(83));
                         a.setContentText(Language.get(84));
                         a.showAndWait();
                         console.printError("Failed to perform game download task: " + e);
@@ -859,6 +875,7 @@ public class MainFX {
                         Alert a = new Alert(Alert.AlertType.ERROR);
                         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                        a.setHeaderText(Language.get(81));
                         a.setContentText(Language.get(82));
                         a.showAndWait();
                         console.printError("Failed to perform game launch task: " + e);
@@ -1358,7 +1375,7 @@ public class MainFX {
                 parseRemoteTextures();
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
-                a.setHeaderText("Failed to authenticate");
+                a.setHeaderText(Language.get(22));
                 a.setContentText(ex.getMessage());
                 a.show();
                 password.setText("");
@@ -1406,7 +1423,7 @@ public class MainFX {
             s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
             a.setHeaderText("We could not log you back with that user!");
             a.setContentText(ex.getMessage());
-            a.show();
+            a.showAndWait();
             updateExistingUsers();
         }
     }
@@ -1419,11 +1436,16 @@ public class MainFX {
         s.getIcons().add(new Image("/kml/gui/textures/icon.png"));
         if (selected == null) {
             a.setContentText("Select a user first!");
-            a.show();
+            a.showAndWait();
         } else {
-            Authentication auth = kernel.getAuthentication();
-            auth.logOut(selected.getUserID());
-            updateExistingUsers();
+            a.setAlertType(Alert.AlertType.CONFIRMATION);
+            a.setContentText(Language.get(8));
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                Authentication auth = kernel.getAuthentication();
+                auth.logOut(selected.getUserID());
+                updateExistingUsers();
+            }
         }
     }
 
@@ -1472,14 +1494,35 @@ public class MainFX {
             s.setShowGameLog(!s.getShowGameLog());
             toggleLabel(source, s.getShowGameLog());
         } else if (source == enableSnapshots) {
+            if (!s.getEnableSnapshots()) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+                st.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                a.setContentText(Language.get(71) + "\n" + Language.get(72));
+                a.showAndWait();
+            }
             s.setEnableSnapshots(!s.getEnableSnapshots());
             toggleLabel(source, s.getEnableSnapshots());
             kernel.getProfiles().updateSessionProfiles();
             loadProfileList();
         } else if (source == historicalVersions) {
+            if (!s.getEnableHistorical()) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+                st.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                a.setContentText(Language.get(73) + "\n" + Language.get(74) + "\n" + Language.get(75));
+                a.showAndWait();
+            }
             s.setEnableHistorical(!s.getEnableHistorical());
             toggleLabel(source, s.getEnableHistorical());
         } else if (source == advancedSettings) {
+            if (!s.getEnableAdvanced()) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+                st.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                a.setContentText(Language.get(76) + "\n" + Language.get(77));
+                a.showAndWait();
+            }
             s.setEnableAdvanced(!s.getEnableAdvanced());
             toggleLabel(source, s.getEnableAdvanced());
         }
