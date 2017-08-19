@@ -127,7 +127,8 @@ public class MainFX {
         stage = s;
 
         //Check for updates
-        checkForUpdates();
+        Thread updateThread = new Thread(this::checkForUpdates);
+        updateThread.start();
 
         //Refresh session
         refreshSession();
@@ -224,20 +225,22 @@ public class MainFX {
         kernel.getConsole().printInfo("Checking for updates...");
         String update = kernel.checkForUpdates();
         if (update != null) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            Stage s = (Stage) confirm.getDialogPane().getScene().getWindow();
-            s.getIcons().add(Constants.APPLICATION_ICON);
-            confirm.setHeaderText(Language.get(11));
-            confirm.setContentText(Language.get(10));
-            Optional<ButtonType> result = confirm.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    kernel.getHostServices().showDocument(Utils.fromBase64(update));
+            Platform.runLater(() -> {
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                Stage s = (Stage) confirm.getDialogPane().getScene().getWindow();
+                s.getIcons().add(Constants.APPLICATION_ICON);
+                confirm.setHeaderText(Language.get(11));
+                confirm.setContentText(Language.get(10));
+                Optional<ButtonType> result = confirm.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    try {
+                        kernel.getHostServices().showDocument(Utils.fromBase64(update));
+                    }
+                    catch (Exception e) {
+                        kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+                    }
                 }
-                catch (Exception e) {
-                    kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
-                }
-            }
+            });
         }
     }
 
@@ -1155,13 +1158,10 @@ public class MainFX {
                         toggleEditorOption(javaArgsLabel, false);
                         StringBuilder jA = new StringBuilder();
                         if (Utils.getOSArch().equals(OSArch.OLD)) {
-                            jA.append("-Xmx512M");
-                        } else {
                             jA.append("-Xmx1G");
+                        } else {
+                            jA.append("-Xmx2G");
                         }
-                        jA.append(" -XX:+UseConcMarkSweepGC");
-                        jA.append(" -XX:+CMSIncrementalMode");
-                        jA.append(" -XX:-UseAdaptiveSizePolicy");
                         jA.append(" -Xmn128M");
                         javaArgs.setText(jA.toString());
                     }
@@ -1438,21 +1438,15 @@ public class MainFX {
     //Logout existing user
     public void logout() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
-        Alert a = new Alert(Alert.AlertType.WARNING);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         Stage s = (Stage) a.getDialogPane().getScene().getWindow();
         s.getIcons().add(Constants.APPLICATION_ICON);
-        if (selected == null) {
-            a.setContentText("Select a user first!");
-            a.showAndWait();
-        } else {
-            a.setAlertType(Alert.AlertType.CONFIRMATION);
-            a.setContentText(Language.get(8));
-            Optional<ButtonType> result = a.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                Authentication auth = kernel.getAuthentication();
-                auth.logOut(selected.getUserID());
-                updateExistingUsers();
-            }
+        a.setContentText(Language.get(8));
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Authentication auth = kernel.getAuthentication();
+            auth.logOut(selected.getUserID());
+            updateExistingUsers();
         }
     }
 
