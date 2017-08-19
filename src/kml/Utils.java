@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * @author DarkLBP
- *         website https://krothium.com
+ * website https://krothium.com
  */
 
 public class Utils {
@@ -110,21 +110,6 @@ public class Utils {
         directory.delete();
     }
 
-    public static void openWebsite(String url) throws IOException {
-        String os = System.getProperty("os.name").toLowerCase();
-        Runtime rt = Runtime.getRuntime();
-        if (os.contains("win")) {
-            rt.exec("rundll32 url.dll,FileProtocolHandler " + url);
-        } else if (os.contains("mac")) {
-            rt.exec("open " + url);
-        } else if (os.contains("nix") || os.contains("nux")) {
-            String[] browsers = {"firefox", "epiphany", "mozilla", "konqueror", "netscape", "opera", "links", "lynx", "chromium"};
-            StringBuilder cmd = new StringBuilder();
-            for (int i = 0; i < browsers.length; i++)
-                cmd.append(i == 0 ? "" : " || ").append(browsers[i]).append(" \"").append(url).append("\" ");
-            rt.exec(new String[]{"sh", "-c", cmd.toString()});
-        }
-    }
 
     public static boolean downloadFile(URL url, File output) {
         try {
@@ -173,13 +158,12 @@ public class Utils {
         try {
             StringBuilder content = new StringBuilder();
             URLConnection con = url.openConnection();
-            Reader reader = new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8"));
-            char[] buffer = new char[16384];
-            int charsRead;
-            while ((charsRead = reader.read(buffer)) != -1) {
-                content.append(buffer);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")), 16384);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line);
+                content.append(System.lineSeparator());
             }
-            reader.close();
             return content.toString();
         } catch (Exception ex) {
             return null;
@@ -600,7 +584,7 @@ public class Utils {
                     break;
             }
 
-            pw.setPixels(0, 0, 136, 136, pr,blockX * 136, blockY * 136);
+            pw.setPixels(0, 0, 136, 136, pr, blockX * 136, blockY * 136);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -20,10 +20,9 @@ public class Settings {
 
     public void loadSettings() {
         kernel.getConsole().printInfo("Loading settings...");
-        File launcherProfiles = kernel.getConfigFile();
-        if (launcherProfiles.exists()) {
+        JSONObject root = kernel.getLauncherProfiles();
+        if (root != null) {
             try {
-                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
                 if (root.has("settings")) {
                     JSONObject settings = root.getJSONObject("settings");
                     if (settings.has("locale")) {
@@ -59,7 +58,7 @@ public class Settings {
                 enableSnapshots = false;
             }
         } else {
-            kernel.getConsole().printError("Launcher profiles file not found. Using defaults.");
+            kernel.getConsole().printError("Not settings to be loaded.");
             setLocale("en-us");
         }
     }

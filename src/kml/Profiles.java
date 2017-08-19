@@ -85,12 +85,11 @@ public class Profiles {
 
     public void fetchProfiles() {
         console.printInfo("Fetching profiles.");
-        File launcherProfiles = kernel.getConfigFile();
         String latestUsedID = null;
         Timestamp latestUsedMillis = new Timestamp(-1);
-        if (launcherProfiles.exists()) {
+        JSONObject root = kernel.getLauncherProfiles();
+        if (root != null) {
             try {
-                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
                 JSONObject ples = root.getJSONObject("profiles");
                 Set keys = ples.keySet();
                 Iterator it = keys.iterator();
@@ -169,7 +168,7 @@ public class Profiles {
                 console.printError("Failed to fetch profiles.");
             }
         } else {
-            console.printError("Launcher profiles file not found. Using defaults.");
+            console.printError("No profiles to be loaded.");
         }
     }
 

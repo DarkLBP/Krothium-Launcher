@@ -191,10 +191,9 @@ public class Authentication {
 
     public void fetchUsers() {
         console.printInfo("Loading user data.");
-        File launcherProfiles = kernel.getConfigFile();
-        if (launcherProfiles.exists()) {
+        JSONObject root = kernel.getLauncherProfiles();
+        if (root != null) {
             try {
-                JSONObject root = new JSONObject(Utils.readURL(launcherProfiles.toURI().toURL()));
                 if (root.has("clientToken")) {
                     this.clientToken = root.getString("clientToken");
                 }
@@ -230,7 +229,7 @@ public class Authentication {
                 console.printError("Failed to load user list.");
             }
         } else {
-            console.printError("Launcher profiles file not found. Using defaults.");
+            console.printError("No users to be loaded.");
         }
     }
 

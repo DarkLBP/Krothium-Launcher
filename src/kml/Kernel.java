@@ -15,6 +15,7 @@ import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ public final class Kernel {
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
     private final MainFX mainForm;
+    private final File configFile;
+    private JSONObject launcherProfiles;
     public Kernel(Stage stage, HostServices hs) {
         this(Utils.getWorkingDirectory(), stage, hs);
     }
@@ -79,6 +82,17 @@ public final class Kernel {
             }
         }
         console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+        console.printInfo("Reading launcher profiles...");
+        configFile = this.getConfigFile();
+        try {
+            if (configFile.exists() && configFile.isFile()) {
+                launcherProfiles = new JSONObject(Utils.readURL(this.getConfigFile().toURI().toURL()));
+            } else {
+                console.printError("Launcher profiles file does not exists.");
+            }
+        } catch (Exception e) {
+            console.printError("Malformed launcher profiles file.");
+        }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
         this.settings = new Settings(this);
@@ -195,8 +209,12 @@ public final class Kernel {
         return this.authentication;
     }
 
-    public File getConfigFile() {
+    private File getConfigFile() {
         return new File(this.workingDir + File.separator + "launcher_profiles.json");
+    }
+
+    public JSONObject getLauncherProfiles() {
+        return launcherProfiles;
     }
 
     public GameLauncher getGameLauncher() {
