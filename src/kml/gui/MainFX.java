@@ -214,7 +214,7 @@ public class MainFX {
 
         //If offline mode make play button bigger for language support
         if (Constants.USE_LOCAL) {
-            playButton.setMinWidth(320);
+            playButton.setMinWidth(290);
         }
 
         //Localize elements
