@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import java.lang.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="700.0" prefWidth="950.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="675.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
       <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
@@ -196,14 +213,14 @@
                                     <Insets right="25.0" />
                                  </HBox.margin>
                                  <children>
-                                    <StackPane minWidth="300.0" prefHeight="306.0" prefWidth="244.0">
+                                    <StackPane minWidth="300.0" prefHeight="290.0" prefWidth="210.0">
                                        <children>
                                           <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡀" StackPane.alignment="CENTER_LEFT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Label>
-                                          <ImageView fx:id="skinPreview" fitHeight="306.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                                          <ImageView fx:id="skinPreview" fitHeight="290.0" fitWidth="210.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
                                           <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" styleClass="text-unicode" text="🡂" StackPane.alignment="CENTER_RIGHT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
@@ -235,11 +252,11 @@
                                           <Insets bottom="5.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <RadioButton fx:id="skinClassic" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="33.0" prefWidth="264.0" selected="true" styleClass="text-5" text="Classic">
+                                    <RadioButton fx:id="skinClassic" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="30.0" prefWidth="264.0" selected="true" styleClass="text-5" text="Classic">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="skinType" />
                                        </toggleGroup></RadioButton>
-                                    <RadioButton fx:id="skinSlim" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="35.0" prefWidth="267.0" styleClass="text-5" text="Slim" toggleGroup="$skinType" />
+                                    <RadioButton fx:id="skinSlim" mnemonicParsing="false" onMouseClicked="#toggleSkinType" prefHeight="30.0" prefWidth="267.0" styleClass="text-5" text="Slim" toggleGroup="$skinType" />
                                     <Label fx:id="skinLabel" layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="166.0" styleClass="text-3" text="SKIN">
                                        <VBox.margin>
                                           <Insets top="5.0" />
@@ -696,7 +713,7 @@
                   <String fx:value="text-1" />
                </styleClass>
             </Button>
-            <Button id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
+            <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

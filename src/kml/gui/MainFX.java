@@ -61,7 +61,7 @@ public class MainFX {
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape;
+            selectCape, profilePopupButton;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -843,7 +843,7 @@ public class MainFX {
                                     Alert a = new Alert(Alert.AlertType.ERROR);
                                     Stage s = (Stage) a.getDialogPane().getScene().getWindow();
                                     s.getIcons().add(Constants.APPLICATION_ICON);
-                                    a.setHeaderText(Language.get(14));
+                                    a.setHeaderText(Language.get(16));
                                     a.setContentText(Language.get(15));
                                     a.showAndWait();
                                 }
@@ -962,6 +962,9 @@ public class MainFX {
         } else if (oldTab == launchOptionsTab && source != profileEditorTab) {
             launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == profileEditorTab) {
+            //Show play button
+            playButton.setVisible(true);
+            profilePopupButton.setVisible(true);
             launchOptionsLabel.getStyleClass().remove("selectedItem");
         }
         if (source == newsLabel) {
@@ -978,6 +981,9 @@ public class MainFX {
             selection.select(launchOptionsTab);
             profileList.getSelectionModel().clearSelection();
         } else if (source == profileEditorTab) {
+            //Hide play button
+            playButton.setVisible(false);
+            profilePopupButton.setVisible(false);
             selection.select(profileEditorTab);
         }
     }

@@ -95,27 +95,27 @@
 }
 
 .text-unicode {
-    -fx-font-size: 80px;
+    -fx-font-size: 70px;
 }
 
 .text-1 {
-    -fx-font-size: 27.5px;
-}
-
-.text-2 {
     -fx-font-size: 25px;
 }
 
-.text-3 {
+.text-2 {
     -fx-font-size: 22.5px;
 }
 
-.text-4 {
+.text-3 {
     -fx-font-size: 20px;
 }
 
-.text-5 {
+.text-4 {
     -fx-font-size: 17.5px;
+}
+
+.text-5 {
+    -fx-font-size: 15px;
 }
 
 .text-6 {
