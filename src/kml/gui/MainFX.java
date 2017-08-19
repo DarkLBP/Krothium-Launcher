@@ -316,7 +316,8 @@ public class MainFX {
                                 slim = true;
                             }
                         }
-                        skin = new Image(textures.getJSONObject("SKIN").getString("url"));
+                        File cachedFile = Utils.downloadFileCached(Utils.stringToURL(textures.getJSONObject("SKIN").getString("url")));
+                        skin = new Image(cachedFile.toURI().toString());
                     }
                     if (skin == null || skin.getHeight() == 0 && !slim) {
                         skin = steve;
@@ -328,7 +329,8 @@ public class MainFX {
                         deleteSkin.setDisable(false);
                     }
                     if (textures.has("CAPE")) {
-                        cape = new Image(textures.getJSONObject("CAPE").getString("url"));
+                        File cachedFile = Utils.downloadFileCached(Utils.stringToURL(textures.getJSONObject("CAPE").getString("url")));
+                        cape = new Image(cachedFile.toURI().toString());
                         includeCape.setDisable(false);
                         deleteCape.setDisable(false);
                     } else {
@@ -344,6 +346,7 @@ public class MainFX {
                 }
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             kernel.getConsole().printError("Failed to parse remote profile textures. (" + ex.getMessage() + ")");
         }
     }

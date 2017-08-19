@@ -111,31 +111,9 @@ public class Utils {
     }
 
 
-    public static boolean downloadFile(URL url, File output) {
+    public static boolean downloadFile(URLConnection con, File output) {
         try {
-            if (url.getProtocol().equalsIgnoreCase("file")) {
-                return true;
-            }
-            InputStream in = null;
-            String ETag = null;
-            if (url.getProtocol().equalsIgnoreCase("http")) {
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                in = con.getInputStream();
-                ETag = con.getHeaderField("ETag");
-            } else if (url.getProtocol().equalsIgnoreCase("https")) {
-                HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-                in = con.getInputStream();
-                ETag = con.getHeaderField("ETag");
-            }
-            if (output.exists() && output.isFile()) {
-                //Match ETAG with existing file
-                if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
-                    return true;
-                }
-            }
-            if (Objects.isNull(in)) {
-                in = url.openConnection().getInputStream();
-            }
+            InputStream in = con.getInputStream();
             File parent = output.getParentFile();
             if (!parent.exists()) {
                 parent.mkdirs();
@@ -154,9 +132,75 @@ public class Utils {
         }
     }
 
+    public static File downloadFileCached(URL url) {
+        //Requires server ETAG
+        //Returns the path of the cached file
+        try {
+            String hash = calculateChecksum(url.toString(), "SHA1");
+            File output = new File(Kernel.instance.getCacheFolder(), hash);
+            if (!Constants.USE_LOCAL) {
+                URLConnection con = url.openConnection();
+                String ETag = con.getHeaderField("ETag");
+                if (verifyChecksum(output, ETag.replace("\"", ""), "MD5") || downloadFile(con, output)) {
+                    return output;
+                }
+            } else {
+                if (output.exists() && output.isFile()) {
+                    return output;
+                }
+            }
+
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static boolean downloadFile(URL url, File output) {
+        try {
+            if (url.getProtocol().equalsIgnoreCase("file")) {
+                return true;
+            }
+            URLConnection con = url.openConnection();
+            String ETag = con.getHeaderField("ETag");
+            if (output.exists() && output.isFile()) {
+                //Match ETAG with existing file
+                if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+                    return true;
+                }
+            }
+            return downloadFile(con, output);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     public static String readURL(URL url) {
         try {
             StringBuilder content = new StringBuilder();
+            if (url.getProtocol().startsWith("http")) {
+                String hash = calculateChecksum(url.toString(), "SHA1");
+                File cachedFile = new File(Kernel.instance.getCacheFolder(), hash);
+                if (!Constants.USE_LOCAL) {
+                    URLConnection con = url.openConnection();
+                    String ETag = con.getHeaderField("ETag");
+                    if (ETag != null) {
+                        if (!verifyChecksum(cachedFile, ETag.replace("\"", ""), "MD5")) {
+                            if (!downloadFile(con, cachedFile)) {
+                                return null;
+                            }
+                        }
+                        return readURL(cachedFile.toURI().toURL());
+                    }
+                    return null;
+                } else {
+                    if (cachedFile.exists() && cachedFile.isFile()) {
+                        return readURL(cachedFile.toURI().toURL());
+                    }
+                    return null;
+                }
+            }
             URLConnection con = url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")), 16384);
             String line;
@@ -182,11 +226,28 @@ public class Utils {
         }
     }
 
+    public static String calculateChecksum(String txt, String method) {
+        try {
+            MessageDigest sha1 = MessageDigest.getInstance(method);
+            byte[] data = txt.getBytes();
+            sha1.update(data);
+            int read;
+            byte[] hashBytes = sha1.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte hashByte : hashBytes) {
+                sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public static String calculateChecksum(File file, String method) {
         try {
             MessageDigest sha1 = MessageDigest.getInstance(method);
             FileInputStream fis = new FileInputStream(file);
-            byte[] data = new byte[8192];
+            byte[] data = new byte[16384];
             int read;
             while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);

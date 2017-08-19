@@ -1,6 +1,9 @@
 package kml.objects;
 
 import javafx.scene.image.Image;
+import kml.Utils;
+
+import java.io.File;
 
 public class Slide {
     private final String action;
@@ -10,7 +13,8 @@ public class Slide {
 
     public Slide(String action, String image, String title, String text) {
         this.action = action;
-        this.image = new Image(image, true);
+        File cachedImage = Utils.downloadFileCached(Utils.stringToURL(image));
+        this.image = new Image(cachedImage.toURI().toString(), true);
         this.title = title;
         this.text = text;
     }

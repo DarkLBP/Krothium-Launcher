@@ -39,11 +39,19 @@ public class Constants {
     public static final URL REALMS_REGIONS_URL = Utils.stringToURL("https://mc.krothium.com/realms/regions");
     public static final URL NEWS_URL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
-    public static final Image PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");;
-    public static final Image APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
+    public static Image PROFILE_ICONS;
+    public static Image APPLICATION_ICON;
     public static final URLMatcher[] HTTP_MATCHERS = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher(), new CheckServerMatcher()};
     public static final URLMatcher[] HTTPS_MATCHERS = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEP_OLD_LOGS = 4;
     public static boolean USE_LOCAL = false;
+    static {
+        try {
+            PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
+            APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
+        } catch (Exception ex) {
+
+        }
+    }
 }

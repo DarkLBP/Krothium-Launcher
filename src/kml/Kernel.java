@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import kml.gui.BrowserFX;
 import kml.gui.MainFX;
 import org.json.JSONObject;
 
@@ -38,17 +39,21 @@ public final class Kernel {
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
     private final MainFX mainForm;
-    private final File configFile;
+    private final File configFile, cacheFolder;
     private JSONObject launcherProfiles;
+    public static Kernel instance;
     public Kernel(Stage stage, HostServices hs) {
         this(Utils.getWorkingDirectory(), stage, hs);
     }
 
     private Kernel(File workDir, Stage stage, HostServices hs) {
+        instance = this;
         this.workingDir = workDir;
         if (!this.workingDir.exists()) {
             this.workingDir.mkdirs();
         }
+        this.cacheFolder = new File(this.workingDir, "cache");
+        this.cacheFolder.mkdir();
         this.console = new Console(this);
         this.console.printInfo("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("Kernel build: " + Constants.KERNEL_BUILD);
@@ -104,6 +109,7 @@ public final class Kernel {
         this.loadVersions();
         this.loadProfiles();
         this.loadUsers();
+        //this.mainForm = null;
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
         Parent p;
@@ -124,6 +130,26 @@ public final class Kernel {
         mainForm = loader.getController();
         mainForm.initialize(this, stage);
         stage.show();
+
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
+//        Parent p;
+//        try {
+//            p = loader.load();
+//        } catch (IOException e) {
+//            p = null;
+//            this.console.printError("Failed to initialize JavaFX GUI!");
+//            this.console.printError(e.getMessage());
+//            exitSafely();
+//        }
+//        stage.getIcons().add(Constants.APPLICATION_ICON);
+//        stage.setTitle("Krothium Minecraft Launcher");
+//        stage.setScene(new Scene(p));
+//        stage.setResizable(false);
+//        stage.setMaximized(false);
+//        stage.setOnCloseRequest(e -> exitSafely());
+//        BrowserFX browser = loader.getController();
+//        stage.show();
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
@@ -151,6 +177,10 @@ public final class Kernel {
 
     public File getWorkingDir() {
         return this.workingDir;
+    }
+
+    public File getCacheFolder() {
+        return this.cacheFolder;
     }
 
     public void saveProfiles() {
@@ -230,8 +260,7 @@ public final class Kernel {
 
     public String checkForUpdates() {
         try {
-            URL url = Constants.GETLATEST_URL;
-            String r = Utils.sendPost(url, new byte[0], new HashMap<>());
+            String r = Utils.readURL(Constants.GETLATEST_URL);
             String[] data = r.split(":");
             int version = Integer.parseInt(Utils.fromBase64(data[0]));
             if (version > Constants.KERNEL_BUILD) {
