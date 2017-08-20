@@ -113,7 +113,7 @@ public class Versions {
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
         try {
-            File versionsDir = new File(kernel.getWorkingDir() + File.separator + "versions");
+            File versionsDir = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "versions");
             if (versionsDir.exists()) {
                 if (versionsDir.isDirectory()) {
                     File[] files = versionsDir.listFiles();

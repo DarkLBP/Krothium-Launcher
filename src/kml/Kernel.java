@@ -29,7 +29,6 @@ import java.util.Set;
  */
 
 public final class Kernel {
-    private final File workingDir;
     private final Console console;
     private final Profiles profiles;
     private final Versions versions;
@@ -39,22 +38,16 @@ public final class Kernel {
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
     private final MainFX mainForm;
-    private final File configFile, cacheFolder;
     private JSONObject launcherProfiles;
     public static Kernel instance;
-    public Kernel(Stage stage, HostServices hs) {
-        this(Utils.getWorkingDirectory(), stage, hs);
-    }
 
-    private Kernel(File workDir, Stage stage, HostServices hs) {
+    public Kernel(Stage stage, HostServices hs) {
         instance = this;
-        this.workingDir = workDir;
-        if (!this.workingDir.exists()) {
-            this.workingDir.mkdirs();
+        if (!Constants.APPLICATION_WORKING_DIR.exists()) {
+            Constants.APPLICATION_WORKING_DIR.mkdirs();
         }
-        this.cacheFolder = new File(this.workingDir, "cache");
-        this.cacheFolder.mkdir();
-        this.console = new Console(this);
+        Constants.APPLICATION_CACHE.mkdir();
+        this.console = new Console();
         this.console.printInfo("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.printInfo("Kernel build: " + Constants.KERNEL_BUILD);
         this.console.printInfo("OS: " + System.getProperty("os.name"));
@@ -88,10 +81,9 @@ public final class Kernel {
         }
         console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         console.printInfo("Reading launcher profiles...");
-        configFile = this.getConfigFile();
         try {
-            if (configFile.exists() && configFile.isFile()) {
-                launcherProfiles = new JSONObject(Utils.readURL(this.getConfigFile().toURI().toURL()));
+            if (Constants.APPLICATION_CONFIG.exists() && Constants.APPLICATION_CONFIG.isFile()) {
+                launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
             } else {
                 console.printError("Launcher profiles file does not exists.");
             }
@@ -175,14 +167,6 @@ public final class Kernel {
         return this.hostServices;
     }
 
-    public File getWorkingDir() {
-        return this.workingDir;
-    }
-
-    public File getCacheFolder() {
-        return this.cacheFolder;
-    }
-
     public void saveProfiles() {
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();
@@ -198,7 +182,7 @@ public final class Kernel {
             output.put(name, authdata.get(name));
         }
         output.put("settings", this.settings.toJSON());
-        if (!Utils.writeToFile(output.toString(4), this.getConfigFile())) {
+        if (!Utils.writeToFile(output.toString(4), Constants.APPLICATION_CONFIG)) {
             console.printError("Failed to save the profiles file!");
         }
     }
@@ -237,10 +221,6 @@ public final class Kernel {
 
     public Authentication getAuthentication() {
         return this.authentication;
-    }
-
-    private File getConfigFile() {
-        return new File(this.workingDir + File.separator + "launcher_profiles.json");
     }
 
     public JSONObject getLauncherProfiles() {

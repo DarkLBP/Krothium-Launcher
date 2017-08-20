@@ -346,7 +346,6 @@ public class MainFX {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             kernel.getConsole().printError("Failed to parse remote profile textures. (" + ex.getMessage() + ")");
         }
     }

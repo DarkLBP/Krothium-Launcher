@@ -128,6 +128,7 @@ public class Utils {
             fo.close();
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             return false;
         }
     }
@@ -137,7 +138,7 @@ public class Utils {
         //Returns the path of the cached file
         try {
             String hash = calculateChecksum(url.toString(), "SHA1");
-            File output = new File(Kernel.instance.getCacheFolder(), hash);
+            File output = new File(Constants.APPLICATION_CACHE, hash);
             if (!Constants.USE_LOCAL) {
                 URLConnection con = url.openConnection();
                 String ETag = con.getHeaderField("ETag");
@@ -181,7 +182,7 @@ public class Utils {
             StringBuilder content = new StringBuilder();
             if (url.getProtocol().startsWith("http")) {
                 String hash = calculateChecksum(url.toString(), "SHA1");
-                File cachedFile = new File(Kernel.instance.getCacheFolder(), hash);
+                File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
                 if (!Constants.USE_LOCAL) {
                     URLConnection con = url.openConnection();
                     String ETag = con.getHeaderField("ETag");

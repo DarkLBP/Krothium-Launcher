@@ -21,8 +21,8 @@ public class Console {
     private Date date;
     private File log;
 
-    public Console(Kernel instance) {
-        File logFolder = new File(instance.getWorkingDir() + File.separator + "logs");
+    public Console() {
+        File logFolder = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "logs");
         if (logFolder.exists() && logFolder.isDirectory()) {
             File[] logFiles = logFolder.listFiles();
             if (Objects.nonNull(logFiles) && logFiles.length > 0) {
@@ -63,7 +63,7 @@ public class Console {
             }
         }
         try {
-            log = new File(instance.getWorkingDir() + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
+            log = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
             if (!log.getParentFile().exists()) {
                 log.getParentFile().mkdirs();
             }

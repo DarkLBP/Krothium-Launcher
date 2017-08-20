@@ -59,7 +59,7 @@ public class GameLauncher {
             verID = kernel.getVersions().getLatestSnapshot();
         }
         ver = kernel.getVersions().getVersion(verID);
-        File workingDir = kernel.getWorkingDir();
+        File workingDir = Constants.APPLICATION_WORKING_DIR;
         console.printInfo("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
         if (nativesRoot.exists()) {
@@ -114,7 +114,7 @@ public class GameLauncher {
             if (lib.isCompatible()) {
                 if (lib.isNative()) {
                     try {
-                        File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativeNativePath());
+                        File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
                         ZipFile zip = new ZipFile(completePath);
                         final Enumeration<? extends ZipEntry> entries = zip.entries();
                         while (entries.hasMoreElements()) {
@@ -152,13 +152,13 @@ public class GameLauncher {
                         console.printError("Failed to extract native: " + lib.getName());
                     }
                 } else {
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + lib.getRelativePath());
+                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
                     libraries.append(completePath.getAbsolutePath()).append(separator);
                 }
             }
         }
         console.printInfo("Preparing game args.");
-        File verPath = new File(kernel.getWorkingDir() + File.separator + ver.getRelativeJar());
+        File verPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
         String assetsID = null;
         File assetsDir;

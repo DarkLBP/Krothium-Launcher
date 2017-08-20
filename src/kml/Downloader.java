@@ -70,12 +70,12 @@ public class Downloader {
             if (v.hasAssetIndex()) {
                 AssetIndex index = v.getAssetIndex();
                 assetID = index.getID();
-                indexJSON = new File(kernel.getWorkingDir() + File.separator + index.getRelativeFile());
+                indexJSON = new File(Constants.APPLICATION_WORKING_DIR + File.separator + index.getRelativeFile());
                 assetsURL = index.getURL();
             } else {
                 assetID = v.getAssets();
                 assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetID + ".json"); //Might be deprecated soon
-                indexJSON = new File(kernel.getWorkingDir() + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
+                indexJSON = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
             }
             if (!Constants.USE_LOCAL) {
                 int tries = 0;
@@ -110,7 +110,7 @@ public class Downloader {
                 long size = o.getLong("size");
                 URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + "/" + hash);
                 File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
-                File fullPath = new File(kernel.getWorkingDir() + File.separator + relPath);
+                File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
                 boolean localValid = false;
                 if (fullPath.exists() && fullPath.isFile()) {
                     if (fullPath.length() == size && Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
@@ -136,9 +136,9 @@ public class Downloader {
                 long jarSize = d.getSize();
                 String jarSHA1 = d.getHash();
                 total += d.getSize();
-                File destPath = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJar());
+                File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
                 boolean localValid = false;
-                File jsonFile = new File(kernel.getWorkingDir() + File.separator + v.getRelativeJSON());
+                File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
                 if (!Constants.USE_LOCAL) {
                     int tries = 0;
                     while (!Utils.downloadFile(v.getJSONURL(), jsonFile) && (tries < Constants.DOWNLOAD_TRIES)) {
@@ -170,7 +170,7 @@ public class Downloader {
             if (lib.isCompatible()) {
                 if (lib.hasArtifactDownload()) {
                     Downloadable a = lib.getArtifactDownload();
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + a.getRelativePath());
+                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
                     boolean valid = false;
                     if (completePath.exists()) {
                         if (completePath.isFile()) {
@@ -193,7 +193,7 @@ public class Downloader {
                 }
                 if (lib.hasClassifierDownload()) {
                     Downloadable c = lib.getClassifierDownload();
-                    File completePath = new File(kernel.getWorkingDir() + File.separator + c.getRelativePath());
+                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
                     boolean valid = false;
                     if (completePath.exists()) {
                         if (completePath.isFile()) {
@@ -218,7 +218,7 @@ public class Downloader {
             for (final Downloadable dw : urls) {
                 Runnable thread = () -> {
                     File path = dw.getRelativePath();
-                    File fullPath = new File(kernel.getWorkingDir() + File.separator + path);
+                    File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
                     URL url = dw.getURL();
                     int tries = 0;
                     if (dw.hasFakePath()) {
