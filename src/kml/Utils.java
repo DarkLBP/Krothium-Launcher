@@ -205,9 +205,14 @@ public class Utils {
             URLConnection con = url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")), 16384);
             String line;
+            boolean first = true;
             while ((line = bufferedReader.readLine()) != null) {
+                if (!first) {
+                    content.append(System.lineSeparator());
+                } else {
+                    first = false;
+                }
                 content.append(line);
-                content.append(System.lineSeparator());
             }
             return content.toString();
         } catch (Exception ex) {

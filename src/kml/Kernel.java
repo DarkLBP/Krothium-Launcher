@@ -5,7 +5,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
@@ -16,10 +17,9 @@ import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -38,6 +38,7 @@ public final class Kernel {
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
     private final MainFX mainForm;
+    private final BrowserFX webBrowser;
     private JSONObject launcherProfiles;
     public static Kernel instance;
 
@@ -101,12 +102,45 @@ public final class Kernel {
         this.loadVersions();
         this.loadProfiles();
         this.loadUsers();
-        //this.mainForm = null;
+
+        //Load web browser
+        Stage s = new Stage();
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
+        loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
         Parent p;
         try {
             p = loader.load();
+        } catch (IOException e) {
+            p = null;
+            this.console.printError("Failed to initialize JavaFX GUI!");
+            this.console.printError(e.getMessage());
+            exitSafely();
+        }
+        s.getIcons().add(Constants.APPLICATION_ICON);
+        s.setTitle("Krothium Minecraft Launcher");
+        s.setScene(new Scene(p));
+        s.setResizable(false);
+        s.setMaximized(false);
+        s.setOnCloseRequest(e -> {
+            e.consume();
+            Alert ask = new Alert(Alert.AlertType.CONFIRMATION);
+            Stage st = (Stage) ask.getDialogPane().getScene().getWindow();
+            st.getIcons().add(Constants.APPLICATION_ICON);
+            ask.setContentText("This ads makes this service alive.\nTo close the ad you need to wait 5 seconds and click Skip Ad.\n" +
+                    "If you don't want to wait you can always make a donation.\nDo you want to donate now?");
+            Optional<ButtonType> response = ask.showAndWait();
+            if (response.isPresent() && response.get() == ButtonType.OK) {
+                getHostServices().showDocument("https://krothium.com/donaciones/");
+            }
+        });
+        webBrowser = loader.getController();
+        webBrowser.initialize(s);
+
+        //Load main form
+        FXMLLoader loader2 = new FXMLLoader();
+        loader2.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
+        try {
+            p = loader2.load();
         } catch (IOException e) {
             p = null;
             this.console.printError("Failed to initialize JavaFX GUI!");
@@ -119,29 +153,10 @@ public final class Kernel {
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.setOnCloseRequest(e -> exitSafely());
-        mainForm = loader.getController();
+        mainForm = loader2.getController();
         mainForm.initialize(this, stage);
         stage.show();
 
-//        FXMLLoader loader = new FXMLLoader();
-//        loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
-//        Parent p;
-//        try {
-//            p = loader.load();
-//        } catch (IOException e) {
-//            p = null;
-//            this.console.printError("Failed to initialize JavaFX GUI!");
-//            this.console.printError(e.getMessage());
-//            exitSafely();
-//        }
-//        stage.getIcons().add(Constants.APPLICATION_ICON);
-//        stage.setTitle("Krothium Minecraft Launcher");
-//        stage.setScene(new Scene(p));
-//        stage.setResizable(false);
-//        stage.setMaximized(false);
-//        stage.setOnCloseRequest(e -> exitSafely());
-//        BrowserFX browser = loader.getController();
-//        stage.show();
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
@@ -261,5 +276,9 @@ public final class Kernel {
 
     public MainFX getGUI() {
         return this.mainForm;
+    }
+
+    public BrowserFX getBrowser() {
+        return this.webBrowser;
     }
 }

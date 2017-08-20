@@ -1,6 +1,5 @@
 package kml.gui;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -117,6 +116,8 @@ public class MainFX {
     private int currentPreview = 0; // 0 = front / 1 = right / 2 = back / 3 = left
     private final Image[] skinPreviews = new Image[4];
     private Image skin, cape, alex, steve;
+    private String urlPrefix = "";
+    private String adsURL = "";
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
@@ -234,13 +235,30 @@ public class MainFX {
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     try {
-                        kernel.getHostServices().showDocument(Utils.fromBase64(update));
+                        kernel.getHostServices().showDocument(urlPrefix + Utils.fromBase64(update));
                     }
                     catch (Exception e) {
                         kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
                     }
                 }
             });
+        }
+    }
+
+    private void fetchAds() {
+        String profileID = kernel.getAuthentication().getSelectedUser().getProfileID();
+        URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
+        String response = Utils.readURL(adsCheck);
+        if (response != null) {
+            if (!response.isEmpty()) {
+                adsURL = Utils.fromBase64(response.split(":")[0]);
+                urlPrefix = Utils.fromBase64(response.split(":")[1]);
+                kernel.getBrowser().loadWebsite(adsURL);
+                kernel.getBrowser().show(stage);
+            }
+            kernel.getConsole().printInfo("Ads loaded.");
+        } else {
+            kernel.getConsole().printInfo("Ads info not available.");
         }
     }
 
@@ -669,7 +687,7 @@ public class MainFX {
             return;
         }
         Slide s = slides.get(currentSlide);
-        kernel.getHostServices().showDocument(s.getAction());
+        kernel.getHostServices().showDocument(urlPrefix + s.getAction());
     }
 
     @FXML
@@ -1381,6 +1399,7 @@ public class MainFX {
                     loadProfileList();
                 }
                 showLoginPrompt(false);
+                fetchAds();
                 parseRemoteTextures();
             } catch (AuthenticationException ex) {
                 a.setAlertType(Alert.AlertType.ERROR);
@@ -1407,6 +1426,7 @@ public class MainFX {
         } finally {
             if (kernel.getAuthentication().isAuthenticated()) {
                 showLoginPrompt(false);
+                fetchAds();
                 parseRemoteTextures();
             } else {
                 showLoginPrompt(true);
@@ -1425,6 +1445,7 @@ public class MainFX {
                 loadProfileList();
             }
             showLoginPrompt(false);
+            fetchAds();
             parseRemoteTextures();
         } catch (AuthenticationException ex) {
             Alert a = new Alert(Alert.AlertType.ERROR);
@@ -1463,19 +1484,19 @@ public class MainFX {
     @FXML
     public void register() {
         //Open register page
-        kernel.getHostServices().showDocument("https://krothium.com/register");
+        kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/register");
     }
 
     @FXML
     public void openHelp() {
         //Open help page
-        kernel.getHostServices().showDocument("https://krothium.com/forum/12-soporte/");
+        kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/12-soporte/");
     }
 
     @FXML
     public void openNews() {
         //Open news page
-        kernel.getHostServices().showDocument("https://krothium.com/forum/3-noticias/");
+        kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/3-noticias/");
     }
 
     @FXML
