@@ -198,13 +198,18 @@ public class Utils {
                                 return null;
                             }
                         }
-                        return readURL(cachedFile.toURI().toURL());
+                    } else {
+                        if (!downloadFile(con, cachedFile)) {
+                            return null;
+                        }
                     }
+                    con = cachedFile.toURI().toURL().openConnection();
                 } else {
                     if (cachedFile.exists() && cachedFile.isFile()) {
-                        return readURL(cachedFile.toURI().toURL());
+                        con = cachedFile.toURI().toURL().openConnection();
+                    } else {
+                        return null;
                     }
-                    return null;
                 }
             }
             if (con == null) {
