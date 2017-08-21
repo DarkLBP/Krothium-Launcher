@@ -1,5 +1,7 @@
 package kml;
 
+import kml.enums.OS;
+import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.DownloaderException;
 import kml.objects.*;
@@ -8,6 +10,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -56,11 +59,45 @@ public class Downloader {
         if (Objects.isNull(v)) {
             throw new DownloaderException("Version info could not be obtained.");
         }
+
+
         ExecutorService pool = Executors.newFixedThreadPool(5);
         List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;
         this.validated = 0;
         this.total = 0;
+        if (Utils.getPlatform() == OS.WINDOWS && !p.hasJavaDir()) {
+            console.printInfo("Fetching runtime...");
+            try {
+                JSONObject root = new JSONObject(Utils.readURL(Constants.RUNTIME_URL));
+                JSONObject windows = root.getJSONObject("windows");
+                JSONObject arch;
+                if (Utils.getOSArch() == OSArch.OLD) {
+                    arch = windows.getJSONObject("32");
+                } else {
+                    arch = windows.getJSONObject("64");
+                }
+                JSONObject jre = arch.getJSONObject("jre");
+                String sha1 = jre.getString("sha1");
+                URL jreURL = Utils.stringToURL(jre.getString("url"));
+                long length = jreURL.openConnection().getContentLength();
+                this.total += length;
+                File jreFile = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
+                if (jreFile.exists() && jreFile.isFile() && Utils.verifyChecksum(jreFile, sha1, "sha1")) {
+                    console.printInfo("Runtime already downloaded and valid.");
+                    this.validated += length;
+                } else {
+                    Downloadable d = new Downloadable(jreURL, length, new File("jre.lzma"), sha1, null);
+                    urls.add(d);
+                    File markFile = new File(Constants.APPLICATION_WORKING_DIR, "jre" + File.separator + "OK");
+                    if (markFile.exists() && markFile.isFile()) {
+                        markFile.delete();
+                    }
+                }
+            } catch (Exception ex) {
+                console.printError("Failed to fetch runtime.");
+            }
+        }
         console.printInfo("Fetching asset urls..");
         File indexJSON = null;
         URL assetsURL;

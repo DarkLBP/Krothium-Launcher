@@ -1,5 +1,6 @@
 package kml;
 
+import SevenZip.Compression.LZMA.Decoder;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -15,11 +16,15 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author DarkLBP
@@ -179,12 +184,13 @@ public class Utils {
 
     public static String readURL(URL url) {
         try {
+            URLConnection con = null;
             StringBuilder content = new StringBuilder();
             if (url.getProtocol().startsWith("http")) {
                 String hash = calculateChecksum(url.toString(), "SHA1");
                 File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
                 if (!Constants.USE_LOCAL) {
-                    URLConnection con = url.openConnection();
+                    con = url.openConnection();
                     String ETag = con.getHeaderField("ETag");
                     if (ETag != null) {
                         if (!verifyChecksum(cachedFile, ETag.replace("\"", ""), "MD5")) {
@@ -194,7 +200,6 @@ public class Utils {
                         }
                         return readURL(cachedFile.toURI().toURL());
                     }
-                    return null;
                 } else {
                     if (cachedFile.exists() && cachedFile.isFile()) {
                         return readURL(cachedFile.toURI().toURL());
@@ -202,7 +207,9 @@ public class Utils {
                     return null;
                 }
             }
-            URLConnection con = url.openConnection();
+            if (con == null) {
+                con = url.openConnection();
+            }
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")), 16384);
             String line;
             boolean first = true;
@@ -683,5 +690,64 @@ public class Utils {
         }
 
         return output;
+    }
+
+    public static void decompressLZMA(File input, File output) {
+        Decoder LZMADecoder = new SevenZip.Compression.LZMA.Decoder();
+        try {
+            FileInputStream in = new FileInputStream(input);
+            FileOutputStream out = new FileOutputStream(output);
+            // Read the decoder properties
+            byte[] properties = new byte[5];
+            in.read(properties, 0, 5);
+
+            // Read in the decompress file size.
+            byte [] fileLengthBytes = new byte[8];
+            in.read(fileLengthBytes, 0, 8);
+            ByteBuffer bb = ByteBuffer.wrap( fileLengthBytes );
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+            long fileLength = bb.getLong();
+
+            LZMADecoder.SetDecoderProperties(properties);
+            LZMADecoder.Code(in, out, fileLength);
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void decompressZIP(File input, File output) {
+        try {
+            byte[] buffer = new byte[16384];
+            if(!output.exists() || !output.isDirectory()){
+                output.mkdir();
+            }
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(output + File.separator + fileName);
+                if (ze.isDirectory()) {
+                    newFile.mkdir();
+                } else {
+                    new File(newFile.getParent()).mkdirs();
+
+                    FileOutputStream fos = new FileOutputStream(newFile);
+
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                }
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+            new File(output, "OK").createNewFile();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

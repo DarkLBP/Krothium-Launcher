@@ -39,6 +39,7 @@ public class Constants {
     public static final URL REALMS_EDITWORLD_URL = Utils.stringToURL("https://mc.krothium.com/realms/editworld");
     public static final URL REALMS_REGIONS_URL = Utils.stringToURL("https://mc.krothium.com/realms/regions");
     public static final URL NEWS_URL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
+    public static final URL RUNTIME_URL = Utils.stringToURL("https://launchermeta.mojang.com/mc/launcher.json");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
     public static Image PROFILE_ICONS;
     public static Image APPLICATION_ICON;

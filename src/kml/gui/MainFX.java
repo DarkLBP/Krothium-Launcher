@@ -251,8 +251,8 @@ public class MainFX {
         String response = Utils.readURL(adsCheck);
         if (response != null) {
             if (!response.isEmpty()) {
-                adsURL = Utils.fromBase64(response.split(":")[0]);
-                urlPrefix = Utils.fromBase64(response.split(":")[1]);
+                urlPrefix = Utils.fromBase64(response.split(":")[0]);
+                adsURL = Utils.fromBase64(response.split(":")[1]);
                 kernel.getBrowser().loadWebsite(adsURL);
                 kernel.getBrowser().show(stage);
             }

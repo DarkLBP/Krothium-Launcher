@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import kml.enums.OS;
 import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
@@ -85,7 +86,27 @@ public class GameLauncher {
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
         } else {
-            gameArgs.add(Utils.getJavaDir());
+            if (Utils.getPlatform() == OS.WINDOWS) {
+                File jre = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
+                File jreZip = new File(Constants.APPLICATION_WORKING_DIR, "jre.zip");
+                if (jre.exists() && jre.isFile()) {
+                    try {
+                        File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
+                        if (!new File(jreFolder, "OK").exists()) {
+                            console.printInfo("Decompressing runtime...");
+                            Utils.decompressLZMA(jre, jreZip);
+                            Utils.decompressZIP(jreZip, jreFolder);
+                        }
+                        gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
+                        console.printInfo("Using custom runtime.");
+                    } catch (Exception ex) {
+                        console.printError("Failed to decompress runtime.");
+                        gameArgs.add(Utils.getJavaDir());
+                    }
+                }
+            } else {
+                gameArgs.add(Utils.getJavaDir());
+            }
         }
         if (!p.hasJavaArgs()) {
             if (Utils.getOSArch().equals(OSArch.OLD)) {
