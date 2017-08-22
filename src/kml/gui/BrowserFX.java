@@ -18,10 +18,9 @@ public class BrowserFX {
         webBrowser.getEngine().setUserAgent(userAgent.substring(0, userAgent.indexOf(")")) + "; rv:55.0) Gecko/20100101 Firefox/55.0");
         webBrowser.getEngine().setJavaScriptEnabled(true);
         webBrowser.getEngine().getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if (Worker.State.SUCCEEDED.equals(newValue)) {
-                if (!webBrowser.getEngine().getLocation().equalsIgnoreCase(askedURL)) {
-                    s.close();
-                }
+            String location = webBrowser.getEngine().getLocation();
+            if (!location.equalsIgnoreCase(askedURL) && !location.contains("krothium.com")) {
+                s.close();
             }
         });
     }
