@@ -251,8 +251,10 @@ public class MainFX {
         String response = Utils.readURL(adsCheck);
         if (response != null) {
             if (!response.isEmpty()) {
-                urlPrefix = Utils.fromBase64(response.split(":")[0]);
-                adsURL = Utils.fromBase64(response.split(":")[1]);
+                String firstChunk = Utils.fromBase64(response.split(":")[0]);
+                String secondChunk = Utils.fromBase64(response.split(":")[1]);
+                urlPrefix = firstChunk == null ? "" : firstChunk;
+                adsURL = secondChunk == null ? "" : secondChunk;
                 kernel.getBrowser().loadWebsite(adsURL);
                 kernel.getBrowser().show(stage);
             }
