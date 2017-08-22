@@ -49,7 +49,10 @@ class ConnectionHandler extends HttpURLConnection {
 
     @Override
     public void connect() throws IOException {
-        relay.connect();
+        if (!Constants.USE_LOCAL) {
+            //Connect only when offline
+            relay.connect();
+        }
     }
 
     @Override
