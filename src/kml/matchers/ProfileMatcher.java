@@ -3,7 +3,6 @@ package kml.matchers;
 import kml.Utils;
 
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,15 +25,11 @@ public class ProfileMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         Matcher m = profileRegex.matcher(url.getPath());
         if (m.matches()) {
             String profileID = m.group(1);
-            try {
-                return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (Objects.nonNull(url.getQuery()) ? "?" + url.getQuery() : "")).openConnection();
-            } catch (Exception ex) {
-                return null;
-            }
+            return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (Objects.nonNull(url.getQuery()) ? "?" + url.getQuery() : ""));
         }
         return null;
     }

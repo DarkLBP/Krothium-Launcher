@@ -1,13 +1,14 @@
 package kml.handlers;
 
+import kml.Constants;
+import kml.Utils;
 import kml.matchers.URLMatcher;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
 import java.util.Map;
@@ -19,22 +20,31 @@ import java.util.Objects;
  */
 class ConnectionHandler extends HttpURLConnection {
 
-    private final HttpURLConnection relay;
+    private HttpURLConnection relay;
+    private ByteArrayInputStream cached;
 
     public ConnectionHandler(URL url, URLMatcher m) {
         super(url);
-        this.relay = (HttpURLConnection) m.handle(url);
-        System.out.println("URL handled: " + super.url.toString() + " | " + Objects.nonNull(this.relay));
+        try {
+            relay = (HttpURLConnection)m.handle(url).openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("URL handled: " + url + " | " + Objects.nonNull(this.relay));
     }
 
     @Override
     public int getResponseCode() throws IOException {
+        if (Constants.USE_LOCAL) {
+            //Fake response code so cache can be pulled
+            return 200;
+        }
         return relay.getResponseCode();
     }
 
     @Override
     public String getContentType() {
-        return this.relay.getContentType();
+        return relay.getContentType();
     }
 
     @Override
@@ -44,6 +54,39 @@ class ConnectionHandler extends HttpURLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
+        if (relay.getRequestMethod().equalsIgnoreCase("GET") && cached == null) {
+            String etag = this.relay.getHeaderField("ETag");
+            String hash = Utils.calculateChecksum(relay.getURL().toString(), "sha1");
+            File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
+            if (!Constants.USE_LOCAL) {
+                if (etag != null) {
+                    if (!cachedFile.exists() || !cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
+                        System.out.println("Caching file for " + relay.getURL());
+                        if (!Utils.downloadFile(this.relay, cachedFile)) {
+                            return null;
+                        }
+                    }
+                } else {
+                    System.out.println("Caching file without ETAG for " + relay.getURL());
+                    if (!Utils.downloadFile(this.relay, cachedFile)) {
+                        return null;
+                    }
+                }
+            }
+            try {
+                if (cachedFile.exists() && cachedFile.isFile()) {
+                    cached = new ByteArrayInputStream(Files.readAllBytes(cachedFile.toPath()));
+                } else if (Constants.USE_LOCAL) {
+                    System.out.println("No cache available for " + relay.getURL());
+                }
+            } catch (IOException e) {
+                System.out.println("Failed to load cached version for " + relay.getURL());
+            }
+        }
+        if (cached != null) {
+            System.out.println("Serving from cache " + this.getURL());
+            return cached;
+        }
         return relay.getInputStream();
     }
 

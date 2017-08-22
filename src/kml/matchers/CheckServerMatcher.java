@@ -3,7 +3,6 @@ package kml.matchers;
 import kml.Utils;
 
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
 
 /**
@@ -19,13 +18,9 @@ public class CheckServerMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         if (url.toString().contains(checkURL) && Objects.nonNull(url.getQuery())) {
-            try {
-                return Utils.stringToURL("http://mc.krothium.com/server/checkserver?" + url.getQuery()).openConnection();
-            } catch (Exception ex) {
-                return null;
-            }
+            Utils.stringToURL("http://mc.krothium.com/server/checkserver?" + url.getQuery());
         }
         return null;
     }

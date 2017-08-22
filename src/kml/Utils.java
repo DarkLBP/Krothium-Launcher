@@ -18,6 +18,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -118,18 +120,14 @@ public class Utils {
 
     public static boolean downloadFile(URLConnection con, File output) {
         try {
-            InputStream in = con.getInputStream();
+            ReadableByteChannel rbc = Channels.newChannel(con.getInputStream());
             File parent = output.getParentFile();
             if (!parent.exists()) {
                 parent.mkdirs();
             }
             FileOutputStream fo = new FileOutputStream(output);
-            byte[] buffer = new byte[16384];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                fo.write(buffer, 0, read);
-            }
-            in.close();
+            fo.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            rbc.close();
             fo.close();
             return true;
         } catch (Exception ex) {
@@ -233,7 +231,7 @@ public class Utils {
     }
 
     public static boolean verifyChecksum(File file, String hash, String method) {
-        if (hash == null || method == null) {
+        if (hash == null || method == null || !file.exists() || file.isDirectory()) {
             return false;
         }
         try {

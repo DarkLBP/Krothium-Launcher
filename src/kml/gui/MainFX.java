@@ -316,7 +316,7 @@ public class MainFX {
 
     private void parseRemoteTextures() {
         try {
-            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + kernel.getAuthentication().getSelectedUser().getProfileID());
+            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + kernel.getAuthentication().getSelectedUser().getProfileID() + "?unsigned=true");
             JSONObject root = new JSONObject(Utils.readURL(profileURL));
             JSONArray properties = root.getJSONArray("properties");
             for (int i = 0; i < properties.length(); i++) {

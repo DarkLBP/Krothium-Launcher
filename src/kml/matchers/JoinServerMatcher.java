@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +27,7 @@ public class JoinServerMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         if (url.toString().contains(joinURL) && Objects.nonNull(url.getQuery())) {
             Map<String, String> arguments = new HashMap<>();
             arguments.put("Access-Token", GameStarter.ACCESS_TOKEN);
@@ -79,11 +78,7 @@ public class JoinServerMatcher implements URLMatcher {
             } catch (IOException e) {
                 System.out.println("Failed to validate the client.");
             }
-            try {
-                return Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + url.getQuery()).openConnection();
-            } catch (Exception ex) {
-                return null;
-            }
+            return Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + url.getQuery());
         }
         return null;
     }

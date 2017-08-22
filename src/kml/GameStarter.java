@@ -18,10 +18,8 @@ public class GameStarter {
             System.err.println("Failed load custom HTTPS certificate checker.");
         }
         Utils.testNetwork();
-        if (!Constants.USE_LOCAL) {
-            URL.setURLStreamHandlerFactory(new URLHandler());
-            System.out.println("Loaded URL Handler.");
-        }
+        URL.setURLStreamHandlerFactory(new URLHandler());
+        System.out.println("Loaded URL Handler.");
         if (args.length == 0) {
             System.exit(-1);
         }

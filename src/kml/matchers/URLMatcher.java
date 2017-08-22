@@ -1,7 +1,6 @@
 package kml.matchers;
 
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author DarkLBP
@@ -10,5 +9,5 @@ import java.net.URLConnection;
 public interface URLMatcher {
     boolean match(URL url);
 
-    URLConnection handle(URL url);
+    URL handle(URL url);
 }

@@ -3,7 +3,6 @@ package kml.matchers;
 import kml.Utils;
 
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,15 +24,11 @@ public class SkinMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         Matcher m = skinRegex.matcher(url.getPath());
         if (m.matches()) {
-            try {
-                String name = m.group(1);
-                return Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png").openConnection();
-            } catch (Exception ex) {
-                return null;
-            }
+            String name = m.group(1);
+            return Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png");
         }
         return null;
     }

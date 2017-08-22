@@ -2,9 +2,7 @@ package kml.matchers;
 
 import kml.Constants;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author DarkLBP
@@ -19,13 +17,9 @@ public class BlockedServersMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         if (url.toString().equalsIgnoreCase(blockURL)) {
-            try {
-                return Constants.BLOCKED_SERVERS.openConnection();
-            } catch (IOException ex) {
-                return null;
-            }
+            return Constants.BLOCKED_SERVERS;
         }
         return null;
     }

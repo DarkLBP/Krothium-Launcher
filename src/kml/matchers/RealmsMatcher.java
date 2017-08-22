@@ -3,9 +3,7 @@ package kml.matchers;
 import kml.Constants;
 import kml.Utils;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +32,7 @@ public class RealmsMatcher implements URLMatcher {
     }
 
     @Override
-    public URLConnection handle(URL url) {
+    public URL handle(URL url) {
         URL remoteURL = null;
         if (url.toString().equalsIgnoreCase(realms_compatible)) {
             remoteURL = Constants.REALMS_COMPATIBLE_URL;
@@ -65,10 +63,6 @@ public class RealmsMatcher implements URLMatcher {
         } else if (url.toString().equalsIgnoreCase(realms_regions)) {
             remoteURL = Constants.REALMS_REGIONS_URL;
         }
-        try {
-            return Objects.nonNull(remoteURL) ? remoteURL.openConnection() : null;
-        } catch (IOException ex) {
-            return null;
-        }
+        return Objects.nonNull(remoteURL) ? remoteURL : null;
     }
 }
