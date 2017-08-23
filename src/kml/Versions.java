@@ -170,8 +170,4 @@ public class Versions {
     public String getLatestSnapshot() {
         return latestSnap;
     }
-
-    public int versionCount() {
-        return versions.size();
-    }
 }

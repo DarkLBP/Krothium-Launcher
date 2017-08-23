@@ -166,7 +166,7 @@ public final class Kernel {
                 method.setAccessible(true);
                 method.invoke(classLoader, file.toURI().toURL());
                 return true;
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 return false;
             }
         }

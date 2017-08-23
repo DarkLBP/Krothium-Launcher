@@ -247,7 +247,6 @@ public class Utils {
             MessageDigest sha1 = MessageDigest.getInstance(method);
             byte[] data = txt.getBytes();
             sha1.update(data);
-            int read;
             byte[] hashBytes = sha1.digest();
             StringBuilder sb = new StringBuilder();
             for (byte hashByte : hashBytes) {

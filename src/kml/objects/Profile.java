@@ -259,10 +259,6 @@ public class Profile implements Comparable<Profile>{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Profile) {
-            Profile p = (Profile)obj;
-            return this.id.equalsIgnoreCase(p.id);
-        }
-        return false;
+        return obj instanceof Profile && id.equalsIgnoreCase(((Profile) obj).id);
     }
 }

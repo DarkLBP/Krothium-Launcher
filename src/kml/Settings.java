@@ -2,7 +2,6 @@ package kml;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Objects;
 
 /**

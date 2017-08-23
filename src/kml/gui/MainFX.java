@@ -117,7 +117,6 @@ public class MainFX {
     private final Image[] skinPreviews = new Image[4];
     private Image skin, cape, alex, steve;
     private String urlPrefix = "";
-    private String adsURL = "";
 
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
@@ -254,7 +253,7 @@ public class MainFX {
                 String firstChunk = Utils.fromBase64(response.split(":")[0]);
                 String secondChunk = Utils.fromBase64(response.split(":")[1]);
                 urlPrefix = firstChunk == null ? "" : firstChunk;
-                adsURL = secondChunk == null ? "" : secondChunk;
+                String adsURL = secondChunk == null ? "" : secondChunk;
                 kernel.getBrowser().loadWebsite(adsURL);
                 kernel.getBrowser().show(stage);
             }
@@ -1343,15 +1342,12 @@ public class MainFX {
 
     private void updateExistingUsers() {
         Authentication a = kernel.getAuthentication();
-        if (a.getUsers().size() > 0 && !a.hasSelectedUser()) {
+        if (a.getUsers().size() > 0 && a.getSelectedUser() == null) {
             existingPanel.setVisible(true);
             existingPanel.setManaged(true);
             ObservableList<User> users = FXCollections.observableArrayList();
-            Map<String, User> us = a.getUsers();
-            Set<String> keys = us.keySet();
-            for (String key : keys) {
-                users.add(us.get(key));
-            }
+            Set<User> us = a.getUsers();
+            users.addAll(us);
             existingUsers.setItems(users);
             existingUsers.getSelectionModel().select(0);
         } else {
@@ -1368,7 +1364,6 @@ public class MainFX {
             tabMenu.setManaged(false);
             accountButton.setVisible(false);
             playPane.setVisible(false);
-            Authentication a = kernel.getAuthentication();
             updateExistingUsers();
         } else {
             contentPane.getSelectionModel().select(newsTab);
@@ -1415,7 +1410,7 @@ public class MainFX {
 
     private void refreshSession() {
         try {
-            if (kernel.getAuthentication().hasSelectedUser()) {
+            if (kernel.getAuthentication().getSelectedUser() != null) {
                 kernel.getAuthentication().refresh();
                 if (kernel.getProfiles().updateSessionProfiles()) {
                     loadProfileList();
@@ -1441,7 +1436,7 @@ public class MainFX {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
         Authentication auth = kernel.getAuthentication();
         try {
-            auth.setSelectedUser(selected.getUserID());
+            auth.setSelectedUser(selected);
             auth.refresh();
             if (kernel.getProfiles().updateSessionProfiles()) {
                 loadProfileList();
@@ -1470,7 +1465,7 @@ public class MainFX {
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Authentication auth = kernel.getAuthentication();
-            auth.logOut(selected.getUserID());
+            auth.removeUser(selected);
             updateExistingUsers();
         }
     }

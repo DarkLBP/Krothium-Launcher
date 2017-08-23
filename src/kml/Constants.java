@@ -43,9 +43,9 @@ public class Constants {
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
     public static Image PROFILE_ICONS;
     public static Image APPLICATION_ICON;
-    public static File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
-    public static File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
-    public static File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
+    public static final File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
+    public static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
+    public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
     public static final URLMatcher[] HTTP_MATCHERS = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher(), new CheckServerMatcher()};
     public static final URLMatcher[] HTTPS_MATCHERS = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
     public static final int DOWNLOAD_TRIES = 5;

@@ -5,7 +5,6 @@ import kml.enums.ProfileType;
 import kml.objects.Profile;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -97,40 +96,16 @@ public class Profiles {
                 while (it.hasNext()) {
                     String key = it.next().toString();
                     JSONObject o = ples.getJSONObject(key);
-                    String type = null;
-                    String name = null;
-                    String ver = null;
-                    String created = null;
-                    String lastUsed = null;
-                    String gameDir = null;
-                    String javaDir = null;
-                    String javaArgs = null;
-                    ProfileIcon icon = null;
+                    String type = o.has("type") ? o.getString("type") : null;
+                    String name = o.has("name") ? o.getString("name") : null;
+                    String ver = o.has("lastVersionId") ? o.getString("lastVersionId") : null;
+                    String created = o.has("created") ? o.getString("created") : null;
+                    String lastUsed = o.has("lastUsed") ? o.getString("lastUsed") : null;
+                    String gameDir = o.has("gameDir") ? o.getString("gameDir") : null;
+                    String javaDir = o.has("javaDir") ? o.getString("javaDir") : null;
+                    String javaArgs = o.has("javaArgs") ? o.getString("javaArgs") : null;
+                    ProfileIcon icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase()) : null;
                     Map<String, Integer> resolution = new HashMap<>();
-                    if (o.has("name")) {
-                        name = o.getString("name");
-                    }
-                    if (o.has("type")) {
-                        type = o.getString("type");
-                    }
-                    if (o.has("created")) {
-                        created = o.getString("created");
-                    }
-                    if (o.has("lastUsed")) {
-                        lastUsed = o.getString("lastUsed");
-                    }
-                    if (o.has("lastVersionId")) {
-                        ver = o.getString("lastVersionId");
-                    }
-                    if (o.has("gameDir")) {
-                        gameDir = o.getString("gameDir");
-                    }
-                    if (o.has("javaDir")) {
-                        javaDir = o.getString("javaDir");
-                    }
-                    if (o.has("javaArgs")) {
-                        javaArgs = o.getString("javaArgs");
-                    }
                     if (o.has("resolution")) {
                         JSONObject res = o.getJSONObject("resolution");
                         if (res.has("width") && res.has("height")) {
@@ -140,11 +115,8 @@ public class Profiles {
                             console.printError("Profile " + ((Objects.nonNull(name)) ? name : "UNKNOWN") + " has an invalid resolution.");
                         }
                     }
-                    if (o.has("icon")) {
-                        icon = ProfileIcon.valueOf(o.getString("icon").toUpperCase());
-                    }
                     Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, icon);
-                    if (Objects.isNull(first)) {
+                    if (first == null) {
                         first = key;
                     }
                     if (!profiles.contains(p)) {
@@ -156,7 +128,7 @@ public class Profiles {
                     }
                 }
                 if (profiles.size() > 0) {
-                    if (Objects.nonNull(latestUsedID)) {
+                    if (latestUsedID != null) {
                         this.setSelectedProfile(getProfile(latestUsedID));
                     } else {
                         console.printInfo("No profile is selected! Using first loaded (" + first + ")");
@@ -164,7 +136,6 @@ public class Profiles {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
                 console.printError("Failed to fetch profiles.");
             }
         } else {

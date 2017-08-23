@@ -63,7 +63,6 @@ public class JoinServerMatcher implements URLMatcher {
                     }
                 }
             }
-            System.out.println(array.toString());
             try {
                 String response = Utils.sendPost(Constants.PROTECTION_URL, array.toString().getBytes(), arguments);
                 if (response.equalsIgnoreCase("OK")) {

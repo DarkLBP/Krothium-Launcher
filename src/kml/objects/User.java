@@ -45,4 +45,9 @@ public class User {
     public String toString() {
         return this.displayName;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof User && userID.equalsIgnoreCase(((User) o).userID);
+    }
 }

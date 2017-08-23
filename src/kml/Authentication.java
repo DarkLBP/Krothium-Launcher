@@ -4,7 +4,6 @@ import kml.exceptions.AuthenticationException;
 import kml.objects.User;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -16,70 +15,51 @@ import java.util.*;
 
 public class Authentication {
     private final Console console;
-    private final Map<String, User> userDatabase = new HashMap<>();
+    private final Set<User> userDatabase = new HashSet<>();
     private final Kernel kernel;
     private boolean authenticated;
-    private String selectedAccount, selectedProfile, clientToken = UUID.randomUUID().toString();
+    private String selectedProfile, clientToken = UUID.randomUUID().toString();
+    private User selectedAccount;
 
     public Authentication(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
     }
 
-    private void addUser(String userID, User u) {
-        console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.containsKey(userID)) ? " updated." : " loaded."));
-        this.userDatabase.put(userID, u);
+    private void addUser(User u) {
+        console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.contains(u)) ? " updated." : " loaded."));
+        this.userDatabase.add(u);
     }
 
-    private boolean removeUser(String userID) {
-        if (this.userDatabase.containsKey(userID)) {
-            console.printInfo("User " + this.userDatabase.get(userID).getDisplayName() + " deleted.");
-            this.userDatabase.remove(userID);
-            if (userID.equals(this.selectedAccount)) {
+    public boolean removeUser(User u) {
+        if (this.userDatabase.contains(u)) {
+            console.printInfo("User " + u.getDisplayName() + " deleted.");
+            userDatabase.remove(u);
+            if (u.equals(this.selectedAccount)) {
                 this.selectedAccount = null;
                 this.selectedProfile = null;
             }
             return true;
         } else {
-            console.printError("userID " + userID + " is not registered.");
+            console.printError("userID " + u.getUserID() + " is not registered.");
             return false;
         }
     }
 
-    public User getUser(String userID) {
-        if (this.userDatabase.containsKey(userID)) {
-            return this.userDatabase.get(userID);
-        } else {
-            console.printError("userID " + userID + " is not registered.");
-            return null;
-        }
-    }
-
     public User getSelectedUser() {
-        return this.userDatabase.get(this.selectedAccount);
+        return selectedAccount;
     }
 
-    public void setSelectedUser(String user) {
-        if (Objects.nonNull(user)) {
-            if (this.userDatabase.containsKey(user)) {
+    public void setSelectedUser(User user) {
+        if (user != null) {
+            if (this.userDatabase.contains(user)) {
                 this.selectedAccount = user;
-                this.selectedProfile = this.userDatabase.get(user).getProfileID();
-            } else {
-                this.selectedAccount = null;
-                this.selectedProfile = null;
+                this.selectedProfile = user.getProfileID();
+                return;
             }
-        } else {
-            this.selectedAccount = null;
-            this.selectedProfile = null;
         }
-    }
-
-    public boolean hasSelectedUser() {
-        return Objects.nonNull(this.selectedAccount) && this.userDatabase.containsKey(this.selectedAccount);
-    }
-
-    public void logOut(String user) {
-        this.removeUser(user);
+        this.selectedAccount = null;
+        this.selectedProfile = null;
     }
 
     public void authenticate(final String username, final String password) throws AuthenticationException {
@@ -114,8 +94,8 @@ public class Authentication {
             String profileName = (r.has("selectedProfile")) ? r.getJSONObject("selectedProfile").getString("name") : null;
             String userID = (r.has("user")) ? r.getJSONObject("user").getString("id") : null;
             User u = new User(profileName, accessToken, userID, username, profileID);
-            this.addUser(userID, u);
-            this.selectedAccount = userID;
+            this.addUser(u);
+            this.selectedAccount = u;
             this.selectedProfile = profileID;
             this.authenticated = true;
         } else {
@@ -136,7 +116,7 @@ public class Authentication {
         }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.getUser(this.selectedAccount);
+        User u = this.selectedAccount;
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("accessToken", Objects.nonNull(u) ? u.getAccessToken() : null);
@@ -194,8 +174,12 @@ public class Authentication {
         JSONObject root = kernel.getLauncherProfiles();
         if (root != null) {
             try {
+                String selectedUser = null;
                 if (root.has("clientToken")) {
                     this.clientToken = root.getString("clientToken");
+                }
+                if (root.has("selectedUser") && root.getJSONObject("selectedUser").has("account") && root.getJSONObject("selectedUser").has("profile")) {
+                    selectedUser = root.getJSONObject("selectedUser").getString("account");
                 }
                 if (root.has("authenticationDatabase")) {
                     JSONObject users = root.getJSONObject("authenticationDatabase");
@@ -211,7 +195,10 @@ public class Authentication {
                                     JSONObject profile = profiles.getJSONObject(uuid);
                                     if (profile.has("displayName")) {
                                         User u = new User(profile.getString("displayName"), user.getString("accessToken"), userID, user.getString("username"), uuid);
-                                        this.addUser(userID, u);
+                                        this.addUser(u);
+                                        if (u.getUserID().equalsIgnoreCase(selectedUser)) {
+                                            this.setSelectedUser(u);
+                                        }
                                     }
                                 }
                             }
@@ -219,13 +206,7 @@ public class Authentication {
                         }
                     }
                 }
-                if (root.has("selectedUser") && root.getJSONObject("selectedUser").has("account") && root.getJSONObject("selectedUser").has("profile")) {
-                    if (this.userDatabase.size() > 0) {
-                        this.setSelectedUser(root.getJSONObject("selectedUser").getString("account"));
-                    }
-                }
             } catch (Exception ex) {
-                ex.printStackTrace();
                 console.printError("Failed to load user list.");
             }
         } else {
@@ -233,7 +214,7 @@ public class Authentication {
         }
     }
 
-    public Map<String, User> getUsers() {
+    public Set<User> getUsers() {
         return this.userDatabase;
     }
 
@@ -242,11 +223,8 @@ public class Authentication {
         o.put("clientToken", this.clientToken);
         if (this.userDatabase.size() > 0) {
             JSONObject db = new JSONObject();
-            Set s = this.userDatabase.keySet();
-            for (Object value : s) {
-                String key = value.toString();
+            for (User u : userDatabase) {
                 JSONObject user = new JSONObject();
-                User u = this.userDatabase.get(key);
                 user.put("accessToken", u.getAccessToken());
                 user.put("username", u.getUsername());
                 JSONObject profile = new JSONObject();
@@ -254,11 +232,11 @@ public class Authentication {
                 profileInfo.put("displayName", u.getDisplayName());
                 profile.put(u.getProfileID(), profileInfo);
                 user.put("profiles", profile);
-                db.put(key, user);
+                db.put(u.getUserID(), user);
             }
             o.put("authenticationDatabase", db);
             JSONObject selectedUser = new JSONObject();
-            selectedUser.put("account", this.selectedAccount);
+            selectedUser.put("account", this.selectedAccount.getUserID());
             selectedUser.put("profile", this.selectedProfile);
             o.put("selectedUser", selectedUser);
         }
