@@ -130,9 +130,6 @@ public class MainFX {
         Thread updateThread = new Thread(this::checkForUpdates);
         updateThread.start();
 
-        //Refresh session
-        refreshSession();
-
         //Update version label
         versionLabel.setText(Constants.KERNEL_BUILD_NAME);
 
@@ -142,6 +139,9 @@ public class MainFX {
         newsTitle.setText("Loading news...");
         newsText.setText("Please wait a moment...");
         loadSlideshow();
+
+        //Refresh session
+        refreshSession();
 
         //Prepare language list
         String locale = kernel.getSettings().getLocale();

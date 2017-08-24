@@ -236,7 +236,9 @@ public class Authentication {
             }
             o.put("authenticationDatabase", db);
             JSONObject selectedUser = new JSONObject();
-            selectedUser.put("account", this.selectedAccount.getUserID());
+            if (selectedAccount != null) {
+                selectedUser.put("account", this.selectedAccount.getUserID());
+            }
             selectedUser.put("profile", this.selectedProfile);
             o.put("selectedUser", selectedUser);
         }

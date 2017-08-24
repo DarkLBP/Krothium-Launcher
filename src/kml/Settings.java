@@ -21,40 +21,30 @@ public class Settings {
         kernel.getConsole().printInfo("Loading settings...");
         JSONObject root = kernel.getLauncherProfiles();
         if (root != null) {
-            try {
-                if (root.has("settings")) {
-                    JSONObject settings = root.getJSONObject("settings");
-                    if (settings.has("locale")) {
-                        setLocale(settings.getString("locale"));
-                    } else {
-                        setLocale("en-us");
-                    }
-                    if (settings.has("keepLauncherOpen")) {
-                        keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
-                    }
-                    if (settings.has("showGameLog")) {
-                        showGameLog = settings.getBoolean("showGameLog");
-                    }
-                    if (settings.has("enableAdvanced")) {
-                        enableAdvanced = settings.getBoolean("enableAdvanced");
-                    }
-                    if (settings.has("enableHistorical")) {
-                        enableHistorical = settings.getBoolean("enableHistorical");
-                    }
-                    if (settings.has("enableSnapshots")) {
-                        enableSnapshots = settings.getBoolean("enableSnapshots");
-                    }
+            if (root.has("settings")) {
+                JSONObject settings = root.getJSONObject("settings");
+                if (settings.has("locale")) {
+                    setLocale(settings.getString("locale"));
                 } else {
                     setLocale("en-us");
                 }
-            } catch (Exception ex) {
-                kernel.getConsole().printError("Failed to load settings data. Using defaults...");
+                if (settings.has("keepLauncherOpen")) {
+                    keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
+                }
+                if (settings.has("showGameLog")) {
+                    showGameLog = settings.getBoolean("showGameLog");
+                }
+                if (settings.has("enableAdvanced")) {
+                    enableAdvanced = settings.getBoolean("enableAdvanced");
+                }
+                if (settings.has("enableHistorical")) {
+                    enableHistorical = settings.getBoolean("enableHistorical");
+                }
+                if (settings.has("enableSnapshots")) {
+                    enableSnapshots = settings.getBoolean("enableSnapshots");
+                }
+            } else {
                 setLocale("en-us");
-                keepLauncherOpen = false;
-                showGameLog = false;
-                enableAdvanced = false;
-                enableHistorical = false;
-                enableSnapshots = false;
             }
         } else {
             kernel.getConsole().printError("Not settings to be loaded.");

@@ -60,7 +60,7 @@ public class Downloader {
         }
 
 
-        ExecutorService pool = Executors.newFixedThreadPool(5);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
         List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;
         this.validated = 0;

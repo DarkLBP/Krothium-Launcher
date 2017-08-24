@@ -18,14 +18,13 @@ public class Console {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private boolean enabled = true;
     private FileOutputStream data;
-    private Date date;
-    private File log;
+    private final File log;
 
     public Console() {
-        File logFolder = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "logs");
+        File logFolder = new File(Constants.APPLICATION_WORKING_DIR, "logs");
         if (logFolder.exists() && logFolder.isDirectory()) {
             File[] logFiles = logFolder.listFiles();
-            if (Objects.nonNull(logFiles) && logFiles.length > 0) {
+            if (logFiles != null && logFiles.length > 0) {
                 Arrays.sort(logFiles);
                 int count = 0;
                 for (File f : logFiles) {
@@ -62,11 +61,11 @@ public class Console {
                 }
             }
         }
+        log = new File(Constants.APPLICATION_WORKING_DIR, "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
+        if (!log.getParentFile().exists()) {
+            log.getParentFile().mkdirs();
+        }
         try {
-            log = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
-            if (!log.getParentFile().exists()) {
-                log.getParentFile().mkdirs();
-            }
             this.data = new FileOutputStream(log);
         } catch (IOException ex) {
             this.enabled = false;
@@ -75,28 +74,24 @@ public class Console {
 
     public void printInfo(Object info) {
         if (this.enabled) {
-            date = new Date();
-            Object inf = "[" + dateFormat.format(date) + "] " + info;
-            writeData(inf);
-            System.out.println(inf);
+            writeData("[" + dateFormat.format(new Date()) + "] " + info);
+            System.out.println(info);
         }
     }
 
     public void printError(Object error) {
         if (this.enabled) {
-            date = new Date();
-            Object err = "[" + dateFormat.format(date) + "] " + error;
-            writeData(err);
-            System.err.println(err);
+            writeData("[" + dateFormat.format(new Date()) + "] " + error);
+            System.err.println(error);
         }
     }
 
     private void writeData(Object data) {
         try {
-            byte[] raw = (data.toString() + System.lineSeparator()).getBytes();
+            byte[] raw = (data + System.lineSeparator()).getBytes();
             this.data.write(raw);
         } catch (IOException ignored) {
-            System.out.println("Failed to write log data.");
+            System.err.println("Failed to write log data.");
             this.enabled = false;
         }
     }

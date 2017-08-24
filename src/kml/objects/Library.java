@@ -6,7 +6,6 @@ import kml.Utils;
 import kml.enums.LibraryRule;
 import kml.enums.OS;
 import kml.enums.OSArch;
-import kml.exceptions.ObjectException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -29,12 +28,12 @@ public final class Library {
     private final List<String> exclude = new ArrayList<>();
     private final Map<OS, String> natives = new HashMap<>();
 
-    public Library(JSONObject lib, Kernel k) throws ObjectException {
+    public Library(JSONObject lib, Kernel k) throws Exception {
         final Console console = k.getConsole();
         if (lib.has("name")) {
             this.name = lib.getString("name");
         } else {
-            throw new ObjectException("Invalid name for a library.");
+            throw new Exception("Invalid name for a library.");
         }
         if (lib.has("url")) {
             this.url = Utils.stringToURL(lib.getString("url"));

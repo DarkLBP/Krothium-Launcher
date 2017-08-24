@@ -694,11 +694,10 @@ public class Utils {
         return output;
     }
 
-    public static void decompressLZMA(File input, File output) {
+    public static void decompressLZMA(File input, File output) throws IOException {
         Decoder LZMADecoder = new SevenZip.Compression.LZMA.Decoder();
-        try {
-            FileInputStream in = new FileInputStream(input);
-            FileOutputStream out = new FileOutputStream(output);
+        try (FileInputStream in = new FileInputStream(input);
+             FileOutputStream out = new FileOutputStream(output)){
             // Read the decoder properties
             byte[] properties = new byte[5];
             in.read(properties, 0, 5);
@@ -712,20 +711,16 @@ public class Utils {
 
             LZMADecoder.SetDecoderProperties(properties);
             LZMADecoder.Code(in, out, fileLength);
-            in.close();
-            out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public static void decompressZIP(File input, File output) {
-        try {
-            byte[] buffer = new byte[16384];
-            if(!output.exists() || !output.isDirectory()){
-                output.mkdir();
-            }
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(input));
+    public static void decompressZIP(File input, File output, List<String> exclusions) throws IOException {
+        if(!output.exists() || !output.isDirectory()){
+            output.mkdir();
+        }
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))){
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
                 String fileName = ze.getName();
@@ -733,23 +728,34 @@ public class Utils {
                 if (ze.isDirectory()) {
                     newFile.mkdir();
                 } else {
+                    boolean excluded = false;
+                    if (exclusions != null) {
+                        for (String e : exclusions) {
+                            if (fileName.startsWith(e)) {
+                                excluded = true;
+                            }
+                        }
+                    }
+                    if (excluded) {
+                        zis.closeEntry();
+                        ze = zis.getNextEntry();
+                        continue;
+                    }
+                    byte[] buffer = new byte[16384];
                     new File(newFile.getParent()).mkdirs();
-
                     FileOutputStream fos = new FileOutputStream(newFile);
-
                     int len;
                     while ((len = zis.read(buffer)) > 0) {
                         fos.write(buffer, 0, len);
                     }
                     fos.close();
                 }
+                zis.closeEntry();
                 ze = zis.getNextEntry();
             }
-            zis.closeEntry();
-            zis.close();
             new File(output, "OK").createNewFile();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw ex;
         }
     }
 }

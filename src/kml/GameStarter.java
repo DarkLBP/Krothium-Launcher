@@ -21,6 +21,7 @@ public class GameStarter {
         URL.setURLStreamHandlerFactory(new URLHandler());
         System.out.println("Loaded URL Handler.");
         if (args.length == 0) {
+            System.err.println("Invalid number of arguments.");
             System.exit(-1);
         }
         GAME_DIR = args[0];
@@ -35,7 +36,6 @@ public class GameStarter {
             method.invoke(null, (Object) gameArgs);
         } catch (Exception ex) {
             System.out.println("Failed to start the game.");
-            ex.printStackTrace();
         }
     }
 }

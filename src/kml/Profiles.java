@@ -84,17 +84,16 @@ public class Profiles {
 
     public void fetchProfiles() {
         console.printInfo("Fetching profiles.");
-        String latestUsedID = null;
         Timestamp latestUsedMillis = new Timestamp(-1);
         JSONObject root = kernel.getLauncherProfiles();
         if (root != null) {
             try {
                 JSONObject ples = root.getJSONObject("profiles");
-                Set keys = ples.keySet();
-                Iterator it = keys.iterator();
-                String first = null;
+                Set<String> keys = ples.keySet();
+                Iterator<String> it = keys.iterator();
+                Profile first = null, latestUsedID = null;
                 while (it.hasNext()) {
-                    String key = it.next().toString();
+                    String key = it.next();
                     JSONObject o = ples.getJSONObject(key);
                     String type = o.has("type") ? o.getString("type") : null;
                     String name = o.has("name") ? o.getString("name") : null;
@@ -117,22 +116,22 @@ public class Profiles {
                     }
                     Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, icon);
                     if (first == null) {
-                        first = key;
+                        first = p;
                     }
                     if (!profiles.contains(p)) {
                         this.addProfile(p);
                         if (p.getLastUsed().compareTo(latestUsedMillis) > 0) {
                             latestUsedMillis = p.getLastUsed();
-                            latestUsedID = p.getID();
+                            latestUsedID = p;
                         }
                     }
                 }
                 if (profiles.size() > 0) {
                     if (latestUsedID != null) {
-                        this.setSelectedProfile(getProfile(latestUsedID));
+                        this.setSelectedProfile(latestUsedID);
                     } else {
                         console.printInfo("No profile is selected! Using first loaded (" + first + ")");
-                        this.setSelectedProfile(getProfile(first));
+                        this.setSelectedProfile(first);
                     }
                 }
             } catch (Exception ex) {
@@ -159,9 +158,7 @@ public class Profiles {
 
     public boolean setSelectedProfile(Profile p) {
         if (profiles.contains(p)) {
-            if (p.getType() == ProfileType.CUSTOM) {
-                p.setLastUsed(new Timestamp(System.currentTimeMillis()));
-            }
+            p.setLastUsed(new Timestamp(System.currentTimeMillis()));
             console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;

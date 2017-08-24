@@ -95,7 +95,10 @@ public class GameLauncher {
                         if (!new File(jreFolder, "OK").exists()) {
                             console.printInfo("Decompressing runtime...");
                             Utils.decompressLZMA(jre, jreZip);
-                            Utils.decompressZIP(jreZip, jreFolder);
+                            Utils.decompressZIP(jreZip, jreFolder, null);
+                            if (!jreZip.delete()) {
+                                console.printError("Failed to delete temporary zip file.");
+                            }
                         }
                         gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
                         console.printInfo("Using custom runtime.");
@@ -136,39 +139,7 @@ public class GameLauncher {
                 if (lib.isNative()) {
                     try {
                         File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
-                        ZipFile zip = new ZipFile(completePath);
-                        final Enumeration<? extends ZipEntry> entries = zip.entries();
-                        while (entries.hasMoreElements()) {
-                            final ZipEntry entry = entries.nextElement();
-                            if (entry.isDirectory()) {
-                                continue;
-                            }
-                            final File targetFile = new File(nativesDir, entry.getName());
-                            boolean excluded = false;
-                            if (lib.hasExtractExclusions()) {
-                                List<String> exclude = lib.getExtractExclusions();
-                                for (String e : exclude) {
-                                    if (entry.getName().startsWith(e)) {
-                                        excluded = true;
-                                    }
-                                }
-                            }
-                            if (excluded) {
-                                continue;
-                            }
-                            final BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
-                            final byte[] buffer = new byte[8192];
-                            final FileOutputStream outputStream = new FileOutputStream(targetFile);
-                            final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
-                            int length;
-                            while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {
-                                bufferedOutputStream.write(buffer, 0, length);
-                            }
-                            bufferedOutputStream.close();
-                            outputStream.close();
-                            inputStream.close();
-                        }
-                        zip.close();
+                        Utils.decompressZIP(completePath, nativesDir, lib.getExtractExclusions());
                     } catch (IOException ex) {
                         console.printError("Failed to extract native: " + lib.getName());
                     }

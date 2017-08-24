@@ -36,13 +36,10 @@ public final class Kernel {
     private final Authentication authentication;
     private final GameLauncher gameLauncher;
     private final HostServices hostServices;
-    private final MainFX mainForm;
     private final BrowserFX webBrowser;
     private JSONObject launcherProfiles;
-    public static Kernel instance;
 
     public Kernel(Stage stage, HostServices hs) {
-        instance = this;
         if (!Constants.APPLICATION_WORKING_DIR.exists()) {
             Constants.APPLICATION_WORKING_DIR.mkdirs();
         }
@@ -152,10 +149,9 @@ public final class Kernel {
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.setOnCloseRequest(e -> exitSafely());
-        mainForm = loader2.getController();
+        MainFX mainForm = loader2.getController();
         mainForm.initialize(this, stage);
         stage.show();
-
     }
 
     public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
@@ -271,10 +267,6 @@ public final class Kernel {
     private void warnJavaFX() {
         JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
         exitSafely();
-    }
-
-    public MainFX getGUI() {
-        return this.mainForm;
     }
 
     public BrowserFX getBrowser() {
