@@ -367,6 +367,12 @@ public class MainFX {
         } catch (Exception ex) {
             kernel.getConsole().printError("Failed to parse remote profile textures. (" + ex.getMessage() + ")");
         }
+        if (Constants.USE_LOCAL) {
+            selectSkin.setDisable(true);
+            selectCape.setDisable(true);
+            deleteSkin.setDisable(true);
+            deleteCape.setDisable(true);
+        }
     }
 
     @FXML
