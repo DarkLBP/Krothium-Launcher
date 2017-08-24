@@ -50,4 +50,9 @@ public class User {
     public boolean equals(Object o) {
         return o instanceof User && userID.equalsIgnoreCase(((User) o).userID);
     }
+
+    @Override
+    public int hashCode() {
+        return userID.hashCode();
+    }
 }

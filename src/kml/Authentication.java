@@ -27,8 +27,15 @@ public class Authentication {
     }
 
     private void addUser(User u) {
-        console.printInfo("User " + u.getDisplayName() + ((this.userDatabase.contains(u)) ? " updated." : " loaded."));
-        this.userDatabase.add(u);
+        if (this.userDatabase.contains(u)) {
+            this.userDatabase.remove(u);
+            this.userDatabase.add(u);
+            console.printInfo("User " + u.getDisplayName() + " updated.");
+        } else {
+            this.userDatabase.add(u);
+            console.printInfo("User " + u.getDisplayName() + " loaded.");
+        }
+
     }
 
     public boolean removeUser(User u) {
