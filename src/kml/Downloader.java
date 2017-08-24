@@ -41,25 +41,24 @@ public class Downloader {
         this.downloading = true;
         console.printInfo("Download work has started.");
         Profile p = this.kernel.getProfiles().getSelectedProfile();
-        String verID;
+        Versions versions = kernel.getVersions();
+        VersionMeta verID;
         if (p.getType() == ProfileType.CUSTOM) {
-            verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
+            verID = p.hasVersion() ? versions.getVersionMeta(p.getVersionID()) : versions.getLatestRelease();
         } else if (p.getType() == ProfileType.RELEASE) {
-            verID = kernel.getVersions().getLatestRelease();
+            verID = versions.getLatestRelease();
         } else {
-            verID = kernel.getVersions().getLatestSnapshot();
+            verID = versions.getLatestSnapshot();
         }
-        if (Objects.isNull(verID)) {
+        if (verID == null) {
             this.downloading = false;
             throw new DownloaderException("Version ID is null.");
         }
         console.printInfo("Using version ID: " + verID);
-        Version v = kernel.getVersions().getVersion(verID);
-        if (Objects.isNull(v)) {
+        Version v = versions.getVersion(verID);
+        if (v == null) {
             throw new DownloaderException("Version info could not be obtained.");
         }
-
-
         ExecutorService pool = Executors.newFixedThreadPool(2);
         List<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;

@@ -21,18 +21,6 @@ public class VersionMeta {
         this.type = type;
     }
 
-    public boolean hasURL() {
-        return Objects.nonNull(this.url);
-    }
-
-    public boolean hasID() {
-        return Objects.nonNull(this.id);
-    }
-
-    public boolean hasType() {
-        return Objects.nonNull(this.type);
-    }
-
     public String getID() {
         return this.id;
     }
@@ -43,5 +31,20 @@ public class VersionMeta {
 
     public VersionType getType() {
         return this.type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof VersionMeta && id.equalsIgnoreCase(((VersionMeta)o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

@@ -11,10 +11,7 @@ import kml.enums.OSArch;
 import kml.enums.ProfileType;
 import kml.exceptions.GameLauncherException;
 import kml.gui.OutputFX;
-import kml.objects.Library;
-import kml.objects.Profile;
-import kml.objects.User;
-import kml.objects.Version;
+import kml.objects.*;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -22,8 +19,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * @author DarkLBP
@@ -50,16 +45,22 @@ public class GameLauncher {
         if (this.isRunning()) {
             throw new GameLauncherException("Game is already started!");
         }
-        String verID;
-        Version ver;
+        Versions versions = kernel.getVersions();
+        VersionMeta verID;
         if (p.getType() == ProfileType.CUSTOM) {
-            verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
+            verID = p.hasVersion() ? versions.getVersionMeta(p.getVersionID()) : versions.getLatestRelease();
         } else if (p.getType() == ProfileType.RELEASE) {
-            verID = kernel.getVersions().getLatestRelease();
+            verID = versions.getLatestRelease();
         } else {
-            verID = kernel.getVersions().getLatestSnapshot();
+            verID = versions.getLatestSnapshot();
         }
-        ver = kernel.getVersions().getVersion(verID);
+        if (verID == null) {
+            throw new GameLauncherException("Version ID is null.");
+        }
+        Version ver = versions.getVersion(verID);
+        if (ver == null) {
+            throw new GameLauncherException("Version info could not be obtained.");
+        }
         File workingDir = Constants.APPLICATION_WORKING_DIR;
         console.printInfo("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());

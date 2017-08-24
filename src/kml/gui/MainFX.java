@@ -766,19 +766,10 @@ public class MainFX {
                 l2 = new Label(name, iv2);
             }
             //Fetch Minecraft version used by the profile
-            String verID;
+            VersionMeta verID;
             if (p.getType() == ProfileType.CUSTOM) {
-                verID = p.hasVersion() ? p.getVersionID() : kernel.getVersions().getLatestRelease();
-                if (verID != null) {
-                    switch (verID) {
-                        case "latest-release":
-                            verID = kernel.getVersions().getLatestRelease();
-                            break;
-                        case "latest-snapshot":
-                            verID = kernel.getVersions().getLatestSnapshot();
-                            break;
-                    }
-                }
+                Versions versions = kernel.getVersions();
+                verID = p.hasVersion() ? versions.getVersionMeta(p.getVersionID()) : versions.getLatestRelease();
             } else if (p.getType() == ProfileType.RELEASE) {
                 verID = kernel.getVersions().getLatestRelease();
             } else {
@@ -1213,7 +1204,7 @@ public class MainFX {
         if (kernel.getSettings().getEnableSnapshots()) {
             vers.add(Language.get(60));
         }
-        for (VersionMeta v : kernel.getVersions().getVersions().values()) {
+        for (VersionMeta v : kernel.getVersions().getVersions()) {
             if (v.getType() == VersionType.RELEASE) {
                 vers.add(v.getID());
             } else if (v.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) {

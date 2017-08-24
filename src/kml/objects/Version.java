@@ -145,7 +145,7 @@ public final class Version {
         }
         if (version.has("inheritsFrom")) {
             String inheritsFrom = version.getString("inheritsFrom");
-            Version ver = k.getVersions().getVersion(inheritsFrom);
+            Version ver = k.getVersions().getVersion(k.getVersions().getVersionMeta(inheritsFrom));
             if (ver.hasLibraries()) {
                 for (Library lib : ver.libraries) {
                     if (!this.libraries.contains(lib)) {
@@ -287,5 +287,20 @@ public final class Version {
 
     public Downloadable getClientDownload() {
         return this.downloads.get("client");
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Version && id.equalsIgnoreCase(((Version)obj).id);
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }
