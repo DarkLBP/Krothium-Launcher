@@ -245,7 +245,7 @@ public final class Kernel {
         this.saveProfiles();
         this.console.printInfo("Shutting down launcher...");
         this.console.close();
-        Platform.exit();
+        System.exit(0);
     }
 
     public String checkForUpdates() {

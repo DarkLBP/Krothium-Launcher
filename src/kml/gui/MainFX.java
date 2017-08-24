@@ -849,6 +849,10 @@ public class MainFX {
                     try {
                         d.download();
                         task.stop();
+                        Platform.runLater(() -> {
+                            progressText.setText("Preparing runtime...");
+                            progressBar.setProgress(0);
+                        });
                         gl.launch();
                         progressPane.setVisible(false);
                         playPane.setVisible(true);
