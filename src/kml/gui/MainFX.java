@@ -38,10 +38,15 @@ import kml.objects.VersionMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.text.html.Option;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author DarkLBP
@@ -60,7 +65,7 @@ public class MainFX {
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, profilePopupButton;
+            selectCape, profilePopupButton, deleteCache, exportLogs;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -1557,6 +1562,57 @@ public class MainFX {
             label.getStyleClass().add("toggle-enabled");
         } else {
             label.getStyleClass().add("toggle-disabled");
+        }
+    }
+
+    @FXML
+    private void deleteCache() {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+        st.getIcons().add(Constants.APPLICATION_ICON);
+        a.setContentText("The cache makes things load faster.\n" +
+                "Only delete the cache if something doesn't work properly.\n" +
+                "Are you sure you want to delete the cache?");
+        Optional<ButtonType> response = a.showAndWait();
+        if (response.isPresent() && response.get() == ButtonType.OK) {
+            File[] cacheFiles = Constants.APPLICATION_CACHE.listFiles();
+            for (File file : cacheFiles) {
+                file.delete();
+            }
+            a.setAlertType(Alert.AlertType.INFORMATION);
+            a.setContentText("Cache deleted successfully.");
+            a.showAndWait();
+        }
+    }
+
+    @FXML
+    private void exportLogs() {
+        FileChooser chooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("ZIP", "*.zip");
+        chooser.getExtensionFilters().add(filter);
+        File selected = chooser.showSaveDialog(null);
+        if (selected != null) {
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(selected))) {
+                File[] files = Constants.APPLICATION_LOGS.listFiles();
+                for (File file : files) {
+                    ZipEntry entry = new ZipEntry(file.getName());
+                    out.putNextEntry(entry);
+                    byte[] bytes = Files.readAllBytes(file.toPath());
+                    out.write(bytes);
+                    out.closeEntry();
+                }
+                Alert a = new Alert(Alert.AlertType.INFORMATION);
+                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+                st.getIcons().add(Constants.APPLICATION_ICON);
+                a.setContentText("Logs exported to:\n" + selected.getAbsolutePath());
+                a.showAndWait();
+            } catch (IOException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
+                st.getIcons().add(Constants.APPLICATION_ICON);
+                a.setContentText("Failed to export the logs (" + ex.getMessage() + ")");
+                a.showAndWait();
+            }
         }
     }
 }

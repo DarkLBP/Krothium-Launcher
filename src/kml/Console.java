@@ -21,7 +21,7 @@ public class Console {
     private final File log;
 
     public Console() {
-        File logFolder = new File(Constants.APPLICATION_WORKING_DIR, "logs");
+        File logFolder = Constants.APPLICATION_LOGS;
         if (logFolder.exists() && logFolder.isDirectory()) {
             File[] logFiles = logFolder.listFiles();
             if (logFiles != null && logFiles.length > 0) {
@@ -61,7 +61,7 @@ public class Console {
                 }
             }
         }
-        log = new File(Constants.APPLICATION_WORKING_DIR, "logs" + File.separator + "krothium-unclosed-" + System.currentTimeMillis() + ".log");
+        log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
         if (!log.getParentFile().exists()) {
             log.getParentFile().mkdirs();
         }
