@@ -131,7 +131,6 @@ public class Utils {
             fo.close();
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return false;
         }
     }
@@ -153,7 +152,6 @@ public class Utils {
                     return output;
                 }
             }
-
             return null;
         } catch (IOException e) {
             return null;
@@ -175,7 +173,6 @@ public class Utils {
             }
             return downloadFile(con, output);
         } catch (Exception ex) {
-            ex.printStackTrace();
             return false;
         }
     }

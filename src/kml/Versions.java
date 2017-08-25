@@ -30,9 +30,6 @@ public class Versions {
     private void add(VersionMeta m) {
         if (!versions.contains(m)) {
             versions.add(m);
-        } else {
-            versions.remove(m);
-            versions.add(m);
         }
     }
 

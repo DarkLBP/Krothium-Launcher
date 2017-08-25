@@ -1265,7 +1265,7 @@ public class MainFX {
             if (!javaArgs.isDisabled() && !javaArgs.getText().isEmpty()) {
                 target.setJavaArgs(javaArgs.getText());
             } else {
-                target.setJavaDir(null);
+                target.setJavaArgs(null);
             }
         }
         Alert a = new Alert(Alert.AlertType.INFORMATION);
@@ -1552,11 +1552,10 @@ public class MainFX {
 
     //Changes the label icon
     private void toggleLabel(Label label, boolean state) {
+        label.getStyleClass().clear();
         if (state) {
-            label.getStyleClass().remove("toggle-disabled");
             label.getStyleClass().add("toggle-enabled");
         } else {
-            label.getStyleClass().remove("toggle-enabled");
             label.getStyleClass().add("toggle-disabled");
         }
     }

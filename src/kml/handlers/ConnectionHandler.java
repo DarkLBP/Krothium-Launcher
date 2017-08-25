@@ -30,7 +30,7 @@ class ConnectionHandler extends HttpURLConnection {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("URL handled: " + url + " | " + this.relay != null);
+        System.out.println("URL handled: " + url);
     }
 
     @Override
