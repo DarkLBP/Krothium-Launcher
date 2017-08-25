@@ -14,12 +14,12 @@ public class CheckServerMatcher implements URLMatcher {
 
     @Override
     public boolean match(URL url) {
-        return url.toString().contains(checkURL) && Objects.nonNull(url.getQuery());
+        return url.toString().contains(checkURL) && url.getQuery() != null;
     }
 
     @Override
     public URL handle(URL url) {
-        if (url.toString().contains(checkURL) && Objects.nonNull(url.getQuery())) {
+        if (url.toString().contains(checkURL) && url.getQuery() != null) {
             Utils.stringToURL("http://mc.krothium.com/server/checkserver?" + url.getQuery());
         }
         return null;

@@ -23,12 +23,12 @@ public class JoinServerMatcher implements URLMatcher {
 
     @Override
     public boolean match(URL url) {
-        return url.toString().contains(joinURL) && Objects.nonNull(url.getQuery());
+        return url.toString().contains(joinURL) && url.getQuery() != null;
     }
 
     @Override
     public URL handle(URL url) {
-        if (url.toString().contains(joinURL) && Objects.nonNull(url.getQuery())) {
+        if (url.toString().contains(joinURL) && url.getQuery() != null) {
             Map<String, String> arguments = new HashMap<>();
             arguments.put("Access-Token", GameStarter.ACCESS_TOKEN);
             arguments.put("Profile-ID", GameStarter.PROFILE_ID);
@@ -39,7 +39,7 @@ public class JoinServerMatcher implements URLMatcher {
                 if (f.exists() && f.isFile()) {
                     JSONObject obj = new JSONObject();
                     String checksum = Utils.calculateChecksum(f, "SHA-1");
-                    if (Objects.nonNull(checksum)) {
+                    if (checksum != null) {
                         obj.put("name", f.getName());
                         obj.put("hash", checksum);
                         array.put(obj);
@@ -49,12 +49,12 @@ public class JoinServerMatcher implements URLMatcher {
             File gameDir = new File(GameStarter.GAME_DIR, "mods");
             if (gameDir.exists() && gameDir.isDirectory()) {
                 File[] mods = gameDir.listFiles();
-                if (Objects.nonNull(mods)) {
+                if (mods != null) {
                     for (File mod : mods) {
                         if (mod.isFile()) {
                             JSONObject obj = new JSONObject();
                             String checksum = Utils.calculateChecksum(mod, "SHA-1");
-                            if (Objects.nonNull(checksum)) {
+                            if (checksum != null) {
                                 obj.put("name", mod.getName());
                                 obj.put("hash", checksum);
                                 array.put(obj);

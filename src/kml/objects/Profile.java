@@ -39,7 +39,7 @@ public class Profile implements Comparable<Profile>{
 
     public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId,
                    String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon) {
-        if (Objects.isNull(id)) {
+        if (id == null) {
             this.id = UUID.randomUUID().toString().replaceAll("-", "");
         } else {
             this.id = id;
@@ -47,13 +47,13 @@ public class Profile implements Comparable<Profile>{
         this.name = name;
 
         this.lastVersionId = lastVersionId;
-        if (Objects.nonNull(gameDir)) {
+        if (gameDir != null) {
             this.gameDir = new File(gameDir);
             if (!this.gameDir.exists() || !this.gameDir.isDirectory()) {
                 this.gameDir = null;
             }
         }
-        if (Objects.nonNull(javaDir)) {
+        if (javaDir != null) {
             this.javaDir = new File(javaDir);
             if (!this.javaDir.exists() || !this.javaDir.isFile()) {
                 this.javaDir = null;
@@ -61,7 +61,7 @@ public class Profile implements Comparable<Profile>{
         }
         this.javaArgs = javaArgs;
         this.resolution = resolution;
-        if (Objects.isNull(lastUsed)) {
+        if (lastUsed == null) {
             this.lastUsed = new Timestamp(0);
         } else {
             try {
@@ -70,7 +70,7 @@ public class Profile implements Comparable<Profile>{
                 this.lastUsed = new Timestamp(0);
             }
         }
-        if (Objects.isNull(type)) {
+        if (type == null) {
             this.type = ProfileType.CUSTOM;
         } else {
             type = type.toLowerCase();
@@ -87,7 +87,7 @@ public class Profile implements Comparable<Profile>{
         }
 
         if (this.type == ProfileType.CUSTOM) {
-            if (Objects.isNull(created)) {
+            if (created == null) {
                 this.created = new Timestamp(0);
             } else {
                 try {
@@ -114,7 +114,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasName() {
-        return Objects.nonNull(this.name) && !this.name.isEmpty();
+        return this.name != null && !this.name.isEmpty();
     }
 
     public ProfileType getType() {
@@ -134,7 +134,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasVersion() {
-        return Objects.nonNull(this.lastVersionId);
+        return this.lastVersionId != null;
     }
 
     public File getGameDir() {
@@ -146,7 +146,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasGameDir() {
-        return Objects.nonNull(this.gameDir);
+        return this.gameDir != null;
     }
 
     public File getJavaDir() {
@@ -158,7 +158,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasJavaDir() {
-        return Objects.nonNull(this.javaDir);
+        return this.javaDir != null;
     }
 
     public String getJavaArgs() {
@@ -170,7 +170,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasJavaArgs() {
-        return Objects.nonNull(this.javaArgs);
+        return this.javaArgs != null;
     }
 
     public Timestamp getLastUsed() {
@@ -182,7 +182,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasCreated() {
-        return Objects.nonNull(this.created);
+        return this.created != null;
     }
 
     public Timestamp getCreated() {
@@ -190,7 +190,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public boolean hasResolution() {
-        return Objects.nonNull(this.resolution) && (this.resolution.size() == 2);
+        return this.resolution != null && this.resolution.size() == 2;
     }
 
     public int getResolutionHeight() {
@@ -211,7 +211,7 @@ public class Profile implements Comparable<Profile>{
         if (w < 0 || h < 0) {
             resolution = null;
         } else {
-            if (Objects.isNull(resolution)) {
+            if (resolution == null) {
                 resolution = new HashMap<>();
             }
             resolution.put("width", w);

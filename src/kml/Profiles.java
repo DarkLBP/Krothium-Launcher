@@ -57,7 +57,7 @@ public class Profiles {
 
     public boolean deleteProfile(Profile p) {
         if (profiles.contains(p)) {
-            if (Objects.nonNull(this.selected) && this.selected.equals(p)) {
+            if (this.selected != null && this.selected.equals(p)) {
                 console.printInfo("Profile " + p + " is selected and is going to be removed.");
                 profiles.remove(p);
                 console.printInfo("Profile " + p + " deleted.");
@@ -111,7 +111,7 @@ public class Profiles {
                             resolution.put("width", res.getInt("width"));
                             resolution.put("height", res.getInt("height"));
                         } else {
-                            console.printError("Profile " + ((Objects.nonNull(name)) ? name : "UNKNOWN") + " has an invalid resolution.");
+                            console.printError("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
                         }
                     }
                     Profile p = new Profile(key, name, type, created, lastUsed, ver, gameDir, javaDir, javaArgs, resolution, icon);
@@ -167,11 +167,11 @@ public class Profiles {
     }
 
     private boolean hasReleaseProfile() {
-        return Objects.nonNull(this.releaseProfile);
+        return this.releaseProfile != null;
     }
 
     private boolean hasSnapshotProfile() {
-        return Objects.nonNull(this.snapshotProfile);
+        return this.snapshotProfile != null;
     }
 
     private Profile getReleaseProfile() {

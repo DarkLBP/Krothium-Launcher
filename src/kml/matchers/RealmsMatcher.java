@@ -63,6 +63,6 @@ public class RealmsMatcher implements URLMatcher {
         } else if (url.toString().equalsIgnoreCase(realms_regions)) {
             remoteURL = Constants.REALMS_REGIONS_URL;
         }
-        return Objects.nonNull(remoteURL) ? remoteURL : null;
+        return remoteURL != null ? remoteURL : null;
     }
 }

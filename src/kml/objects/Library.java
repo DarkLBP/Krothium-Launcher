@@ -59,9 +59,9 @@ public final class Library {
                         o = OS.valueOf(os.getString("name").toUpperCase());
                     }
                 }
-                if (Objects.nonNull(o) && Objects.nonNull(action)) {
+                if (o != null && action != null) {
                     this.rules.put(o, action);
-                } else if (Objects.isNull(o) && Objects.nonNull(action)) {
+                } else if (o == null && action != null) {
                     for (OS os : oses) {
                         if (this.rules.get(Utils.getPlatform()).equals(LibraryRule.NOSET)) {
                             this.rules.put(os, action);
@@ -118,7 +118,7 @@ public final class Library {
             if (downloads.has("classifiers")) {
                 JSONObject classif = downloads.getJSONObject("classifiers");
                 String current = this.getNativeTag();
-                if (Objects.nonNull(current)) {
+                if (current != null) {
                     if (classif.has(current)) {
                         JSONObject download = classif.getJSONObject(current);
                         URL url = null;
@@ -172,7 +172,7 @@ public final class Library {
     }
 
     public boolean hasExtractExclusions() {
-        return (this.exclude.size() > 0);
+        return this.exclude.size() > 0;
     }
 
     public List<String> getExtractExclusions() {
@@ -192,7 +192,7 @@ public final class Library {
     }
 
     private boolean hasURL() {
-        return Objects.nonNull(this.url);
+        return this.url != null;
     }
 
     public URL getURL() {
@@ -200,7 +200,7 @@ public final class Library {
     }
 
     private boolean hasDownloads() {
-        return (this.downloads.size() > 0);
+        return this.downloads.size() > 0;
     }
 
     public boolean hasArtifactDownload() {

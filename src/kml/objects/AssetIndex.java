@@ -26,23 +26,23 @@ public class AssetIndex {
     }
 
     public boolean hasID() {
-        return (Objects.nonNull(this.id));
+        return this.id != null;
     }
 
     public boolean hasSize() {
-        return (this.size >= 0);
+        return this.size >= 0;
     }
 
     public boolean hasTotalSize() {
-        return (this.totalSize >= 0);
+        return this.totalSize >= 0;
     }
 
     public boolean hasURL() {
-        return (Objects.nonNull(this.url));
+        return this.url != null;
     }
 
     public boolean hasSHA1() {
-        return (Objects.nonNull(this.sha1));
+        return this.sha1 != null;
     }
 
     public String getID() {

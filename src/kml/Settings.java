@@ -65,7 +65,7 @@ public class Settings {
     }
 
     public void setLocale(String s) {
-        if (Objects.nonNull(s)) {
+        if (s != null) {
             if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("pt-br") || s.equals("val-es") || s.equals("hu-hu")) {
                 kernel.getConsole().printInfo("Switched language to " + s);
                 this.locale = s;

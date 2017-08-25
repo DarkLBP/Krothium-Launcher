@@ -89,7 +89,7 @@ public class Utils {
                 break;
             case WINDOWS:
                 final String applicationData = System.getenv("APPDATA");
-                final String folder = Objects.nonNull(applicationData) ? applicationData : userHome;
+                final String folder = applicationData != null ? applicationData : userHome;
                 workingDirectory = new File(folder, ".minecraft/");
                 break;
             case OSX:
@@ -104,7 +104,7 @@ public class Utils {
     public static void deleteDirectory(File directory) {
         if (directory.exists()) {
             File[] files = directory.listFiles();
-            if (Objects.nonNull(files)) {
+            if (files != null) {
                 for (File f : files) {
                     if (f.isDirectory()) {
                         deleteDirectory(f);
@@ -336,7 +336,7 @@ public class Utils {
             BufferedReader in = new BufferedReader(new InputStreamReader(i));
             String inputLine;
             response = new StringBuilder();
-            while (Objects.nonNull((inputLine = in.readLine()))) {
+            while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
@@ -347,11 +347,11 @@ public class Utils {
             } else {
                 i = ((HttpURLConnection) con).getErrorStream();
             }
-            if (Objects.nonNull(i)) {
+            if (i != null) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(i));
                 String inputLine;
                 response = new StringBuilder();
-                while (Objects.nonNull((inputLine = in.readLine()))) {
+                while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();

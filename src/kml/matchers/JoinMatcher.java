@@ -39,7 +39,7 @@ public class JoinMatcher implements URLMatcher {
                 if (f.exists() && f.isFile()) {
                     JSONObject obj = new JSONObject();
                     String checksum = Utils.calculateChecksum(f, "SHA-1");
-                    if (Objects.nonNull(checksum)) {
+                    if (checksum != null) {
                         obj.put("name", f.getName());
                         obj.put("hash", checksum);
                         array.put(obj);
@@ -49,12 +49,12 @@ public class JoinMatcher implements URLMatcher {
             File gameDir = new File(GameStarter.GAME_DIR, "mods");
             if (gameDir.exists() && gameDir.isDirectory()) {
                 File[] mods = gameDir.listFiles();
-                if (Objects.nonNull(mods)) {
+                if (mods != null) {
                     for (File mod : mods) {
                         if (mod.isFile()) {
                             JSONObject obj = new JSONObject();
                             String checksum = Utils.calculateChecksum(mod, "SHA-1");
-                            if (Objects.nonNull(checksum)) {
+                            if (checksum != null) {
                                 obj.put("name", mod.getName());
                                 obj.put("hash", checksum);
                                 array.put(obj);

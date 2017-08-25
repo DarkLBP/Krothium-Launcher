@@ -226,11 +226,11 @@ public final class Version {
     }
 
     private boolean hasMinecraftArguments() {
-        return Objects.nonNull(this.minecraftArguments);
+        return this.minecraftArguments != null;
     }
 
     private boolean hasMainClass() {
-        return Objects.nonNull(this.mainClass);
+        return this.mainClass != null;
     }
 
     public String getMinecraftArguments() {
@@ -250,11 +250,11 @@ public final class Version {
     }
 
     public boolean hasAssetIndex() {
-        return Objects.nonNull(this.assetIndex);
+        return this.assetIndex != null;
     }
 
     public boolean hasAssets() {
-        return Objects.nonNull(this.assets);
+        return this.assets != null;
     }
 
     public String getAssets() {
@@ -266,7 +266,7 @@ public final class Version {
     }
 
     private boolean hasDownloads() {
-        return (this.downloads.size() > 0);
+        return this.downloads.size() > 0;
     }
 
     public Map<String, Downloadable> getDownloads() {
@@ -274,7 +274,7 @@ public final class Version {
     }
 
     private boolean hasJar() {
-        return Objects.nonNull(this.jar);
+        return this.jar != null;
     }
 
     public String getJar() {

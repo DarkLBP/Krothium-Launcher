@@ -29,7 +29,7 @@ public class Downloadable {
     }
 
     public boolean hasURL() {
-        return Objects.nonNull(this.url);
+        return this.url != null;
     }
 
     public URL getURL() {
@@ -45,7 +45,7 @@ public class Downloadable {
     }
 
     public boolean hasHash() {
-        return Objects.nonNull(this.hash);
+        return this.hash != null;
     }
 
     public boolean hasSize() {

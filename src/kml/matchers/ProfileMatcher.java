@@ -29,7 +29,7 @@ public class ProfileMatcher implements URLMatcher {
         Matcher m = profileRegex.matcher(url.getPath());
         if (m.matches()) {
             String profileID = m.group(1);
-            return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (Objects.nonNull(url.getQuery()) ? "?" + url.getQuery() : ""));
+            return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (url.getQuery() != null ? "?" + url.getQuery() : ""));
         }
         return null;
     }

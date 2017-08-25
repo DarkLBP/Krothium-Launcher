@@ -77,7 +77,7 @@ public class Authentication {
         request.put("agent", agent);
         request.put("username", username);
         request.put("password", password);
-        if (Objects.nonNull(this.clientToken)) {
+        if (this.clientToken != null) {
             request.put("clientToken", this.clientToken);
         }
         request.put("requestUser", true);
@@ -118,7 +118,7 @@ public class Authentication {
     }
 
     public void refresh() throws AuthenticationException {
-        if (Objects.isNull(this.selectedAccount)) {
+        if (this.selectedAccount == null) {
             throw new AuthenticationException("No user is selected.");
         }
         JSONObject request = new JSONObject();
@@ -126,7 +126,7 @@ public class Authentication {
         User u = this.selectedAccount;
         agent.put("name", "Minecraft");
         agent.put("version", 1);
-        request.put("accessToken", Objects.nonNull(u) ? u.getAccessToken() : null);
+        request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
         request.put("requestUser", true);
         Map<String, String> postParams = new HashMap<>();

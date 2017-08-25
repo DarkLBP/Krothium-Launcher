@@ -125,7 +125,7 @@ public class Downloader {
             console.printInfo("Version " + v.getID() + " does not have any valid assets.");
         }
         //Fetch assets
-        if (Objects.nonNull(indexJSON)) {
+        if (indexJSON != null) {
             JSONObject root;
             try {
                 root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
@@ -166,7 +166,7 @@ public class Downloader {
         }
         console.printInfo("Fetching version urls..");
         Downloadable d = v.getClientDownload();
-        if (Objects.nonNull(d)) {
+        if (d != null) {
             if (d.hasURL()) {
                 long jarSize = d.getSize();
                 String jarSHA1 = d.getHash();

@@ -67,7 +67,7 @@ public class GameLauncher {
         if (nativesRoot.exists()) {
             if (nativesRoot.isDirectory()) {
                 File[] files = nativesRoot.listFiles();
-                if (Objects.nonNull(files)) {
+                if (files != null) {
                     for (File f : files) {
                         if (f.isDirectory() && f.getName().contains("natives")) {
                             Utils.deleteDirectory(f);
@@ -183,7 +183,7 @@ public class GameLauncher {
                         }
                         if (!valid) {
                             File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
-                            if (Objects.nonNull(assetFile.getParentFile())) {
+                            if (assetFile.getParentFile() != null) {
                                 assetFile.getParentFile().mkdirs();
                             }
                             Files.copy(objectFile.toPath(), assetFile.toPath());
@@ -313,7 +313,7 @@ public class GameLauncher {
                 try {
                     while (GameLauncher.this.isRunning()) {
                         final String lineRead = br.readLine();
-                        if (Objects.nonNull(lineRead)) {
+                        if (lineRead != null) {
                             if (kernel.getSettings().getShowGameLog()) {
                                 Platform.runLater(() -> out[0].pushString(lineRead));
                             }
@@ -339,7 +339,7 @@ public class GameLauncher {
                 try {
                     while (GameLauncher.this.isRunning()) {
                         final String lineRead = br.readLine();
-                        if (Objects.nonNull(lineRead)) {
+                        if (lineRead != null) {
                             if (kernel.getSettings().getShowGameLog()) {
                                 Platform.runLater(() -> out[0].pushString(lineRead));
                             }
@@ -364,7 +364,7 @@ public class GameLauncher {
     }
 
     public boolean isRunning() {
-        if (Objects.nonNull(process)) {
+        if (process != null) {
             try {
                 process.exitValue();
                 return false;
