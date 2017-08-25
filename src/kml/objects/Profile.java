@@ -17,12 +17,14 @@ import java.util.UUID;
 
 public class Profile implements Comparable<Profile>{
     private final String id;
-    private String name, javaArgs, lastVersionId;
+    private String name, javaArgs;
     private ProfileType type;
     private File gameDir, javaDir;
     private Timestamp created, lastUsed;
     private Map<String, Integer> resolution = new HashMap<>();
     private ProfileIcon icon;
+    private VersionMeta lastVersionId;
+    private boolean latestRelease, latestSnapshot;
 
     public Profile(ProfileType type) {
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
@@ -37,16 +39,13 @@ public class Profile implements Comparable<Profile>{
         }
     }
 
-    public Profile(String id, String name, String type, String created, String lastUsed, String lastVersionId,
-                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon) {
-        if (id == null) {
-            this.id = UUID.randomUUID().toString().replaceAll("-", "");
-        } else {
-            this.id = id;
-        }
-        this.name = name;
+    public Profile(String id, String name, ProfileType type, String created, String lastUsed, VersionMeta lastVersionId,
+                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon, boolean latestRelease, boolean latestSnapshot) {
 
+        this.id = id;
+        this.name = name;
         this.lastVersionId = lastVersionId;
+
         if (gameDir != null) {
             this.gameDir = new File(gameDir);
             if (!this.gameDir.exists() || !this.gameDir.isDirectory()) {
@@ -59,8 +58,10 @@ public class Profile implements Comparable<Profile>{
                 this.javaDir = null;
             }
         }
+
         this.javaArgs = javaArgs;
         this.resolution = resolution;
+
         if (lastUsed == null) {
             this.lastUsed = new Timestamp(0);
         } else {
@@ -70,21 +71,8 @@ public class Profile implements Comparable<Profile>{
                 this.lastUsed = new Timestamp(0);
             }
         }
-        if (type == null) {
-            this.type = ProfileType.CUSTOM;
-        } else {
-            type = type.toLowerCase();
-            switch (type) {
-                case "latest-release":
-                    this.type = ProfileType.RELEASE;
-                    break;
-                case "latest-snapshot":
-                    this.type = ProfileType.SNAPSHOT;
-                    break;
-                default:
-                    this.type = ProfileType.CUSTOM;
-            }
-        }
+
+        this.type = type;
 
         if (this.type == ProfileType.CUSTOM) {
             if (created == null) {
@@ -99,6 +87,9 @@ public class Profile implements Comparable<Profile>{
         }
 
         this.icon = icon;
+
+        this.latestRelease = latestRelease;
+        this.latestSnapshot = latestSnapshot;
     }
 
     public String getID() {
@@ -125,11 +116,11 @@ public class Profile implements Comparable<Profile>{
         this.type = type;
     }
 
-    public String getVersionID() {
+    public VersionMeta getVersionID() {
         return this.lastVersionId;
     }
 
-    public void setVersionID(String ver) {
+    public void setVersionID(VersionMeta ver) {
         this.lastVersionId = ver;
     }
 
@@ -229,6 +220,22 @@ public class Profile implements Comparable<Profile>{
 
     public void setIcon(ProfileIcon icon) {
         this.icon = icon;
+    }
+
+    public boolean isLatestRelease() {
+        return latestRelease;
+    }
+
+    public boolean isLatestSnapshot() {
+        return latestSnapshot;
+    }
+
+    public void setLatestRelease(boolean latestRelease) {
+        this.latestRelease = latestRelease;
+    }
+
+    public void setLatestSnapshot(boolean latestSnapshot) {
+        this.latestSnapshot = latestSnapshot;
     }
 
     @Override

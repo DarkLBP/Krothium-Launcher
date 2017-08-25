@@ -38,7 +38,6 @@ import kml.objects.VersionMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,7 +64,7 @@ public class MainFX {
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, profilePopupButton, deleteCache, exportLogs;
+            selectCape, profilePopupButton, deleteCache, exportLogs, downloadServer;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -102,7 +101,7 @@ public class MainFX {
     private ComboBox<User> existingUsers;
 
     @FXML
-    private ComboBox<String> versionList;
+    private ComboBox<VersionMeta> versionList;
 
     @FXML
     private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
@@ -222,6 +221,9 @@ public class MainFX {
             playButton.setMinWidth(290);
         }
 
+        //Load version list
+        loadVersionList();
+
         //Localize elements
         localizeElements();
     }
@@ -316,8 +318,6 @@ public class MainFX {
         includeCape.setText(Language.get(93));
         //Load profile list
         loadProfileList();
-        //Load version list
-        loadVersionList();
     }
 
     private void parseRemoteTextures() {
@@ -727,6 +727,25 @@ public class MainFX {
     @FXML
     private void loadProfileList() {
         Profiles ps = kernel.getProfiles();
+
+        //Check if selected profile passes the current settings
+        Profile selected = ps.getSelectedProfile();
+        VersionMeta selectedVersion = selected.getVersionID();
+        Settings settings = kernel.getSettings();
+
+        if (selected.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
+            ps.setSelectedProfile(ps.getReleaseProfile());
+        } else if (selected.getType() == ProfileType.CUSTOM) {
+            VersionType type = selectedVersion.getType();
+            if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            }
+        }
+
         //For some reason using the same label for both lists one list appear the items blank
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
         ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
@@ -737,6 +756,9 @@ public class MainFX {
 
         Label l2;
         for (Profile p : ps.getProfiles()) {
+            if (p.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
+                continue;
+            }
             if (p.getType() == ProfileType.RELEASE) {
                 Image img = Utils.getProfileIcon(ProfileIcon.GRASS);
                 ImageView iv = new ImageView(img);
@@ -774,7 +796,7 @@ public class MainFX {
             VersionMeta verID;
             if (p.getType() == ProfileType.CUSTOM) {
                 Versions versions = kernel.getVersions();
-                verID = p.hasVersion() ? versions.getVersionMeta(p.getVersionID()) : versions.getLatestRelease();
+                verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
             } else if (p.getType() == ProfileType.RELEASE) {
                 verID = kernel.getVersions().getLatestRelease();
             } else {
@@ -784,10 +806,15 @@ public class MainFX {
             l2.setId(p.getID());
             if (verID != null) {
                 //If profile has any known version just show it below the profile name
-                l.setText(l2.getText() + "\n" + verID);
-                l2.setText(l2.getText() + "\n" + verID);
+                if (verID.getType() == VersionType.SNAPSHOT && !kernel.getSettings().getEnableSnapshots()) {
+                    continue;
+                } else if ((verID.getType() == VersionType.OLD_ALPHA || verID.getType() == VersionType.OLD_BETA) && !kernel.getSettings().getEnableHistorical()) {
+                    continue;
+                }
+                l.setText(l2.getText() + "\n" + verID.getID());
+                l2.setText(l2.getText() + "\n" + verID.getID());
             }
-            if (kernel.getProfiles().getSelectedProfile().equals(p)) {
+            if (ps.getSelectedProfile().equals(p)) {
                 l.getStyleClass().add("selectedProfile");
                 l2.getStyleClass().add("selectedProfile");
             }
@@ -969,7 +996,12 @@ public class MainFX {
             switchAccountButton.setVisible(false);
         } else {
             Bounds b = accountButton.localToScene(accountButton.getBoundsInLocal());
-            switchAccountButton.setTranslateX(b.getMinX() - 5);
+            //Avoid the label getting out of bounds
+            if (b.getMinX() - 5 + switchAccountButton.getWidth() > stage.getWidth()) {
+                switchAccountButton.setTranslateX(stage.getWidth() - switchAccountButton.getWidth() - 5);
+            } else {
+                switchAccountButton.setTranslateX(b.getMinX() - 5);
+            }
             switchAccountButton.setTranslateY(b.getMaxY() + 5);
             switchAccountButton.setVisible(true);
         }
@@ -1066,7 +1098,6 @@ public class MainFX {
             versionBlock.setManaged(true);
             iconBlock.setVisible(true);
             iconBlock.setManaged(true);
-            loadVersionList();
             versionList.getSelectionModel().select(0);
             profileIcon.setImage(Utils.getProfileIcon(ProfileIcon.FURNACE));
             if (kernel.getSettings().getEnableAdvanced()) {
@@ -1133,12 +1164,10 @@ public class MainFX {
                     versionBlock.setManaged(true);
                     iconBlock.setVisible(true);
                     iconBlock.setManaged(true);
-                    loadVersionList();
                     if (p.hasVersion()) {
-                        String versionID = p.getVersionID();
-                        if (versionID.equalsIgnoreCase("lastest-release")) {
+                        if (p.isLatestRelease()) {
                             versionList.getSelectionModel().select(0);
-                        } else if (versionID.equalsIgnoreCase("latest-snapshot") && kernel.getSettings().getEnableSnapshots()) {
+                        } else if (p.isLatestSnapshot() && kernel.getSettings().getEnableSnapshots()) {
                             versionList.getSelectionModel().select(1);
                         } else if (versionList.getItems().contains(p.getVersionID())) {
                             versionList.getSelectionModel().select(p.getVersionID());
@@ -1204,18 +1233,20 @@ public class MainFX {
     }
 
     private void loadVersionList() {
-        ObservableList<String> vers = FXCollections.observableArrayList();
-        vers.add(Language.get(59));
+        ObservableList<VersionMeta> vers = FXCollections.observableArrayList();
+        VersionMeta latestVersion = new VersionMeta(Language.get(59), null, null);
+        vers.add(latestVersion);
         if (kernel.getSettings().getEnableSnapshots()) {
-            vers.add(Language.get(60));
+            VersionMeta latestSnapshot = new VersionMeta(Language.get(60), null, null);
+            vers.add(latestSnapshot);
         }
         for (VersionMeta v : kernel.getVersions().getVersions()) {
             if (v.getType() == VersionType.RELEASE) {
-                vers.add(v.getID());
+                vers.add(v);
             } else if (v.getType() == VersionType.SNAPSHOT && kernel.getSettings().getEnableSnapshots()) {
-                vers.add(v.getID());
+                vers.add(v);
             } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && kernel.getSettings().getEnableHistorical()) {
-                vers.add(v.getID());
+                vers.add(v);
             }
         }
         versionList.setItems(vers);
@@ -1239,9 +1270,13 @@ public class MainFX {
                 target.setName(null);
             }
             if (versionList.getSelectionModel().getSelectedIndex() == 0) {
-                target.setVersionID("latest-release");
+                target.setVersionID(kernel.getVersions().getLatestRelease());
+                target.setLatestRelease(true);
+                target.setLatestSnapshot(false);
             } else if (versionList.getSelectionModel().getSelectedIndex() == 1 && kernel.getSettings().getEnableSnapshots()) {
-                target.setVersionID("latest-snapshot");
+                target.setVersionID(kernel.getVersions().getLatestSnapshot());
+                target.setLatestRelease(false);
+                target.setLatestSnapshot(true);
             } else {
                 target.setVersionID(versionList.getSelectionModel().getSelectedItem());
             }
@@ -1398,9 +1433,6 @@ public class MainFX {
                 auth.authenticate(username.getText(), password.getText());
                 username.setText("");
                 password.setText("");
-                if (kernel.getProfiles().updateSessionProfiles()) {
-                    loadProfileList();
-                }
                 showLoginPrompt(false);
                 fetchAds();
                 parseRemoteTextures();
@@ -1418,9 +1450,6 @@ public class MainFX {
         try {
             if (kernel.getAuthentication().getSelectedUser() != null) {
                 kernel.getAuthentication().refresh();
-                if (kernel.getProfiles().updateSessionProfiles()) {
-                    loadProfileList();
-                }
             } else {
                 kernel.getConsole().printInfo("No user is selected.");
             }
@@ -1444,9 +1473,6 @@ public class MainFX {
         try {
             auth.setSelectedUser(selected);
             auth.refresh();
-            if (kernel.getProfiles().updateSessionProfiles()) {
-                loadProfileList();
-            }
             showLoginPrompt(false);
             fetchAds();
             parseRemoteTextures();
@@ -1530,8 +1556,8 @@ public class MainFX {
             }
             s.setEnableSnapshots(!s.getEnableSnapshots());
             toggleLabel(source, s.getEnableSnapshots());
-            kernel.getProfiles().updateSessionProfiles();
             loadProfileList();
+            loadVersionList();
         } else if (source == historicalVersions) {
             if (!s.getEnableHistorical()) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
@@ -1542,6 +1568,8 @@ public class MainFX {
             }
             s.setEnableHistorical(!s.getEnableHistorical());
             toggleLabel(source, s.getEnableHistorical());
+            loadProfileList();
+            loadVersionList();
         } else if (source == advancedSettings) {
             if (!s.getEnableAdvanced()) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
@@ -1614,5 +1642,11 @@ public class MainFX {
                 a.showAndWait();
             }
         }
+    }
+
+    @FXML
+    private void downloadServer() {
+        VersionMeta selectedItem = versionList.getSelectionModel().getSelectedItem();
+        kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
     }
 }

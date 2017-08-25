@@ -34,18 +34,20 @@ public class Versions {
     }
 
     public VersionMeta getVersionMeta(String id) {
-        switch (id) {
-            case "latest-release":
-                return getLatestRelease();
-            case "latest-snapshot":
-                return getLatestSnapshot();
-        }
-        for (VersionMeta m : versions) {
-            if (m.getID().equalsIgnoreCase(id)) {
-                return m;
+        if (id != null) {
+            switch (id) {
+                case "latest-release":
+                    return this.latestRel;
+                case "latest-snapshot":
+                    return this.latestSnap;
+            }
+            for (VersionMeta m : versions) {
+                if (m.getID().equalsIgnoreCase(id)) {
+                    return m;
+                }
             }
         }
-        return null;
+        return this.latestRel;
     }
 
     public Version getVersion(VersionMeta vm) {
@@ -104,9 +106,10 @@ public class Versions {
                     console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
                 }
                 VersionMeta vm = new VersionMeta(id, url, type);
-                if (lr.equalsIgnoreCase(id) && type == VersionType.RELEASE) {
+                if (lr.equalsIgnoreCase(id)) {
                     this.latestRel = vm;
-                } else if (ls.equalsIgnoreCase(id) && type == VersionType.SNAPSHOT) {
+                }
+                if (ls.equalsIgnoreCase(id)) {
                     this.latestSnap = vm;
                 }
                 this.add(vm);

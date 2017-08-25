@@ -564,7 +564,7 @@
                <content>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <StackPane maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
+                        <StackPane maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="900.0">
                            <children>
                               <Label fx:id="nameLabel" styleClass="text-5" text="Name" StackPane.alignment="CENTER_LEFT" />
                               <TextField fx:id="profileName" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" promptText="My configuration" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
@@ -587,7 +587,7 @@
                                  </cursor>
                                  <styleClass>
                                     <String fx:value="color-alt" />
-                                    <String fx:value="text-5" />
+                                    <String fx:value="text-6" />
                                  </styleClass>
                               </Button>
                            </children>
@@ -595,7 +595,19 @@
                         <StackPane fx:id="versionBlock" layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
                               <Label fx:id="profileVersionLabel" styleClass="text-5" text="Version" StackPane.alignment="CENTER_LEFT" />
-                              <ComboBox fx:id="versionList" maxWidth="450.0" prefHeight="33.0" prefWidth="150.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                              <ComboBox fx:id="versionList" maxWidth="270.0" prefHeight="33.0" prefWidth="50.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <StackPane.margin>
+                                    <Insets right="180.0" />
+                                 </StackPane.margin></ComboBox>
+                              <Button fx:id="downloadServer" mnemonicParsing="false" onMouseClicked="#downloadServer" prefHeight="34.0" prefWidth="175.0" text="Download Server" StackPane.alignment="CENTER_RIGHT">
+                                 <styleClass>
+                                    <String fx:value="color-alt" />
+                                    <String fx:value="text-6" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
                            </children>
                         </StackPane>
                         <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">

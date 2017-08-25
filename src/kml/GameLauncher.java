@@ -48,7 +48,7 @@ public class GameLauncher {
         Versions versions = kernel.getVersions();
         VersionMeta verID;
         if (p.getType() == ProfileType.CUSTOM) {
-            verID = p.hasVersion() ? versions.getVersionMeta(p.getVersionID()) : versions.getLatestRelease();
+            verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
         } else if (p.getType() == ProfileType.RELEASE) {
             verID = versions.getLatestRelease();
         } else {
