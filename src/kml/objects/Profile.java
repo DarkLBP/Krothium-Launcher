@@ -268,4 +268,9 @@ public class Profile implements Comparable<Profile>{
     public boolean equals(Object obj) {
         return obj instanceof Profile && id.equalsIgnoreCase(((Profile) obj).id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

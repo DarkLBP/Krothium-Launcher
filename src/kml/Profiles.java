@@ -74,6 +74,16 @@ public class Profiles {
                 while (it.hasNext()) {
                     String key = it.next();
                     JSONObject o = ples.getJSONObject(key);
+                    try {
+                        if (key.length() != 32) {
+                            key = UUID.randomUUID().toString().replace("-", "");
+                        } else {
+                            String uuid = key.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");;
+                            UUID.fromString(uuid);
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        key = UUID.randomUUID().toString().replace("-", "");
+                    }
                     ProfileType type;
                     String typeString = o.has("type") ? o.getString("type") : null;
                     if (typeString != null) {
