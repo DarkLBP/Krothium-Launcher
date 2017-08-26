@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author DarkLBP

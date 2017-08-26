@@ -1,6 +1,5 @@
 package kml;
 
-import javafx.scene.image.Image;
 import kml.matchers.*;
 
 import java.io.File;
@@ -11,7 +10,7 @@ import java.net.URL;
  *         website https://krothium.com
  */
 
-public class Constants {
+public final class Constants {
     public static final int KERNEL_BUILD = 35;
     public static final String KERNEL_BUILD_NAME = "2.3.2";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
@@ -41,8 +40,6 @@ public class Constants {
     public static final URL NEWS_URL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
     public static final URL RUNTIME_URL = Utils.stringToURL("https://launchermeta.mojang.com/mc/launcher.json");
     public static final String RESOURCES_URL = "http://resources.download.minecraft.net/";
-    public static Image PROFILE_ICONS;
-    public static Image APPLICATION_ICON;
     public static final File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
     public static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
@@ -52,12 +49,4 @@ public class Constants {
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEP_OLD_LOGS = 4;
     public static boolean USE_LOCAL = false;
-    static {
-        try {
-            PROFILE_ICONS = new Image("/kml/gui/textures/profile_icons.png");
-            APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
-        } catch (Exception ex) {
-
-        }
-    }
 }

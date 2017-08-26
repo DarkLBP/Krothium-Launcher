@@ -22,6 +22,7 @@ import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
 import com.mojang.authlib.yggdrasil.response.Response;
 import com.mojang.util.UUIDTypeAdapter;
 import kml.Constants;
+import kml.Kernel;
 import kml.Utils;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.binary.Base64;
@@ -196,7 +197,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                     }
                 }
             } catch (Exception ex) {
-                LOGGER.error("Failed to fetch data from profile " + profile.getId() + " with name " + profile.getName());
+                System.err.println("Failed to fetch data from profile " + profile.getId() + " with name " + profile.getName());
             }
         }
         System.out.println("No textures found for " + profile.getName());

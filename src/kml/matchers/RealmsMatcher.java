@@ -4,7 +4,6 @@ import kml.Constants;
 import kml.Utils;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

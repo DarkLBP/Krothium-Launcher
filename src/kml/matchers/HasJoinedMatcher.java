@@ -3,7 +3,6 @@ package kml.matchers;
 import kml.Utils;
 
 import java.net.URL;
-import java.util.Objects;
 
 /**
  * @author DarkLBP
