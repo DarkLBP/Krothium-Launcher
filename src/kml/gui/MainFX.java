@@ -1123,9 +1123,10 @@ public class MainFX {
                 javaArgsBlock.setManaged(false);
             }
             toggleEditorOption(resolutionLabel, false);
+            resW.getEditor().setText(String.valueOf(854));
             resW.getValueFactory().setValue(854);
+            resH.getEditor().setText(String.valueOf(480));
             resH.getValueFactory().setValue(480);
-
             toggleEditorOption(gameDirLabel, false);
             gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
         } else {
@@ -1181,11 +1182,15 @@ public class MainFX {
 
                 if (p.hasResolution()) {
                     toggleEditorOption(resolutionLabel, true);
+                    resH.getEditor().setText(String.valueOf(p.getResolutionHeight()));
                     resH.getValueFactory().setValue(p.getResolutionHeight());
+                    resW.getEditor().setText(String.valueOf(p.getResolutionWidth()));
                     resW.getValueFactory().setValue(p.getResolutionWidth());
                 } else {
                     toggleEditorOption(resolutionLabel, false);
+                    resW.getEditor().setText(String.valueOf(854));
                     resW.getValueFactory().setValue(854);
+                    resH.getEditor().setText(String.valueOf(480));
                     resH.getValueFactory().setValue(480);
                 }
                 if (p.hasGameDir()) {
@@ -1287,7 +1292,13 @@ public class MainFX {
             }
         }
         if (!resW.isDisabled()) {
-            target.setResolution(resW.getValue(), resH.getValue());
+            try {
+                int h = Integer.parseInt(resH.getEditor().getText());
+                int w = Integer.parseInt(resW.getEditor().getText());
+                target.setResolution(w, h);
+            } catch (NumberFormatException ex) {
+                kernel.getConsole().printError("Invalid resolution given.");
+            }
         } else {
             target.setResolution(-1, -1);
         }

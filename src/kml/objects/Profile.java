@@ -199,7 +199,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public void setResolution(int w, int h) {
-        if (w < 0 || h < 0) {
+        if (w < 1 || h < 1) {
             resolution = null;
         } else {
             if (resolution == null) {
