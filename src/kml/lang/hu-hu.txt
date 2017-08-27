@@ -93,7 +93,7 @@ Ikon
 Köpeny előnézet engedélyezése
 A hírdetések tartják életben ezt a szolgáltatást.
 A hirdetés bezárásához 5 másodpercet kell várni, majd kattintson a Skip AD gombra.
-Ha nem akarjod megvárni akkor adományozhatsz.
+Ha nem akarod megvárni akkor adományozhatsz.
 Szeretnél adományozni most?
 A gyorsítótár gyorsabbá teszi a dolgokat.
 Csak akkor törölje a gyorsítótárat, ha valami nem működik megfelelően.
