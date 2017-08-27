@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -1659,5 +1660,45 @@ public class MainFX {
     private void downloadServer() {
         VersionMeta selectedItem = versionList.getSelectionModel().getSelectedItem();
         kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
+    }
+
+    @FXML
+    private void selectGameDirectory() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        if (gameDir.getText().isEmpty()) {
+            chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
+        } else {
+            File gd = new File(gameDir.getText());
+            if (gd.exists() && gd.isDirectory()) {
+                chooser.setInitialDirectory(gd);
+            } else {
+                chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
+            }
+        }
+        File selectedFolder = chooser.showDialog(null);
+        if (selectedFolder != null) {
+            gameDir.setText(selectedFolder.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void selectJavaExecutable() {
+        FileChooser chooser = new FileChooser();
+        File je;
+        if (javaExec.getText().isEmpty()) {
+            je = new File(Utils.getJavaDir());
+        } else {
+            je = new File(javaExec.getText());
+        }
+        if (je.exists() && je.isFile()) {
+            File jf = je.getParentFile();
+            if (jf.exists() && jf.isDirectory()) {
+                chooser.setInitialDirectory(jf);
+            }
+        }
+        File selected = chooser.showOpenDialog(null);
+        if (selected != null && selected.isFile()) {
+            javaExec.setText(selected.getAbsolutePath());
+        }
     }
 }

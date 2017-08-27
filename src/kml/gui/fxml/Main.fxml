@@ -649,7 +649,10 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Label>
-                              <TextField fx:id="gameDir" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                              <TextField fx:id="gameDir" editable="false" maxWidth="450.0" onMouseClicked="#selectGameDirectory" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></TextField>
                            </children>
                         </StackPane>
                         <StackPane fx:id="javaExecBlock" layoutX="110.0" layoutY="145.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
@@ -663,7 +666,10 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Label>
-                              <TextField fx:id="javaExec" maxWidth="450.0" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT" />
+                              <TextField fx:id="javaExec" editable="false" maxWidth="450.0" onMouseClicked="#selectJavaExecutable" prefHeight="33.0" prefWidth="651.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></TextField>
                            </children>
                         </StackPane>
                         <StackPane fx:id="javaArgsBlock" layoutX="110.0" layoutY="190.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
