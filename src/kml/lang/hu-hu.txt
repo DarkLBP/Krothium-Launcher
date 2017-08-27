@@ -6,7 +6,7 @@ Skinek
 Beállítások
 Indítási opciók
 Biztosan kiszeretnél jelentkezni?
-
+A JavaFX betöltése sikertelen volt. Kérjük, frissítse a Java-t.
 Új indító verzió elérhető! Leszeretnéd tölteni?
 Új verzió elérhető
 INDÍTÁS
@@ -14,27 +14,27 @@ Letöltés
 JÁTÉKBAN
 A játék összeomlott! Nézd meg a log fájlokat további információkért.
 Játék összeomlott
-
+A felhasználónév mezőt nem lehet üresen hagyni!
 Krothium Felhasználónév vagy Email:
 Jelszó:
 BEJELENTKEZÉS
 REGISZTRÁCIÓ
 Sikertelen bejelentkezés
-
+A jelszó mezőt nem lehet üresen hagyni!
 Változtatása
 Köpeny PNG fájl (128KB MAX)
-
-
-
+Cache Törlése
+Export Naplók
+Szerver letöltése
 SKIN
 KÖPENY
 Biztosan törölni szeretnéd a skined?
-
+A gyorsítótár sikeresen törölve!
 Nem sikerült törölni a skinedet!
 Skin sikeresen törölve!
-
+Naplók exportálva:
 Biztosan törölni szeretnéd a köpenyed?
-
+Nem sikerült exportálni a naplókat
 Nem sikerült törölni a köpenyed!
 Köpeny sikeresen törölve!
 Skin sikeresen megváltoztatva!
@@ -53,13 +53,13 @@ Mentés Profil
 Mégse
 Törlés Profil
 Biztos vagy benne? A változtatások nem lesznek elmentve!
-
+A profil sikeresen törölve.
 Profil sikeresen elmentve!
-
+Nem sikerült törölni a profilt.
 Legújabb verzió
 Legújabb fejlesztői kiadás
 Biztosan törölni szeretnéd ezt a profilt?
-
+Nem tudtuk bejelentkezni a felhasználóval!
 Név:
 Verzió
 Felbontás
@@ -75,9 +75,9 @@ Ezek nagyon régiek és nem támogatottak. Hibák, összeomlások nem lesznek ja
 Ajánlott, hogy külön mappába futtasd ezeket, hogy elkerüld a világaid korruptálását.
 Ez engedélyezi a haladó JAVA beállításokat.
 Ezek a beállítások a játék elindíthatalanságát is okozhatják.
-
+A végrehajtás előkészítése...
 OFFLINE JÁTÉK
-
+Hírek nem állnak rendelkezésre
 Nem sikerült elindítani
 Nem sikerült elindítani az indítási folyamatot! Nézd meg a log fájlokat bővebb információkért.
 Letöltés nem sikerült
@@ -91,3 +91,15 @@ Klasszikus
 Vékony
 Ikon
 Mutat móteny a előnézet
+Ez a hirdetés életben tartja ezt a szolgáltatást.
+A hirdetés bezárásához 5 másodpercet kell várnia, majd kattintson a Hirdetés kihagyása gombra.
+Ha nem akarja megvárni, akkor mindig adományozhat.
+Szeretne adományozni most?
+A gyorsítótár gyorsabbá teszi a dolgokat.
+Csak akkor törölje a gyorsítótárat, ha valami nem működik megfelelően.
+Biztosan törli a gyorsítótárat?
+Nem sikerült lekérni a legfrissebb híreket
+Nincs elérhető hír
+Nincs megjeleníthető hír
+A Cape fájl meghaladja a 128KB méretű fájlméretet.
+A bőrfájl meghaladja a 128KB méretű fájlméretet.

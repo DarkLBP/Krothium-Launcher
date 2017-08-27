@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import kml.enums.ProfileIcon;
 import kml.gui.BrowserFX;
@@ -131,11 +132,8 @@ public final class Kernel {
         s.setMaximized(false);
         s.setOnCloseRequest(e -> {
             e.consume();
-            Alert ask = new Alert(Alert.AlertType.CONFIRMATION);
-            Stage st = (Stage) ask.getDialogPane().getScene().getWindow();
-            st.getIcons().add(applicationIcon);
-            ask.setContentText("This ads makes this service alive.\nTo close the ad you need to wait 5 seconds and click Skip Ad.\n" +
-                    "If you don't want to wait you can always make a donation.\nDo you want to donate now?");
+            Alert ask = buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+                    Language.get(96) + System.lineSeparator() + Language.get(97));
             Optional<ButtonType> response = ask.showAndWait();
             if (response.isPresent() && response.get() == ButtonType.OK) {
                 getHostServices().showDocument("https://krothium.com/donaciones/");
@@ -289,7 +287,7 @@ public final class Kernel {
     }
 
     private void warnJavaFX() {
-        JOptionPane.showMessageDialog(null, "Failed to load JavaFX. Please update Java.", "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, Language.get(9), "Error", JOptionPane.ERROR_MESSAGE);
         exitSafely();
     }
 
@@ -606,5 +604,15 @@ public final class Kernel {
         }
 
         return output;
+    }
+
+    public Alert buildAlert(Alert.AlertType type, String header, String content) {
+        Alert a = new Alert(type);
+        a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        a.setContentText(content);
+        a.setHeaderText(header);
+        Stage s = (Stage)a.getDialogPane().getScene().getWindow();
+        s.getIcons().add(applicationIcon);
+        return a;
     }
 }

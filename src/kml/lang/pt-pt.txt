@@ -6,7 +6,7 @@ Skins
 Definições
 Opções de início
 Tem certeza de que deseja terminar o sessão?
-
+Falha ao carregar o JavaFX. Atualize o Java.
 Uma nova versão do lançador está disponível! Deseja fazer o download?
 Nova versão disponível
 JOGAR
@@ -14,27 +14,27 @@ Baixando
 JOGANDO
 O jogo crashed! Verifique os logs para obter mais informações.
 O jogo crashed
-
+You cannot leave the username field empty!
 Krothium Nome de Usuário ou Email:
 Senha:
 ENTRAR
 REGISTRE-SE
 Impossível iniciar sessão
-
+Você não pode deixar o campo da senha vazio!
 Mudar
 Arquivo PNG de Capa (128KB MAX)
-
-
-
+Eliminar Cache
+Exportar Registros
+Baixar Servidor
 SKIN
 CAPA
 Tem certeza de que deseja eliminar sua skin?
-
+Cache excluído com sucesso!
 Failed to delete the skin!
 Skin eliminada com sucesso!
-
+Registros exportados para:
 Tem certeza de que deseja eliminar sua capa?
-
+Falha ao exportar os logs
 Failed to delete the cape!
 Capa eliminada com sucesso!
 Skin alterada com sucesso!
@@ -53,13 +53,13 @@ Guardar Perfil
 Cancelar
 Eliminar Perfil
 Você tem certeza? Qualquer alteração feita não será guardada!
-
+Perfil excluído com sucesso.
 Perfil guardado com sucesso!
-
+Falha ao excluir o perfil.
 Versão mais recente
 Snapshot mais recente
 Tem a certesa que deseja eliminar este perfil?
-
+Não conseguimos fazer login com esse usuário!
 Nome
 Versão
 Resolução
@@ -75,9 +75,9 @@ Estas versões antigas e podem ser instáveis. Quaisquer bugs, crashes, opções
 É altamente recomendado que execute-os em diretórios separados ou criar backups regulares.
 Isto habilita as configurações avançadas de Java quando você adicionar uma nova opção de inicialização.
 Alterando estes pode causar o jogo a mau funcionar.
-
+Preparando execução...
 JOGAR OFFLINE
-
+Notícias Indisponíveis
 Falha no lançamento
 Falha ao executar a tarefa de lançamento do jogo! Verifique os logs para obter mais informações.
 Falha no download
@@ -91,3 +91,15 @@ Clássico
 Delgado
 Ícone
 Mostrar capa na visualização
+Este anúncio torna este serviço vivo.
+Para fechar o anúncio, você precisa esperar 5 segundos e clicar em Ignorar anúncio.
+Se você não quer esperar, você sempre pode fazer uma doação.
+Você quer doar agora?
+O cache torna as coisas mais rápidas.
+Apenas apague o cache se algo não funcionar corretamente.
+Tem certeza de que deseja excluir o cache?
+Falha ao buscar as últimas notícias
+Nenhuma novidade disponível
+Nenhuma novidade disponível para mostrar
+O arquivo Cape excede o limite de tamanho de arquivo de 128 KB.
+O arquivo de pele excede o limite de tamanho de arquivo de 128 KB.

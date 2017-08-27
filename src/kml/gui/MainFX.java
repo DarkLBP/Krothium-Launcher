@@ -234,11 +234,7 @@ public class MainFX {
         String update = kernel.checkForUpdates();
         if (update != null) {
             Platform.runLater(() -> {
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                Stage s = (Stage) confirm.getDialogPane().getScene().getWindow();
-                s.getIcons().add(kernel.getApplicationIcon());
-                confirm.setHeaderText(Language.get(11));
-                confirm.setContentText(Language.get(10));
+                Alert confirm = kernel.buildAlert(Alert.AlertType.CONFIRMATION, Language.get(11), Language.get(10));
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     try {
@@ -289,6 +285,9 @@ public class MainFX {
         loginExisting.setText(Language.get(20));
         registerButton.setText(Language.get(21));
         changeIcon.setText(Language.get(24));
+        deleteCache.setText(Language.get(26));
+        exportLogs.setText(Language.get(27));
+        downloadServer.setText(Language.get(28));
         skinLabel.setText(Language.get(29));
         capeLabel.setText(Language.get(30));
         launcherSettings.setText(Language.get(45));
@@ -428,11 +427,8 @@ public class MainFX {
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
             if (selected.length() > 131072) {
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                Stage s = (Stage) error.getDialogPane().getScene().getWindow();
-                s.getIcons().add(kernel.getApplicationIcon());
+                Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(105));
                 kernel.getConsole().printError("Skin file exceeds 128KB file size limit.");
-                error.setContentText("Skin file exceeds 128KB file size limit.");
                 error.showAndWait();
             } else {
                 HashMap<String, String> params = new HashMap<>();
@@ -450,17 +446,11 @@ public class MainFX {
                     if (!r.equals("OK")) {
                         kernel.getConsole().printError("Failed to change the skin.");
                         kernel.getConsole().printError(r);
-                        Alert error = new Alert(Alert.AlertType.ERROR);
-                        Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                        s2.getIcons().add(kernel.getApplicationIcon());
-                        error.setContentText(Language.get(42));
+                        Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(42));
                         error.showAndWait();
                     }
                     else {
-                        Alert correct = new Alert(Alert.AlertType.INFORMATION);
-                        Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
-                        s2.getIcons().add(kernel.getApplicationIcon());
-                        correct.setContentText(Language.get(40));
+                        Alert correct = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(40));
                         kernel.getConsole().printInfo("Skin changed successfully!");
                         correct.showAndWait();
                         parseRemoteTextures();
@@ -468,10 +458,7 @@ public class MainFX {
                 } catch (Exception ex) {
                     kernel.getConsole().printError("Failed to change the skin.");
                     kernel.getConsole().printError(ex.getMessage());
-                    Alert error = new Alert(Alert.AlertType.ERROR);
-                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    error.setContentText(Language.get(42));
+                    Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(42));
                     error.showAndWait();
                 }
             }
@@ -486,11 +473,8 @@ public class MainFX {
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
             if (selected.length() > 131072) {
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                Stage s = (Stage) error.getDialogPane().getScene().getWindow();
-                s.getIcons().add(kernel.getApplicationIcon());
+                Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(104));
                 kernel.getConsole().printError("Cape file exceeds 128KB file size limit.");
-                error.setContentText("Cape file exceeds 128KB file size limit.");
                 error.showAndWait();
             } else {
                 HashMap<String, String> params = new HashMap<>();
@@ -503,17 +487,11 @@ public class MainFX {
                     if (!r.equals("OK")) {
                         kernel.getConsole().printError("Failed to change the cape.");
                         kernel.getConsole().printError(r);
-                        Alert error = new Alert(Alert.AlertType.ERROR);
-                        Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                        s2.getIcons().add(kernel.getApplicationIcon());
-                        error.setContentText(Language.get(43));
+                        Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(43));
                         error.showAndWait();
                     }
                     else {
-                        Alert correct = new Alert(Alert.AlertType.INFORMATION);
-                        Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
-                        s2.getIcons().add(kernel.getApplicationIcon());
-                        correct.setContentText(Language.get(41));
+                        Alert correct = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(41));
                         kernel.getConsole().printInfo("Cape changed successfully.");
                         correct.showAndWait();
                         parseRemoteTextures();
@@ -521,10 +499,7 @@ public class MainFX {
                 } catch (Exception ex) {
                     kernel.getConsole().printError("Failed to change the cape.");
                     kernel.getConsole().printError(ex.getMessage());
-                    Alert error = new Alert(Alert.AlertType.ERROR);
-                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    error.setContentText(Language.get(43));
+                    Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(43));
                     error.showAndWait();
                 }
             }
@@ -533,10 +508,7 @@ public class MainFX {
 
     @FXML
     private void deleteSkin() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(31));
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(31));
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
@@ -547,17 +519,11 @@ public class MainFX {
                 if (!r.equals("OK")) {
                     kernel.getConsole().printError("Failed to delete the skin.");
                     kernel.getConsole().printError(r);
-                    Alert error = new Alert(Alert.AlertType.ERROR);
-                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    error.setContentText(Language.get(33));
+                    Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(33));
                     error.showAndWait();
                 }
                 else {
-                    Alert correct = new Alert(Alert.AlertType.INFORMATION);
-                    Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    correct.setContentText(Language.get(34));
+                    Alert correct = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(34));
                     kernel.getConsole().printInfo("Skin deleted successfully!");
                     correct.showAndWait();
                     parseRemoteTextures();
@@ -566,10 +532,7 @@ public class MainFX {
             catch (Exception ex) {
                 kernel.getConsole().printError("Failed to delete the skin.");
                 kernel.getConsole().printError(ex.getMessage());
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                s2.getIcons().add(kernel.getApplicationIcon());
-                error.setContentText(Language.get(33));
+                Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(33));
                 error.showAndWait();
             }
             params.clear();
@@ -578,10 +541,7 @@ public class MainFX {
 
     @FXML
     private void deleteCape() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(36));
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(36));
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK){
             HashMap<String, String> params = new HashMap<>();
@@ -592,17 +552,11 @@ public class MainFX {
                 if (!r.equals("OK")) {
                     kernel.getConsole().printError("Failed to delete the cape.");
                     kernel.getConsole().printError(r);
-                    Alert error = new Alert(Alert.AlertType.ERROR);
-                    Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    error.setContentText(Language.get(38));
+                    Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(38));
                     error.showAndWait();
                 }
                 else {
-                    Alert correct = new Alert(Alert.AlertType.INFORMATION);
-                    Stage s2 = (Stage) correct.getDialogPane().getScene().getWindow();
-                    s2.getIcons().add(kernel.getApplicationIcon());
-                    correct.setContentText(Language.get(39));
+                    Alert correct = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(39));
                     kernel.getConsole().printInfo("Cape deleted successfully!");
                     correct.showAndWait();
                     parseRemoteTextures();
@@ -611,14 +565,10 @@ public class MainFX {
             catch (Exception ex) {
                 kernel.getConsole().printError("Failed to delete the cape.");
                 kernel.getConsole().printError(ex.getMessage());
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                Stage s2 = (Stage) error.getDialogPane().getScene().getWindow();
-                s2.getIcons().add(kernel.getApplicationIcon());
-                error.setContentText(Language.get(38));
+                Alert error = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(38));
                 error.showAndWait();
             }
             params.clear();
-
         }
     }
 
@@ -649,8 +599,8 @@ public class MainFX {
                 slides.add(s);
             }
         } catch (Exception ex) {
-            newsTitle.setText("News Unavailable");
-            newsText.setText("Failed to fetch the latest news");
+            newsTitle.setText(Language.get(80));
+            newsText.setText(Language.get(101));
             kernel.getConsole().printError("Couldn't parse news data. (" + ex.getMessage() + ")");
             return;
         }
@@ -662,8 +612,8 @@ public class MainFX {
             newsTitle.setText(s.getTitle());
             newsText.setText(s.getText());
         } else {
-            newsTitle.setText("No news available");
-            newsText.setText("No news available to show");
+            newsTitle.setText(Language.get(102));
+            newsText.setText(Language.get(103));
         }
     }
 
@@ -880,7 +830,7 @@ public class MainFX {
                         d.download();
                         task.stop();
                         Platform.runLater(() -> {
-                            progressText.setText("Preparing runtime...");
+                            progressText.setText(Language.get(78));
                             progressBar.setProgress(0);
                         });
                         gl.launch();
@@ -898,11 +848,7 @@ public class MainFX {
                         task2.statusProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
                             if (newValue == Animation.Status.STOPPED) {
                                 if (gl.hasError()) {
-                                    Alert a = new Alert(Alert.AlertType.ERROR);
-                                    Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-                                    s.getIcons().add(kernel.getApplicationIcon());
-                                    a.setHeaderText(Language.get(16));
-                                    a.setContentText(Language.get(15));
+                                    Alert a = kernel.buildAlert(Alert.AlertType.ERROR, Language.get(16), Language.get(15));
                                     a.showAndWait();
                                 }
                                 if (!kernel.getSettings().getKeepLauncherOpen() && !kernel.getSettings().getShowGameLog()) {
@@ -923,19 +869,11 @@ public class MainFX {
                             Platform.runLater(() -> setVisible(false));
                         }
                     } catch (DownloaderException e) {
-                        Alert a = new Alert(Alert.AlertType.ERROR);
-                        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-                        s.getIcons().add(kernel.getApplicationIcon());
-                        a.setHeaderText(Language.get(83));
-                        a.setContentText(Language.get(84));
+                        Alert a = kernel.buildAlert(Alert.AlertType.ERROR, Language.get(83), Language.get(84));
                         a.showAndWait();
                         console.printError("Failed to perform game download task: " + e);
                     } catch (GameLauncherException e) {
-                        Alert a = new Alert(Alert.AlertType.ERROR);
-                        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-                        s.getIcons().add(kernel.getApplicationIcon());
-                        a.setHeaderText(Language.get(81));
-                        a.setContentText(Language.get(82));
+                        Alert a = kernel.buildAlert(Alert.AlertType.ERROR, Language.get(81), Language.get(82));
                         a.showAndWait();
                         console.printError("Failed to perform game launch task: " + e);
                     }
@@ -1320,10 +1258,7 @@ public class MainFX {
                 target.setJavaArgs(null);
             }
         }
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(57));
+        Alert a = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(57));
         a.showAndWait();
         loadProfileList();
         switchTab(launchOptionsLabel);
@@ -1331,10 +1266,7 @@ public class MainFX {
 
     @FXML
     public void cancelProfile() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(55));
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(55));
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             switchTab(launchOptionsLabel);
@@ -1343,20 +1275,17 @@ public class MainFX {
 
     @FXML
     public void deleteProfile() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(61));
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(61));
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Label selectedElement = profileList.getSelectionModel().getSelectedItem();
             if (kernel.getProfiles().deleteProfile(kernel.getProfiles().getProfile(selectedElement.getId()))) {
                 a.setAlertType(Alert.AlertType.INFORMATION);
-                a.setContentText("Profile deleted successfully.");
+                a.setContentText(Language.get(56));
                 a.showAndWait();
             } else {
                 a.setAlertType(Alert.AlertType.ERROR);
-                a.setContentText("Failed to delete the profile.");
+                a.setContentText(Language.get(58));
                 a.showAndWait();
             }
             loadProfileList();
@@ -1430,14 +1359,12 @@ public class MainFX {
     }
 
     public void authenticate() {
-        Alert a = new Alert(Alert.AlertType.WARNING);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
+        Alert a = kernel.buildAlert(Alert.AlertType.WARNING, null, null);
         if (username.getText().isEmpty()) {
-            a.setContentText("You cannot leave the username field empty!");
+            a.setContentText(Language.get(17));
             a.show();
         } else if (password.getText().isEmpty()) {
-            a.setContentText("You cannot leave the password field empty!");
+            a.setContentText(Language.get(23));
             a.show();
         } else {
             try {
@@ -1489,11 +1416,7 @@ public class MainFX {
             fetchAds();
             parseRemoteTextures();
         } catch (AuthenticationException ex) {
-            Alert a = new Alert(Alert.AlertType.ERROR);
-            Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-            s.getIcons().add(kernel.getApplicationIcon());
-            a.setHeaderText("We could not log you back with that user!");
-            a.setContentText(ex.getMessage());
+            Alert a = kernel.buildAlert(Alert.AlertType.ERROR, Language.get(62), ex.getMessage());
             a.showAndWait();
             updateExistingUsers();
         }
@@ -1502,10 +1425,7 @@ public class MainFX {
     //Logout existing user
     public void logout() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage s = (Stage) a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText(Language.get(8));
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(8));
         Optional<ButtonType> result = a.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Authentication auth = kernel.getAuthentication();
@@ -1560,10 +1480,7 @@ public class MainFX {
             toggleLabel(source, s.getShowGameLog());
         } else if (source == enableSnapshots) {
             if (!s.getEnableSnapshots()) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-                st.getIcons().add(kernel.getApplicationIcon());
-                a.setContentText(Language.get(71) + "\n" + Language.get(72));
+                Alert a = kernel.buildAlert(Alert.AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
                 a.showAndWait();
             }
             s.setEnableSnapshots(!s.getEnableSnapshots());
@@ -1572,10 +1489,9 @@ public class MainFX {
             loadVersionList();
         } else if (source == historicalVersions) {
             if (!s.getEnableHistorical()) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-                st.getIcons().add(kernel.getApplicationIcon());
-                a.setContentText(Language.get(73) + "\n" + Language.get(74) + "\n" + Language.get(75));
+                Alert a = kernel.buildAlert(Alert.AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
+                        + Language.get(74) + System.lineSeparator()
+                        + Language.get(75));
                 a.showAndWait();
             }
             s.setEnableHistorical(!s.getEnableHistorical());
@@ -1584,10 +1500,7 @@ public class MainFX {
             loadVersionList();
         } else if (source == advancedSettings) {
             if (!s.getEnableAdvanced()) {
-                Alert a = new Alert(Alert.AlertType.WARNING);
-                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-                st.getIcons().add(kernel.getApplicationIcon());
-                a.setContentText(Language.get(76) + "\n" + Language.get(77));
+                Alert a = kernel.buildAlert(Alert.AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
                 a.showAndWait();
             }
             s.setEnableAdvanced(!s.getEnableAdvanced());
@@ -1607,12 +1520,9 @@ public class MainFX {
 
     @FXML
     private void deleteCache() {
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-        st.getIcons().add(kernel.getApplicationIcon());
-        a.setContentText("The cache makes things load faster.\n" +
-                "Only delete the cache if something doesn't work properly.\n" +
-                "Are you sure you want to delete the cache?");
+        Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(98) + System.lineSeparator() +
+                Language.get(99) + System.lineSeparator() +
+                Language.get(100));
         Optional<ButtonType> response = a.showAndWait();
         if (response.isPresent() && response.get() == ButtonType.OK) {
             File[] cacheFiles = Constants.APPLICATION_CACHE.listFiles();
@@ -1620,7 +1530,7 @@ public class MainFX {
                 file.delete();
             }
             a.setAlertType(Alert.AlertType.INFORMATION);
-            a.setContentText("Cache deleted successfully.");
+            a.setContentText(Language.get(32));
             a.showAndWait();
         }
     }
@@ -1641,16 +1551,10 @@ public class MainFX {
                     out.write(bytes);
                     out.closeEntry();
                 }
-                Alert a = new Alert(Alert.AlertType.INFORMATION);
-                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-                st.getIcons().add(kernel.getApplicationIcon());
-                a.setContentText("Logs exported to:\n" + selected.getAbsolutePath());
+                Alert a = kernel.buildAlert(Alert.AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
                 a.showAndWait();
             } catch (IOException ex) {
-                Alert a = new Alert(Alert.AlertType.ERROR);
-                Stage st = (Stage) a.getDialogPane().getScene().getWindow();
-                st.getIcons().add(kernel.getApplicationIcon());
-                a.setContentText("Failed to export the logs (" + ex.getMessage() + ")");
+                Alert a = kernel.buildAlert(Alert.AlertType.ERROR, null, Language.get(35) + "\n" + selected.getAbsolutePath());
                 a.showAndWait();
             }
         }
