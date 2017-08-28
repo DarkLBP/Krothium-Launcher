@@ -251,7 +251,15 @@ public class MainFX {
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     try {
-                        kernel.getHostServices().showDocument(urlPrefix + Utils.fromBase64(update));
+                        File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
+                        if (!Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater)) {
+                            throw new Exception("Failed to download the file.");
+                        }
+                        String currentJar = Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+                        ProcessBuilder pb = new ProcessBuilder(Utils.getJavaDir(), "-jar", updater.getAbsolutePath(), currentJar);
+                        pb.directory(updater.getParentFile());
+                        pb.start();
+                        kernel.exitSafely();
                     }
                     catch (Exception e) {
                         kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());

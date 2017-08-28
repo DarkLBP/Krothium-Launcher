@@ -140,7 +140,7 @@ public final class Utils {
         try {
             ReadableByteChannel rbc = Channels.newChannel(con.getInputStream());
             File parent = output.getParentFile();
-            if (!parent.exists()) {
+            if (parent != null && !parent.exists()) {
                 parent.mkdirs();
             }
             FileOutputStream fo = new FileOutputStream(output);
