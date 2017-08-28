@@ -244,6 +244,14 @@ public class MainFX {
      */
     private void checkForUpdates() {
         kernel.getConsole().printInfo("Checking for updates...");
+        File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
+        if (updater.exists() && updater.isFile()) {
+            if (updater.delete()) {
+                kernel.getConsole().printInfo("Removed old updater.jar.");
+            } else {
+                kernel.getConsole().printError("Failed to remove old updater.jar.");
+            }
+        }
         String update = kernel.checkForUpdates();
         if (update != null) {
             Platform.runLater(() -> {
@@ -251,7 +259,6 @@ public class MainFX {
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     try {
-                        File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
                         if (!Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater)) {
                             throw new Exception("Failed to download the file.");
                         }
