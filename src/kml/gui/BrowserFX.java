@@ -1,6 +1,5 @@
 package kml.gui;
 
-import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;

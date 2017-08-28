@@ -3,7 +3,6 @@ package kml;
 import SevenZip.Compression.LZMA.Decoder;
 import kml.enums.OS;
 import kml.enums.OSArch;
-import kml.enums.ProfileIcon;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;

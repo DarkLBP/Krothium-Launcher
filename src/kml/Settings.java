@@ -2,8 +2,6 @@ package kml;
 
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com

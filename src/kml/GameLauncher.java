@@ -299,7 +299,7 @@ public class GameLauncher {
                     }
                     Stage stage = new Stage();
                     stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
-                    stage.setTitle("Krothium Minecraft Launcher " + Constants.KERNEL_BUILD_NAME + " - " + Language.get(69));
+                    stage.setTitle("Krothium Minecraft Launcher - " + Language.get(69));
                     stage.setScene(new Scene(parent));
                     stage.setResizable(true);
                     stage.setMaximized(false);
@@ -323,6 +323,9 @@ public class GameLauncher {
                     if (process.exitValue() != 0) {
                         error = true;
                         console.printError("Game stopped unexpectedly.");
+                    }
+                    if (!kernel.getSettings().getKeepLauncherOpen()) {
+                        kernel.exitSafely();
                     }
                 } catch (Exception ex) {
                     error = true;

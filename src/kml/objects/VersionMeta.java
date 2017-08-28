@@ -3,7 +3,6 @@ package kml.objects;
 import kml.enums.VersionType;
 
 import java.net.URL;
-import java.util.Objects;
 
 /**
  * @author DarkLBP

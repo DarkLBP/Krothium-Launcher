@@ -831,7 +831,7 @@ public class MainFX {
                         task.stop();
                         Platform.runLater(() -> {
                             progressText.setText(Language.get(78));
-                            progressBar.setProgress(0);
+                            progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                         });
                         gl.launch();
                         progressPane.setVisible(false);
