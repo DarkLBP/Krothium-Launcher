@@ -161,7 +161,6 @@ public final class Kernel {
         stage.setOnCloseRequest(e -> exitSafely());
         MainFX mainForm = loader2.getController();
         mainForm.initialize(this, stage);
-        stage.show();
     }
 
     /**

@@ -232,6 +232,11 @@ public class MainFX {
 
         //Localize elements
         localizeElements();
+
+        //Show window
+        if (!kernel.getBrowser().isVisible()) {
+            stage.show();
+        }
     }
 
     /**

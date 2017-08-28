@@ -11,7 +11,7 @@ public class BrowserFX {
 
     private Stage stage;
     private String askedURL;
-    private boolean done;
+    private Stage toHide;
 
     public void initialize(Stage s) {
         stage = s;
@@ -21,23 +21,25 @@ public class BrowserFX {
         engine.setJavaScriptEnabled(true);
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             String location = engine.getLocation();
-            if (!location.equalsIgnoreCase(askedURL) && !location.contains("krothium.com") && !done) {
-                done = true;
+            if (!location.equalsIgnoreCase(askedURL) && !location.contains("krothium.com")) {
+                toHide.show();
                 s.close();
             }
         });
     }
 
     public void loadWebsite(String url) {
-        done = false;
         askedURL = url;
         webBrowser.getEngine().load(url);
     }
 
     public void show(Stage toHide) {
+        this.toHide = toHide;
         toHide.close();
-        stage.showAndWait();
-        webBrowser.getEngine().loadContent("");
-        toHide.show();
+        stage.show();
+    }
+
+    public boolean isVisible() {
+        return stage.isShowing();
     }
 }
