@@ -164,7 +164,12 @@ public final class Kernel {
         stage.show();
     }
 
-    public static boolean addToSystemClassLoader(final File file) throws IntrospectionException {
+    /**
+     * Loads a JAR file dynamically
+     * @param file The JAR file to be laoded
+     * @return A boolean indicating if the file has been loaded
+     */
+    public static boolean addToSystemClassLoader(final File file) {
         if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
             final URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
             try {
@@ -187,6 +192,9 @@ public final class Kernel {
         return this.hostServices;
     }
 
+    /**
+     * Saves the profiles
+     */
     public void saveProfiles() {
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();
@@ -263,6 +271,9 @@ public final class Kernel {
         return iconCache;
     }
 
+    /**
+     * Saves the profiles and shuts down the launcher
+     */
     public void exitSafely() {
         this.saveProfiles();
         this.console.printInfo("Shutting down launcher...");
@@ -270,6 +281,10 @@ public final class Kernel {
         System.exit(0);
     }
 
+    /**
+     * Checks for launcher updates
+     * @return The update url
+     */
     public String checkForUpdates() {
         try {
             String r = Utils.readURL(Constants.GETLATEST_URL);
@@ -286,6 +301,9 @@ public final class Kernel {
         return null;
     }
 
+    /**
+     * Warns the user that JavaFX is not available
+     */
     private void warnJavaFX() {
         JOptionPane.showMessageDialog(null, Language.get(9), "Error", JOptionPane.ERROR_MESSAGE);
         exitSafely();
@@ -295,6 +313,11 @@ public final class Kernel {
         return this.webBrowser;
     }
 
+    /**
+     * Gets a profile icon from the icons map
+     * @param p The desired profile icon
+     * @return The image with the profile icon
+     */
     public Image getProfileIcon(ProfileIcon p) {
         if (iconCache.containsKey(p)) {
             return iconCache.get(p);
@@ -580,6 +603,12 @@ public final class Kernel {
         return wi;
     }
 
+    /**
+     * This method receives an image scales it
+     * @param input Input image
+     * @param scaleFactor Output scale factor
+     * @return The resampled image
+     */
     public Image resampleImage(Image input, int scaleFactor) {
         final int W = (int) input.getWidth();
         final int H = (int) input.getHeight();
@@ -606,6 +635,13 @@ public final class Kernel {
         return output;
     }
 
+    /**
+     * Constructs an alert with the application icon
+     * @param type The alert type
+     * @param header The header text
+     * @param content The content text
+     * @return The built alert
+     */
     public Alert buildAlert(Alert.AlertType type, String header, String content) {
         Alert a = new Alert(type);
         a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

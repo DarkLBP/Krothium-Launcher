@@ -123,6 +123,11 @@ public class MainFX {
     private Image skin, cape, alex, steve;
     private String urlPrefix = "";
 
+    /**
+     * Initializes all required stuff from the GUI
+     * @param k The Kernel instance
+     * @param s The Stage instance
+     */
     public void initialize(Kernel k, Stage s) {
         //Require to exit using Platform.exit()
         Platform.setImplicitExit(false);
@@ -229,6 +234,9 @@ public class MainFX {
         localizeElements();
     }
 
+    /**
+     * Checks for launcher updates
+     */
     private void checkForUpdates() {
         kernel.getConsole().printInfo("Checking for updates...");
         String update = kernel.checkForUpdates();
@@ -248,6 +256,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Fetches any advertisement available for the logged user
+     */
     private void fetchAds() {
         String profileID = kernel.getAuthentication().getSelectedUser().getProfileID();
         URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
@@ -267,6 +278,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Updates all components text with its localized Strings
+     */
     private void localizeElements() {
         helpButton.setText(Language.get(2));
         logoutButton.setText(Language.get(3));
@@ -320,6 +334,9 @@ public class MainFX {
         loadProfileList();
     }
 
+    /**
+     * Loads the skin preview for the logged user
+     */
     private void parseRemoteTextures() {
         try {
             URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + kernel.getAuthentication().getSelectedUser().getProfileID() + "?unsigned=true");
@@ -380,6 +397,10 @@ public class MainFX {
         }
     }
 
+
+    /**
+     * Toggles the label of the toggle cape button
+     */
     @FXML
     public void toggleCapePreview() {
         if (includeCape.getStyleClass().contains("toggle-enabled")) {
@@ -390,6 +411,9 @@ public class MainFX {
         updatePreview();
     }
 
+    /**
+     * Changes the skin type
+     */
     @FXML
     public void toggleSkinType() {
         if (deleteSkin.isDisabled()) {
@@ -402,7 +426,9 @@ public class MainFX {
         }
     }
 
-    //Update cape skin preview
+    /**
+     * Updates the skin preview
+     */
     private void updatePreview() {
         boolean slim = skinSlim.isSelected();
         if (includeCape.getStyleClass().contains("toggle-enabled")) {
@@ -419,6 +445,9 @@ public class MainFX {
         skinPreview.setImage(skinPreviews[currentPreview]);
     }
 
+    /**
+     * Changes the skin of the user
+     */
     @FXML
     private void changeSkin() {
         FileChooser chooser = new FileChooser();
@@ -465,6 +494,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Changes the cape of the user
+     */
     @FXML
     private void changeCape() {
         FileChooser chooser = new FileChooser();
@@ -506,6 +538,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Deletes the skin of the user
+     */
     @FXML
     private void deleteSkin() {
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(31));
@@ -539,6 +574,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Deletes the cape of the user
+     */
     @FXML
     private void deleteCape() {
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(36));
@@ -572,6 +610,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Loads the news slideshow
+     */
     private void loadSlideshow() {
         kernel.getConsole().printInfo("Loading news slideshow...");
         try {
@@ -617,6 +658,10 @@ public class MainFX {
         }
     }
 
+    /**
+     * Changes the news slide
+     * @param e The trigger event
+     */
     @FXML
     public void changeSlide(MouseEvent e) {
         if (slides.isEmpty()) {
@@ -643,6 +688,9 @@ public class MainFX {
         newsText.setText(s.getText());
     }
 
+    /**
+     * Performs an action when a slide is clicked
+     */
     @FXML
     public void performSlideAction() {
         if (slides.isEmpty()) {
@@ -653,6 +701,10 @@ public class MainFX {
         kernel.getHostServices().showDocument(urlPrefix + s.getAction());
     }
 
+    /**
+     * Rotates the skin preview
+     * @param e The trigger event
+     */
     @FXML
     public void rotatePreview(MouseEvent e) {
         Label src = (Label)e.getSource();
@@ -675,6 +727,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Loads the profile lists
+     */
     @FXML
     private void loadProfileList() {
         Profiles ps = kernel.getProfiles();
@@ -776,6 +831,9 @@ public class MainFX {
         profilePopupList.setItems(profileListItems2);
     }
 
+    /**
+     * Loads the profile icons
+     */
     private void loadIcons() {
         kernel.getConsole().printInfo("Loading icons...");
         ObservableList<ImageView> icons = FXCollections.observableArrayList();
@@ -791,6 +849,9 @@ public class MainFX {
         iconList.setItems(icons);
     }
 
+    /**
+     * Selects the selected profile from the list
+     */
     @FXML
     private void selectProfile() {
         if (profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
@@ -803,6 +864,9 @@ public class MainFX {
         profilePopupList.setVisible(false);
     }
 
+    /**
+     * Downloads and launches the game
+     */
     @FXML
     public void launchGame() {
         progressPane.setVisible(true);
@@ -866,7 +930,7 @@ public class MainFX {
                         task2.setCycleCount(Timeline.INDEFINITE);
                         task2.play();
                         if (!kernel.getSettings().getKeepLauncherOpen()) {
-                            Platform.runLater(() -> setVisible(false));
+                            Platform.runLater(() -> stage.close());
                         }
                     } catch (DownloaderException e) {
                         Alert a = kernel.buildAlert(Alert.AlertType.ERROR, Language.get(83), Language.get(84));
@@ -885,6 +949,9 @@ public class MainFX {
         t.start();
     }
 
+    /**
+     * Shows the language list
+     */
     @FXML
     public void showLanguages() {
         if (languagesList.isVisible()) {
@@ -894,6 +961,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Deselects the current user and allows to select another
+     */
     @FXML
     public void switchAccount() {
         showAccountOptions();
@@ -903,6 +973,9 @@ public class MainFX {
         updateExistingUsers();
     }
 
+    /**
+     * Shows the profile popup list
+     */
     @FXML
     public void showProfiles() {
         if (profilePopupList.isVisible()) {
@@ -916,6 +989,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Shows the profile editor profile icons
+     */
     @FXML
     public void showIcons() {
         if (iconList.isVisible()) {
@@ -929,6 +1005,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Shows the Switch Account option when the user label is clicked
+     */
     @FXML
     public void showAccountOptions() {
         if (switchAccountButton.isVisible()) {
@@ -946,11 +1025,19 @@ public class MainFX {
         }
     }
 
+    /**
+     * Switched the selected tab according to the clicked label
+     * @param e The trigger event
+     */
     @FXML
     public void switchTab(Event e) {
         switchTab(e.getSource());
     }
 
+    /**
+     * Switched the selected tab according to the source
+     * @param source The object that trigger the change
+     */
     private void switchTab(Object source) {
         SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
         Tab oldTab = selection.getSelectedItem();
@@ -989,6 +1076,10 @@ public class MainFX {
         }
     }
 
+    /**
+     * Hides any open popup that triggers this method
+     * @param e The event trigger
+     */
     @FXML
     public void hidePopup(Event e) {
         Node ls = (Node)e.getSource();
@@ -997,6 +1088,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Updates the selected language
+     */
     @FXML
     public void updateLanguage() {
         if (languagesList.getSelectionModel().getSelectedIndex() == -1) {
@@ -1010,6 +1104,9 @@ public class MainFX {
         localizeElements();
     }
 
+    /**
+     * Updates the selected icon
+     */
     @FXML
     public void updateIcon() {
         if (iconList.getSelectionModel().getSelectedIndex() == -1) {
@@ -1022,7 +1119,9 @@ public class MainFX {
         iconList.setVisible(false);
     }
 
-    //Load profile editor for clicked profile
+    /**
+     * Prepares the editor with the selected profile or with a new one
+     */
     @FXML
     public void loadEditor() {
         if (profileList.getSelectionModel().getSelectedIndex() == -1) {
@@ -1176,6 +1275,9 @@ public class MainFX {
         switchTab(profileEditorTab);
     }
 
+    /**
+     * Loads the list of version for the profile editor
+     */
     private void loadVersionList() {
         ObservableList<VersionMeta> vers = FXCollections.observableArrayList();
         VersionMeta latestVersion = new VersionMeta(Language.get(59), null, null);
@@ -1197,6 +1299,9 @@ public class MainFX {
         versionList.getSelectionModel().select(0);
     }
 
+    /**
+     * Saves the profile data from the profile editor
+     */
     @FXML
     public void saveProfile() {
         Profile target;
@@ -1264,6 +1369,9 @@ public class MainFX {
         switchTab(launchOptionsLabel);
     }
 
+    /**
+     * Discards the changes of the profile editor
+     */
     @FXML
     public void cancelProfile() {
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(55));
@@ -1273,6 +1381,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Deletes the profile loaded by the profile editor
+     */
     @FXML
     public void deleteProfile() {
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(61));
@@ -1293,7 +1404,11 @@ public class MainFX {
         }
     }
 
-    //Toggle editor options
+    /**
+     * Toggles the editor options on and off
+     * @param src The object that has been clicked
+     * @param newState The new state
+     */
     private void toggleEditorOption(Object src, boolean newState) {
         if (src instanceof Label) {
             Label l = (Label)src;
@@ -1311,9 +1426,9 @@ public class MainFX {
         }
     }
 
-    /*
-        Update editor when clicking labels
-        This method fetches the adjacent sibling to determine if is disabled
+    /**
+     * Update editor when clicking labels. This method fetches the adjacent sibling to determine if is disabled
+     * @param e The event trigger
      */
     @FXML
     public void updateEditor(MouseEvent e) {
@@ -1321,7 +1436,9 @@ public class MainFX {
         toggleEditorOption(l, l.getParent().getChildrenUnmodifiable().get(1).isDisable());
     }
 
-
+    /**
+     * Updates the existing users list
+     */
     private void updateExistingUsers() {
         Authentication a = kernel.getAuthentication();
         if (a.getUsers().size() > 0 && a.getSelectedUser() == null) {
@@ -1339,6 +1456,10 @@ public class MainFX {
 
     }
 
+    /**
+     * Shows or hides the login prompt
+     * @param showLoginPrompt The new state
+     */
     private void showLoginPrompt(boolean showLoginPrompt) {
         if (showLoginPrompt) {
             contentPane.getSelectionModel().select(loginTab);
@@ -1358,6 +1479,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Performs an authenticate with the data typed in the login form
+     */
     public void authenticate() {
         Alert a = kernel.buildAlert(Alert.AlertType.WARNING, null, null);
         if (username.getText().isEmpty()) {
@@ -1385,6 +1509,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Refreshes latest session
+     */
     private void refreshSession() {
         try {
             if (kernel.getAuthentication().getSelectedUser() != null) {
@@ -1405,7 +1532,9 @@ public class MainFX {
         }
     }
 
-    //Refresh existing user
+    /**
+     * Refreshes user selected from the existing user list
+     */
     public void refresh() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
         Authentication auth = kernel.getAuthentication();
@@ -1422,7 +1551,9 @@ public class MainFX {
         }
     }
 
-    //Logout existing user
+    /**
+     * Logs out the selected user from the existing user list
+     */
     public void logout() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(8));
@@ -1434,32 +1565,37 @@ public class MainFX {
         }
     }
 
-    private void setVisible(boolean b) {
-        if (b) {
-            stage.show();
-        } else {
-            stage.close();
-        }
-    }
-
+    /**
+     * Opens the register page
+     */
     @FXML
     public void register() {
         //Open register page
         kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/register");
     }
 
+    /**
+     * Opens the help page
+     */
     @FXML
     public void openHelp() {
         //Open help page
         kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/12-soporte/");
     }
 
+    /**
+     * Opens the news page
+     */
     @FXML
     public void openNews() {
         //Open news page
         kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/3-noticias/");
     }
 
+    /**
+     * Performs an authenticate if the Enter key is pressed in the Username or Password field
+     * @param e The trigger event
+     */
     @FXML
     public void triggerAuthenticate(KeyEvent e) {
         if (e.getCode() == KeyCode.ENTER) {
@@ -1467,7 +1603,10 @@ public class MainFX {
         }
     }
 
-    //Handles mouse events on the settings tab and updates launcher settings
+    /**
+     * Updates the settings according to the label cicked
+     * @param e The trigger event
+     */
     @FXML
     public void updateSettings(MouseEvent e) {
         Label source = (Label)e.getSource();
@@ -1508,7 +1647,11 @@ public class MainFX {
         }
     }
 
-    //Changes the label icon
+    /**
+     * Changes any label icon
+     * @param label The target label
+     * @param state The new state
+     */
     private void toggleLabel(Label label, boolean state) {
         label.getStyleClass().clear();
         if (state) {
@@ -1518,6 +1661,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Deletes the cache with confirmation
+     */
     @FXML
     private void deleteCache() {
         Alert a = kernel.buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(98) + System.lineSeparator() +
@@ -1535,6 +1681,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Exports the logs to a ZIP file
+     */
     @FXML
     private void exportLogs() {
         FileChooser chooser = new FileChooser();
@@ -1560,12 +1709,18 @@ public class MainFX {
         }
     }
 
+    /**
+     * Opens the URL of the selected version server in the default user web browser
+     */
     @FXML
     private void downloadServer() {
         VersionMeta selectedItem = versionList.getSelectionModel().getSelectedItem();
         kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
     }
 
+    /**
+     * Selects a game directory for the profile editor
+     */
     @FXML
     private void selectGameDirectory() {
         DirectoryChooser chooser = new DirectoryChooser();
@@ -1585,6 +1740,9 @@ public class MainFX {
         }
     }
 
+    /**
+     * Selects the java executable for the profile editor
+     */
     @FXML
     private void selectJavaExecutable() {
         FileChooser chooser = new FileChooser();

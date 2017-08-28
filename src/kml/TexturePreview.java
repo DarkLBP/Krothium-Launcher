@@ -13,6 +13,13 @@ import javafx.scene.paint.Color;
  */
 public class TexturePreview {
 
+    /**
+     * Generates the front preview of the skin
+     * @param skin The skin image
+     * @param cape The cape image
+     * @param slim If the format is slim
+     * @return The generated preview image
+     */
     public static Image generateFront(Image skin, Image cape, boolean slim) {
         double h = skin.getHeight();
         PixelReader pr = skin.getPixelReader();
@@ -71,6 +78,13 @@ public class TexturePreview {
         return wi;
     }
 
+    /**
+     * Generates the back preview of the skin
+     * @param skin The skin image
+     * @param cape The cape image
+     * @param slim If the format is slim
+     * @return The generated preview image
+     */
     public static Image generateBack(Image skin, Image cape, boolean slim) {
         double h = skin.getHeight();
         PixelReader pr = skin.getPixelReader();
@@ -129,6 +143,12 @@ public class TexturePreview {
         return wi;
     }
 
+    /**
+     * Generates the left preview of the skin
+     * @param skin The skin image
+     * @param cape The cape image
+     * @return The generated preview image
+     */
     public static Image generateLeft(Image skin, Image cape) {
         double h = skin.getHeight();
         PixelReader pr = skin.getPixelReader();
@@ -169,6 +189,12 @@ public class TexturePreview {
         return wi;
     }
 
+    /**
+     * Generates the right preview of the skin
+     * @param skin The skin image
+     * @param cape The cape image
+     * @return The generated preview image
+     */
     public static Image generateRight(Image skin, Image cape) {
         double h = skin.getHeight();
         PixelReader pr = skin.getPixelReader();
@@ -209,6 +235,17 @@ public class TexturePreview {
         return wi;
     }
 
+    /**
+     * Renders a layer. Transparent colors and background color is ignored.
+     * @param dstx Destination X
+     * @param dsty Destination Y
+     * @param w Width of the chunk
+     * @param h Height of the chunk
+     * @param pr The image pixel reader
+     * @param pw The output pixel writer
+     * @param srcx The X coordinate from the source skin
+     * @param srcy The Y coordinate from the source skin
+     */
     private static void renderLayer(int dstx, int dsty, int w, int h, PixelReader pr, PixelWriter pw, int srcx, int srcy) {
         Color background = pr.getColor(0, 0);
         int x_origin = dstx;
@@ -225,6 +262,17 @@ public class TexturePreview {
         }
     }
 
+    /**
+     * Renders a layer inversed
+     * @param dstx Destination X
+     * @param dsty Destination Y
+     * @param w Width of the chunk
+     * @param h Height of the chunk
+     * @param pr The image pixel reader
+     * @param pw The output pixel writer
+     * @param srcx The X coordinate from the source skin
+     * @param srcy The Y coordinate from the source skin
+     */
     private static void renderLayerInverse(int dstx, int dsty, int w, int h, PixelReader pr, PixelWriter pw, int srcx, int srcy) {
         int x_origin = dstx;
         for (int y = srcy; y < srcy + h; y++){

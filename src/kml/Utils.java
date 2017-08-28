@@ -30,6 +30,10 @@ import java.util.zip.ZipInputStream;
 
 public final class Utils {
 
+    /**
+     * Ignores HTTPS certificate issuer
+     * @return A boolean that indicates if the custom certificate validator has been installed
+     */
     public static boolean ignoreHTTPSCert() {
         try {
             SSLContext t = SSLContext.getInstance("SSL");
@@ -52,6 +56,9 @@ public final class Utils {
         }
     }
 
+    /**
+     * Tests if there is connectivity to the server
+     */
     public static void testNetwork() {
         try {
             HttpsURLConnection con = (HttpsURLConnection) Constants.HANDSHAKE_URL.openConnection();
@@ -62,6 +69,10 @@ public final class Utils {
         }
     }
 
+    /**
+     * Gets the current operating system
+     * @return An OS enum with the detected OS
+     */
     public static OS getPlatform() {
         final String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")) {
@@ -74,6 +85,10 @@ public final class Utils {
         return OS.UNKNOWN;
     }
 
+    /**
+     * Gets the default working directory for the launcher depending of the OS
+     * @return The working directory
+     */
     public static File getWorkingDirectory() {
         final String userHome = System.getProperty("user.home", ".");
         File workingDirectory;
@@ -95,6 +110,10 @@ public final class Utils {
         return workingDirectory;
     }
 
+    /**
+     * Deletes a directory recursively
+     * @param directory The target directory
+     */
     public static void deleteDirectory(File directory) {
         if (directory.exists()) {
             File[] files = directory.listFiles();
@@ -111,7 +130,12 @@ public final class Utils {
         directory.delete();
     }
 
-
+    /**
+     * Downloads a file using channel transfer
+     * @param con An established connection
+     * @param output The output file
+     * @return A boolean that indicates if the download has completed
+     */
     public static boolean downloadFile(URLConnection con, File output) {
         try {
             ReadableByteChannel rbc = Channels.newChannel(con.getInputStream());
@@ -129,6 +153,11 @@ public final class Utils {
         }
     }
 
+    /**
+     * Downloads a file to the cache using server's ETAG header
+     * @param url The url that will be used to download the file
+     * @return The path of the cached file
+     */
     public static File downloadFileCached(URL url) {
         //Requires server ETAG
         //Returns the path of the cached file
@@ -152,6 +181,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * Downloads a file and even caches it if server ETAG is existent
+     * @param url The source URL
+     * @param output The output file
+     * @return A boolean that indicated if the download has completed
+     */
     public static boolean downloadFile(URL url, File output) {
         try {
             if (url.getProtocol().equalsIgnoreCase("file")) {
@@ -171,6 +206,11 @@ public final class Utils {
         }
     }
 
+    /**
+     * Reads a String from the source URL
+     * @param url The source URL
+     * @return The read String or null if an error occurred
+     */
     public static String readURL(URL url) {
         try {
             URLConnection con = null;
@@ -221,6 +261,13 @@ public final class Utils {
         }
     }
 
+    /**
+     * Verifies a checksum from a file
+     * @param file The file to be checked
+     * @param hash The hash or checksum to check
+     * @param method The hash format (md5, sha1...)
+     * @return A boolean that indicated if the hash matches
+     */
     public static boolean verifyChecksum(File file, String hash, String method) {
         if (hash == null || method == null || !file.exists() || file.isDirectory()) {
             return false;
@@ -233,6 +280,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * Calculates a checksum from a String
+     * @param txt The input String
+     * @param method The hash method (md5, sha1...)
+     * @return The calculated hash
+     */
     public static String calculateChecksum(String txt, String method) {
         try {
             MessageDigest sha1 = MessageDigest.getInstance(method);
@@ -249,6 +302,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * Calculates a checksum from a File
+     * @param file The input File
+     * @param method The hash method (md5, sha1...)
+     * @return The calculated hash
+     */
     public static String calculateChecksum(File file, String method) {
         try {
             MessageDigest sha1 = MessageDigest.getInstance(method);
@@ -269,6 +328,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * Writes a String to a File
+     * @param o The String to be written
+     * @param f The output File
+     * @return A boolean that indicated if the text has been written
+     */
     public static boolean writeToFile(String o, File f) {
         try {
             if (!f.getParentFile().exists()) {
@@ -283,17 +348,32 @@ public final class Utils {
         }
     }
 
+    /**
+     * Checks whether the current OS arch is 32 or 64 bits
+     * @return An OSArch enum with the detected architecture
+     */
     public static OSArch getOSArch() {
         String arch = System.getProperty("os.arch");
         String realArch = arch.endsWith("64") ? "64" : "32";
         return (realArch.equals("32") ? OSArch.OLD : OSArch.NEW);
     }
 
+    /**
+     * Gets a real path from an artifact path
+     * @param artifact The artifact path
+     * @param ext The extension
+     * @return The real path
+     */
     public static String getArtifactPath(String artifact, String ext) {
         final String[] parts = artifact.split(":", 3);
         return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
     }
 
+    /**
+     * Converts a String to an URL
+     * @param url Input url String
+     * @return Return the URL or null if it is not a valid URL
+     */
     public static URL stringToURL(String url) {
         try {
             return new URL(url);
@@ -302,6 +382,14 @@ public final class Utils {
         }
     }
 
+    /**
+     * Sends a post to the desired target
+     * @param url The POST URL
+     * @param data The data to be sent
+     * @param params The headers to be sent
+     * @return The response of the server
+     * @throws IOException If connection failed
+     */
     public static String sendPost(URL url, byte[] data, Map<String, String> params) throws IOException {
         URLConnection con = url.openConnection();
         con.setDoOutput(true);
@@ -352,6 +440,10 @@ public final class Utils {
         return response.toString();
     }
 
+    /**
+     * Gets the java executable path
+     * @return The java executable path
+     */
     public static String getJavaDir() {
         final String separator = System.getProperty("file.separator");
         final String path = System.getProperty("java.home") + separator + "bin" + separator;
@@ -361,6 +453,11 @@ public final class Utils {
         return path + "java";
     }
 
+    /**
+     * Converts a Base64 String to text
+     * @param st The Base64 String
+     * @return The decoded text
+     */
     public static String fromBase64(String st) {
         if (st == null || st.isEmpty()) {
             return null;
@@ -374,6 +471,12 @@ public final class Utils {
         return conversion;
     }
 
+    /**
+     * Unpacks a LZMA file
+     * @param input The LZMA file
+     * @param output The output file
+     * @throws IOException If an error occurred
+     */
     public static void decompressLZMA(File input, File output) throws IOException {
         Decoder LZMADecoder = new SevenZip.Compression.LZMA.Decoder();
         try (FileInputStream in = new FileInputStream(input);
@@ -396,6 +499,13 @@ public final class Utils {
         }
     }
 
+    /**
+     * Decompresses a ZIP file
+     * @param input The ZIP file
+     * @param output The output directory
+     * @param exclusions Any extraction exclusions
+     * @throws IOException If the process failed
+     */
     public static void decompressZIP(File input, File output, List<String> exclusions) throws IOException {
         if(!output.exists() || !output.isDirectory()){
             output.mkdir();
