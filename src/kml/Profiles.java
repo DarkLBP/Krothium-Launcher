@@ -26,10 +26,19 @@ public class Profiles {
         this.console = k.getConsole();
     }
 
+    /**
+     * Returns the profile database
+     * @return The profile database
+     */
     public TreeSet<Profile> getProfiles() {
         return this.profiles;
     }
 
+    /**
+     * Adds a profile to the database
+     * @param p The profile to be added
+     * @return A boolean that indicates if the profile has been added
+     */
     public boolean addProfile(Profile p) {
         if (!profiles.contains(p)) {
             profiles.add(p);
@@ -40,6 +49,11 @@ public class Profiles {
         return false;
     }
 
+    /**
+     * Deletes a profile from the database
+     * @param p The profile to be deleted
+     * @return A boolean that indicates if the profile has been deleted
+     */
     public boolean deleteProfile(Profile p) {
         if (profiles.contains(p)) {
             if (this.selected != null && this.selected.equals(p)) {
@@ -61,6 +75,9 @@ public class Profiles {
         return false;
     }
 
+    /**
+     * Loads the profiles from the launcher_profiles.json
+     */
     public void fetchProfiles() {
         console.printInfo("Fetching profiles.");
         Timestamp latestUsedMillis = new Timestamp(-1);
@@ -208,7 +225,11 @@ public class Profiles {
         }
     }
 
-    //Get profile by ID
+    /**
+     * Gets a profile by id
+     * @param id The id to search
+     * @return The profile that matches the id or null
+     */
     public Profile getProfile(String id) {
         for (Profile p : profiles) {
             if (p.getID().equalsIgnoreCase(id)) {
@@ -218,14 +239,27 @@ public class Profiles {
         return null;
     }
 
+    /**
+     * Returns the selected profile
+     * @return The selected profile
+     */
     public Profile getSelectedProfile() {
         return this.selected;
     }
 
+    /**
+     * Returns the release profile
+     * @return The release profile
+     */
     public Profile getReleaseProfile() {
         return releaseProfile;
     }
 
+    /**
+     * Sets the current selected profile
+     * @param p Profile to be selected
+     * @return A boolean that indicates if the profile has been selected
+     */
     public boolean setSelectedProfile(Profile p) {
         if (profiles.contains(p)) {
             p.setLastUsed(new Timestamp(System.currentTimeMillis()));
@@ -236,6 +270,10 @@ public class Profiles {
         return false;
     }
 
+    /**
+     * Converts the profile database to JSON
+     * @return The json conversion of the profile database
+     */
     public JSONObject toJSON() {
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();

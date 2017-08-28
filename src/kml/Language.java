@@ -7,6 +7,10 @@ package kml;
 public class Language {
     private static String[] langData = new String[0];
 
+    /**
+     * Loads a language file
+     * @param lang The language to be loaded
+     */
     public static void loadLang(String lang) {
         String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
         if (data != null) {
@@ -19,6 +23,11 @@ public class Language {
         }
     }
 
+    /**
+     * Gets a specific localized line
+     * @param line The target line
+     * @return The requested localized line
+     */
     public static String get(int line) {
         if (langData.length == 0) {
             return "";

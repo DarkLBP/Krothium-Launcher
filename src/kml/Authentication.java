@@ -26,6 +26,10 @@ public class Authentication {
         this.console = k.getConsole();
     }
 
+    /**
+     * Adds a user to the database
+     * @param u The user to be added
+     */
     private void addUser(User u) {
         if (this.userDatabase.contains(u)) {
             this.userDatabase.remove(u);
@@ -38,6 +42,11 @@ public class Authentication {
 
     }
 
+    /**
+     * Removes a user for the database
+     * @param u The User to be removed
+     * @return A boolean that indicates if the user has been found and removed
+     */
     public boolean removeUser(User u) {
         if (this.userDatabase.contains(u)) {
             console.printInfo("User " + u.getDisplayName() + " deleted.");
@@ -53,10 +62,18 @@ public class Authentication {
         }
     }
 
+    /**
+     * Returns the selected user. Might be null
+     * @return The selected user or null if no user is selected.
+     */
     public User getSelectedUser() {
         return selectedAccount;
     }
 
+    /**
+     * Sets the selected user
+     * @param user The user to be selected
+     */
     public void setSelectedUser(User user) {
         if (user != null) {
             if (this.userDatabase.contains(user)) {
@@ -69,6 +86,12 @@ public class Authentication {
         this.selectedProfile = null;
     }
 
+    /**
+     * Performs an authenticate request to the server
+     * @param username The username
+     * @param password The password
+     * @throws AuthenticationException If authentication failed
+     */
     public void authenticate(final String username, final String password) throws AuthenticationException {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
@@ -117,6 +140,10 @@ public class Authentication {
         }
     }
 
+    /**
+     * Performs a refresh request to the server
+     * @throws AuthenticationException If the refresh failed
+     */
     public void refresh() throws AuthenticationException {
         if (this.selectedAccount == null) {
             throw new AuthenticationException("No user is selected.");
@@ -167,15 +194,25 @@ public class Authentication {
         }
     }
 
+    /**
+     * Checks if someone is authenticated
+     * @return A boolean that indicates if is authenticated
+     */
     public boolean isAuthenticated() {
         return this.authenticated;
     }
 
+    /**
+     * Returns the client token
+     * @return The client token
+     */
     public String getClientToken() {
         return this.clientToken;
     }
 
-
+    /**
+     * Loads the users from launcher_profile.json
+     */
     public void fetchUsers() {
         console.printInfo("Loading user data.");
         JSONObject root = kernel.getLauncherProfiles();
@@ -221,10 +258,18 @@ public class Authentication {
         }
     }
 
+    /**
+     * Returns the user database
+     * @return The user database
+     */
     public Set<User> getUsers() {
         return this.userDatabase;
     }
 
+    /**
+     * Converts the user database to JSON
+     * @return The user database in json format
+     */
     public JSONObject toJSON() {
         JSONObject o = new JSONObject();
         o.put("clientToken", this.clientToken);

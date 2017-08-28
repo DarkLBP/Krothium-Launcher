@@ -36,6 +36,10 @@ public class Downloader {
         this.console = k.getConsole();
     }
 
+    /**
+     * Downloads all requires game files
+     * @throws DownloaderException If the download fails
+     */
     public void download() throws DownloaderException {
         this.downloading = true;
         console.printInfo("Download work has started.");
@@ -282,6 +286,10 @@ public class Downloader {
         this.downloading = false;
     }
 
+    /**
+     * Returns the current download progress
+     * @return The download progress
+     */
     public double getProgress() {
         if (!this.downloading) {
             return 0;
@@ -289,10 +297,18 @@ public class Downloader {
         return (this.downloaded + this.validated) / this.total * 100;
     }
 
+    /**
+     * Checks if the download task still running
+     * @return A boolean with the current status
+     */
     public boolean isDownloading() {
         return this.downloading;
     }
 
+    /**
+     * Gets the latest file that has been pushed to the download queue
+     * @return The current file name
+     */
     public String getCurrentFile() {
         return currentFile;
     }

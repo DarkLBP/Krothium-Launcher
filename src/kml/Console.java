@@ -71,6 +71,10 @@ public class Console {
         }
     }
 
+    /**
+     * Prints something to the output channel
+     * @param info The Object to be printed
+     */
     public void printInfo(Object info) {
         if (this.enabled) {
             writeData("[" + dateFormat.format(new Date()) + "] " + info);
@@ -78,6 +82,10 @@ public class Console {
         }
     }
 
+    /**
+     * Prints something to the error channel
+     * @param error The Object to be printed
+     */
     public void printError(Object error) {
         if (this.enabled) {
             writeData("[" + dateFormat.format(new Date()) + "] " + error);
@@ -85,6 +93,10 @@ public class Console {
         }
     }
 
+    /**
+     * Writes data to the log
+     * @param data The data to be written
+     */
     private void writeData(Object data) {
         try {
             byte[] raw = (data + System.lineSeparator()).getBytes();
@@ -95,6 +107,9 @@ public class Console {
         }
     }
 
+    /**
+     * Closes the log file
+     */
     public void close() {
         if (this.enabled) {
             try {

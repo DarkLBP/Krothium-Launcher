@@ -27,12 +27,21 @@ public class Versions {
         this.console = k.getConsole();
     }
 
+    /**
+     * Add a version to the database
+     * @param m The versions to be added
+     */
     private void add(VersionMeta m) {
         if (!versions.contains(m)) {
             versions.add(m);
         }
     }
 
+    /**
+     * Gets the version meta by id
+     * @param id The id to fetch the version meta
+     * @return The version meta from the specified id or from the latest release
+     */
     public VersionMeta getVersionMeta(String id) {
         if (id != null) {
             switch (id) {
@@ -50,6 +59,11 @@ public class Versions {
         return this.latestRel;
     }
 
+    /**
+     * Gets the version data from a version meta
+     * @param vm The target version meta
+     * @return The version data from the specified version meta or null if an error happened
+     */
     public Version getVersion(VersionMeta vm) {
         if (this.versions.contains(vm)) {
             for (Version v : version_cache) {
@@ -70,6 +84,9 @@ public class Versions {
         return null;
     }
 
+    /**
+     * Loads versions from Mojang servers or from local versions
+     */
     public void fetchVersions() {
         String lr = "", ls = "";
         console.printInfo("Fetching remote version list.");
@@ -172,14 +189,26 @@ public class Versions {
         }
     }
 
+    /**
+     * Returns the version database
+     * @return The version database
+     */
     public Set<VersionMeta> getVersions() {
         return versions;
     }
 
+    /**
+     * Returns the latest release
+     * @return The latest release
+     */
     public VersionMeta getLatestRelease() {
         return latestRel;
     }
 
+    /**
+     * Returns the latest snapshot
+     * @return The latest snapshot
+     */
     public VersionMeta getLatestSnapshot() {
         return latestSnap;
     }

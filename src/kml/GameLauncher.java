@@ -37,6 +37,10 @@ public class GameLauncher {
         this.console = k.getConsole();
     }
 
+    /**
+     * Prepares and launcher the game
+     * @throws GameLauncherException If an error has been thrown
+     */
     public void launch() throws GameLauncherException {
         started = true;
         error = false;
@@ -308,7 +312,7 @@ public class GameLauncher {
                 });
             }
             Thread log_info = new Thread(() -> {
-                InputStreamReader isr = new InputStreamReader(GameLauncher.this.getInputStream(), Charset.forName("ISO-8859-1"));
+                InputStreamReader isr = new InputStreamReader(process.getInputStream(), Charset.forName("ISO-8859-1"));
                 BufferedReader br = new BufferedReader(isr);
                 try {
                     while (GameLauncher.this.isRunning()) {
@@ -337,7 +341,7 @@ public class GameLauncher {
             });
             log_info.start();
             Thread log_error = new Thread(() -> {
-                InputStreamReader isr = new InputStreamReader(GameLauncher.this.getErrorStream(), Charset.forName("ISO-8859-1"));
+                InputStreamReader isr = new InputStreamReader(process.getErrorStream(), Charset.forName("ISO-8859-1"));
                 BufferedReader br = new BufferedReader(isr);
                 try {
                     while (GameLauncher.this.isRunning()) {
@@ -362,33 +366,32 @@ public class GameLauncher {
         }
     }
 
+    /**
+     * Checks if the game launch process is started
+     * @return A boolean that indicates if the launcher process is started
+     */
     public boolean isStarted() {
         return this.started;
     }
 
+    /**
+     * Checks if the game process is running
+     * @return A boolean with the current state
+     */
     public boolean isRunning() {
         if (process != null) {
-            try {
-                process.exitValue();
-                return false;
-            } catch (Exception ex) {
-                return true;
-            }
+            process.isAlive();
         }
         return false;
     }
 
+    /**
+     * Checks if there is an error. Once is called the error marker disappears.
+     * @return If there is an error
+     */
     public boolean hasError() {
         boolean current = this.error;
         this.error = false;
         return current;
-    }
-
-    private InputStream getInputStream() {
-        return this.process.getInputStream();
-    }
-
-    private InputStream getErrorStream() {
-        return this.process.getErrorStream();
     }
 }
