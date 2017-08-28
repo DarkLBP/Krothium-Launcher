@@ -380,7 +380,7 @@ public class GameLauncher {
      */
     public boolean isRunning() {
         if (process != null) {
-            process.isAlive();
+            return process.isAlive();
         }
         return false;
     }
