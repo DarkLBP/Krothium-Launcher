@@ -1,5 +1,6 @@
 package kml.gui;
 
+import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -20,10 +21,15 @@ public class BrowserFX {
         engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:55.0) Gecko/20100101 Firefox/55.0");
         engine.setJavaScriptEnabled(true);
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            String location = engine.getLocation();
-            if (!location.equalsIgnoreCase(this.askedURL) && !location.contains("krothium.com")) {
-                this.toHide.show();
-                s.close();
+            if (newValue.equals(State.SUCCEEDED)) {
+                String location = engine.getLocation();
+                if (!location.equalsIgnoreCase(this.askedURL) && !location.contains("krothium.com") && !location.contains("about:blank")) {
+                    this.webBrowser.getEngine().load("about:blank");
+                }
+                if (location.contains("about:blank") && !this.toHide.isShowing()) {
+                    this.toHide.show();
+                    s.close();
+                }
             }
         });
     }

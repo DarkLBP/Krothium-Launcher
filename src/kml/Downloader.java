@@ -64,7 +64,7 @@ public class Downloader {
         if (v == null) {
             throw new DownloaderException("Version info could not be obtained.");
         }
-        ExecutorService pool = Executors.newFixedThreadPool(2);
+        ExecutorService pool = Executors.newFixedThreadPool(1);
         Collection<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;
         this.validated = 0;

@@ -11,8 +11,8 @@ import java.net.URL;
  */
 
 public final class Constants {
-    public static final int KERNEL_BUILD = 35;
-    public static final String KERNEL_BUILD_NAME = "2.3.2";
+    public static final int KERNEL_BUILD = 36;
+    public static final String KERNEL_BUILD_NAME = "3.0.0";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
     public static final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
@@ -47,6 +47,6 @@ public final class Constants {
     public static final URLMatcher[] HTTP_MATCHERS = {new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher()};
     public static final URLMatcher[] HTTPS_MATCHERS = {new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
     public static final int DOWNLOAD_TRIES = 5;
-    public static final int KEEP_OLD_LOGS = 4;
+    public static final int KEEP_OLD_LOGS = 5;
     public static boolean USE_LOCAL;
 }
