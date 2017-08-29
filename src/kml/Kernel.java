@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -15,15 +16,19 @@ import javafx.stage.Stage;
 import kml.enums.ProfileIcon;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.beans.IntrospectionException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,7 +50,7 @@ public final class Kernel {
     private final BrowserFX webBrowser;
     private JSONObject launcherProfiles;
     private final Image applicationIcon, profileIcons;
-    private final HashMap<ProfileIcon, Image> iconCache;
+    private final Map<ProfileIcon, Image> iconCache;
 
     public Kernel(Stage stage, HostServices hs) {
         if (!Constants.APPLICATION_WORKING_DIR.exists()) {
@@ -65,7 +70,7 @@ public final class Kernel {
             this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
             this.console.printInfo("JavaFX loaded.");
         } catch (ClassNotFoundException e) {
-            final File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
+            File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
             if (jfxrt.isFile()) {
                 this.console.printInfo("Attempting to load JavaFX manually...");
                 try {
@@ -73,27 +78,27 @@ public final class Kernel {
                         this.console.printInfo("JavaFX loaded manually.");
                     } else {
                         this.console.printError("Found JavaFX but it couldn't be loaded!");
-                        warnJavaFX();
+                        this.warnJavaFX();
                     }
                 } catch (Throwable e2) {
                     this.console.printError("Found JavaFX but it couldn't be loaded!");
-                    warnJavaFX();
+                    this.warnJavaFX();
                 }
             } else {
                 this.console.printError("JavaFX library not found. Please update Java!");
-                warnJavaFX();
+                this.warnJavaFX();
             }
         }
-        console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
-        console.printInfo("Reading launcher profiles...");
+        this.console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+        this.console.printInfo("Reading launcher profiles...");
         try {
             if (Constants.APPLICATION_CONFIG.exists() && Constants.APPLICATION_CONFIG.isFile()) {
-                launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
+                this.launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
             } else {
-                console.printError("Launcher profiles file does not exists.");
+                this.console.printError("Launcher profiles file does not exists.");
             }
-        } catch (Exception e) {
-            console.printError("Malformed launcher profiles file.");
+        } catch (MalformedURLException | JSONException e) {
+            this.console.printError("Malformed launcher profiles file.");
         }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
@@ -108,14 +113,14 @@ public final class Kernel {
         this.loadUsers();
 
         //Initialize constants
-        profileIcons = new Image("/kml/gui/textures/profile_icons.png");
-        applicationIcon = new Image("/kml/gui/textures/icon.png");
-        iconCache = new HashMap<>();
+        this.profileIcons = new Image("/kml/gui/textures/profile_icons.png");
+        this.applicationIcon = new Image("/kml/gui/textures/icon.png");
+        this.iconCache = new EnumMap<>(ProfileIcon.class);
 
         //Load web browser
         Stage s = new Stage();
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
+        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
         Parent p;
         try {
             p = loader.load();
@@ -123,42 +128,42 @@ public final class Kernel {
             p = null;
             this.console.printError("Failed to initialize JavaFX GUI!");
             this.console.printError(e.getMessage());
-            exitSafely();
+            this.exitSafely();
         }
-        s.getIcons().add(applicationIcon);
+        s.getIcons().add(this.applicationIcon);
         s.setTitle("Krothium Minecraft Launcher");
         s.setScene(new Scene(p));
         s.setResizable(false);
         s.setMaximized(false);
         s.setOnCloseRequest(e -> {
             e.consume();
-            Alert ask = buildAlert(Alert.AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+            Alert ask = this.buildAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
                     Language.get(96) + System.lineSeparator() + Language.get(97));
             Optional<ButtonType> response = ask.showAndWait();
             if (response.isPresent() && response.get() == ButtonType.OK) {
-                getHostServices().showDocument("https://krothium.com/donaciones/");
+                this.hostServices.showDocument("https://krothium.com/donaciones/");
             }
         });
-        webBrowser = loader.getController();
-        webBrowser.initialize(s);
+        this.webBrowser = loader.getController();
+        this.webBrowser.initialize(s);
 
         //Load main form
         FXMLLoader loader2 = new FXMLLoader();
-        loader2.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
+        loader2.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
         try {
             p = loader2.load();
         } catch (IOException e) {
             p = null;
             this.console.printError("Failed to initialize JavaFX GUI!");
             this.console.printError(e.getMessage());
-            exitSafely();
+            this.exitSafely();
         }
-        stage.getIcons().add(applicationIcon);
+        stage.getIcons().add(this.applicationIcon);
         stage.setTitle("Krothium Minecraft Launcher");
         stage.setScene(new Scene(p));
         stage.setResizable(false);
         stage.setMaximized(false);
-        stage.setOnCloseRequest(e -> exitSafely());
+        stage.setOnCloseRequest(e -> this.exitSafely());
         MainFX mainForm = loader2.getController();
         mainForm.initialize(this, stage);
     }
@@ -168,15 +173,15 @@ public final class Kernel {
      * @param file The JAR file to be laoded
      * @return A boolean indicating if the file has been loaded
      */
-    public static boolean addToSystemClassLoader(final File file) {
+    public static boolean addToSystemClassLoader(File file) {
         if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
-            final URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
             try {
-                final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                 method.setAccessible(true);
                 method.invoke(classLoader, file.toURI().toURL());
                 return true;
-            } catch (Exception t) {
+            } catch (NoSuchMethodException | MalformedURLException | InvocationTargetException | IllegalAccessException t) {
                 return false;
             }
         }
@@ -210,24 +215,24 @@ public final class Kernel {
         }
         output.put("settings", this.settings.toJSON());
         if (!Utils.writeToFile(output.toString(4), Constants.APPLICATION_CONFIG)) {
-            console.printError("Failed to save the profiles file!");
+            this.console.printError("Failed to save the profiles file!");
         }
     }
 
     private void loadProfiles() {
-        profiles.fetchProfiles();
+        this.profiles.fetchProfiles();
     }
 
     private void loadVersions() {
-        versions.fetchVersions();
+        this.versions.fetchVersions();
     }
 
     private void loadUsers() {
-        authentication.fetchUsers();
+        this.authentication.fetchUsers();
     }
 
     private void loadSettings() {
-        settings.loadSettings();
+        this.settings.loadSettings();
     }
 
     public Versions getVersions() {
@@ -251,23 +256,11 @@ public final class Kernel {
     }
 
     public JSONObject getLauncherProfiles() {
-        return launcherProfiles;
+        return this.launcherProfiles;
     }
 
     public GameLauncher getGameLauncher() {
         return this.gameLauncher;
-    }
-
-    public Image getApplicationIcon() {
-        return applicationIcon;
-    }
-
-    public Image getProfileIcons() {
-        return profileIcons;
-    }
-
-    public HashMap<ProfileIcon, Image> getIconCache() {
-        return iconCache;
     }
 
     /**
@@ -285,17 +278,26 @@ public final class Kernel {
      * @return The update url
      */
     public String checkForUpdates() {
-        try {
-            String r = Utils.readURL(Constants.GETLATEST_URL);
-            String[] data = r.split(":");
-            int version = Integer.parseInt(Utils.fromBase64(data[0]));
-            if (version > Constants.KERNEL_BUILD) {
-                console.printInfo("New kernel build available: " + version);
-                return data[1];
-            }
-        } catch (Exception ex) {
-            console.printError("Failed to check for updates: " + ex);
+        String r = Utils.readURL(Constants.GETLATEST_URL);
+        if (r == null) {
+            this.console.printError("Failed to check for updates");
             return null;
+        }
+        String[] data = r.split(":");
+        if (data.length == 2) {
+            try {
+                int version = Integer.parseInt(Utils.fromBase64(data[0]));
+                if (version > Constants.KERNEL_BUILD) {
+                    this.console.printInfo("New kernel build available: " + version);
+                    return data[1];
+                } else {
+                    this.console.printInfo("No updates found.");
+                }
+            } catch (NumberFormatException e) {
+                this.console.printError("Invalid check for updates reponse from the server.");
+            }
+        } else {
+            this.console.printError("Invalid check for updates reponse from the server.");
         }
         return null;
     }
@@ -305,7 +307,7 @@ public final class Kernel {
      */
     private void warnJavaFX() {
         JOptionPane.showMessageDialog(null, Language.get(9), "Error", JOptionPane.ERROR_MESSAGE);
-        exitSafely();
+        this.exitSafely();
     }
 
     public BrowserFX getBrowser() {
@@ -318,287 +320,282 @@ public final class Kernel {
      * @return The image with the profile icon
      */
     public Image getProfileIcon(ProfileIcon p) {
-        if (iconCache.containsKey(p)) {
-            return iconCache.get(p);
+        if (this.iconCache.containsKey(p)) {
+            return this.iconCache.get(p);
         }
         WritableImage wi = new WritableImage(136, 136);
         PixelWriter pw = wi.getPixelWriter();
         int blockX = 0;
         int blockY = 0;
-        try {
-            PixelReader pr = profileIcons.getPixelReader();
-            switch (p) {
-                case LEAVES_OAK:
-                    blockX = 0;
-                    blockY = 0;
-                    break;
-                case BEDROCK:
-                    blockX = 1;
-                    blockY = 0;
-                    break;
-                case CLAY:
-                    blockX = 2;
-                    blockY = 0;
-                    break;
-                case DIAMOND_BLOCK:
-                    blockX = 3;
-                    blockY = 0;
-                    break;
-                case END_STONE:
-                    blockX = 4;
-                    blockY = 0;
-                    break;
-                case GRAVEL:
-                    blockX = 5;
-                    blockY = 0;
-                    break;
-                case LOG_BIRCH:
-                    blockX = 6;
-                    blockY = 0;
-                    break;
-                case PLANKS_OAK:
-                    blockX = 7;
-                    blockY = 0;
-                    break;
-                case TNT:
-                    blockX = 8;
-                    blockY = 0;
-                    break;
-                case BRICK:
-                    blockX = 0;
-                    blockY = 1;
-                    break;
-                case CHEST:
-                    blockX = 1;
-                    blockY = 1;
-                    break;
-                case COAL_BLOCK:
-                    blockX = 2;
-                    blockY = 1;
-                    break;
-                case DIAMOND_ORE:
-                    blockX = 3;
-                    blockY = 1;
-                    break;
-                case FARMLAND:
-                    blockX = 4;
-                    blockY = 1;
-                    break;
-                case HARDENED_CLAY:
-                    blockX = 5;
-                    blockY = 1;
-                    break;
-                case LOG_DARKOAK:
-                    blockX = 6;
-                    blockY = 1;
-                    break;
-                case PLANKS_SPRUCE:
-                    blockX = 7;
-                    blockY = 1;
-                    break;
-                case WOOL:
-                    blockX = 8;
-                    blockY = 1;
-                    break;
-                case COAL_ORE:
-                    blockX = 0;
-                    blockY = 2;
-                    break;
-                case COBBLESTONE:
-                    blockX = 1;
-                    blockY = 2;
-                    break;
-                case CRAFTING_TABLE: //Default for Latest Snapshot
-                    blockX = 2;
-                    blockY = 2;
-                    break;
-                case DIRT:
-                    blockX = 3;
-                    blockY = 2;
-                    break;
-                case FURNACE: //Default for custom profiles
-                    blockX = 4;
-                    blockY = 2;
-                    break;
-                case ICE_PACKED:
-                    blockX = 5;
-                    blockY = 2;
-                    break;
-                case LOG_JUNGLE:
-                    blockX = 6;
-                    blockY = 2;
-                    break;
-                case QUARTZ_ORE:
-                    blockX = 7;
-                    blockY = 2;
-                    break;
-                case DIRT_PODZOL:
-                    blockX = 0;
-                    blockY = 3;
-                    break;
-                case DIRT_SNOW:
-                    blockX = 1;
-                    blockY = 3;
-                    break;
-                case EMERALD_BLOCK:
-                    blockX = 2;
-                    blockY = 3;
-                    break;
-                case EMERALD_ORE:
-                    blockX = 3;
-                    blockY = 3;
-                    break;
-                case FURNACE_ON:
-                    blockX = 4;
-                    blockY = 3;
-                    break;
-                case IRON_BLOCK:
-                    blockX = 5;
-                    blockY = 3;
-                    break;
-                case LOG_OAK:
-                    blockX = 6;
-                    blockY = 3;
-                    break;
-                case RED_SAND:
-                    blockX = 7;
-                    blockY = 3;
-                    break;
-                case GLASS:
-                    blockX = 0;
-                    blockY = 4;
-                    break;
-                case GLOWSTONE:
-                    blockX = 1;
-                    blockY = 4;
-                    break;
-                case GOLD_BLOCK:
-                    blockX = 2;
-                    blockY = 4;
-                    break;
-                case GOLD_ORE:
-                    blockX = 3;
-                    blockY = 4;
-                    break;
-                case GRASS: //Default for Latest Release
-                    blockX = 4;
-                    blockY = 4;
-                    break;
-                case IRON_ORE:
-                    blockX = 5;
-                    blockY = 4;
-                    break;
-                case LOG_SPRUCE:
-                    blockX = 6;
-                    blockY = 4;
-                    break;
-                case RED_SANDSTONE:
-                    blockX = 7;
-                    blockY = 4;
-                    break;
-                case LAPIS_ORE:
-                    blockX = 0;
-                    blockY = 5;
-                    break;
-                case LEAVES_BIRCH:
-                    blockX = 1;
-                    blockY = 5;
-                    break;
-                case LEAVES_JUNGLE:
-                    blockX = 2;
-                    blockY = 5;
-                    break;
-                case BOOKSHELF:
-                    blockX = 3;
-                    blockY = 5;
-                    break;
-                case LEAVES_SPRUCE:
-                    blockX = 4;
-                    blockY = 5;
-                    break;
-                case LOG_ACACIA:
-                    blockX = 5;
-                    blockY = 5;
-                    break;
-                case MYCELIUM:
-                    blockX = 6;
-                    blockY = 5;
-                    break;
-                case REDSTONE_BLOCK:
-                    blockX = 7;
-                    blockY = 5;
-                    break;
-                case NETHER_BRICK:
-                    blockX = 0;
-                    blockY = 6;
-                    break;
-                case NETHERRACK:
-                    blockX = 1;
-                    blockY = 6;
-                    break;
-                case OBSIDIAN:
-                    blockX = 2;
-                    blockY = 6;
-                    break;
-                case PLANKS_ACACIA:
-                    blockX = 3;
-                    blockY = 6;
-                    break;
-                case PLANKS_BIRCH:
-                    blockX = 4;
-                    blockY = 6;
-                    break;
-                case PLANKS_DARKOAK:
-                    blockX = 5;
-                    blockY = 6;
-                    break;
-                case PLANKS_JUNGLE:
-                    blockX = 6;
-                    blockY = 6;
-                    break;
-                case REDSTONE_ORE:
-                    blockX = 7;
-                    blockY = 6;
-                    break;
-                case SAND:
-                    blockX = 0;
-                    blockY = 7;
-                    break;
-                case SANDSTONE:
-                    blockX = 1;
-                    blockY = 7;
-                    break;
-                case SNOW:
-                    blockX = 2;
-                    blockY = 7;
-                    break;
-                case SOUL_SAND:
-                    blockX = 3;
-                    blockY = 7;
-                    break;
-                case STONE:
-                    blockX = 4;
-                    blockY = 7;
-                    break;
-                case STONE_ANDESITE:
-                    blockX = 5;
-                    blockY = 7;
-                    break;
-                case STONE_DIORITE:
-                    blockX = 6;
-                    blockY = 7;
-                    break;
-                case STONE_GRANITE:
-                    blockX = 7;
-                    blockY = 7;
-                    break;
-            }
-
-            pw.setPixels(0, 0, 136, 136, pr, blockX * 136, blockY * 136);
-        } catch (Exception e) {
-            e.printStackTrace();
+        PixelReader pr = this.profileIcons.getPixelReader();
+        switch (p) {
+            case LEAVES_OAK:
+                blockX = 0;
+                blockY = 0;
+                break;
+            case BEDROCK:
+                blockX = 1;
+                blockY = 0;
+                break;
+            case CLAY:
+                blockX = 2;
+                blockY = 0;
+                break;
+            case DIAMOND_BLOCK:
+                blockX = 3;
+                blockY = 0;
+                break;
+            case END_STONE:
+                blockX = 4;
+                blockY = 0;
+                break;
+            case GRAVEL:
+                blockX = 5;
+                blockY = 0;
+                break;
+            case LOG_BIRCH:
+                blockX = 6;
+                blockY = 0;
+                break;
+            case PLANKS_OAK:
+                blockX = 7;
+                blockY = 0;
+                break;
+            case TNT:
+                blockX = 8;
+                blockY = 0;
+                break;
+            case BRICK:
+                blockX = 0;
+                blockY = 1;
+                break;
+            case CHEST:
+                blockX = 1;
+                blockY = 1;
+                break;
+            case COAL_BLOCK:
+                blockX = 2;
+                blockY = 1;
+                break;
+            case DIAMOND_ORE:
+                blockX = 3;
+                blockY = 1;
+                break;
+            case FARMLAND:
+                blockX = 4;
+                blockY = 1;
+                break;
+            case HARDENED_CLAY:
+                blockX = 5;
+                blockY = 1;
+                break;
+            case LOG_DARKOAK:
+                blockX = 6;
+                blockY = 1;
+                break;
+            case PLANKS_SPRUCE:
+                blockX = 7;
+                blockY = 1;
+                break;
+            case WOOL:
+                blockX = 8;
+                blockY = 1;
+                break;
+            case COAL_ORE:
+                blockX = 0;
+                blockY = 2;
+                break;
+            case COBBLESTONE:
+                blockX = 1;
+                blockY = 2;
+                break;
+            case CRAFTING_TABLE: //Default for Latest Snapshot
+                blockX = 2;
+                blockY = 2;
+                break;
+            case DIRT:
+                blockX = 3;
+                blockY = 2;
+                break;
+            case FURNACE: //Default for custom profiles
+                blockX = 4;
+                blockY = 2;
+                break;
+            case ICE_PACKED:
+                blockX = 5;
+                blockY = 2;
+                break;
+            case LOG_JUNGLE:
+                blockX = 6;
+                blockY = 2;
+                break;
+            case QUARTZ_ORE:
+                blockX = 7;
+                blockY = 2;
+                break;
+            case DIRT_PODZOL:
+                blockX = 0;
+                blockY = 3;
+                break;
+            case DIRT_SNOW:
+                blockX = 1;
+                blockY = 3;
+                break;
+            case EMERALD_BLOCK:
+                blockX = 2;
+                blockY = 3;
+                break;
+            case EMERALD_ORE:
+                blockX = 3;
+                blockY = 3;
+                break;
+            case FURNACE_ON:
+                blockX = 4;
+                blockY = 3;
+                break;
+            case IRON_BLOCK:
+                blockX = 5;
+                blockY = 3;
+                break;
+            case LOG_OAK:
+                blockX = 6;
+                blockY = 3;
+                break;
+            case RED_SAND:
+                blockX = 7;
+                blockY = 3;
+                break;
+            case GLASS:
+                blockX = 0;
+                blockY = 4;
+                break;
+            case GLOWSTONE:
+                blockX = 1;
+                blockY = 4;
+                break;
+            case GOLD_BLOCK:
+                blockX = 2;
+                blockY = 4;
+                break;
+            case GOLD_ORE:
+                blockX = 3;
+                blockY = 4;
+                break;
+            case GRASS: //Default for Latest Release
+                blockX = 4;
+                blockY = 4;
+                break;
+            case IRON_ORE:
+                blockX = 5;
+                blockY = 4;
+                break;
+            case LOG_SPRUCE:
+                blockX = 6;
+                blockY = 4;
+                break;
+            case RED_SANDSTONE:
+                blockX = 7;
+                blockY = 4;
+                break;
+            case LAPIS_ORE:
+                blockX = 0;
+                blockY = 5;
+                break;
+            case LEAVES_BIRCH:
+                blockX = 1;
+                blockY = 5;
+                break;
+            case LEAVES_JUNGLE:
+                blockX = 2;
+                blockY = 5;
+                break;
+            case BOOKSHELF:
+                blockX = 3;
+                blockY = 5;
+                break;
+            case LEAVES_SPRUCE:
+                blockX = 4;
+                blockY = 5;
+                break;
+            case LOG_ACACIA:
+                blockX = 5;
+                blockY = 5;
+                break;
+            case MYCELIUM:
+                blockX = 6;
+                blockY = 5;
+                break;
+            case REDSTONE_BLOCK:
+                blockX = 7;
+                blockY = 5;
+                break;
+            case NETHER_BRICK:
+                blockX = 0;
+                blockY = 6;
+                break;
+            case NETHERRACK:
+                blockX = 1;
+                blockY = 6;
+                break;
+            case OBSIDIAN:
+                blockX = 2;
+                blockY = 6;
+                break;
+            case PLANKS_ACACIA:
+                blockX = 3;
+                blockY = 6;
+                break;
+            case PLANKS_BIRCH:
+                blockX = 4;
+                blockY = 6;
+                break;
+            case PLANKS_DARKOAK:
+                blockX = 5;
+                blockY = 6;
+                break;
+            case PLANKS_JUNGLE:
+                blockX = 6;
+                blockY = 6;
+                break;
+            case REDSTONE_ORE:
+                blockX = 7;
+                blockY = 6;
+                break;
+            case SAND:
+                blockX = 0;
+                blockY = 7;
+                break;
+            case SANDSTONE:
+                blockX = 1;
+                blockY = 7;
+                break;
+            case SNOW:
+                blockX = 2;
+                blockY = 7;
+                break;
+            case SOUL_SAND:
+                blockX = 3;
+                blockY = 7;
+                break;
+            case STONE:
+                blockX = 4;
+                blockY = 7;
+                break;
+            case STONE_ANDESITE:
+                blockX = 5;
+                blockY = 7;
+                break;
+            case STONE_DIORITE:
+                blockX = 6;
+                blockY = 7;
+                break;
+            case STONE_GRANITE:
+                blockX = 7;
+                blockY = 7;
+                break;
         }
-        iconCache.put(p, wi);
+        pw.setPixels(0, 0, 136, 136, pr, blockX * 136, blockY * 136);
+        this.iconCache.put(p, wi);
         return wi;
     }
 
@@ -609,8 +606,8 @@ public final class Kernel {
      * @return The resampled image
      */
     public Image resampleImage(Image input, int scaleFactor) {
-        final int W = (int) input.getWidth();
-        final int H = (int) input.getHeight();
+        int W = (int) input.getWidth();
+        int H = (int) input.getHeight();
 
         WritableImage output = new WritableImage(
                 W * scaleFactor,
@@ -622,7 +619,7 @@ public final class Kernel {
 
         for (int y = 0; y < H; y++) {
             for (int x = 0; x < W; x++) {
-                final int argb = reader.getArgb(x, y);
+                int argb = reader.getArgb(x, y);
                 for (int dy = 0; dy < scaleFactor; dy++) {
                     for (int dx = 0; dx < scaleFactor; dx++) {
                         writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb);
@@ -641,13 +638,13 @@ public final class Kernel {
      * @param content The content text
      * @return The built alert
      */
-    public Alert buildAlert(Alert.AlertType type, String header, String content) {
+    public Alert buildAlert(AlertType type, String header, String content) {
         Alert a = new Alert(type);
         a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         a.setContentText(content);
         a.setHeaderText(header);
         Stage s = (Stage)a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(applicationIcon);
+        s.getIcons().add(this.applicationIcon);
         return a;
     }
 }

@@ -23,39 +23,39 @@ public class Downloadable {
         this.fakePath = fakePath;
     }
 
-    public long getSize() {
+    public final long getSize() {
         return this.size;
     }
 
-    public boolean hasURL() {
+    public final boolean hasURL() {
         return this.url != null;
     }
 
-    public URL getURL() {
+    public final URL getURL() {
         return this.url;
     }
 
-    public File getRelativePath() {
+    public final File getRelativePath() {
         return this.relPath;
     }
 
-    public String getHash() {
+    public final String getHash() {
         return this.hash;
     }
 
-    public boolean hasHash() {
+    public final boolean hasHash() {
         return this.hash != null;
     }
 
-    public boolean hasSize() {
-        return (this.size != -1);
+    public final boolean hasSize() {
+        return this.size != -1;
     }
 
-    public boolean hasFakePath() {
+    public final boolean hasFakePath() {
         return this.fakePath != null;
     }
 
-    public String getFakePath() {
+    public final String getFakePath() {
         return this.fakePath;
     }
 }

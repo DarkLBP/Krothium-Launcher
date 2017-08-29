@@ -14,11 +14,17 @@ import kml.gui.OutputFX;
 import kml.objects.*;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author DarkLBP
@@ -41,15 +47,15 @@ public class GameLauncher {
      * Prepares and launcher the game
      * @throws GameLauncherException If an error has been thrown
      */
-    public void launch() throws GameLauncherException {
-        started = true;
-        error = false;
-        console.printInfo("Game launch work has started.");
+    public final void launch() throws GameLauncherException {
+        this.started = true;
+        this.error = false;
+        this.console.printInfo("Game launch work has started.");
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         if (this.isRunning()) {
             throw new GameLauncherException("Game is already started!");
         }
-        Versions versions = kernel.getVersions();
+        Versions versions = this.kernel.getVersions();
         VersionMeta verID;
         if (p.getType() == ProfileType.CUSTOM) {
             verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
@@ -66,7 +72,7 @@ public class GameLauncher {
             throw new GameLauncherException("Version info could not be obtained.");
         }
         File workingDir = Constants.APPLICATION_WORKING_DIR;
-        console.printInfo("Deleting old natives.");
+        this.console.printInfo("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
         if (nativesRoot.exists()) {
             if (nativesRoot.isDirectory()) {
@@ -80,13 +86,13 @@ public class GameLauncher {
                 }
             }
         }
-        final File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
+        File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.exists() || !nativesDir.isDirectory()) {
             nativesDir.mkdirs();
         }
-        console.printInfo("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
-        console.printInfo("Using natives dir: " + nativesDir);
-        console.printInfo("Extracting natives.");
+        this.console.printInfo("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
+        this.console.printInfo("Using natives dir: " + nativesDir);
+        this.console.printInfo("Extracting natives.");
         List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
@@ -98,17 +104,17 @@ public class GameLauncher {
                     try {
                         File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
                         if (!new File(jreFolder, "OK").exists()) {
-                            console.printInfo("Decompressing runtime...");
+                            this.console.printInfo("Decompressing runtime...");
                             Utils.decompressLZMA(jre, jreZip);
                             Utils.decompressZIP(jreZip, jreFolder, null);
                             if (!jreZip.delete()) {
-                                console.printError("Failed to delete temporary zip file.");
+                                this.console.printError("Failed to delete temporary zip file.");
                             }
                         }
                         gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
-                        console.printInfo("Using custom runtime.");
+                        this.console.printInfo("Using custom runtime.");
                     } catch (Exception ex) {
-                        console.printError("Failed to decompress runtime.");
+                        this.console.printError("Failed to decompress runtime.");
                         gameArgs.add(Utils.getJavaDir());
                     }
                 }
@@ -117,7 +123,7 @@ public class GameLauncher {
             }
         }
         if (!p.hasJavaArgs()) {
-            if (Utils.getOSArch().equals(OSArch.OLD)) {
+            if (Utils.getOSArch() == OSArch.OLD) {
                 gameArgs.add("-Xmx1G");
             } else {
                 gameArgs.add("-Xmx2G");
@@ -137,7 +143,7 @@ public class GameLauncher {
             File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             libraries.append(launchPath.getAbsolutePath()).append(separator);
         } catch (URISyntaxException ex) {
-            console.printError("Failed to load GameStarter.");
+            this.console.printError("Failed to load GameStarter.");
         }
         for (Library lib : libs) {
             if (lib.isCompatible()) {
@@ -146,7 +152,7 @@ public class GameLauncher {
                         File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
                         Utils.decompressZIP(completePath, nativesDir, lib.getExtractExclusions());
                     } catch (IOException ex) {
-                        console.printError("Failed to extract native: " + lib.getName());
+                        this.console.printError("Failed to extract native: " + lib.getName());
                     }
                 } else {
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
@@ -154,7 +160,7 @@ public class GameLauncher {
                 }
             }
         }
-        console.printInfo("Preparing game args.");
+        this.console.printInfo("Preparing game args.");
         File verPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
         String assetsID = null;
@@ -162,12 +168,12 @@ public class GameLauncher {
         File assetsRoot = new File(workingDir + File.separator + "assets");
         if (ver.hasAssets()) {
             assetsID = ver.getAssets();
-            if (assetsID.equals("legacy")) {
+            if ("legacy".equals(assetsID)) {
                 assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
                 if (!assetsDir.exists() || !assetsDir.isDirectory()) {
                     assetsDir.mkdirs();
                 }
-                console.printInfo("Building virtual asset folder.");
+                this.console.printInfo("Building virtual asset folder.");
                 File indexJSON = new File(assetsRoot + File.separator + "indexes" + File.separator + assetsID + ".json");
                 try {
                     JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
@@ -194,7 +200,7 @@ public class GameLauncher {
                         }
                     }
                 } catch (Exception ex) {
-                    console.printError("Failed to create virtual asset folder.");
+                    this.console.printError("Failed to create virtual asset folder.");
                 }
             } else {
                 assetsDir = assetsRoot;
@@ -213,12 +219,12 @@ public class GameLauncher {
         } else {
             gameArgs.add(workingDir.getAbsolutePath());
         }
-        Authentication a = kernel.getAuthentication();
+        Authentication a = this.kernel.getAuthentication();
         User u = a.getSelectedUser();
         gameArgs.add(u.getProfileID());
         gameArgs.add(u.getAccessToken());
         gameArgs.add(ver.getMainClass());
-        console.printInfo("Full game launcher parameters: ");
+        this.console.printInfo("Full game launcher parameters: ");
         String[] versionArgs = ver.getMinecraftArguments().split(" ");
         for (int i = 0; i < versionArgs.length; i++) {
             if (versionArgs[i].startsWith("$")) {
@@ -269,7 +275,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");
                         break;
                     case "${auth_session}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ":" + u.getProfileID().replace("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ':' + u.getProfileID().replace("-", ""));
                         break;
                 }
             }
@@ -282,17 +288,17 @@ public class GameLauncher {
             gameArgs.add(String.valueOf(p.getResolutionHeight()));
         }
         for (String arg : gameArgs) {
-            console.printInfo(arg);
+            this.console.printInfo(arg);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
         try {
             this.process = pb.start();
-            final OutputFX[] out = new OutputFX[1];
-            if (kernel.getSettings().getShowGameLog()) {
+            OutputFX[] out = new OutputFX[1];
+            if (this.kernel.getSettings().getShowGameLog()) {
                 Platform.runLater(() -> {
                     FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(getClass().getResource("/kml/gui/fxml/Output.fxml"));
+                    loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Output.fxml"));
                     Parent parent;
                     try {
                         parent = loader.load();
@@ -312,57 +318,56 @@ public class GameLauncher {
                 });
             }
             Thread log_info = new Thread(() -> {
-                InputStreamReader isr = new InputStreamReader(process.getInputStream(), Charset.forName("ISO-8859-1"));
-                BufferedReader br = new BufferedReader(isr);
-                try {
-                    while (GameLauncher.this.isRunning()) {
-                        final String lineRead = br.readLine();
+
+
+                try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), Charset.forName("ISO-8859-1"));
+                     BufferedReader br = new BufferedReader(isr);){
+                    while (this.isRunning()) {
+                        String lineRead = br.readLine();
                         if (lineRead != null) {
-                            if (kernel.getSettings().getShowGameLog()) {
+                            if (this.kernel.getSettings().getShowGameLog()) {
                                 Platform.runLater(() -> out[0].pushString(lineRead));
                             }
-                            console.printInfo(lineRead);
+                            this.console.printInfo(lineRead);
                         }
                     }
-                    if (process.exitValue() != 0) {
-                        error = true;
-                        console.printError("Game stopped unexpectedly.");
+                    if (this.process.exitValue() != 0) {
+                        this.error = true;
+                        this.console.printError("Game stopped unexpectedly.");
                     }
-                    if (!kernel.getSettings().getKeepLauncherOpen()) {
-                        kernel.exitSafely();
+                    if (!this.kernel.getSettings().getKeepLauncherOpen()) {
+                        this.kernel.exitSafely();
                     }
                 } catch (Exception ex) {
-                    error = true;
-                    console.printError("Game stopped unexpectedly.");
+                    this.error = true;
+                    this.console.printError("Game stopped unexpectedly.");
                 }
-                started = false;
-                console.printInfo("Deleteting natives dir.");
+                this.started = false;
+                this.console.printInfo("Deleteting natives dir.");
                 Utils.deleteDirectory(nativesDir);
             });
             log_info.start();
             Thread log_error = new Thread(() -> {
-                InputStreamReader isr = new InputStreamReader(process.getErrorStream(), Charset.forName("ISO-8859-1"));
-                BufferedReader br = new BufferedReader(isr);
-                try {
-                    while (GameLauncher.this.isRunning()) {
-                        final String lineRead = br.readLine();
+                try (InputStreamReader isr = new InputStreamReader(this.process.getErrorStream(), Charset.forName("ISO-8859-1"));
+                     BufferedReader br = new BufferedReader(isr);){
+                    while (this.isRunning()) {
+                        String lineRead = br.readLine();
                         if (lineRead != null) {
-                            if (kernel.getSettings().getShowGameLog()) {
+                            if (this.kernel.getSettings().getShowGameLog()) {
                                 Platform.runLater(() -> out[0].pushString(lineRead));
                             }
-                            console.printInfo(lineRead);
+                            this.console.printInfo(lineRead);
                         }
                     }
-                } catch (Exception ignored) {
-                    console.printError("Failed to read game error stream.");
+                } catch (IOException ignored) {
+                    this.console.printError("Failed to read game error stream.");
                 }
             });
             log_error.start();
-        } catch (Exception ex) {
-            error = true;
-            started = false;
-            ex.printStackTrace();
-            console.printError("Game returned an error code.");
+        } catch (IOException ex) {
+            this.error = true;
+            this.started = false;
+            this.console.printError("Game returned an error code.");
         }
     }
 
@@ -370,7 +375,7 @@ public class GameLauncher {
      * Checks if the game launch process is started
      * @return A boolean that indicates if the launcher process is started
      */
-    public boolean isStarted() {
+    public final boolean isStarted() {
         return this.started;
     }
 
@@ -378,18 +383,15 @@ public class GameLauncher {
      * Checks if the game process is running
      * @return A boolean with the current state
      */
-    public boolean isRunning() {
-        if (process != null) {
-            return process.isAlive();
-        }
-        return false;
+    public final boolean isRunning() {
+        return this.process != null && this.process.isAlive();
     }
 
     /**
      * Checks if there is an error. Once is called the error marker disappears.
      * @return If there is an error
      */
-    public boolean hasError() {
+    public final boolean hasError() {
         boolean current = this.error;
         this.error = false;
         return current;

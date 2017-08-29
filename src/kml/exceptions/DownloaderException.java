@@ -6,7 +6,7 @@ package kml.exceptions;
  */
 
 public class DownloaderException extends Exception {
-    public DownloaderException(final String message) {
+    public DownloaderException(String message) {
         super(message);
     }
 }

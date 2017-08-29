@@ -25,51 +25,51 @@ class ConnectionHandler extends HttpURLConnection {
     public ConnectionHandler(URL url, URLMatcher m) {
         super(url);
         try {
-            relay = (HttpURLConnection)m.handle(url).openConnection();
+            this.relay = (HttpURLConnection)m.handle(url).openConnection();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
         System.out.println("URL handled: " + url);
     }
 
     @Override
-    public int getResponseCode() throws IOException {
+    public final int getResponseCode() throws IOException {
         if (Constants.USE_LOCAL) {
             //Fake response code so cache can be pulled
             return 200;
         }
-        return relay.getResponseCode();
+        return this.relay.getResponseCode();
     }
 
     @Override
-    public String getContentType() {
-        return relay.getContentType();
+    public final String getContentType() {
+        return this.relay.getContentType();
     }
 
     @Override
-    public void connect() throws IOException {
+    public final void connect() throws IOException {
         if (!Constants.USE_LOCAL) {
             //Connect only when offline
-            relay.connect();
+            this.relay.connect();
         }
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
-        if (relay.getRequestMethod().equalsIgnoreCase("GET") && cached == null) {
+    public final InputStream getInputStream() throws IOException {
+        if ("GET".equalsIgnoreCase(this.relay.getRequestMethod()) && this.cached == null) {
             String etag = this.relay.getHeaderField("ETag");
-            String hash = Utils.calculateChecksum(relay.getURL().toString(), "sha1");
+            String hash = Utils.calculateChecksum(this.relay.getURL().toString(), "sha1");
             File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
             if (!Constants.USE_LOCAL) {
                 if (etag != null) {
                     if (!cachedFile.exists() || !cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
-                        System.out.println("Caching file for " + relay.getURL());
+                        System.out.println("Caching file for " + this.relay.getURL());
                         if (!Utils.downloadFile(this.relay, cachedFile)) {
                             return null;
                         }
                     }
                 } else {
-                    System.out.println("Caching file without ETAG for " + relay.getURL());
+                    System.out.println("Caching file without ETAG for " + this.relay.getURL());
                     if (!Utils.downloadFile(this.relay, cachedFile)) {
                         return null;
                     }
@@ -77,268 +77,268 @@ class ConnectionHandler extends HttpURLConnection {
             }
             try {
                 if (cachedFile.exists() && cachedFile.isFile()) {
-                    cached = new ByteArrayInputStream(Files.readAllBytes(cachedFile.toPath()));
+                    this.cached = new ByteArrayInputStream(Files.readAllBytes(cachedFile.toPath()));
                 } else if (Constants.USE_LOCAL) {
-                    System.out.println("No cache available for " + relay.getURL());
+                    System.out.println("No cache available for " + this.relay.getURL());
                 }
             } catch (IOException e) {
-                System.out.println("Failed to load cached version for " + relay.getURL());
+                System.out.println("Failed to load cached version for " + this.relay.getURL());
             }
         }
-        if (cached != null) {
+        if (this.cached != null) {
             System.out.println("Serving from cache " + this.getURL());
-            return cached;
+            return this.cached;
         }
-        return relay.getInputStream();
+        return this.relay.getInputStream();
     }
 
     @Override
-    public String getHeaderField(String header) {
-        return relay.getHeaderField(header);
+    public final String getHeaderField(String header) {
+        return this.relay.getHeaderField(header);
     }
 
     @Override
-    public void setRequestProperty(String key, String value) {
-        relay.setRequestProperty(key, value);
+    public final void setRequestProperty(String key, String value) {
+        this.relay.setRequestProperty(key, value);
     }
 
     @Override
-    public String getRequestProperty(String key) {
-        return relay.getRequestProperty(key);
+    public final String getRequestProperty(String key) {
+        return this.relay.getRequestProperty(key);
     }
 
     @Override
-    public OutputStream getOutputStream() throws IOException {
-        return relay.getOutputStream();
+    public final OutputStream getOutputStream() throws IOException {
+        return this.relay.getOutputStream();
     }
 
     @Override
-    public void disconnect() {
-        relay.disconnect();
+    public final void disconnect() {
+        this.relay.disconnect();
     }
 
     @Override
-    public boolean usingProxy() {
-        return relay.usingProxy();
+    public final boolean usingProxy() {
+        return this.relay.usingProxy();
     }
 
     @Override
-    public String getHeaderFieldKey(int n) {
-        return relay.getHeaderFieldKey(n);
+    public final String getHeaderFieldKey(int n) {
+        return this.relay.getHeaderFieldKey(n);
     }
 
     @Override
-    public void setFixedLengthStreamingMode(int contentLength) {
-        relay.setFixedLengthStreamingMode(contentLength);
+    public final void setFixedLengthStreamingMode(int contentLength) {
+        this.relay.setFixedLengthStreamingMode(contentLength);
     }
 
     @Override
-    public void setFixedLengthStreamingMode(long contentLength) {
-        relay.setFixedLengthStreamingMode(contentLength);
+    public final void setFixedLengthStreamingMode(long contentLength) {
+        this.relay.setFixedLengthStreamingMode(contentLength);
     }
 
     @Override
-    public void setChunkedStreamingMode(int chunklen) {
-        relay.setChunkedStreamingMode(chunklen);
+    public final void setChunkedStreamingMode(int chunklen) {
+        this.relay.setChunkedStreamingMode(chunklen);
     }
 
     @Override
-    public String getHeaderField(int n) {
-        return relay.getHeaderField(n);
+    public final String getHeaderField(int n) {
+        return this.relay.getHeaderField(n);
     }
 
     @Override
-    public boolean getInstanceFollowRedirects() {
-        return relay.getInstanceFollowRedirects();
+    public final boolean getInstanceFollowRedirects() {
+        return this.relay.getInstanceFollowRedirects();
     }
 
     @Override
-    public void setInstanceFollowRedirects(boolean followRedirects) {
-        relay.setInstanceFollowRedirects(followRedirects);
+    public final void setInstanceFollowRedirects(boolean followRedirects) {
+        this.relay.setInstanceFollowRedirects(followRedirects);
     }
 
     @Override
-    public String getRequestMethod() {
-        return relay.getRequestMethod();
+    public final String getRequestMethod() {
+        return this.relay.getRequestMethod();
     }
 
     @Override
-    public void setRequestMethod(String method) throws ProtocolException {
-        relay.setRequestMethod(method);
+    public final void setRequestMethod(String method) throws ProtocolException {
+        this.relay.setRequestMethod(method);
     }
 
     @Override
-    public String getResponseMessage() throws IOException {
-        return relay.getResponseMessage();
+    public final String getResponseMessage() throws IOException {
+        return this.relay.getResponseMessage();
     }
 
     @Override
-    public long getHeaderFieldDate(String name, long Default) {
-        return relay.getHeaderFieldDate(name, Default);
+    public final long getHeaderFieldDate(String name, long Default) {
+        return this.relay.getHeaderFieldDate(name, Default);
     }
 
     @Override
-    public Permission getPermission() throws IOException {
-        return relay.getPermission();
+    public final Permission getPermission() throws IOException {
+        return this.relay.getPermission();
     }
 
     @Override
-    public InputStream getErrorStream() {
-        return relay.getErrorStream();
+    public final InputStream getErrorStream() {
+        return this.relay.getErrorStream();
     }
 
     @Override
-    public int getConnectTimeout() {
-        return relay.getConnectTimeout();
+    public final int getConnectTimeout() {
+        return this.relay.getConnectTimeout();
     }
 
     @Override
-    public void setConnectTimeout(int timeout) {
-        relay.setConnectTimeout(timeout);
+    public final void setConnectTimeout(int timeout) {
+        this.relay.setConnectTimeout(timeout);
     }
 
     @Override
-    public int getReadTimeout() {
-        return relay.getReadTimeout();
+    public final int getReadTimeout() {
+        return this.relay.getReadTimeout();
     }
 
     @Override
-    public void setReadTimeout(int timeout) {
-        relay.setReadTimeout(timeout);
+    public final void setReadTimeout(int timeout) {
+        this.relay.setReadTimeout(timeout);
     }
 
     @Override
-    public URL getURL() {
-        return relay.getURL();
+    public final URL getURL() {
+        return this.relay.getURL();
     }
 
     @Override
-    public int getContentLength() {
-        return relay.getContentLength();
+    public final int getContentLength() {
+        return this.relay.getContentLength();
     }
 
     @Override
-    public long getContentLengthLong() {
-        return relay.getContentLengthLong();
+    public final long getContentLengthLong() {
+        return this.relay.getContentLengthLong();
     }
 
     @Override
-    public String getContentEncoding() {
-        return relay.getContentEncoding();
+    public final String getContentEncoding() {
+        return this.relay.getContentEncoding();
     }
 
     @Override
-    public long getExpiration() {
-        return relay.getExpiration();
+    public final long getExpiration() {
+        return this.relay.getExpiration();
     }
 
     @Override
-    public long getDate() {
-        return relay.getDate();
+    public final long getDate() {
+        return this.relay.getDate();
     }
 
     @Override
-    public long getLastModified() {
-        return relay.getLastModified();
+    public final long getLastModified() {
+        return this.relay.getLastModified();
     }
 
     @Override
-    public Map<String, List<String>> getHeaderFields() {
-        return relay.getHeaderFields();
+    public final Map<String, List<String>> getHeaderFields() {
+        return this.relay.getHeaderFields();
     }
 
     @Override
-    public int getHeaderFieldInt(String name, int Default) {
-        return relay.getHeaderFieldInt(name, Default);
+    public final int getHeaderFieldInt(String name, int Default) {
+        return this.relay.getHeaderFieldInt(name, Default);
     }
 
     @Override
-    public long getHeaderFieldLong(String name, long Default) {
-        return relay.getHeaderFieldLong(name, Default);
+    public final long getHeaderFieldLong(String name, long Default) {
+        return this.relay.getHeaderFieldLong(name, Default);
     }
 
     @Override
-    public Object getContent() throws IOException {
-        return relay.getContent();
+    public final Object getContent() throws IOException {
+        return this.relay.getContent();
     }
 
     @Override
-    public Object getContent(Class[] classes) throws IOException {
-        return relay.getContent(classes);
+    public final Object getContent(Class[] classes) throws IOException {
+        return this.relay.getContent(classes);
     }
 
     @Override
-    public String toString() {
-        return relay.toString();
+    public final String toString() {
+        return this.relay.toString();
     }
 
     @Override
-    public boolean getDoInput() {
-        return relay.getDoInput();
+    public final boolean getDoInput() {
+        return this.relay.getDoInput();
     }
 
     @Override
-    public void setDoInput(boolean doinput) {
-        relay.setDoInput(doinput);
+    public final void setDoInput(boolean doinput) {
+        this.relay.setDoInput(doinput);
     }
 
     @Override
-    public boolean getDoOutput() {
-        return relay.getDoOutput();
+    public final boolean getDoOutput() {
+        return this.relay.getDoOutput();
     }
 
     @Override
-    public void setDoOutput(boolean dooutput) {
-        relay.setDoOutput(dooutput);
+    public final void setDoOutput(boolean dooutput) {
+        this.relay.setDoOutput(dooutput);
     }
 
     @Override
-    public boolean getAllowUserInteraction() {
-        return relay.getAllowUserInteraction();
+    public final boolean getAllowUserInteraction() {
+        return this.relay.getAllowUserInteraction();
     }
 
     @Override
-    public void setAllowUserInteraction(boolean allowuserinteraction) {
-        relay.setAllowUserInteraction(allowuserinteraction);
+    public final void setAllowUserInteraction(boolean allowuserinteraction) {
+        this.relay.setAllowUserInteraction(allowuserinteraction);
     }
 
     @Override
-    public boolean getUseCaches() {
-        return relay.getUseCaches();
+    public final boolean getUseCaches() {
+        return this.relay.getUseCaches();
     }
 
     @Override
-    public void setUseCaches(boolean usecaches) {
-        relay.setUseCaches(usecaches);
+    public final void setUseCaches(boolean usecaches) {
+        this.relay.setUseCaches(usecaches);
     }
 
     @Override
-    public long getIfModifiedSince() {
-        return relay.getIfModifiedSince();
+    public final long getIfModifiedSince() {
+        return this.relay.getIfModifiedSince();
     }
 
     @Override
-    public void setIfModifiedSince(long ifmodifiedsince) {
-        relay.setIfModifiedSince(ifmodifiedsince);
+    public final void setIfModifiedSince(long ifmodifiedsince) {
+        this.relay.setIfModifiedSince(ifmodifiedsince);
     }
 
     @Override
-    public boolean getDefaultUseCaches() {
-        return relay.getDefaultUseCaches();
+    public final boolean getDefaultUseCaches() {
+        return this.relay.getDefaultUseCaches();
     }
 
     @Override
-    public void setDefaultUseCaches(boolean defaultusecaches) {
-        relay.setDefaultUseCaches(defaultusecaches);
+    public final void setDefaultUseCaches(boolean defaultusecaches) {
+        this.relay.setDefaultUseCaches(defaultusecaches);
     }
 
     @Override
-    public void addRequestProperty(String key, String value) {
-        relay.addRequestProperty(key, value);
+    public final void addRequestProperty(String key, String value) {
+        this.relay.addRequestProperty(key, value);
     }
 
     @Override
-    public Map<String, List<String>> getRequestProperties() {
-        return relay.getRequestProperties();
+    public final Map<String, List<String>> getRequestProperties() {
+        return this.relay.getRequestProperties();
     }
 }

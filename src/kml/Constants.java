@@ -44,9 +44,9 @@ public final class Constants {
     public static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
     public static final File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
-    public static final URLMatcher[] HTTP_MATCHERS = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher()};
-    public static final URLMatcher[] HTTPS_MATCHERS = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
+    public static final URLMatcher[] HTTP_MATCHERS = {new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher()};
+    public static final URLMatcher[] HTTPS_MATCHERS = {new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
     public static final int DOWNLOAD_TRIES = 5;
     public static final int KEEP_OLD_LOGS = 4;
-    public static boolean USE_LOCAL = false;
+    public static boolean USE_LOCAL;
 }

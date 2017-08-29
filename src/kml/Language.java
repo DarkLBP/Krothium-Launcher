@@ -5,7 +5,7 @@ package kml;
  *         website https://krothium.com
  */
 public class Language {
-    private static String[] langData = new String[0];
+    private static String[] langData;
 
     /**
      * Loads a language file
@@ -29,9 +29,10 @@ public class Language {
      * @return The requested localized line
      */
     public static String get(int line) {
-        if (langData.length == 0) {
+        if (langData == null || langData.length == 0) {
             return "";
-        } else if (line <= langData.length) {
+        }
+        if (line <= langData.length) {
             return langData[line - 1];
         }
         return "";

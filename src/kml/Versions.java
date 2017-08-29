@@ -4,11 +4,16 @@ import kml.enums.VersionType;
 import kml.objects.Version;
 import kml.objects.VersionMeta;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author DarkLBP
@@ -17,7 +22,7 @@ import java.util.*;
 
 public class Versions {
     private final Set<VersionMeta> versions = new LinkedHashSet<>();
-    private final Set<Version> version_cache = new HashSet<>();
+    private final Collection<Version> version_cache = new HashSet<>();
     private final Console console;
     private final Kernel kernel;
     private VersionMeta latestSnap, latestRel;
@@ -32,8 +37,8 @@ public class Versions {
      * @param m The versions to be added
      */
     private void add(VersionMeta m) {
-        if (!versions.contains(m)) {
-            versions.add(m);
+        if (!this.versions.contains(m)) {
+            this.versions.add(m);
         }
     }
 
@@ -42,7 +47,7 @@ public class Versions {
      * @param id The id to fetch the version meta
      * @return The version meta from the specified id or from the latest release
      */
-    public VersionMeta getVersionMeta(String id) {
+    public final VersionMeta getVersionMeta(String id) {
         if (id != null) {
             switch (id) {
                 case "latest-release":
@@ -50,7 +55,7 @@ public class Versions {
                 case "latest-snapshot":
                     return this.latestSnap;
             }
-            for (VersionMeta m : versions) {
+            for (VersionMeta m : this.versions) {
                 if (m.getID().equalsIgnoreCase(id)) {
                     return m;
                 }
@@ -64,32 +69,32 @@ public class Versions {
      * @param vm The target version meta
      * @return The version data from the specified version meta or null if an error happened
      */
-    public Version getVersion(VersionMeta vm) {
+    public final Version getVersion(VersionMeta vm) {
         if (this.versions.contains(vm)) {
-            for (Version v : version_cache) {
+            for (Version v : this.version_cache) {
                 if (v.getID().equalsIgnoreCase(vm.getID())) {
                     return v;
                 }
             }
             try {
-                Version v = new Version(vm.getURL(), kernel);
+                Version v = new Version(vm.getURL(), this.kernel);
                 this.version_cache.add(v);
                 return v;
             } catch (Exception ex) {
-                console.printError(ex.getMessage());
+                this.console.printError(ex.getMessage());
                 return null;
             }
         }
-        console.printError("Version id " + vm.getID() + " not found.");
+        this.console.printError("Version id " + vm.getID() + " not found.");
         return null;
     }
 
     /**
      * Loads versions from Mojang servers or from local versions
      */
-    public void fetchVersions() {
+    public final void fetchVersions() {
         String lr = "", ls = "";
-        console.printInfo("Fetching remote version list.");
+        this.console.printInfo("Fetching remote version list.");
         try {
             JSONObject root = new JSONObject(Utils.readURL(Constants.VERSION_MANIFEST_FILE));
             if (root.has("latest")) {
@@ -120,7 +125,7 @@ public class Versions {
                     type = VersionType.valueOf(ver.getString("type").toUpperCase());
                 } else {
                     type = VersionType.RELEASE;
-                    console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                    this.console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
                 }
                 VersionMeta vm = new VersionMeta(id, url, type);
                 if (lr.equalsIgnoreCase(id)) {
@@ -131,12 +136,12 @@ public class Versions {
                 }
                 this.add(vm);
             }
-            console.printInfo("Remote version list loaded.");
-        } catch (Exception ex) {
-            console.printError("Failed to fetch remote version list.");
-            console.printError(ex.getMessage());
+            this.console.printInfo("Remote version list loaded.");
+        } catch (JSONException ex) {
+            this.console.printError("Failed to fetch remote version list.");
+            this.console.printError(ex.getMessage());
         }
-        console.printInfo("Fetching local version list versions.");
+        this.console.printInfo("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
         try {
@@ -147,7 +152,7 @@ public class Versions {
                     if (file.isDirectory()) {
                         File jsonFile = new File(file.getAbsolutePath(), file.getName() + ".json");
                         if (jsonFile.exists()) {
-                            String id = null;
+                            String id;
                             URL url = jsonFile.toURI().toURL();
                             VersionType type;
                             JSONObject ver = new JSONObject(Utils.readURL(url));
@@ -160,7 +165,7 @@ public class Versions {
                                 type = VersionType.valueOf(ver.getString("type").toUpperCase());
                             } else {
                                 type = VersionType.RELEASE;
-                                console.printError("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
+                                this.console.printError("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
                             }
                             VersionMeta vm = new VersionMeta(id, url, type);
                             this.add(vm);
@@ -183,9 +188,9 @@ public class Versions {
             if (this.latestSnap == null && lastSnapshot != null) {
                 this.latestSnap = lastSnapshot;
             }
-            console.printInfo("Local version list loaded.");
-        } catch (Exception ex) {
-            console.printError("Failed to fetch local version list.");
+            this.console.printInfo("Local version list loaded.");
+        } catch (JSONException | MalformedURLException ex) {
+            this.console.printError("Failed to fetch local version list.");
         }
     }
 
@@ -193,23 +198,23 @@ public class Versions {
      * Returns the version database
      * @return The version database
      */
-    public Set<VersionMeta> getVersions() {
-        return versions;
+    public final Iterable<VersionMeta> getVersions() {
+        return this.versions;
     }
 
     /**
      * Returns the latest release
      * @return The latest release
      */
-    public VersionMeta getLatestRelease() {
-        return latestRel;
+    public final VersionMeta getLatestRelease() {
+        return this.latestRel;
     }
 
     /**
      * Returns the latest snapshot
      * @return The latest snapshot
      */
-    public VersionMeta getLatestSnapshot() {
-        return latestSnap;
+    public final VersionMeta getLatestSnapshot() {
+        return this.latestSnap;
     }
 }

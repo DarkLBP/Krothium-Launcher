@@ -17,42 +17,42 @@ public class User {
         this.profileUUID = pi;
     }
 
-    public String getDisplayName() {
+    public final String getDisplayName() {
         return this.displayName;
     }
 
-    public String getAccessToken() {
+    public final String getAccessToken() {
         return this.accessToken;
     }
 
-    public String getUserID() {
+    public final String getUserID() {
         return this.userID;
     }
 
-    public String getProfileID() {
+    public final String getProfileID() {
         return this.profileUUID;
     }
 
-    public void updateAccessToken(String accessToken) {
+    public final void updateAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public String getUsername() {
+    public final String getUsername() {
         return this.userName;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return this.displayName;
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof User && userID.equalsIgnoreCase(((User) o).userID);
+    public final boolean equals(Object o) {
+        return o instanceof User && this.userID.equalsIgnoreCase(((User) o).userID);
     }
 
     @Override
-    public int hashCode() {
-        return userID.hashCode();
+    public final int hashCode() {
+        return this.userID.hashCode();
     }
 }

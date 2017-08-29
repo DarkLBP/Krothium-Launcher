@@ -14,32 +14,32 @@ public class OutputFX {
     @FXML
     private ListView<String> outputList;
 
-    public void initialize() {
-        outputList.setItems(FXCollections.observableArrayList());
-        outputList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    public final void initialize() {
+        this.outputList.setItems(FXCollections.observableArrayList());
+        this.outputList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    public void pushString(String str) {
-        outputList.getItems().add(str);
-        outputList.scrollTo(outputList.getItems().size() - 1);
+    public final void pushString(String str) {
+        this.outputList.getItems().add(str);
+        this.outputList.scrollTo(this.outputList.getItems().size() - 1);
     }
 
     @FXML
-    public void copyClipboard(KeyEvent e) {
+    public final void copyClipboard(KeyEvent e) {
         //Copy to clipboard selected rows
         if (e.getCode() == KeyCode.C && e.isControlDown()) {
-            copySelected();
+            this.copySelected();
         }
     }
 
     @FXML
-    public void copySelected() {
-        if (outputList.getSelectionModel().getSelectedItems().size() > 0) {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
+    public final void copySelected() {
+        if (!this.outputList.getSelectionModel().getSelectedItems().isEmpty()) {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
             StringBuilder b = new StringBuilder();
-            for (String s : outputList.getSelectionModel().getSelectedItems()) {
-                b.append(s).append("\n");
+            for (String s : this.outputList.getSelectionModel().getSelectedItems()) {
+                b.append(s).append('\n');
             }
             content.putString(b.toString());
             clipboard.setContent(content);
@@ -48,6 +48,6 @@ public class OutputFX {
 
     @FXML
     private void clearAll() {
-        outputList.getItems().clear();
+        this.outputList.getItems().clear();
     }
 }

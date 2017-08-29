@@ -5,6 +5,7 @@ import kml.enums.ProfileType;
 import kml.enums.VersionType;
 import kml.objects.Profile;
 import kml.objects.VersionMeta;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
@@ -30,7 +31,7 @@ public class Profiles {
      * Returns the profile database
      * @return The profile database
      */
-    public TreeSet<Profile> getProfiles() {
+    public final Iterable<Profile> getProfiles() {
         return this.profiles;
     }
 
@@ -39,13 +40,13 @@ public class Profiles {
      * @param p The profile to be added
      * @return A boolean that indicates if the profile has been added
      */
-    public boolean addProfile(Profile p) {
-        if (!profiles.contains(p)) {
-            profiles.add(p);
-            console.printInfo("Profile " + p + " added");
+    public final boolean addProfile(Profile p) {
+        if (!this.profiles.contains(p)) {
+            this.profiles.add(p);
+            this.console.printInfo("Profile " + p + " added");
             return true;
         }
-        console.printError("Profile " + p + " already exists!");
+        this.console.printError("Profile " + p + " already exists!");
         return false;
     }
 
@@ -54,34 +55,34 @@ public class Profiles {
      * @param p The profile to be deleted
      * @return A boolean that indicates if the profile has been deleted
      */
-    public boolean deleteProfile(Profile p) {
-        if (profiles.contains(p)) {
+    public final boolean deleteProfile(Profile p) {
+        if (this.profiles.contains(p)) {
             if (this.selected != null && this.selected.equals(p)) {
-                console.printInfo("Profile " + p + " is selected and is going to be removed.");
-                profiles.remove(p);
-                console.printInfo("Profile " + p + " deleted.");
-                if (profiles.size() > 0) {
-                    this.setSelectedProfile(profiles.first());
+                this.console.printInfo("Profile " + p + " is selected and is going to be removed.");
+                this.profiles.remove(p);
+                this.console.printInfo("Profile " + p + " deleted.");
+                if (!this.profiles.isEmpty()) {
+                    this.setSelectedProfile(this.profiles.first());
                 } else {
                     this.selected = null;
                 }
             } else {
-                profiles.remove(p);
-                console.printInfo("Profile " + p + " deleted.");
+                this.profiles.remove(p);
+                this.console.printInfo("Profile " + p + " deleted.");
             }
             return true;
         }
-        console.printError("Profile " + p + " doesn't exist.");
+        this.console.printError("Profile " + p + " doesn't exist.");
         return false;
     }
 
     /**
      * Loads the profiles from the launcher_profiles.json
      */
-    public void fetchProfiles() {
-        console.printInfo("Fetching profiles.");
+    public final void fetchProfiles() {
+        this.console.printInfo("Fetching profiles.");
         Timestamp latestUsedMillis = new Timestamp(-1);
-        JSONObject root = kernel.getLauncherProfiles();
+        JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
             try {
                 JSONObject ples = root.getJSONObject("profiles");
@@ -135,7 +136,7 @@ public class Profiles {
                                     break;
                             }
                         }
-                        version = kernel.getVersions().getVersionMeta(ver);
+                        version = this.kernel.getVersions().getVersionMeta(ver);
                         icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase()) : null;
                     } else {
                         name = null;
@@ -154,74 +155,74 @@ public class Profiles {
                             resolution.put("width", res.getInt("width"));
                             resolution.put("height", res.getInt("height"));
                         } else {
-                            console.printError("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
+                            this.console.printError("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
                         }
                     }
                     Profile p = new Profile(key, name, type, created, lastUsed, version, gameDir, javaDir, javaArgs, resolution, icon, latestRelease, latestSnapshot);
                     if (first == null) {
                         first = p;
                     }
-                    if (!profiles.contains(p)) {
+                    if (!this.profiles.contains(p)) {
                         this.addProfile(p);
                         if (p.getLastUsed().compareTo(latestUsedMillis) > 0) {
                             latestUsedMillis = p.getLastUsed();
                             latestUsedID = p;
                         }
-                        if (type == ProfileType.RELEASE && releaseProfile == null) {
-                            releaseProfile = p;
-                        } else if (type == ProfileType.SNAPSHOT && snapshotProfile == null) {
-                            snapshotProfile = p;
+                        if (type == ProfileType.RELEASE && this.releaseProfile == null) {
+                            this.releaseProfile = p;
+                        } else if (type == ProfileType.SNAPSHOT && this.snapshotProfile == null) {
+                            this.snapshotProfile = p;
                         }
                     }
                 }
-                if (releaseProfile == null) {
-                    releaseProfile = new Profile(ProfileType.RELEASE);
-                    addProfile(releaseProfile);
+                if (this.releaseProfile == null) {
+                    this.releaseProfile = new Profile(ProfileType.RELEASE);
+                    this.addProfile(this.releaseProfile);
                 }
-                if (snapshotProfile == null) {
-                    snapshotProfile = new Profile(ProfileType.SNAPSHOT);
-                    addProfile(snapshotProfile);
+                if (this.snapshotProfile == null) {
+                    this.snapshotProfile = new Profile(ProfileType.SNAPSHOT);
+                    this.addProfile(this.snapshotProfile);
                 }
-                if (profiles.size() > 0) {
+                if (!this.profiles.isEmpty()) {
                     if (latestUsedID != null) {
-                        Settings settings = kernel.getSettings();
+                        Settings settings = this.kernel.getSettings();
                         if (latestUsedID.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                            setSelectedProfile(this.releaseProfile);
+                            this.setSelectedProfile(this.releaseProfile);
                         } else if (latestUsedID.getType() == ProfileType.CUSTOM) {
                             VersionType type = latestUsedID.getVersionID().getType();
                             if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                                setSelectedProfile(this.releaseProfile);
+                                this.setSelectedProfile(this.releaseProfile);
                             } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
-                                setSelectedProfile(this.releaseProfile);
+                                this.setSelectedProfile(this.releaseProfile);
                             } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
-                                setSelectedProfile(this.releaseProfile);
+                                this.setSelectedProfile(this.releaseProfile);
                             } else {
-                                setSelectedProfile(latestUsedID);
+                                this.setSelectedProfile(latestUsedID);
                             }
                         } else {
-                            setSelectedProfile(latestUsedID);
+                            this.setSelectedProfile(latestUsedID);
                         }
                     } else {
-                        console.printInfo("No profile is selected! Using first loaded (" + first + ")");
+                        this.console.printInfo("No profile is selected! Using first loaded (" + first + ')');
                         this.setSelectedProfile(first);
                     }
                 }
-            } catch (Exception ex) {
-                console.printError("Failed to fetch profiles.");
+            } catch (JSONException ex) {
+                this.console.printError("Failed to fetch profiles.");
             }
         } else {
-            console.printError("No profiles to be loaded. Generating defaults.");
-            if (releaseProfile == null) {
-                releaseProfile = new Profile(ProfileType.RELEASE);
-                addProfile(releaseProfile);
+            this.console.printError("No profiles to be loaded. Generating defaults.");
+            if (this.releaseProfile == null) {
+                this.releaseProfile = new Profile(ProfileType.RELEASE);
+                this.addProfile(this.releaseProfile);
             }
-            if (snapshotProfile == null) {
-                snapshotProfile = new Profile(ProfileType.SNAPSHOT);
-                addProfile(snapshotProfile);
+            if (this.snapshotProfile == null) {
+                this.snapshotProfile = new Profile(ProfileType.SNAPSHOT);
+                this.addProfile(this.snapshotProfile);
             }
         }
-        if (selected == null) {
-            setSelectedProfile(releaseProfile);
+        if (this.selected == null) {
+            this.setSelectedProfile(this.releaseProfile);
         }
     }
 
@@ -230,8 +231,8 @@ public class Profiles {
      * @param id The id to search
      * @return The profile that matches the id or null
      */
-    public Profile getProfile(String id) {
-        for (Profile p : profiles) {
+    public final Profile getProfile(String id) {
+        for (Profile p : this.profiles) {
             if (p.getID().equalsIgnoreCase(id)) {
                 return p;
             }
@@ -243,7 +244,7 @@ public class Profiles {
      * Returns the selected profile
      * @return The selected profile
      */
-    public Profile getSelectedProfile() {
+    public final Profile getSelectedProfile() {
         return this.selected;
     }
 
@@ -251,8 +252,8 @@ public class Profiles {
      * Returns the release profile
      * @return The release profile
      */
-    public Profile getReleaseProfile() {
-        return releaseProfile;
+    public final Profile getReleaseProfile() {
+        return this.releaseProfile;
     }
 
     /**
@@ -260,10 +261,10 @@ public class Profiles {
      * @param p Profile to be selected
      * @return A boolean that indicates if the profile has been selected
      */
-    public boolean setSelectedProfile(Profile p) {
-        if (profiles.contains(p)) {
+    public final boolean setSelectedProfile(Profile p) {
+        if (this.profiles.contains(p)) {
             p.setLastUsed(new Timestamp(System.currentTimeMillis()));
-            console.printInfo("Profile " + p + " has been selected.");
+            this.console.printInfo("Profile " + p + " has been selected.");
             this.selected = p;
             return true;
         }
@@ -274,7 +275,7 @@ public class Profiles {
      * Converts the profile database to JSON
      * @return The json conversion of the profile database
      */
-    public JSONObject toJSON() {
+    public final JSONObject toJSON() {
         JSONObject o = new JSONObject();
         JSONObject profiles = new JSONObject();
         for (Profile p : this.profiles) {
@@ -307,9 +308,9 @@ public class Profiles {
                 }
             }
             if (p.hasCreated()) {
-                prof.put("created", p.getCreated().toString().replace(" ", "T") + "Z");
+                prof.put("created", p.getCreated().toString().replace(" ", "T") + 'Z');
             }
-            prof.put("lastUsed", p.getLastUsed().toString().replace(" ", "T") + "Z");
+            prof.put("lastUsed", p.getLastUsed().toString().replace(" ", "T") + 'Z');
             if (p.hasGameDir()) {
                 prof.put("gameDir", p.getGameDir().toString());
             }

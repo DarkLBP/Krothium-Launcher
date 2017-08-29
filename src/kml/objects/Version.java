@@ -9,7 +9,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author DarkLBP
@@ -25,10 +28,11 @@ public final class Version {
     private final URL jsonURL;
     private String mainClass, minecraftArguments, jar, assets;
     private AssetIndex assetIndex;
-    private File relativeJar, relativeJSON;
+    private final File relativeJar;
+    private final File relativeJSON;
 
     public Version(URL durl, Kernel k) throws Exception {
-        final Console console = k.getConsole();
+        Console console = k.getConsole();
         this.jsonURL = durl;
         console.printInfo("Getting version info from " + durl);
         JSONObject version = new JSONObject(Utils.readURL(durl));
@@ -41,7 +45,7 @@ public final class Version {
             this.type = VersionType.valueOf(version.getString("type").toUpperCase());
         } else {
             this.type = VersionType.RELEASE;
-            console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+            console.printError("Remote version " + this.id + " has no version type. Will be loaded as a RELEASE.");
         }
         if (version.has("mainClass")) {
             this.mainClass = version.getString("mainClass");
@@ -113,7 +117,7 @@ public final class Version {
                 if (server.has("sha1")) {
                     sha1 = server.getString("sha1");
                 }
-                File path = new File("versions" + File.separator + id + File.separator + id + "_server.jar");
+                File path = new File("versions" + File.separator + this.id + File.separator + this.id + "_server.jar");
                 Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("server", d);
             }
@@ -131,7 +135,7 @@ public final class Version {
                 if (windows_server.has("sha1")) {
                     sha1 = windows_server.getString("sha1");
                 }
-                File path = new File("versions" + File.separator + id + File.separator + id + "_server.exe");
+                File path = new File("versions" + File.separator + this.id + File.separator + this.id + "_server.exe");
                 Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("server", d);
             }
@@ -242,7 +246,7 @@ public final class Version {
     }
 
     private boolean hasLibraries() {
-        return (this.libraries.size() > 0);
+        return !this.libraries.isEmpty();
     }
 
     public List<Library> getLibraries() {
@@ -266,7 +270,7 @@ public final class Version {
     }
 
     private boolean hasDownloads() {
-        return this.downloads.size() > 0;
+        return !this.downloads.isEmpty();
     }
 
     public Map<String, Downloadable> getDownloads() {
@@ -291,16 +295,16 @@ public final class Version {
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return this.id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Version && id.equalsIgnoreCase(((Version)obj).id);
+        return obj instanceof Version && this.id.equalsIgnoreCase(((Version) obj).id);
     }
 
     @Override
     public String toString() {
-        return id;
+        return this.id;
     }
 }

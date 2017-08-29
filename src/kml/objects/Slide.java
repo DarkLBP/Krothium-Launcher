@@ -19,19 +19,19 @@ public class Slide {
         this.text = text;
     }
 
-    public String getAction() {
-        return action;
+    public final String getAction() {
+        return this.action;
     }
 
-    public Image getImage() {
-        return image;
+    public final Image getImage() {
+        return this.image;
     }
 
-    public String getTitle() {
-        return title;
+    public final String getTitle() {
+        return this.title;
     }
 
-    public String getText() {
-        return text;
+    public final String getText() {
+        return this.text;
     }
 }

@@ -14,19 +14,19 @@ public class CapeMatcher implements URLMatcher {
     private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
 
     @Override
-    public boolean match(URL url) {
-        final String capeHost = "skins.minecraft.net";
-        final String capeHostLegacy = "s3.amazonaws.com";
+    public final boolean match(URL url) {
+        String capeHost = "skins.minecraft.net";
+        String capeHostLegacy = "s3.amazonaws.com";
         if (url.getHost().equalsIgnoreCase(capeHost) || url.getHost().equalsIgnoreCase(capeHostLegacy)) {
-            Matcher m = capeRegex.matcher(url.getPath());
+            Matcher m = this.capeRegex.matcher(url.getPath());
             return m.matches();
         }
         return false;
     }
 
     @Override
-    public URL handle(URL url) {
-        Matcher m = capeRegex.matcher(url.getPath());
+    public final URL handle(URL url) {
+        Matcher m = this.capeRegex.matcher(url.getPath());
         if (m.matches()) {
             String name = m.group(1);
             return Utils.stringToURL("http://mc.krothium.com/capes/" + name + ".png");

@@ -9,16 +9,16 @@ import java.net.URL;
  *         website https://krothium.com
  */
 public class BlockedServersMatcher implements URLMatcher {
-    private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
+    private static final String BLOCK_URL = "https://sessionserver.mojang.com/blockedservers";
 
     @Override
-    public boolean match(URL url) {
-        return url.toString().equalsIgnoreCase(blockURL);
+    public final boolean match(URL url) {
+        return url.toString().equalsIgnoreCase(BLOCK_URL);
     }
 
     @Override
-    public URL handle(URL url) {
-        if (url.toString().equalsIgnoreCase(blockURL)) {
+    public final URL handle(URL url) {
+        if (url.toString().equalsIgnoreCase(BLOCK_URL)) {
             return Constants.BLOCKED_SERVERS;
         }
         return null;

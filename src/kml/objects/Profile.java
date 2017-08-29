@@ -91,169 +91,172 @@ public class Profile implements Comparable<Profile>{
         this.latestSnapshot = latestSnapshot;
     }
 
-    public String getID() {
+    public final String getID() {
         return this.id;
     }
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public void setName(String newName) {
+    public final void setName(String newName) {
         this.name = newName;
     }
 
-    public boolean hasName() {
+    public final boolean hasName() {
         return this.name != null && !this.name.isEmpty();
     }
 
-    public ProfileType getType() {
+    public final ProfileType getType() {
         return this.type;
     }
 
-    public void setType(ProfileType type) {
+    public final void setType(ProfileType type) {
         this.type = type;
     }
 
-    public VersionMeta getVersionID() {
+    public final VersionMeta getVersionID() {
         return this.lastVersionId;
     }
 
-    public void setVersionID(VersionMeta ver) {
+    public final void setVersionID(VersionMeta ver) {
         this.lastVersionId = ver;
     }
 
-    public boolean hasVersion() {
+    public final boolean hasVersion() {
         return this.lastVersionId != null;
     }
 
-    public File getGameDir() {
+    public final File getGameDir() {
         return this.gameDir;
     }
 
-    public void setGameDir(File dir) {
+    public final void setGameDir(File dir) {
         this.gameDir = dir;
     }
 
-    public boolean hasGameDir() {
+    public final boolean hasGameDir() {
         return this.gameDir != null;
     }
 
-    public File getJavaDir() {
+    public final File getJavaDir() {
         return this.javaDir;
     }
 
-    public void setJavaDir(File dir) {
+    public final void setJavaDir(File dir) {
         this.javaDir = dir;
     }
 
-    public boolean hasJavaDir() {
+    public final boolean hasJavaDir() {
         return this.javaDir != null;
     }
 
-    public String getJavaArgs() {
+    public final String getJavaArgs() {
         return this.javaArgs;
     }
 
-    public void setJavaArgs(String args) {
+    public final void setJavaArgs(String args) {
         this.javaArgs = args;
     }
 
-    public boolean hasJavaArgs() {
+    public final boolean hasJavaArgs() {
         return this.javaArgs != null;
     }
 
-    public Timestamp getLastUsed() {
-        return lastUsed;
+    public final Timestamp getLastUsed() {
+        return this.lastUsed;
     }
 
-    public void setLastUsed(Timestamp used) {
+    public final void setLastUsed(Timestamp used) {
         this.lastUsed = used;
     }
 
-    public boolean hasCreated() {
+    public final boolean hasCreated() {
         return this.created != null;
     }
 
-    public Timestamp getCreated() {
+    public final Timestamp getCreated() {
         return this.created;
     }
 
-    public boolean hasResolution() {
+    public final boolean hasResolution() {
         return this.resolution != null && this.resolution.size() == 2;
     }
 
-    public int getResolutionHeight() {
-        if (resolution.containsKey("height")) {
-            return resolution.get("height");
+    public final int getResolutionHeight() {
+        if (this.resolution.containsKey("height")) {
+            return this.resolution.get("height");
         }
         return 0;
     }
 
-    public int getResolutionWidth() {
-        if (resolution.containsKey("width")) {
-            return resolution.get("width");
+    public final int getResolutionWidth() {
+        if (this.resolution.containsKey("width")) {
+            return this.resolution.get("width");
         }
         return 0;
     }
 
-    public void setResolution(int w, int h) {
+    public final void setResolution(int w, int h) {
         if (w < 1 || h < 1) {
-            resolution = null;
+            this.resolution = null;
         } else {
-            if (resolution == null) {
-                resolution = new HashMap<>();
+            if (this.resolution == null) {
+                this.resolution = new HashMap<>();
             }
-            resolution.put("width", w);
-            resolution.put("height", h);
+            this.resolution.put("width", w);
+            this.resolution.put("height", h);
         }
     }
 
-    public boolean hasIcon() {
+    public final boolean hasIcon() {
         return this.icon != null;
     }
 
-    public ProfileIcon getIcon() {
+    public final ProfileIcon getIcon() {
         return this.icon;
     }
 
-    public void setIcon(ProfileIcon icon) {
+    public final void setIcon(ProfileIcon icon) {
         this.icon = icon;
     }
 
-    public boolean isLatestRelease() {
-        return latestRelease;
+    public final boolean isLatestRelease() {
+        return this.latestRelease;
     }
 
-    public boolean isLatestSnapshot() {
-        return latestSnapshot;
+    public final boolean isLatestSnapshot() {
+        return this.latestSnapshot;
     }
 
-    public void setLatestRelease(boolean latestRelease) {
+    public final void setLatestRelease(boolean latestRelease) {
         this.latestRelease = latestRelease;
     }
 
-    public void setLatestSnapshot(boolean latestSnapshot) {
+    public final void setLatestSnapshot(boolean latestSnapshot) {
         this.latestSnapshot = latestSnapshot;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return this.id;
     }
 
     @Override
-    public int compareTo(Profile o) {
+    public final int compareTo(Profile o) {
         if (this.equals(o)) {
             return 0;
         }
         if (this.type == ProfileType.RELEASE && o.type == ProfileType.SNAPSHOT) {
             return -1;
-        } else if (this.type == ProfileType.SNAPSHOT && o.type == ProfileType.RELEASE) {
+        }
+        if (this.type == ProfileType.SNAPSHOT && o.type == ProfileType.RELEASE) {
             return 1;
-        } else if (o.type != ProfileType.CUSTOM && this.type == ProfileType.CUSTOM) {
+        }
+        if (o.type != ProfileType.CUSTOM && this.type == ProfileType.CUSTOM) {
             return 1;
-        } else if (this.type != ProfileType.CUSTOM && o.type == ProfileType.CUSTOM) {
+        }
+        if (this.type != ProfileType.CUSTOM && o.type == ProfileType.CUSTOM) {
             return -1;
         }
         int timeCompare = this.created.compareTo(o.created);
@@ -264,12 +267,12 @@ public class Profile implements Comparable<Profile>{
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Profile && id.equalsIgnoreCase(((Profile) obj).id);
+    public final boolean equals(Object obj) {
+        return obj instanceof Profile && this.id.equalsIgnoreCase(((Profile) obj).id);
     }
 
     @Override
-    public int hashCode() {
-        return id.hashCode();
+    public final int hashCode() {
+        return this.id.hashCode();
     }
 }

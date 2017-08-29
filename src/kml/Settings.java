@@ -12,44 +12,44 @@ public class Settings {
     private boolean keepLauncherOpen, showGameLog, enableAdvanced, enableHistorical, enableSnapshots;
 
     public Settings(Kernel k) {
-        kernel = k;
+        this.kernel = k;
     }
 
     /**
      * Loads the settings from launcher_profiles.json
      */
-    public void loadSettings() {
-        kernel.getConsole().printInfo("Loading settings...");
-        JSONObject root = kernel.getLauncherProfiles();
+    public final void loadSettings() {
+        this.kernel.getConsole().printInfo("Loading settings...");
+        JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
             if (root.has("settings")) {
                 JSONObject settings = root.getJSONObject("settings");
                 if (settings.has("locale")) {
-                    setLocale(settings.getString("locale"));
+                    this.setLocale(settings.getString("locale"));
                 } else {
-                    setLocale("en-us");
+                    this.setLocale("en-us");
                 }
                 if (settings.has("keepLauncherOpen")) {
-                    keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
+                    this.keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
                 }
                 if (settings.has("showGameLog")) {
-                    showGameLog = settings.getBoolean("showGameLog");
+                    this.showGameLog = settings.getBoolean("showGameLog");
                 }
                 if (settings.has("enableAdvanced")) {
-                    enableAdvanced = settings.getBoolean("enableAdvanced");
+                    this.enableAdvanced = settings.getBoolean("enableAdvanced");
                 }
                 if (settings.has("enableHistorical")) {
-                    enableHistorical = settings.getBoolean("enableHistorical");
+                    this.enableHistorical = settings.getBoolean("enableHistorical");
                 }
                 if (settings.has("enableSnapshots")) {
-                    enableSnapshots = settings.getBoolean("enableSnapshots");
+                    this.enableSnapshots = settings.getBoolean("enableSnapshots");
                 }
             } else {
-                setLocale("en-us");
+                this.setLocale("en-us");
             }
         } else {
-            kernel.getConsole().printError("Not settings to be loaded.");
-            setLocale("en-us");
+            this.kernel.getConsole().printError("Not settings to be loaded.");
+            this.setLocale("en-us");
         }
     }
 
@@ -57,7 +57,7 @@ public class Settings {
      * Checks if the launcher should be kept open
      * @return If the launcher should be kept open
      */
-    public boolean getKeepLauncherOpen() {
+    public final boolean getKeepLauncherOpen() {
         return this.keepLauncherOpen;
     }
 
@@ -65,7 +65,7 @@ public class Settings {
      * Changes whether the launcher should be kept open
      * @param b The new value
      */
-    public void setKeepLauncherOpen(boolean b) {
+    public final void setKeepLauncherOpen(boolean b) {
         this.keepLauncherOpen = b;
     }
 
@@ -73,7 +73,7 @@ public class Settings {
      * Gets the current locale
      * @return The current locale
      */
-    public String getLocale() {
+    public final String getLocale() {
         return this.locale;
     }
 
@@ -81,14 +81,14 @@ public class Settings {
      * Changes the current locale
      * @param s The locale to be selected
      */
-    public void setLocale(String s) {
+    public final void setLocale(String s) {
         if (s != null) {
-            if (s.equals("es-es") || s.equals("en-us") || s.equals("pt-pt") || s.equals("pt-br") || s.equals("val-es") || s.equals("hu-hu")) {
-                kernel.getConsole().printInfo("Switched language to " + s);
+            if ("es-es".equals(s) || "en-us".equals(s) || "pt-pt".equals(s) || "pt-br".equals(s) || "val-es".equals(s) || "hu-hu".equals(s)) {
+                this.kernel.getConsole().printInfo("Switched language to " + s);
                 this.locale = s;
                 Language.loadLang(this.locale);
             } else {
-                kernel.getConsole().printInfo("Switched language to en-us");
+                this.kernel.getConsole().printInfo("Switched language to en-us");
                 this.locale = "en-us";
                 Language.loadLang(this.locale);
             }
@@ -99,7 +99,7 @@ public class Settings {
      * Returns if the game log should be displayed
      * @return If the game log should be displayed
      */
-    public boolean getShowGameLog() {
+    public final boolean getShowGameLog() {
         return this.showGameLog;
     }
 
@@ -107,7 +107,7 @@ public class Settings {
      * Changes the value of whether the game log should be displayed
      * @param b The new value
      */
-    public void setShowGameLog(boolean b) {
+    public final void setShowGameLog(boolean b) {
         this.showGameLog = b;
     }
 
@@ -115,7 +115,7 @@ public class Settings {
      * Returns if advanced settings are enabled
      * @return If advanced settings are enabled
      */
-    public boolean getEnableAdvanced() {
+    public final boolean getEnableAdvanced() {
         return this.enableAdvanced;
     }
 
@@ -123,7 +123,7 @@ public class Settings {
      * Changes if advanced settings are enabled
      * @param b The new value
      */
-    public void setEnableAdvanced(boolean b) {
+    public final void setEnableAdvanced(boolean b) {
         this.enableAdvanced = b;
     }
 
@@ -131,7 +131,7 @@ public class Settings {
      * Returns if the historical versions are enabled
      * @return If the historical versions are enabled
      */
-    public boolean getEnableHistorical() {
+    public final boolean getEnableHistorical() {
         return this.enableHistorical;
     }
 
@@ -139,7 +139,7 @@ public class Settings {
      * Changes if the historical versions are enabled
      * @param b The new value
      */
-    public void setEnableHistorical(boolean b) {
+    public final void setEnableHistorical(boolean b) {
         this.enableHistorical = b;
     }
 
@@ -147,7 +147,7 @@ public class Settings {
      * Returns if the snapshots are enabled
      * @return If the snapshots are enabled
      */
-    public boolean getEnableSnapshots() {
+    public final boolean getEnableSnapshots() {
         return this.enableSnapshots;
     }
 
@@ -155,7 +155,7 @@ public class Settings {
      * Changes if the snapshots are enabled
      * @param b The new value
      */
-    public void setEnableSnapshots(boolean b) {
+    public final void setEnableSnapshots(boolean b) {
         this.enableSnapshots = b;
     }
 
@@ -163,14 +163,14 @@ public class Settings {
      * Converts the settings to JSON
      * @return The json conversion of the settings
      */
-    public JSONObject toJSON() {
+    public final JSONObject toJSON() {
         JSONObject o = new JSONObject();
-        o.put("locale", getLocale());
-        o.put("keepLauncherOpen", getKeepLauncherOpen());
-        o.put("showGameLog", getShowGameLog());
-        o.put("enableAdvanced", getEnableAdvanced());
-        o.put("enableHistorical", getEnableHistorical());
-        o.put("enableSnapshots", getEnableSnapshots());
+        o.put("locale", this.locale);
+        o.put("keepLauncherOpen", this.keepLauncherOpen);
+        o.put("showGameLog", this.showGameLog);
+        o.put("enableAdvanced", this.enableAdvanced);
+        o.put("enableHistorical", this.enableHistorical);
+        o.put("enableSnapshots", this.enableSnapshots);
         return o;
     }
 }

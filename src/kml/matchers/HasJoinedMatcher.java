@@ -9,16 +9,16 @@ import java.net.URL;
  *         website https://krothium.com
  */
 public class HasJoinedMatcher implements URLMatcher {
-    private final String hasURL = "https://sessionserver.mojang.com/session/minecraft/hasJoined";
+    private static final String HAS_URL = "https://sessionserver.mojang.com/session/minecraft/hasJoined";
 
     @Override
-    public boolean match(URL url) {
-        return url.toString().contains(hasURL) && url.getQuery() != null;
+    public final boolean match(URL url) {
+        return url.toString().contains(HAS_URL) && url.getQuery() != null;
     }
 
     @Override
-    public URL handle(URL url) {
-        if (url.toString().contains(hasURL) && url.getQuery() != null) {
+    public final URL handle(URL url) {
+        if (url.toString().contains(HAS_URL) && url.getQuery() != null) {
             return Utils.stringToURL("https://mc.krothium.com/server/hasJoined?" + url.getQuery());
         }
         return null;

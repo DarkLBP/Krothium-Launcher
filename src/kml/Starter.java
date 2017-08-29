@@ -20,8 +20,9 @@ public class Starter extends Application {
      * @throws Exception If something went wrong
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public final void start(Stage primaryStage) throws Exception {
+        Utils.ignoreHTTPSCert();
         Utils.testNetwork();
-        new Kernel(primaryStage, getHostServices());
+        new Kernel(primaryStage, this.getHostServices());
     }
 }

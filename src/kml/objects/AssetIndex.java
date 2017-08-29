@@ -24,47 +24,47 @@ public class AssetIndex {
         this.relFile = new File("assets" + File.separator + "indexes" + File.separator + id + ".json");
     }
 
-    public boolean hasID() {
+    public final boolean hasID() {
         return this.id != null;
     }
 
-    public boolean hasSize() {
+    public final boolean hasSize() {
         return this.size >= 0;
     }
 
-    public boolean hasTotalSize() {
+    public final boolean hasTotalSize() {
         return this.totalSize >= 0;
     }
 
-    public boolean hasURL() {
+    public final boolean hasURL() {
         return this.url != null;
     }
 
-    public boolean hasSHA1() {
+    public final boolean hasSHA1() {
         return this.sha1 != null;
     }
 
-    public String getID() {
+    public final String getID() {
         return this.id;
     }
 
-    public long getSize() {
+    public final long getSize() {
         return this.size;
     }
 
-    public long getTotalSize() {
+    public final long getTotalSize() {
         return this.totalSize;
     }
 
-    public URL getURL() {
+    public final URL getURL() {
         return this.url;
     }
 
-    public String getSHA1() {
+    public final String getSHA1() {
         return this.sha1;
     }
 
-    public File getRelativeFile() {
+    public final File getRelativeFile() {
         return this.relFile;
     }
 }

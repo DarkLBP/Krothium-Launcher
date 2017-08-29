@@ -12,11 +12,12 @@ public class URLHandler implements URLStreamHandlerFactory {
     private final HttpHandler HTTP_HANDLER = new HttpHandler();
 
     @Override
-    public URLStreamHandler createURLStreamHandler(String protocol) {
-        if (protocol.equalsIgnoreCase("https")) {
-            return HTTPS_HANDLER;
-        } else if (protocol.equalsIgnoreCase("http")) {
-            return HTTP_HANDLER;
+    public final URLStreamHandler createURLStreamHandler(String protocol) {
+        if ("https".equalsIgnoreCase(protocol)) {
+            return this.HTTPS_HANDLER;
+        }
+        if ("http".equalsIgnoreCase(protocol)) {
+            return this.HTTP_HANDLER;
         }
         return null;
     }

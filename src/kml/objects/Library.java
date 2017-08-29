@@ -23,13 +23,13 @@ public final class Library {
     private final String name;
     private final URL url;
     private final Map<String, Downloadable> downloads = new HashMap<>();
-    private final Map<OS, LibraryRule> rules = new HashMap<>();
+    private final Map<OS, LibraryRule> rules = new EnumMap<>(OS.class);
     private final File relativePath, relativeNativePath;
     private final List<String> exclude = new ArrayList<>();
-    private final Map<OS, String> natives = new HashMap<>();
+    private final Map<OS, String> natives = new EnumMap<>(OS.class);
 
     public Library(JSONObject lib, Kernel k) throws Exception {
-        final Console console = k.getConsole();
+        Console console = k.getConsole();
         if (lib.has("name")) {
             this.name = lib.getString("name");
         } else {
@@ -63,7 +63,7 @@ public final class Library {
                     this.rules.put(o, action);
                 } else if (o == null && action != null) {
                     for (OS os : oses) {
-                        if (this.rules.get(Utils.getPlatform()).equals(LibraryRule.NOSET)) {
+                        if (this.rules.get(Utils.getPlatform()) == LibraryRule.NOSET) {
                             this.rules.put(os, action);
                         }
                     }
@@ -72,7 +72,7 @@ public final class Library {
         }
         if (lib.has("natives")) {
             JSONObject natives = lib.getJSONObject("natives");
-            String osArch = (Utils.getOSArch().equals(OSArch.NEW) ? "64" : "32");
+            String osArch = Utils.getOSArch() == OSArch.NEW ? "64" : "32";
             Iterator it = natives.keys();
             while (it.hasNext()) {
                 String index = it.next().toString();
@@ -83,7 +83,7 @@ public final class Library {
         }
         this.relativePath = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
         if (this.isNative()) {
-            this.relativeNativePath = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
+            this.relativeNativePath = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar"));
         } else {
             this.relativeNativePath = null;
         }
@@ -133,7 +133,7 @@ public final class Library {
                         if (download.has("sha1")) {
                             sha1 = download.getString("sha1");
                         }
-                        File relPath = new File(this.relativePath.toString().replace(".jar", "-" + current + ".jar"));
+                        File relPath = new File(this.relativePath.toString().replace(".jar", '-' + current + ".jar"));
                         Downloadable d = new Downloadable(url, size, relPath, sha1, null);
                         this.downloads.put("classifier", d);
                     }
@@ -143,7 +143,7 @@ public final class Library {
             if (this.isCompatible()) {
                 if (this.isNative() && this.natives.containsKey(Utils.getPlatform())) {
                     try {
-                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", "-" + this.getNativeTag() + ".jar"));
+                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar"));
                         Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null, null);
                         this.downloads.put("classifier", d);
                     } catch (MalformedURLException ex) {
@@ -172,7 +172,7 @@ public final class Library {
     }
 
     public boolean hasExtractExclusions() {
-        return this.exclude.size() > 0;
+        return !this.exclude.isEmpty();
     }
 
     public List<String> getExtractExclusions() {
@@ -200,7 +200,7 @@ public final class Library {
     }
 
     private boolean hasDownloads() {
-        return this.downloads.size() > 0;
+        return !this.downloads.isEmpty();
     }
 
     public boolean hasArtifactDownload() {
@@ -220,11 +220,11 @@ public final class Library {
     }
 
     public boolean isCompatible() {
-        if (this.rules.size() > 0) {
+        if (!this.rules.isEmpty()) {
             if (this.rules.containsKey(Utils.getPlatform())) {
-                if (this.rules.get(Utils.getPlatform()).equals(LibraryRule.DISALLOW)) {
+                if (this.rules.get(Utils.getPlatform()) == LibraryRule.DISALLOW) {
                     return false;
-                } else if (this.rules.get(Utils.getPlatform()).equals(LibraryRule.NOSET)) {
+                } else if (this.rules.get(Utils.getPlatform()) == LibraryRule.NOSET) {
                     return false;
                 }
             }
@@ -233,7 +233,7 @@ public final class Library {
     }
 
     public boolean isNative() {
-        return (this.natives.size() > 0);
+        return !this.natives.isEmpty();
     }
 
     private String getNativeTag() {

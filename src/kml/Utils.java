@@ -9,17 +9,20 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -38,20 +41,23 @@ public final class Utils {
         try {
             SSLContext t = SSLContext.getInstance("SSL");
             t.init(null, new X509TrustManager[]{new X509TrustManager() {
+                @Override
                 public void checkClientTrusted(X509Certificate[] chain, String authType) {
                 }
 
+                @Override
                 public void checkServerTrusted(X509Certificate[] chain, String authType) {
                 }
 
+                @Override
                 public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
+                    return null;
                 }
             }}, null);
             HttpsURLConnection.setDefaultSSLSocketFactory(t.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
             return true;
-        } catch (Exception ex) {
+        } catch (KeyManagementException | NoSuchAlgorithmException ex) {
             return false;
         }
     }
@@ -74,12 +80,14 @@ public final class Utils {
      * @return An OS enum with the detected OS
      */
     public static OS getPlatform() {
-        final String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")) {
             return OS.WINDOWS;
-        } else if (osName.contains("mac")) {
+        }
+        if (osName.contains("mac")) {
             return OS.OSX;
-        } else if (osName.contains("linux") || osName.contains("unix")) {
+        }
+        if (osName.contains("linux") || osName.contains("unix")) {
             return OS.LINUX;
         }
         return OS.UNKNOWN;
@@ -90,15 +98,15 @@ public final class Utils {
      * @return The working directory
      */
     public static File getWorkingDirectory() {
-        final String userHome = System.getProperty("user.home", ".");
+        String userHome = System.getProperty("user.home", ".");
         File workingDirectory;
         switch (getPlatform()) {
             case LINUX:
                 workingDirectory = new File(userHome, ".minecraft/");
                 break;
             case WINDOWS:
-                final String applicationData = System.getenv("APPDATA");
-                final String folder = applicationData != null ? applicationData : userHome;
+                String applicationData = System.getenv("APPDATA");
+                String folder = applicationData != null ? applicationData : userHome;
                 workingDirectory = new File(folder, ".minecraft/");
                 break;
             case OSX:
@@ -131,24 +139,25 @@ public final class Utils {
     }
 
     /**
-     * Downloads a file using channel transfer
+     * Downloads a file using a connection
      * @param con An established connection
      * @param output The output file
      * @return A boolean that indicates if the download has completed
      */
     public static boolean downloadFile(URLConnection con, File output) {
-        try {
-            ReadableByteChannel rbc = Channels.newChannel(con.getInputStream());
-            File parent = output.getParentFile();
-            if (parent != null && !parent.exists()) {
-                parent.mkdirs();
+        File parent = output.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        try (InputStream in = con.getInputStream();
+             FileOutputStream fo = new FileOutputStream(output)){
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                fo.write(buffer, 0, read);
             }
-            FileOutputStream fo = new FileOutputStream(output);
-            fo.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            rbc.close();
-            fo.close();
             return true;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             return false;
         }
     }
@@ -189,7 +198,7 @@ public final class Utils {
      */
     public static boolean downloadFile(URL url, File output) {
         try {
-            if (url.getProtocol().equalsIgnoreCase("file")) {
+            if ("file".equalsIgnoreCase(url.getProtocol())) {
                 return true;
             }
             URLConnection con = url.openConnection();
@@ -201,7 +210,7 @@ public final class Utils {
                 }
             }
             return downloadFile(con, output);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             return false;
         }
     }
@@ -244,19 +253,20 @@ public final class Utils {
             if (con == null) {
                 con = url.openConnection();
             }
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")), 16384);
-            String line;
-            boolean first = true;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (!first) {
-                    content.append(System.lineSeparator());
-                } else {
-                    first = false;
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")))) {
+                String line;
+                boolean first = true;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!first) {
+                        content.append(System.lineSeparator());
+                    } else {
+                        first = false;
+                    }
+                    content.append(line);
                 }
-                content.append(line);
+                return content.toString();
             }
-            return content.toString();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             return null;
         }
     }
@@ -272,12 +282,8 @@ public final class Utils {
         if (hash == null || method == null || !file.exists() || file.isDirectory()) {
             return false;
         }
-        try {
-            String fileHash = calculateChecksum(file, method);
-            return hash.equals(fileHash);
-        } catch (Exception ex) {
-            return false;
-        }
+        String fileHash = calculateChecksum(file, method);
+        return hash.equals(fileHash);
     }
 
     /**
@@ -297,7 +303,7 @@ public final class Utils {
                 sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
             }
             return sb.toString();
-        } catch (Exception ex) {
+        } catch (NoSuchAlgorithmException ex) {
             return null;
         }
     }
@@ -309,10 +315,9 @@ public final class Utils {
      * @return The calculated hash
      */
     public static String calculateChecksum(File file, String method) {
-        try {
+        try (FileInputStream fis = new FileInputStream(file)){
             MessageDigest sha1 = MessageDigest.getInstance(method);
-            FileInputStream fis = new FileInputStream(file);
-            byte[] data = new byte[16384];
+            byte[] data = new byte[8192];
             int read;
             while ((read = fis.read(data)) != -1) {
                 sha1.update(data, 0, read);
@@ -323,7 +328,7 @@ public final class Utils {
                 sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
             }
             return sb.toString();
-        } catch (Exception ex) {
+        } catch (IOException | NoSuchAlgorithmException ex) {
             return null;
         }
     }
@@ -335,15 +340,13 @@ public final class Utils {
      * @return A boolean that indicated if the text has been written
      */
     public static boolean writeToFile(String o, File f) {
-        try {
+        try (FileOutputStream out = new FileOutputStream(f)) {
             if (!f.getParentFile().exists()) {
                 f.getParentFile().mkdirs();
             }
-            FileOutputStream out = new FileOutputStream(f);
             out.write(o.getBytes(Charset.forName("UTF-8")));
-            out.close();
             return true;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             return false;
         }
     }
@@ -355,7 +358,7 @@ public final class Utils {
     public static OSArch getOSArch() {
         String arch = System.getProperty("os.arch");
         String realArch = arch.endsWith("64") ? "64" : "32";
-        return (realArch.equals("32") ? OSArch.OLD : OSArch.NEW);
+        return "32".equals(realArch) ? OSArch.OLD : OSArch.NEW;
     }
 
     /**
@@ -365,8 +368,8 @@ public final class Utils {
      * @return The real path
      */
     public static String getArtifactPath(String artifact, String ext) {
-        final String[] parts = artifact.split(":", 3);
-        return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + "-" + parts[2]);
+        String[] parts = artifact.split(":", 3);
+        return String.format("%s/%s/%s/%s." + ext, parts[0].replaceAll("\\.", "/"), parts[1], parts[2], parts[1] + '-' + parts[2]);
     }
 
     /**
@@ -377,7 +380,7 @@ public final class Utils {
     public static URL stringToURL(String url) {
         try {
             return new URL(url);
-        } catch (Exception ex) {
+        } catch (MalformedURLException ex) {
             return null;
         }
     }
@@ -391,50 +394,35 @@ public final class Utils {
      * @throws IOException If connection failed
      */
     public static String sendPost(URL url, byte[] data, Map<String, String> params) throws IOException {
-        URLConnection con = url.openConnection();
+        HttpURLConnection con = (HttpURLConnection)url.openConnection();
         con.setDoOutput(true);
-        if (con instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) con).setRequestMethod("POST");
-        } else {
-            ((HttpURLConnection) con).setRequestMethod("POST");
-        }
-        if (params.size() > 0) {
+        con.setRequestMethod("POST");
+        if (!params.isEmpty()) {
             Set keys = params.keySet();
             for (Object key : keys) {
                 String param = key.toString();
                 con.setRequestProperty(param, params.get(param));
             }
         }
-        OutputStream out = con.getOutputStream();
-        out.write(data);
-        out.close();
-        InputStream i;
+        if (data != null) {
+            try (OutputStream out = con.getOutputStream()) {
+                out.write(data);
+            }
+        }
         StringBuilder response = new StringBuilder();
-        try {
-            i = con.getInputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(i));
+        try (InputStream i = con.getInputStream();
+             BufferedReader in = new BufferedReader(new InputStreamReader(i))){
             String inputLine;
-            response = new StringBuilder();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            in.close();
-            i.close();
-        } catch (Exception ex) {
-            if (con instanceof HttpsURLConnection) {
-                i = ((HttpsURLConnection) con).getErrorStream();
-            } else {
-                i = ((HttpURLConnection) con).getErrorStream();
-            }
-            if (i != null) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(i));
+        } catch (IOException ex) {
+            try (InputStream i = con.getErrorStream();
+                 BufferedReader in = new BufferedReader(new InputStreamReader(i))) {
                 String inputLine;
-                response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
-                in.close();
-                i.close();
             }
         }
         return response.toString();
@@ -445,8 +433,8 @@ public final class Utils {
      * @return The java executable path
      */
     public static String getJavaDir() {
-        final String separator = System.getProperty("file.separator");
-        final String path = System.getProperty("java.home") + separator + "bin" + separator;
+        String separator = System.getProperty("file.separator");
+        String path = System.getProperty("java.home") + separator + "bin" + separator;
         if (getPlatform() == OS.WINDOWS && new File(path + "javaw.exe").isFile()) {
             return path + "javaw.exe";
         }
@@ -465,7 +453,7 @@ public final class Utils {
         String conversion;
         try {
             conversion = new String(Base64.getDecoder().decode(st), StandardCharsets.UTF_8);
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException ex) {
             conversion = "";
         }
         return conversion;
@@ -478,7 +466,7 @@ public final class Utils {
      * @throws IOException If an error occurred
      */
     public static void decompressLZMA(File input, File output) throws IOException {
-        Decoder LZMADecoder = new SevenZip.Compression.LZMA.Decoder();
+        Decoder LZMADecoder = new Decoder();
         try (FileInputStream in = new FileInputStream(input);
              FileOutputStream out = new FileOutputStream(output)){
             // Read the decoder properties
@@ -494,8 +482,6 @@ public final class Utils {
 
             LZMADecoder.SetDecoderProperties(properties);
             LZMADecoder.Code(in, out, fileLength);
-        } catch (IOException e) {
-            throw e;
         }
     }
 
@@ -506,9 +492,9 @@ public final class Utils {
      * @param exclusions Any extraction exclusions
      * @throws IOException If the process failed
      */
-    public static void decompressZIP(File input, File output, List<String> exclusions) throws IOException {
+    public static void decompressZIP(File input, File output, Iterable<String> exclusions) throws IOException {
         if(!output.exists() || !output.isDirectory()){
-            output.mkdir();
+            output.mkdirs();
         }
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))){
             ZipEntry ze = zis.getNextEntry();
@@ -533,19 +519,17 @@ public final class Utils {
                     }
                     byte[] buffer = new byte[16384];
                     new File(newFile.getParent()).mkdirs();
-                    FileOutputStream fos = new FileOutputStream(newFile);
-                    int len;
-                    while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
                     }
-                    fos.close();
                 }
                 zis.closeEntry();
                 ze = zis.getNextEntry();
             }
             new File(output, "OK").createNewFile();
-        } catch (Exception ex) {
-            throw ex;
         }
     }
 }

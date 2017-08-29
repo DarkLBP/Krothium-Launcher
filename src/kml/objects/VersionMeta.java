@@ -20,30 +20,30 @@ public class VersionMeta {
         this.type = type;
     }
 
-    public String getID() {
+    public final String getID() {
         return this.id;
     }
 
-    public URL getURL() {
+    public final URL getURL() {
         return this.url;
     }
 
-    public VersionType getType() {
+    public final VersionType getType() {
         return this.type;
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof VersionMeta && id.equalsIgnoreCase(((VersionMeta)o).id);
+    public final boolean equals(Object o) {
+        return o instanceof VersionMeta && this.id.equalsIgnoreCase(((VersionMeta) o).id);
     }
 
     @Override
-    public int hashCode() {
-        return id.hashCode();
+    public final int hashCode() {
+        return this.id.hashCode();
     }
 
     @Override
-    public String toString() {
-        return id;
+    public final String toString() {
+        return this.id;
     }
 }

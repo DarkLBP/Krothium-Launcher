@@ -6,7 +6,7 @@ package kml.exceptions;
  */
 
 public class AuthenticationException extends Exception {
-    public AuthenticationException(final String message) {
+    public AuthenticationException(String message) {
         super(message);
     }
 }

@@ -18,24 +18,28 @@ import java.util.Map;
  *         website https://krothium.com
  */
 public class JoinMatcher implements URLMatcher {
-    private final String joinURL = "https://sessionserver.mojang.com/session/minecraft/join";
+    private static final String JOIN_URL = "https://sessionserver.mojang.com/session/minecraft/join";
 
     @Override
-    public boolean match(URL url) {
-        return url.toString().equalsIgnoreCase(joinURL);
+    public final boolean match(URL url) {
+        return url.toString().equalsIgnoreCase(JOIN_URL);
     }
 
     @Override
-    public URL handle(URL url) {
-        if (url.toString().equalsIgnoreCase(joinURL)) {
+    public final URL handle(URL url) {
+        if (url.toString().equalsIgnoreCase(JOIN_URL)) {
             Map<String, String> arguments = new HashMap<>();
             arguments.put("Access-Token", GameStarter.ACCESS_TOKEN);
             arguments.put("Profile-ID", GameStarter.PROFILE_ID);
             JSONArray array = new JSONArray();
             String[] files = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+            boolean forge = false;
             for (String file : files) {
                 File f = new File(file);
                 if (f.exists() && f.isFile()) {
+                    if (f.getName().contains("forge")) {
+                        forge = true;
+                    }
                     JSONObject obj = new JSONObject();
                     String checksum = Utils.calculateChecksum(f, "SHA-1");
                     if (checksum != null) {
@@ -45,18 +49,20 @@ public class JoinMatcher implements URLMatcher {
                     }
                 }
             }
-            File gameDir = new File(GameStarter.GAME_DIR, "mods");
-            if (gameDir.exists() && gameDir.isDirectory()) {
-                File[] mods = gameDir.listFiles();
-                if (mods != null) {
-                    for (File mod : mods) {
-                        if (mod.isFile()) {
-                            JSONObject obj = new JSONObject();
-                            String checksum = Utils.calculateChecksum(mod, "SHA-1");
-                            if (checksum != null) {
-                                obj.put("name", mod.getName());
-                                obj.put("hash", checksum);
-                                array.put(obj);
+            if (forge) {
+                File gameDir = new File(GameStarter.GAME_DIR, "mods");
+                if (gameDir.exists() && gameDir.isDirectory()) {
+                    File[] mods = gameDir.listFiles();
+                    if (mods != null) {
+                        for (File mod : mods) {
+                            if (mod.isFile()) {
+                                JSONObject obj = new JSONObject();
+                                String checksum = Utils.calculateChecksum(mod, "SHA-1");
+                                if (checksum != null) {
+                                    obj.put("name", mod.getName());
+                                    obj.put("hash", checksum);
+                                    array.put(obj);
+                                }
                             }
                         }
                     }
@@ -64,9 +70,9 @@ public class JoinMatcher implements URLMatcher {
             }
             try {
                 String response = Utils.sendPost(Constants.PROTECTION_URL, array.toString().getBytes(), arguments);
-                if (response.equalsIgnoreCase("OK")) {
+                if ("OK".equalsIgnoreCase(response)) {
                     System.out.println("Client successfully validated.");
-                } else if (response.equalsIgnoreCase("BANNED")) {
+                } else if ("BANNED".equalsIgnoreCase(response)) {
                     System.out.println("Cheats detected. Account banned.");
                     JOptionPane.showMessageDialog(null, "Your account has been banned for using online cheats.", "Account banned", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);

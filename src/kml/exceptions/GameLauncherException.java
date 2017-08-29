@@ -6,7 +6,7 @@ package kml.exceptions;
  */
 
 public class GameLauncherException extends Exception {
-    public GameLauncherException(final String message) {
+    public GameLauncherException(String message) {
         super(message);
     }
 }

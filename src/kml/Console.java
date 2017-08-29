@@ -60,12 +60,12 @@ public class Console {
                 }
             }
         }
-        log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
-        if (!log.getParentFile().exists()) {
-            log.getParentFile().mkdirs();
+        this.log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
+        if (!this.log.getParentFile().exists()) {
+            this.log.getParentFile().mkdirs();
         }
         try {
-            this.data = new FileOutputStream(log);
+            this.data = new FileOutputStream(this.log);
         } catch (IOException ex) {
             this.enabled = false;
         }
@@ -75,9 +75,9 @@ public class Console {
      * Prints something to the output channel
      * @param info The Object to be printed
      */
-    public void printInfo(Object info) {
+    public final void printInfo(Object info) {
         if (this.enabled) {
-            writeData("[" + dateFormat.format(new Date()) + "] " + info);
+            this.writeData('[' + this.dateFormat.format(new Date()) + "] " + info);
             System.out.println(info);
         }
     }
@@ -86,9 +86,9 @@ public class Console {
      * Prints something to the error channel
      * @param error The Object to be printed
      */
-    public void printError(Object error) {
+    public final void printError(Object error) {
         if (this.enabled) {
-            writeData("[" + dateFormat.format(new Date()) + "] " + error);
+            this.writeData('[' + this.dateFormat.format(new Date()) + "] " + error);
             System.err.println(error);
         }
     }
@@ -110,18 +110,18 @@ public class Console {
     /**
      * Closes the log file
      */
-    public void close() {
+    public final void close() {
         if (this.enabled) {
             try {
                 this.data.close();
                 this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
-            } catch (Exception ignored) {
+            } catch (IOException ignored) {
             }
         } else {
             try {
                 this.data.close();
                 this.log.delete();
-            } catch (Exception ignored) {
+            } catch (IOException ignored) {
             }
         }
     }

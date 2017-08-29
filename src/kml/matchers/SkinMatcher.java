@@ -14,18 +14,18 @@ public class SkinMatcher implements URLMatcher {
     private final Pattern skinRegex = Pattern.compile("/MinecraftSkins/(.+?)\\.png");
 
     @Override
-    public boolean match(URL url) {
-        final String skinHost = "skins.minecraft.net";
+    public final boolean match(URL url) {
+        String skinHost = "skins.minecraft.net";
         if (url.getHost().equalsIgnoreCase(skinHost)) {
-            Matcher m = skinRegex.matcher(url.getPath());
+            Matcher m = this.skinRegex.matcher(url.getPath());
             return m.matches();
         }
         return false;
     }
 
     @Override
-    public URL handle(URL url) {
-        Matcher m = skinRegex.matcher(url.getPath());
+    public final URL handle(URL url) {
+        Matcher m = this.skinRegex.matcher(url.getPath());
         if (m.matches()) {
             String name = m.group(1);
             return Utils.stringToURL("http://mc.krothium.com/skins/" + name + ".png");
