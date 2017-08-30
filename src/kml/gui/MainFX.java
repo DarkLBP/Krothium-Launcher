@@ -201,7 +201,7 @@ public class MainFX {
         this.languagesList.setItems(languageListItems);
 
         //Set news tab as default selected
-        this.newsLabel.getStyleClass().add("selectedItem");
+        this.switchTab(this.newsLabel);
 
         //Update settings labels
         Settings st = this.kernel.getSettings();
@@ -1080,6 +1080,11 @@ public class MainFX {
             this.playButton.setVisible(true);
             this.profilePopupButton.setVisible(true);
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == this.loginTab) {
+            this.newsLabel.getStyleClass().remove("selectedItem");
+            this.skinsLabel.getStyleClass().remove("selectedItem");
+            this.settingsLabel.getStyleClass().remove("selectedItem");
+            this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         }
         if (source == this.newsLabel) {
             this.newsLabel.getStyleClass().add("selectedItem");
@@ -1495,7 +1500,7 @@ public class MainFX {
             this.playPane.setVisible(false);
             this.updateExistingUsers();
         } else {
-            this.contentPane.getSelectionModel().select(this.newsTab);
+            this.switchTab(this.newsLabel);
             this.tabMenu.setVisible(true);
             this.tabMenu.setManaged(true);
             this.accountButton.setVisible(true);
