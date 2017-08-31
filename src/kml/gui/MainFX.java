@@ -200,9 +200,6 @@ public class MainFX {
         ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, val, pt, br, hu);
         this.languagesList.setItems(languageListItems);
 
-        //Set news tab as default selected
-        this.switchTab(this.newsLabel);
-
         //Update settings labels
         Settings st = this.kernel.getSettings();
         this.toggleLabel(this.keepLauncherOpen, st.getKeepLauncherOpen());
@@ -290,12 +287,15 @@ public class MainFX {
         String response = Utils.readURL(adsCheck);
         if (response != null) {
             if (!response.isEmpty()) {
-                String firstChunk = Utils.fromBase64(response.split(":")[0]);
-                String secondChunk = Utils.fromBase64(response.split(":")[1]);
+                String[] chunks = response.split(":");
+                String firstChunk = Utils.fromBase64(chunks[0]);
                 this.urlPrefix = firstChunk == null ? "" : firstChunk;
-                String adsURL = secondChunk == null ? "" : secondChunk;
-                this.kernel.getBrowser().loadWebsite(adsURL);
-                this.kernel.getBrowser().show(this.stage);
+                if (chunks.length == 2) {
+                    String secondChunk = Utils.fromBase64(response.split(":")[1]);
+                    String adsURL = secondChunk == null ? "" : secondChunk;
+                    this.kernel.getBrowser().loadWebsite(adsURL);
+                    this.kernel.getBrowser().show(this.stage);
+                }
             }
             this.kernel.getConsole().printInfo("Ads loaded.");
         } else {
