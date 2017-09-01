@@ -1,5 +1,6 @@
 package kml;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 import kml.enums.VersionType;
@@ -43,10 +44,10 @@ public class Profiles {
     public final boolean addProfile(Profile p) {
         if (!this.profiles.contains(p)) {
             this.profiles.add(p);
-            this.console.printInfo("Profile " + p + " added");
+            this.console.print("Profile " + p + " added");
             return true;
         }
-        this.console.printError("Profile " + p + " already exists!");
+        this.console.print("Profile " + p + " already exists!");
         return false;
     }
 
@@ -58,9 +59,9 @@ public class Profiles {
     public final boolean deleteProfile(Profile p) {
         if (this.profiles.contains(p)) {
             if (this.selected != null && this.selected.equals(p)) {
-                this.console.printInfo("Profile " + p + " is selected and is going to be removed.");
+                this.console.print("Profile " + p + " is selected and is going to be removed.");
                 this.profiles.remove(p);
-                this.console.printInfo("Profile " + p + " deleted.");
+                this.console.print("Profile " + p + " deleted.");
                 if (!this.profiles.isEmpty()) {
                     this.setSelectedProfile(this.profiles.first());
                 } else {
@@ -68,11 +69,11 @@ public class Profiles {
                 }
             } else {
                 this.profiles.remove(p);
-                this.console.printInfo("Profile " + p + " deleted.");
+                this.console.print("Profile " + p + " deleted.");
             }
             return true;
         }
-        this.console.printError("Profile " + p + " doesn't exist.");
+        this.console.print("Profile " + p + " doesn't exist.");
         return false;
     }
 
@@ -80,7 +81,7 @@ public class Profiles {
      * Loads the profiles from the launcher_profiles.json
      */
     public final void fetchProfiles() {
-        this.console.printInfo("Fetching profiles.");
+        this.console.print("Fetching profiles.");
         Timestamp latestUsedMillis = new Timestamp(-1);
         JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
@@ -125,7 +126,6 @@ public class Profiles {
                     if (type == ProfileType.CUSTOM) {
                         name = o.has("name") ? o.getString("name") : null;
                         String ver = o.has("lastVersionId") ? o.getString("lastVersionId") : null;
-
                         if (ver != null) {
                             switch (ver) {
                                 case "latest-release":
@@ -137,7 +137,12 @@ public class Profiles {
                             }
                         }
                         version = this.kernel.getVersions().getVersionMeta(ver);
-                        icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase()) : null;
+                        try {
+                            icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase()) : null;
+                        } catch (IllegalArgumentException ex) {
+                            icon = null;
+                            this.console.print("Invalid profile icon for profile " + key);
+                        }
                     } else {
                         name = null;
                         version = null;
@@ -155,7 +160,7 @@ public class Profiles {
                             resolution.put("width", res.getInt("width"));
                             resolution.put("height", res.getInt("height"));
                         } else {
-                            this.console.printError("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
+                            this.console.print("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
                         }
                     }
                     Profile p = new Profile(key, name, type, created, lastUsed, version, gameDir, javaDir, javaArgs, resolution, icon, latestRelease, latestSnapshot);
@@ -203,15 +208,16 @@ public class Profiles {
                             this.setSelectedProfile(latestUsedID);
                         }
                     } else {
-                        this.console.printInfo("No profile is selected! Using first loaded (" + first + ')');
+                        this.console.print("No profile is selected! Using first loaded (" + first + ')');
                         this.setSelectedProfile(first);
                     }
                 }
             } catch (JSONException ex) {
-                this.console.printError("Failed to fetch profiles.");
+                this.console.print("Failed to fetch profiles.");
+                ex.printStackTrace(this.console.getWriter());
             }
         } else {
-            this.console.printError("No profiles to be loaded. Generating defaults.");
+            this.console.print("No profiles to be loaded. Generating defaults.");
             if (this.releaseProfile == null) {
                 this.releaseProfile = new Profile(ProfileType.RELEASE);
                 this.addProfile(this.releaseProfile);
@@ -264,7 +270,7 @@ public class Profiles {
     public final boolean setSelectedProfile(Profile p) {
         if (this.profiles.contains(p)) {
             p.setLastUsed(new Timestamp(System.currentTimeMillis()));
-            this.console.printInfo("Profile " + p + " has been selected.");
+            this.console.print("Profile " + p + " has been selected.");
             this.selected = p;
             return true;
         }

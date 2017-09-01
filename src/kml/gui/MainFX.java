@@ -120,6 +120,7 @@ public class MainFX {
 
 
     private Kernel kernel;
+    private Console console;
     private Stage stage;
     private final List<Slide> slides = new ArrayList<>();
     private int currentSlide;
@@ -139,6 +140,7 @@ public class MainFX {
 
         //Set kernel and stage
         this.kernel = k;
+        this.console = k.getConsole();
         this.stage = s;
 
         //Check for updates
@@ -245,13 +247,13 @@ public class MainFX {
      * Checks for launcher updates
      */
     private void checkForUpdates() {
-        this.kernel.getConsole().printInfo("Checking for updates...");
+        this.console.print("Checking for updates...");
         File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
         if (updater.exists() && updater.isFile()) {
             if (updater.delete()) {
-                this.kernel.getConsole().printInfo("Removed old updater.jar.");
+                this.console.print("Removed old updater.jar.");
             } else {
-                this.kernel.getConsole().printError("Failed to remove old updater.jar.");
+                this.console.print("Failed to remove old updater.jar.");
             }
         }
         String update = this.kernel.checkForUpdates();
@@ -271,7 +273,7 @@ public class MainFX {
                         this.kernel.exitSafely();
                     }
                     catch (Exception e) {
-                        this.kernel.getConsole().printError("Failed to open update page.\n" + e.getMessage());
+                        this.console.print("Failed to open update page.\n" + e.getMessage());
                     }
                 }
             });
@@ -297,9 +299,9 @@ public class MainFX {
                     this.kernel.getBrowser().show(this.stage);
                 }
             }
-            this.kernel.getConsole().printInfo("Ads loaded.");
+            this.console.print("Ads loaded.");
         } else {
-            this.kernel.getConsole().printInfo("Ads info not available.");
+            this.console.print("Ads info not available.");
         }
     }
 
@@ -412,7 +414,7 @@ public class MainFX {
                 }
             }
         } catch (Exception ex) {
-            this.kernel.getConsole().printError("Failed to parse remote profile textures. (" + ex.getMessage() + ')');
+            this.console.print("Failed to parse remote profile textures. (" + ex.getMessage() + ')');
         }
         if (Constants.USE_LOCAL) {
             this.selectSkin.setDisable(true);
@@ -482,7 +484,7 @@ public class MainFX {
         if (selected != null) {
             if (selected.length() > 131072) {
                 Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(105));
-                this.kernel.getConsole().printError("Skin file exceeds 128KB file size limit.");
+                this.console.print("Skin file exceeds 128KB file size limit.");
                 error.showAndWait();
             } else {
                 Map<String, String> params = new HashMap<>();
@@ -498,20 +500,20 @@ public class MainFX {
                     params.put("Content-Type", "image/png");
                     String r = Utils.sendPost(Constants.CHANGESKIN_URL, data, params);
                     if (!"OK".equals(r)) {
-                        this.kernel.getConsole().printError("Failed to change the skin.");
-                        this.kernel.getConsole().printError(r);
+                        this.console.print("Failed to change the skin.");
+                        this.console.print(r);
                         Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(42));
                         error.showAndWait();
                     }
                     else {
                         Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(40));
-                        this.kernel.getConsole().printInfo("Skin changed successfully!");
+                        this.console.print("Skin changed successfully!");
                         correct.showAndWait();
                         this.parseRemoteTextures();
                     }
                 } catch (Exception ex) {
-                    this.kernel.getConsole().printError("Failed to change the skin.");
-                    this.kernel.getConsole().printError(ex.getMessage());
+                    this.console.print("Failed to change the skin.");
+                    this.console.print(ex.getMessage());
                     Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(42));
                     error.showAndWait();
                 }
@@ -531,7 +533,7 @@ public class MainFX {
         if (selected != null) {
             if (selected.length() > 131072) {
                 Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(104));
-                this.kernel.getConsole().printError("Cape file exceeds 128KB file size limit.");
+                this.console.print("Cape file exceeds 128KB file size limit.");
                 error.showAndWait();
             } else {
                 Map<String, String> params = new HashMap<>();
@@ -542,20 +544,20 @@ public class MainFX {
                     params.put("Content-Type", "image/png");
                     String r = Utils.sendPost(Constants.CHANGECAPE_URL, data, params);
                     if (!"OK".equals(r)) {
-                        this.kernel.getConsole().printError("Failed to change the cape.");
-                        this.kernel.getConsole().printError(r);
+                        this.console.print("Failed to change the cape.");
+                        this.console.print(r);
                         Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(43));
                         error.showAndWait();
                     }
                     else {
                         Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(41));
-                        this.kernel.getConsole().printInfo("Cape changed successfully.");
+                        this.console.print("Cape changed successfully.");
                         correct.showAndWait();
                         this.parseRemoteTextures();
                     }
                 } catch (Exception ex) {
-                    this.kernel.getConsole().printError("Failed to change the cape.");
-                    this.kernel.getConsole().printError(ex.getMessage());
+                    this.console.print("Failed to change the cape.");
+                    this.console.print(ex.getMessage());
                     Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(43));
                     error.showAndWait();
                 }
@@ -577,21 +579,21 @@ public class MainFX {
             try {
                 String r = Utils.sendPost(Constants.CHANGESKIN_URL, null, params);
                 if (!"OK".equals(r)) {
-                    this.kernel.getConsole().printError("Failed to delete the skin.");
-                    this.kernel.getConsole().printError(r);
+                    this.console.print("Failed to delete the skin.");
+                    this.console.print(r);
                     Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(33));
                     error.showAndWait();
                 }
                 else {
                     Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(34));
-                    this.kernel.getConsole().printInfo("Skin deleted successfully!");
+                    this.console.print("Skin deleted successfully!");
                     correct.showAndWait();
                     this.parseRemoteTextures();
                 }
             }
             catch (Exception ex) {
-                this.kernel.getConsole().printError("Failed to delete the skin.");
-                this.kernel.getConsole().printError(ex.getMessage());
+                this.console.print("Failed to delete the skin.");
+                this.console.print(ex.getMessage());
                 Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(33));
                 error.showAndWait();
             }
@@ -613,21 +615,21 @@ public class MainFX {
             try {
                 String r = Utils.sendPost(Constants.CHANGECAPE_URL, null, params);
                 if (!"OK".equals(r)) {
-                    this.kernel.getConsole().printError("Failed to delete the cape.");
-                    this.kernel.getConsole().printError(r);
+                    this.console.print("Failed to delete the cape.");
+                    this.console.print(r);
                     Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(38));
                     error.showAndWait();
                 }
                 else {
                     Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(39));
-                    this.kernel.getConsole().printInfo("Cape deleted successfully!");
+                    this.console.print("Cape deleted successfully!");
                     correct.showAndWait();
                     this.parseRemoteTextures();
                 }
             }
             catch (Exception ex) {
-                this.kernel.getConsole().printError("Failed to delete the cape.");
-                this.kernel.getConsole().printError(ex.getMessage());
+                this.console.print("Failed to delete the cape.");
+                this.console.print(ex.getMessage());
                 Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(38));
                 error.showAndWait();
             }
@@ -639,11 +641,11 @@ public class MainFX {
      * Loads the news slideshow
      */
     private void loadSlideshow() {
-        this.kernel.getConsole().printInfo("Loading news slideshow...");
+        this.console.print("Loading news slideshow...");
         try {
             String response = Utils.readURL(Constants.NEWS_URL);
             if (response == null) {
-                this.kernel.getConsole().printError("Failed to fetch news.");
+                this.console.print("Failed to fetch news.");
             }
             JSONObject root = new JSONObject(response);
             JSONArray entries = root.getJSONArray("entries");
@@ -667,7 +669,7 @@ public class MainFX {
         } catch (Exception ex) {
             this.newsTitle.setText(Language.get(80));
             this.newsText.setText(Language.get(101));
-            this.kernel.getConsole().printError("Couldn't parse news data. (" + ex.getMessage() + ')');
+            this.console.print("Couldn't parse news data. (" + ex.getMessage() + ')');
             return;
         }
         if (!this.slides.isEmpty()) {
@@ -861,7 +863,7 @@ public class MainFX {
      * Loads the profile icons
      */
     private void loadIcons() {
-        this.kernel.getConsole().printInfo("Loading icons...");
+        this.console.print("Loading icons...");
         ObservableList<ImageView> icons = FXCollections.observableArrayList();
         for (ProfileIcon p : ProfileIcon.values()) {
             if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
@@ -901,7 +903,7 @@ public class MainFX {
         this.progressText.setText("");
         Downloader d = this.kernel.getDownloader();
         GameLauncher gl = this.kernel.getGameLauncher();
-        Console console = this.kernel.getConsole();
+        Console console = this.console;
         //Begin download and game launch task
         Task runTask = new Task() {
             @Override
@@ -961,11 +963,11 @@ public class MainFX {
                     } catch (DownloaderException e) {
                         Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(83), Language.get(84));
                         a.showAndWait();
-                        console.printError("Failed to perform game download task: " + e);
+                        console.print("Failed to perform game download task: " + e);
                     } catch (GameLauncherException e) {
                         Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(81), Language.get(82));
                         a.showAndWait();
-                        console.printError("Failed to perform game launch task: " + e);
+                        console.print("Failed to perform game launch task: " + e);
                     }
                 }
                 return null;
@@ -1372,7 +1374,7 @@ public class MainFX {
                 int w = Integer.parseInt(this.resW.getEditor().getText());
                 target.setResolution(w, h);
             } catch (NumberFormatException ex) {
-                this.kernel.getConsole().printError("Invalid resolution given.");
+                this.console.print("Invalid resolution given.");
             }
         } else {
             target.setResolution(-1, -1);
@@ -1548,10 +1550,10 @@ public class MainFX {
             if (this.kernel.getAuthentication().getSelectedUser() != null) {
                 this.kernel.getAuthentication().refresh();
             } else {
-                this.kernel.getConsole().printInfo("No user is selected.");
+                this.console.print("No user is selected.");
             }
         } catch (AuthenticationException ex) {
-            this.kernel.getConsole().printInfo("Couldn't refresh your session.");
+            this.console.print("Couldn't refresh your session.");
         } finally {
             if (this.kernel.getAuthentication().isAuthenticated()) {
                 this.showLoginPrompt(false);

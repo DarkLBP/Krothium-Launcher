@@ -147,7 +147,7 @@ public final class Library {
                         Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null, null);
                         this.downloads.put("classifier", d);
                     } catch (MalformedURLException ex) {
-                        console.printError("Invalid " + this.name + " url.");
+                        console.print("Invalid " + this.name + " url.");
                     }
                 } else if (this.hasURL()) {
                     try {
@@ -155,7 +155,7 @@ public final class Library {
                         Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
-                        console.printError("Invalid " + this.name + " url.");
+                        console.print("Invalid " + this.name + " url.");
                     }
                 } else {
                     try {
@@ -163,10 +163,9 @@ public final class Library {
                         Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
-                        console.printError("Invalid " + this.name + " url.");
+                        console.print("Invalid " + this.name + " url.");
                     }
                 }
-
             }
         }
     }

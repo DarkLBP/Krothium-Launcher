@@ -58,47 +58,47 @@ public final class Kernel {
         }
         Constants.APPLICATION_CACHE.mkdir();
         this.console = new Console();
-        this.console.printInfo("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
-        this.console.printInfo("Kernel build: " + Constants.KERNEL_BUILD);
-        this.console.printInfo("OS: " + System.getProperty("os.name"));
-        this.console.printInfo("OS Version: " + System.getProperty("os.version"));
-        this.console.printInfo("OS Architecture: " + System.getProperty("os.arch"));
-        this.console.printInfo("Java Version: " + System.getProperty("java.version"));
-        this.console.printInfo("Java Vendor: " + System.getProperty("java.vendor"));
-        this.console.printInfo("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        this.console.print("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
+        this.console.print("Kernel build: " + Constants.KERNEL_BUILD);
+        this.console.print("OS: " + System.getProperty("os.name"));
+        this.console.print("OS Version: " + System.getProperty("os.version"));
+        this.console.print("OS Architecture: " + System.getProperty("os.arch"));
+        this.console.print("Java Version: " + System.getProperty("java.version"));
+        this.console.print("Java Vendor: " + System.getProperty("java.vendor"));
+        this.console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
         try {
             this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
-            this.console.printInfo("JavaFX loaded.");
+            this.console.print("JavaFX loaded.");
         } catch (ClassNotFoundException e) {
             File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
             if (jfxrt.isFile()) {
-                this.console.printInfo("Attempting to load JavaFX manually...");
+                this.console.print("Attempting to load JavaFX manually...");
                 try {
                     if (addToSystemClassLoader(jfxrt)) {
-                        this.console.printInfo("JavaFX loaded manually.");
+                        this.console.print("JavaFX loaded manually.");
                     } else {
-                        this.console.printError("Found JavaFX but it couldn't be loaded!");
+                        this.console.print("Found JavaFX but it couldn't be loaded!");
                         this.warnJavaFX();
                     }
                 } catch (Throwable e2) {
-                    this.console.printError("Found JavaFX but it couldn't be loaded!");
+                    this.console.print("Found JavaFX but it couldn't be loaded!");
                     this.warnJavaFX();
                 }
             } else {
-                this.console.printError("JavaFX library not found. Please update Java!");
+                this.console.print("JavaFX library not found. Please update Java!");
                 this.warnJavaFX();
             }
         }
-        this.console.printInfo("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
-        this.console.printInfo("Reading launcher profiles...");
+        this.console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+        this.console.print("Reading launcher profiles...");
         try {
             if (Constants.APPLICATION_CONFIG.exists() && Constants.APPLICATION_CONFIG.isFile()) {
                 this.launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
             } else {
-                this.console.printError("Launcher profiles file does not exists.");
+                this.console.print("Launcher profiles file does not exists.");
             }
         } catch (MalformedURLException | JSONException e) {
-            this.console.printError("Malformed launcher profiles file.");
+            this.console.print("Malformed launcher profiles file.");
         }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
@@ -126,8 +126,8 @@ public final class Kernel {
             p = loader.load();
         } catch (IOException e) {
             p = null;
-            this.console.printError("Failed to initialize JavaFX GUI!");
-            this.console.printError(e.getMessage());
+            this.console.print("Failed to initialize JavaFX GUI!");
+            this.console.print(e.getMessage());
             this.exitSafely();
         }
         s.getIcons().add(this.applicationIcon);
@@ -154,8 +154,8 @@ public final class Kernel {
             p = loader2.load();
         } catch (IOException e) {
             p = null;
-            this.console.printError("Failed to initialize JavaFX GUI!");
-            this.console.printError(e.getMessage());
+            this.console.print("Failed to initialize JavaFX GUI!");
+            this.console.print(e.getMessage());
             this.exitSafely();
         }
         stage.getIcons().add(this.applicationIcon);
@@ -215,7 +215,7 @@ public final class Kernel {
         }
         output.put("settings", this.settings.toJSON());
         if (!Utils.writeToFile(output.toString(4), Constants.APPLICATION_CONFIG)) {
-            this.console.printError("Failed to save the profiles file!");
+            this.console.print("Failed to save the profiles file!");
         }
     }
 
@@ -268,7 +268,7 @@ public final class Kernel {
      */
     public void exitSafely() {
         this.saveProfiles();
-        this.console.printInfo("Shutting down launcher...");
+        this.console.print("Shutting down launcher...");
         this.console.close();
         System.exit(0);
     }
@@ -280,7 +280,7 @@ public final class Kernel {
     public String checkForUpdates() {
         String r = Utils.readURL(Constants.GETLATEST_URL);
         if (r == null) {
-            this.console.printError("Failed to check for updates");
+            this.console.print("Failed to check for updates");
             return null;
         }
         String[] data = r.split(":");
@@ -288,16 +288,16 @@ public final class Kernel {
             try {
                 int version = Integer.parseInt(Utils.fromBase64(data[0]));
                 if (version > Constants.KERNEL_BUILD) {
-                    this.console.printInfo("New kernel build available: " + version);
+                    this.console.print("New kernel build available: " + version);
                     return data[1];
                 } else {
-                    this.console.printInfo("No updates found.");
+                    this.console.print("No updates found.");
                 }
             } catch (NumberFormatException e) {
-                this.console.printError("Invalid check for updates reponse from the server.");
+                this.console.print("Invalid check for updates reponse from the server.");
             }
         } else {
-            this.console.printError("Invalid check for updates reponse from the server.");
+            this.console.print("Invalid check for updates reponse from the server.");
         }
         return null;
     }

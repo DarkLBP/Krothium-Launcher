@@ -34,7 +34,7 @@ public final class Version {
     public Version(URL durl, Kernel k) throws Exception {
         Console console = k.getConsole();
         this.jsonURL = durl;
-        console.printInfo("Getting version info from " + durl);
+        console.print("Getting version info from " + durl);
         JSONObject version = new JSONObject(Utils.readURL(durl));
         if (version.has("id")) {
             this.id = version.getString("id");
@@ -45,7 +45,7 @@ public final class Version {
             this.type = VersionType.valueOf(version.getString("type").toUpperCase());
         } else {
             this.type = VersionType.RELEASE;
-            console.printError("Remote version " + this.id + " has no version type. Will be loaded as a RELEASE.");
+            console.print("Remote version " + this.id + " has no version type. Will be loaded as a RELEASE.");
         }
         if (version.has("mainClass")) {
             this.mainClass = version.getString("mainClass");

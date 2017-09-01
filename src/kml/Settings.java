@@ -1,5 +1,6 @@
 package kml;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -19,36 +20,41 @@ public class Settings {
      * Loads the settings from launcher_profiles.json
      */
     public final void loadSettings() {
-        this.kernel.getConsole().printInfo("Loading settings...");
+        this.kernel.getConsole().print("Loading settings...");
         JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
             if (root.has("settings")) {
                 JSONObject settings = root.getJSONObject("settings");
-                if (settings.has("locale")) {
-                    this.setLocale(settings.getString("locale"));
-                } else {
-                    this.setLocale("en-us");
-                }
-                if (settings.has("keepLauncherOpen")) {
-                    this.keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
-                }
-                if (settings.has("showGameLog")) {
-                    this.showGameLog = settings.getBoolean("showGameLog");
-                }
-                if (settings.has("enableAdvanced")) {
-                    this.enableAdvanced = settings.getBoolean("enableAdvanced");
-                }
-                if (settings.has("enableHistorical")) {
-                    this.enableHistorical = settings.getBoolean("enableHistorical");
-                }
-                if (settings.has("enableSnapshots")) {
-                    this.enableSnapshots = settings.getBoolean("enableSnapshots");
+                try {
+                    if (settings.has("locale")) {
+                        this.setLocale(settings.getString("locale"));
+                    } else {
+                        this.setLocale("en-us");
+                    }
+                    if (settings.has("keepLauncherOpen")) {
+                        this.keepLauncherOpen = settings.getBoolean("keepLauncherOpen");
+                    }
+                    if (settings.has("showGameLog")) {
+                        this.showGameLog = settings.getBoolean("showGameLog");
+                    }
+                    if (settings.has("enableAdvanced")) {
+                        this.enableAdvanced = settings.getBoolean("enableAdvanced");
+                    }
+                    if (settings.has("enableHistorical")) {
+                        this.enableHistorical = settings.getBoolean("enableHistorical");
+                    }
+                    if (settings.has("enableSnapshots")) {
+                        this.enableSnapshots = settings.getBoolean("enableSnapshots");
+                    }
+                } catch (JSONException ex) {
+                    this.kernel.getConsole().print("Failed to load settings.");
+                    ex.printStackTrace(this.kernel.getConsole().getWriter());
                 }
             } else {
                 this.setLocale("en-us");
             }
         } else {
-            this.kernel.getConsole().printError("Not settings to be loaded.");
+            this.kernel.getConsole().print("Not settings to be loaded.");
             this.setLocale("en-us");
         }
     }
@@ -84,11 +90,11 @@ public class Settings {
     public final void setLocale(String s) {
         if (s != null) {
             if ("es-es".equals(s) || "en-us".equals(s) || "pt-pt".equals(s) || "pt-br".equals(s) || "val-es".equals(s) || "hu-hu".equals(s)) {
-                this.kernel.getConsole().printInfo("Switched language to " + s);
+                this.kernel.getConsole().print("Switched language to " + s);
                 this.locale = s;
                 Language.loadLang(this.locale);
             } else {
-                this.kernel.getConsole().printInfo("Switched language to en-us");
+                this.kernel.getConsole().print("Switched language to en-us");
                 this.locale = "en-us";
                 Language.loadLang(this.locale);
             }

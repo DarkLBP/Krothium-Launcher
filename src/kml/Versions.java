@@ -81,11 +81,11 @@ public class Versions {
                 this.version_cache.add(v);
                 return v;
             } catch (Exception ex) {
-                this.console.printError(ex.getMessage());
+                this.console.print(ex.getMessage());
                 return null;
             }
         }
-        this.console.printError("Version id " + vm.getID() + " not found.");
+        this.console.print("Version id " + vm.getID() + " not found.");
         return null;
     }
 
@@ -94,7 +94,7 @@ public class Versions {
      */
     public final void fetchVersions() {
         String lr = "", ls = "";
-        this.console.printInfo("Fetching remote version list.");
+        this.console.print("Fetching remote version list.");
         try {
             JSONObject root = new JSONObject(Utils.readURL(Constants.VERSION_MANIFEST_FILE));
             if (root.has("latest")) {
@@ -122,10 +122,15 @@ public class Versions {
                     continue;
                 }
                 if (ver.has("type")) {
-                    type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                    try {
+                        type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                    } catch (IllegalArgumentException ex) {
+                        type = VersionType.RELEASE;
+                        this.console.print("Invalid type for version " + id);
+                    }
                 } else {
                     type = VersionType.RELEASE;
-                    this.console.printError("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                    this.console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
                 }
                 VersionMeta vm = new VersionMeta(id, url, type);
                 if (lr.equalsIgnoreCase(id)) {
@@ -136,12 +141,12 @@ public class Versions {
                 }
                 this.add(vm);
             }
-            this.console.printInfo("Remote version list loaded.");
+            this.console.print("Remote version list loaded.");
         } catch (JSONException ex) {
-            this.console.printError("Failed to fetch remote version list.");
-            this.console.printError(ex.getMessage());
+            this.console.print("Failed to fetch remote version list.");
+            ex.printStackTrace(this.console.getWriter());
         }
-        this.console.printInfo("Fetching local version list versions.");
+        this.console.print("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
         try {
@@ -162,10 +167,15 @@ public class Versions {
                                 continue;
                             }
                             if (ver.has("type")) {
-                                type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                                try {
+                                    type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                                } catch (IllegalArgumentException ex) {
+                                    type = VersionType.RELEASE;
+                                    this.console.print("Invalid type for version " + id);
+                                }
                             } else {
                                 type = VersionType.RELEASE;
-                                this.console.printError("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
+                                this.console.print("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
                             }
                             VersionMeta vm = new VersionMeta(id, url, type);
                             this.add(vm);
@@ -188,9 +198,10 @@ public class Versions {
             if (this.latestSnap == null && lastSnapshot != null) {
                 this.latestSnap = lastSnapshot;
             }
-            this.console.printInfo("Local version list loaded.");
+            this.console.print("Local version list loaded.");
         } catch (JSONException | MalformedURLException ex) {
-            this.console.printError("Failed to fetch local version list.");
+            this.console.print("Failed to fetch local version list.");
+            ex.printStackTrace(this.console.getWriter());
         }
     }
 

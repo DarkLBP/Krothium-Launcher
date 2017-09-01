@@ -35,10 +35,10 @@ public class Authentication {
         if (this.userDatabase.contains(u)) {
             this.userDatabase.remove(u);
             this.userDatabase.add(u);
-            this.console.printInfo("User " + u.getDisplayName() + " updated.");
+            this.console.print("User " + u.getDisplayName() + " updated.");
         } else {
             this.userDatabase.add(u);
-            this.console.printInfo("User " + u.getDisplayName() + " loaded.");
+            this.console.print("User " + u.getDisplayName() + " loaded.");
         }
 
     }
@@ -50,7 +50,7 @@ public class Authentication {
      */
     public final boolean removeUser(User u) {
         if (this.userDatabase.contains(u)) {
-            this.console.printInfo("User " + u.getDisplayName() + " deleted.");
+            this.console.print("User " + u.getDisplayName() + " deleted.");
             this.userDatabase.remove(u);
             if (u.equals(this.selectedAccount)) {
                 this.selectedAccount = null;
@@ -58,7 +58,7 @@ public class Authentication {
             }
             return true;
         } else {
-            this.console.printError("userID " + u.getUserID() + " is not registered.");
+            this.console.print("userID " + u.getUserID() + " is not registered.");
             return false;
         }
     }
@@ -166,7 +166,7 @@ public class Authentication {
         } catch (IOException ex) {
             if (Constants.USE_LOCAL) {
                 this.authenticated = true;
-                this.console.printInfo("Authenticated locally.");
+                this.console.print("Authenticated locally.");
                 return;
             } else {
                 throw new AuthenticationException("Failed to send request to authentication server: " + ex);
@@ -215,7 +215,7 @@ public class Authentication {
      * Loads the users from launcher_profile.json
      */
     public final void fetchUsers() {
-        this.console.printInfo("Loading user data.");
+        this.console.print("Loading user data.");
         JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
             try {
@@ -252,10 +252,10 @@ public class Authentication {
                     }
                 }
             } catch (JSONException ex) {
-                this.console.printError("Failed to load user list.");
+                this.console.print("Failed to load user list.");
             }
         } else {
-            this.console.printError("No users to be loaded.");
+            this.console.print("No users to be loaded.");
         }
     }
 

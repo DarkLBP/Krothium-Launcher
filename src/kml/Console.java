@@ -3,6 +3,7 @@ package kml;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ import java.util.Date;
 public class Console {
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private boolean enabled = true;
-    private FileOutputStream data;
+    private PrintWriter writer;
     private final File log;
 
     public Console() {
@@ -65,7 +66,67 @@ public class Console {
             this.log.getParentFile().mkdirs();
         }
         try {
-            this.data = new FileOutputStream(this.log);
+            this.writer = new PrintWriter(this.log){
+                @Override
+                public void println(boolean x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(char x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(int x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(long x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(float x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(double x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(char[] x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(String x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println(Object x) {
+                    System.out.println(x);
+                    super.println(x);
+                }
+
+                @Override
+                public void println() {
+                    super.println();
+                    super.flush();
+                }
+            };
         } catch (IOException ex) {
             this.enabled = false;
         }
@@ -75,36 +136,18 @@ public class Console {
      * Prints something to the output channel
      * @param info The Object to be printed
      */
-    public final void printInfo(Object info) {
+    public final void print(Object info) {
         if (this.enabled) {
-            this.writeData('[' + this.dateFormat.format(new Date()) + "] " + info);
-            System.out.println(info);
+            this.writer.println('[' + this.dateFormat.format(new Date()) + "] " + info);
         }
     }
 
     /**
-     * Prints something to the error channel
-     * @param error The Object to be printed
+     * Gets the console writer
+     * @return The console writer
      */
-    public final void printError(Object error) {
-        if (this.enabled) {
-            this.writeData('[' + this.dateFormat.format(new Date()) + "] " + error);
-            System.err.println(error);
-        }
-    }
-
-    /**
-     * Writes data to the log
-     * @param data The data to be written
-     */
-    private void writeData(Object data) {
-        try {
-            byte[] raw = (data + System.lineSeparator()).getBytes();
-            this.data.write(raw);
-        } catch (IOException ignored) {
-            System.err.println("Failed to write log data.");
-            this.enabled = false;
-        }
+    public PrintWriter getWriter() {
+        return this.writer;
     }
 
     /**
@@ -112,17 +155,8 @@ public class Console {
      */
     public final void close() {
         if (this.enabled) {
-            try {
-                this.data.close();
-                this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
-            } catch (IOException ignored) {
-            }
-        } else {
-            try {
-                this.data.close();
-                this.log.delete();
-            } catch (IOException ignored) {
-            }
+            this.writer.close();
+            this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
         }
     }
 }

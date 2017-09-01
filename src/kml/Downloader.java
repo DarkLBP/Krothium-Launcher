@@ -44,7 +44,7 @@ public class Downloader {
      */
     public final void download() throws DownloaderException {
         this.downloading = true;
-        this.console.printInfo("Download work has started.");
+        this.console.print("Download work has started.");
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         Versions versions = this.kernel.getVersions();
         VersionMeta verID;
@@ -59,7 +59,7 @@ public class Downloader {
             this.downloading = false;
             throw new DownloaderException("Version ID is null.");
         }
-        this.console.printInfo("Using version ID: " + verID);
+        this.console.print("Using version ID: " + verID);
         Version v = versions.getVersion(verID);
         if (v == null) {
             throw new DownloaderException("Version info could not be obtained.");
@@ -70,7 +70,7 @@ public class Downloader {
         this.validated = 0;
         this.total = 0;
         if (Utils.getPlatform() == OS.WINDOWS && !p.hasJavaDir()) {
-            this.console.printInfo("Fetching runtime...");
+            this.console.print("Fetching runtime...");
             try {
                 JSONObject root = new JSONObject(Utils.readURL(Constants.RUNTIME_URL));
                 JSONObject windows = root.getJSONObject("windows");
@@ -87,7 +87,7 @@ public class Downloader {
                 this.total += length;
                 File jreFile = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
                 if (jreFile.exists() && jreFile.isFile() && Utils.verifyChecksum(jreFile, sha1, "sha1")) {
-                    this.console.printInfo("Runtime already downloaded and valid.");
+                    this.console.print("Runtime already downloaded and valid.");
                     this.validated += length;
                 } else {
                     Downloadable d = new Downloadable(jreURL, length, new File("jre.lzma"), sha1, null);
@@ -98,10 +98,10 @@ public class Downloader {
                     }
                 }
             } catch (IOException | JSONException ex) {
-                this.console.printError("Failed to fetch runtime.");
+                this.console.print("Failed to fetch runtime.");
             }
         }
-        this.console.printInfo("Fetching asset urls..");
+        this.console.print("Fetching asset urls..");
         File indexJSON = null;
         URL assetsURL;
         String assetID;
@@ -123,11 +123,11 @@ public class Downloader {
                     tries++;
                 }
                 if (tries == Constants.DOWNLOAD_TRIES) {
-                    this.console.printError("Failed to download asset index for version " + assetID);
+                    this.console.print("Failed to download asset index for version " + assetID);
                 }
             }
         } else {
-            this.console.printInfo("Version " + v.getID() + " does not have any valid assets.");
+            this.console.print("Version " + v.getID() + " does not have any valid assets.");
         }
         //Fetch assets
         if (indexJSON != null) {
@@ -169,7 +169,7 @@ public class Downloader {
                 }
             }
         }
-        this.console.printInfo("Fetching version urls..");
+        this.console.print("Fetching version urls..");
         Downloadable d = v.getClientDownload();
         if (d != null) {
             if (d.hasURL()) {
@@ -185,7 +185,7 @@ public class Downloader {
                         tries++;
                     }
                     if (tries == Constants.DOWNLOAD_TRIES) {
-                        this.console.printError("Failed to download version index " + destPath.getName());
+                        this.console.print("Failed to download version index " + destPath.getName());
                     }
                 }
                 if (destPath.exists() && destPath.isFile()) {
@@ -199,12 +199,12 @@ public class Downloader {
                     this.validated += jarSize;
                 }
             } else {
-                this.console.printInfo("Incompatible version downloadable.");
+                this.console.print("Incompatible version downloadable.");
             }
         } else {
-            this.console.printInfo("Version file from " + v.getID() + " has no compatible downloadable objects.");
+            this.console.print("Version file from " + v.getID() + " has no compatible downloadable objects.");
         }
-        this.console.printInfo("Fetching library and native urls..");
+        this.console.print("Fetching library and native urls..");
         List<Library> libs = v.getLibraries();
         for (Library lib : libs) {
             if (lib.isCompatible()) {
@@ -250,9 +250,9 @@ public class Downloader {
                 }
             }
         }
-        this.console.printInfo("Downloading required game files...");
+        this.console.print("Downloading required game files...");
         if (urls.isEmpty()) {
-            this.console.printInfo("Nothing to download.");
+            this.console.print("Nothing to download.");
         } else {
             //Download required files
             for (Downloadable dw : urls) {
@@ -266,12 +266,12 @@ public class Downloader {
                     } else {
                         this.currentFile = path.getName();
                     }
-                    this.console.printInfo("Downloading " + this.currentFile + " from " + url);
+                    this.console.print("Downloading " + this.currentFile + " from " + url);
                     while (!Utils.downloadFile(url, fullPath) && tries < Constants.DOWNLOAD_TRIES) {
                         tries++;
                     }
                     if (tries == Constants.DOWNLOAD_TRIES) {
-                        this.console.printError("Failed to download file " + path.getName() + " from " + url);
+                        this.console.print("Failed to download file " + path.getName() + " from " + url);
                     }
                     this.downloaded += dw.getSize();
                 };
