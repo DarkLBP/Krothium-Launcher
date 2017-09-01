@@ -11,7 +11,6 @@ public class BrowserFX {
     private WebView webBrowser;
 
     private Stage stage;
-    private String askedURL;
     private Stage toHide;
 
     public final void initialize(Stage s) {
@@ -23,7 +22,8 @@ public class BrowserFX {
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(State.SUCCEEDED)) {
                 String location = engine.getLocation();
-                if (!location.equalsIgnoreCase(this.askedURL) && !location.contains("krothium.com") && !location.contains("about:blank")) {
+                System.out.println(location);
+                if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com") && !location.contains("about:blank")) {
                     this.webBrowser.getEngine().load("about:blank");
                 }
                 if (location.contains("about:blank") && !this.toHide.isShowing()) {
@@ -35,7 +35,6 @@ public class BrowserFX {
     }
 
     public final void loadWebsite(String url) {
-        this.askedURL = url;
         this.webBrowser.getEngine().load(url);
     }
 

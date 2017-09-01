@@ -198,6 +198,7 @@ public class GameLauncher {
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to create virtual asset folder.");
+                    ex.printStackTrace(this.console.getWriter());
                 }
             } else {
                 assetsDir = assetsRoot;
@@ -302,7 +303,7 @@ public class GameLauncher {
                     } catch (IOException e) {
                         parent = null;
                         this.console.print("Failed to initialize Output GUI!");
-                        this.console.print(e.getMessage());
+                        e.printStackTrace(this.console.getWriter());
                     }
                     Stage stage = new Stage();
                     stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));

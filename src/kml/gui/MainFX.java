@@ -414,7 +414,8 @@ public class MainFX {
                 }
             }
         } catch (Exception ex) {
-            this.console.print("Failed to parse remote profile textures. (" + ex.getMessage() + ')');
+            this.console.print("Failed to parse remote profile textures.");
+            ex.printStackTrace(this.console.getWriter());
         }
         if (Constants.USE_LOCAL) {
             this.selectSkin.setDisable(true);

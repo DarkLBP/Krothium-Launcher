@@ -36,6 +36,7 @@ public class GameStarter {
             method.invoke(null, (Object) gameArgs);
         } catch (Exception ex) {
             System.out.println("Failed to start the game.");
+            ex.printStackTrace();
         }
     }
 }
