@@ -82,6 +82,7 @@ public final class Kernel {
                     }
                 } catch (Throwable e2) {
                     this.console.print("Found JavaFX but it couldn't be loaded!");
+                    e2.printStackTrace(this.console.getWriter());
                     this.warnJavaFX();
                 }
             } else {
@@ -99,6 +100,7 @@ public final class Kernel {
             }
         } catch (MalformedURLException | JSONException e) {
             this.console.print("Malformed launcher profiles file.");
+            e.printStackTrace(this.console.getWriter());
         }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
@@ -127,7 +129,7 @@ public final class Kernel {
         } catch (IOException e) {
             p = null;
             this.console.print("Failed to initialize JavaFX GUI!");
-            this.console.print(e.getMessage());
+            e.printStackTrace(this.console.getWriter());
             this.exitSafely();
         }
         s.getIcons().add(this.applicationIcon);
@@ -155,7 +157,7 @@ public final class Kernel {
         } catch (IOException e) {
             p = null;
             this.console.print("Failed to initialize JavaFX GUI!");
-            this.console.print(e.getMessage());
+            e.printStackTrace(this.console.getWriter());
             this.exitSafely();
         }
         stage.getIcons().add(this.applicationIcon);

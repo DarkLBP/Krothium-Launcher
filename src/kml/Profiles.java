@@ -1,6 +1,5 @@
 package kml;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import kml.enums.ProfileIcon;
 import kml.enums.ProfileType;
 import kml.enums.VersionType;

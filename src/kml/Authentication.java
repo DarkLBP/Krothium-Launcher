@@ -112,7 +112,9 @@ public class Authentication {
         try {
             response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
-            throw new AuthenticationException("Failed to send request to authentication server: " + ex);
+            this.console.print("Failed to send request to authentication server");
+            ex.printStackTrace(this.console.getWriter());
+            throw new AuthenticationException("Failed to send request to authentication server");
         }
         if (response.isEmpty()) {
             throw new AuthenticationException("Authentication server does not respond.");
@@ -169,7 +171,9 @@ public class Authentication {
                 this.console.print("Authenticated locally.");
                 return;
             } else {
-                throw new AuthenticationException("Failed to send request to authentication server: " + ex);
+                this.console.print("Failed to send request to authentication server");
+                ex.printStackTrace(this.console.getWriter());
+                throw new AuthenticationException("Failed to send request to authentication server");
             }
         }
         if (response.isEmpty()) {
