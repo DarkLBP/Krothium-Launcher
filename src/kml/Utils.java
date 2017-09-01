@@ -1,6 +1,5 @@
 package kml;
 
-import SevenZip.Compression.LZMA.Decoder;
 import kml.enums.OS;
 import kml.enums.OSArch;
 
@@ -12,8 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;

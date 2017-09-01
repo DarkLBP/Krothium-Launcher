@@ -1,5 +1,6 @@
 package kml;
 
+import LZMA.LzmaInputStream;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +14,6 @@ import kml.exceptions.GameLauncherException;
 import kml.gui.OutputFX;
 import kml.objects.*;
 import org.json.JSONObject;
-import org.tukaani.xz.LZMAInputStream;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -102,7 +102,7 @@ public class GameLauncher {
                         File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
                         if (!new File(jreFolder, "OK").exists()) {
                             this.console.print("Decompressing runtime...");
-                            LZMAInputStream input = new LZMAInputStream(new FileInputStream(jre));
+                            LzmaInputStream input = new LzmaInputStream(new FileInputStream(jre));
                             Utils.decompressZIP(input, jreFolder, null);
                         }
                         gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
