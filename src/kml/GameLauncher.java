@@ -318,8 +318,6 @@ public class GameLauncher {
                 });
             }
             Thread log_info = new Thread(() -> {
-
-
                 try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), Charset.forName("ISO-8859-1"));
                      BufferedReader br = new BufferedReader(isr);){
                     while (this.isRunning()) {
@@ -335,12 +333,10 @@ public class GameLauncher {
                         this.error = true;
                         this.console.print("Game stopped unexpectedly.");
                     }
-                    if (!this.kernel.getSettings().getKeepLauncherOpen()) {
-                        this.kernel.exitSafely();
-                    }
                 } catch (Exception ex) {
                     this.error = true;
                     this.console.print("Game stopped unexpectedly.");
+                    ex.printStackTrace(this.console.getWriter());
                 }
                 this.started = false;
                 this.console.print("Deleteting natives dir.");
@@ -361,6 +357,7 @@ public class GameLauncher {
                     }
                 } catch (IOException ignored) {
                     this.console.print("Failed to read game error stream.");
+                    ignored.printStackTrace(this.console.getWriter());
                 }
             });
             log_error.start();
@@ -368,6 +365,7 @@ public class GameLauncher {
             this.error = true;
             this.started = false;
             this.console.print("Game returned an error code.");
+            ex.printStackTrace(this.console.getWriter());
         }
     }
 

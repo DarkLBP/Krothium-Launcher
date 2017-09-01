@@ -903,7 +903,6 @@ public class MainFX {
         this.progressText.setText("");
         Downloader d = this.kernel.getDownloader();
         GameLauncher gl = this.kernel.getGameLauncher();
-        Console console = this.console;
         //Begin download and game launch task
         Task runTask = new Task() {
             @Override
@@ -943,7 +942,7 @@ public class MainFX {
                                     Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(16), Language.get(15));
                                     a.showAndWait();
                                 }
-                                if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen() && !MainFX.this.kernel.getSettings().getShowGameLog()) {
+                                if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
                                     MainFX.this.kernel.exitSafely();
                                 }
                                 MainFX.this.playButton.setDisable(false);
@@ -963,11 +962,13 @@ public class MainFX {
                     } catch (DownloaderException e) {
                         Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(83), Language.get(84));
                         a.showAndWait();
-                        console.print("Failed to perform game download task: " + e);
+                        MainFX.this.console.print("Failed to perform game download task");
+                        e.printStackTrace(MainFX.this.console.getWriter());
                     } catch (GameLauncherException e) {
                         Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(81), Language.get(82));
                         a.showAndWait();
-                        console.print("Failed to perform game launch task: " + e);
+                        MainFX.this.console.print("Failed to perform game launch task");
+                        e.printStackTrace(MainFX.this.console.getWriter());
                     }
                 }
                 return null;

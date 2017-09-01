@@ -173,7 +173,7 @@ public final class Kernel {
      * @param file The JAR file to be laoded
      * @return A boolean indicating if the file has been loaded
      */
-    public static boolean addToSystemClassLoader(File file) {
+    private static boolean addToSystemClassLoader(File file) {
         if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
             URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
             try {
