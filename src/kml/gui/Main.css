@@ -90,12 +90,24 @@
 .button:hover {
     -fx-background-image: url("textures/button_hover.png");
 }
-.text-field {
-    -fx-text-box-border: black;
+
+.left-arrow {
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: 100% 100%;
+    -fx-background-insets: 0;
+    -fx-background-image: url("textures/left_arrow.png");
 }
 
-.text-unicode {
-    -fx-font-size: 70px;
+.right-arrow{
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+    -fx-background-size: 100% 100%;
+    -fx-background-insets: 0;
+    -fx-background-image: url("textures/right_arrow.png");
+}
+.text-field {
+    -fx-text-box-border: black;
 }
 
 .text-1 {
