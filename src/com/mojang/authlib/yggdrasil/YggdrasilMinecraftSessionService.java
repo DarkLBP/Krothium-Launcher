@@ -162,7 +162,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                     JSONObject user = rdata.getJSONObject(0);
                     if (user.has("id")) {
                         profileID = user.getString("id");
-                        System.out.println("Found user " + profile.getName() + " on Krothium  server.");
+                        System.out.println("Found user " + profile.getName() + " on Krothium server.");
                     }
                 } else {
                     System.out.println("No textures found on Krothium for " + profile.getName() + ". Searching in Mojang server...");
@@ -189,7 +189,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                                     String textures = new String(Base64.decodeBase64(property.getString("value")), Charsets.UTF_8);
                                     MinecraftTexturesPayload result = this.gson.fromJson(textures, MinecraftTexturesPayload.class);
                                     cache.put(profile.getName(), result.getTextures());
-                                    System.out.println("Found textures for " + profile.getName() + " on Mojang server.");
+                                    System.out.println("Found textures for " + profile.getName() + ".");
                                     return result.getTextures();
                                 }
                             }

@@ -459,31 +459,6 @@ public final class Utils {
         return conversion;
     }
 
-    /**
-     * Unpacks a LZMA file
-     * @param input The LZMA file
-     * @param output The output file
-     * @throws IOException If an error occurred
-     */
-    public static void decompressLZMA(File input, File output) throws IOException {
-        Decoder LZMADecoder = new Decoder();
-        try (FileInputStream in = new FileInputStream(input);
-             FileOutputStream out = new FileOutputStream(output)){
-            // Read the decoder properties
-            byte[] properties = new byte[5];
-            in.read(properties, 0, 5);
-
-            // Read in the decompress file size.
-            byte [] fileLengthBytes = new byte[8];
-            in.read(fileLengthBytes, 0, 8);
-            ByteBuffer bb = ByteBuffer.wrap( fileLengthBytes );
-            bb.order(ByteOrder.LITTLE_ENDIAN);
-            long fileLength = bb.getLong();
-
-            LZMADecoder.SetDecoderProperties(properties);
-            LZMADecoder.Code(in, out, fileLength);
-        }
-    }
 
     /**
      * Decompresses a ZIP file
@@ -492,11 +467,11 @@ public final class Utils {
      * @param exclusions Any extraction exclusions
      * @throws IOException If the process failed
      */
-    public static void decompressZIP(File input, File output, Iterable<String> exclusions) throws IOException {
+    public static void decompressZIP(InputStream input, File output, Iterable<String> exclusions) throws IOException {
         if(!output.exists() || !output.isDirectory()){
             output.mkdirs();
         }
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(input))){
+        try (ZipInputStream zis = new ZipInputStream(input)){
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
                 String fileName = ze.getName();

@@ -13,11 +13,9 @@ import kml.exceptions.GameLauncherException;
 import kml.gui.OutputFX;
 import kml.objects.*;
 import org.json.JSONObject;
+import org.tukaani.xz.LZMAInputStream;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -99,22 +97,19 @@ public class GameLauncher {
         } else {
             if (Utils.getPlatform() == OS.WINDOWS) {
                 File jre = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
-                File jreZip = new File(Constants.APPLICATION_WORKING_DIR, "jre.zip");
                 if (jre.exists() && jre.isFile()) {
                     try {
                         File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
                         if (!new File(jreFolder, "OK").exists()) {
                             this.console.print("Decompressing runtime...");
-                            Utils.decompressLZMA(jre, jreZip);
-                            Utils.decompressZIP(jreZip, jreFolder, null);
-                            if (!jreZip.delete()) {
-                                this.console.print("Failed to delete temporary zip file.");
-                            }
+                            LZMAInputStream input = new LZMAInputStream(new FileInputStream(jre));
+                            Utils.decompressZIP(input, jreFolder, null);
                         }
                         gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
                         this.console.print("Using custom runtime.");
                     } catch (Exception ex) {
                         this.console.print("Failed to decompress runtime.");
+                        ex.printStackTrace(this.console.getWriter());
                         gameArgs.add(Utils.getJavaDir());
                     }
                 }
@@ -150,9 +145,11 @@ public class GameLauncher {
                 if (lib.isNative()) {
                     try {
                         File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
-                        Utils.decompressZIP(completePath, nativesDir, lib.getExtractExclusions());
+                        FileInputStream input = new FileInputStream(completePath);
+                        Utils.decompressZIP(input, nativesDir, lib.getExtractExclusions());
                     } catch (IOException ex) {
                         this.console.print("Failed to extract native: " + lib.getName());
+                        ex.printStackTrace(this.console.getWriter());
                     }
                 } else {
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
