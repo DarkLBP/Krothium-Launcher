@@ -157,6 +157,11 @@ public class MainFX {
         this.newsText.setText("Please wait a moment...");
         this.loadSlideshow();
 
+        //Load placeholder skins
+        this.alex = new Image("/kml/gui/textures/alex.png");
+        this.steve = new Image("/kml/gui/textures/steve.png");
+
+
         //Refresh session
         this.refreshSession();
 
@@ -221,10 +226,6 @@ public class MainFX {
 
         //Load icons
         this.loadIcons();
-
-        //Load placeholder skins
-        this.alex = new Image("/kml/gui/textures/alex.png");
-        this.steve = new Image("/kml/gui/textures/steve.png");
 
         //If offline mode make play button bigger for language support
         if (Constants.USE_LOCAL) {
