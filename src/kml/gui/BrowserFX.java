@@ -22,7 +22,6 @@ public class BrowserFX {
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(State.SUCCEEDED)) {
                 String location = engine.getLocation();
-                System.out.println(location);
                 if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com") && !location.contains("about:blank")) {
                     this.webBrowser.getEngine().load("about:blank");
                 }

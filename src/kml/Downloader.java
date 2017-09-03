@@ -45,6 +45,11 @@ public class Downloader {
     public final void download() throws DownloaderException {
         this.downloading = true;
         this.console.print("Download work has started.");
+        if (Constants.USE_LOCAL) {
+            this.console.print("You are in offline mode.");
+            this.downloading = false;
+            return;
+        }
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         Versions versions = this.kernel.getVersions();
         VersionMeta verID;
@@ -62,6 +67,7 @@ public class Downloader {
         this.console.print("Using version ID: " + verID);
         Version v = versions.getVersion(verID);
         if (v == null) {
+            this.downloading = false;
             throw new DownloaderException("Version info could not be obtained.");
         }
         ExecutorService pool = Executors.newFixedThreadPool(1);
@@ -102,10 +108,10 @@ public class Downloader {
             }
         }
         this.console.print("Fetching asset urls..");
-        File indexJSON = null;
+        File indexJSON;
         URL assetsURL;
         String assetID;
-        //Fetch asset index
+        //Fetch assets
         if (v.hasAssetIndex() || v.hasAssets()) {
             if (v.hasAssetIndex()) {
                 AssetIndex index = v.getAssetIndex();
@@ -117,58 +123,68 @@ public class Downloader {
                 assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetID + ".json"); //Might be deprecated soon
                 indexJSON = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
             }
-            if (!Constants.USE_LOCAL) {
-                int tries = 0;
-                while (!Utils.downloadFile(assetsURL, indexJSON) && tries < Constants.DOWNLOAD_TRIES) {
+            int tries = 0;
+            while (tries < Constants.DOWNLOAD_TRIES) {
+                try {
+                    Utils.downloadFile(assetsURL, indexJSON);
+                    break;
+                } catch (IOException ex) {
+                    this.console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ")");
+                    ex.printStackTrace(this.console.getWriter());
                     tries++;
                 }
-                if (tries == Constants.DOWNLOAD_TRIES) {
-                    this.console.print("Failed to download asset index for version " + assetID);
+            }
+            if (tries == Constants.DOWNLOAD_TRIES) {
+                this.console.print("Failed to download asset index for version " + assetID);
+            } else {
+                if (indexJSON.exists() && indexJSON.isFile()) {
+                    JSONObject root;
+                    try {
+                        root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
+                    } catch (UnsupportedEncodingException ex) {
+                        this.downloading = false;
+                        throw new DownloaderException("Your computer does not support ISO-8859-1 encoding.");
+                    } catch (IOException ex) {
+                        this.downloading = false;
+                        throw new DownloaderException("Failed to read asset index json file.");
+                    }
+
+                    JSONObject objects = root.getJSONObject("objects");
+                    Set<String> keys = objects.keySet();
+                    Collection<String> processedHashes = new ArrayList<>();
+                    for (String key : keys) {
+                        JSONObject o = objects.getJSONObject(key);
+                        String hash = o.getString("hash");
+                        long size = o.getLong("size");
+                        URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
+                        File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
+                        File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
+                        boolean localValid = false;
+                        if (fullPath.exists() && fullPath.isFile()) {
+                            if (fullPath.length() == size && Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
+                                localValid = true;
+                            }
+                        }
+                        if (!processedHashes.contains(hash)) {
+                            this.total += size;
+                            processedHashes.add(hash);
+                            if (!localValid) {
+                                Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
+                                urls.add(d);
+                            } else {
+                                this.validated += size;
+                            }
+                        }
+                    }
+                } else {
+                    this.console.print("Failed to access asset index json file.");
                 }
             }
         } else {
             this.console.print("Version " + v.getID() + " does not have any valid assets.");
         }
-        //Fetch assets
-        if (indexJSON != null) {
-            JSONObject root;
-            try {
-                root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-            } catch (UnsupportedEncodingException ex) {
-                this.downloading = false;
-                throw new DownloaderException("Your computer does not support ISO-8859-1 encoding.");
-            } catch (IOException ex) {
-                this.downloading = false;
-                throw new DownloaderException("Failed to read asset index json file.");
-            }
-            JSONObject objects = root.getJSONObject("objects");
-            Set<String> keys = objects.keySet();
-            Collection<String> processedHashes = new ArrayList<>();
-            for (String key : keys) {
-                JSONObject o = objects.getJSONObject(key);
-                String hash = o.getString("hash");
-                long size = o.getLong("size");
-                URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
-                File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
-                File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
-                boolean localValid = false;
-                if (fullPath.exists() && fullPath.isFile()) {
-                    if (fullPath.length() == size && Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
-                        localValid = true;
-                    }
-                }
-                if (!processedHashes.contains(hash)) {
-                    this.total += size;
-                    processedHashes.add(hash);
-                    if (!localValid) {
-                        Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
-                        urls.add(d);
-                    } else {
-                        this.validated += size;
-                    }
-                }
-            }
-        }
+
+        //Fetch version
         this.console.print("Fetching version urls..");
         Downloadable d = v.getClientDownload();
         if (d != null) {
@@ -179,14 +195,19 @@ public class Downloader {
                 File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
                 boolean localValid = false;
                 File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
-                if (!Constants.USE_LOCAL) {
-                    int tries = 0;
-                    while (!Utils.downloadFile(v.getJSONURL(), jsonFile) && tries < Constants.DOWNLOAD_TRIES) {
+                int tries = 0;
+                while (tries < Constants.DOWNLOAD_TRIES) {
+                    try {
+                        Utils.downloadFile(v.getJSONURL(), jsonFile);
+                        break;
+                    } catch (IOException ex) {
+                        this.console.print("Failed to download file " + jsonFile.getName() + " (try " + tries + ")");
+                        ex.printStackTrace(this.console.getWriter());
                         tries++;
                     }
-                    if (tries == Constants.DOWNLOAD_TRIES) {
-                        this.console.print("Failed to download version index " + destPath.getName());
-                    }
+                }
+                if (tries == Constants.DOWNLOAD_TRIES) {
+                    this.console.print("Failed to download version index " + destPath.getName());
                 }
                 if (destPath.exists() && destPath.isFile()) {
                     if (destPath.length() == jarSize && d.hasHash()) {
@@ -267,8 +288,15 @@ public class Downloader {
                         this.currentFile = path.getName();
                     }
                     this.console.print("Downloading " + this.currentFile + " from " + url);
-                    while (!Utils.downloadFile(url, fullPath) && tries < Constants.DOWNLOAD_TRIES) {
-                        tries++;
+                    while (tries < Constants.DOWNLOAD_TRIES) {
+                        try {
+                            Utils.downloadFile(url, fullPath);
+                            break;
+                        } catch (IOException ex) {
+                            this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
+                            ex.printStackTrace(this.console.getWriter());
+                            tries++;
+                        }
                     }
                     if (tries == Constants.DOWNLOAD_TRIES) {
                         this.console.print("Failed to download file " + path.getName() + " from " + url);

@@ -2,6 +2,7 @@ package kml;
 
 import kml.handlers.URLHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
@@ -17,7 +18,14 @@ public class GameStarter {
         if (!Utils.ignoreHTTPSCert()) {
             System.err.println("Failed load custom HTTPS certificate checker.");
         }
-        Utils.testNetwork();
+        try {
+            int response = Utils.testNetwork();
+            Constants.USE_LOCAL = response != 204;
+        } catch (IOException ex) {
+            System.out.println("Running offline mode.");
+            Constants.USE_LOCAL = true;
+            ex.printStackTrace();
+        }
         URL.setURLStreamHandlerFactory(new URLHandler());
         System.out.println("Loaded URL Handler.");
         if (args.length == 0) {
@@ -37,6 +45,7 @@ public class GameStarter {
         } catch (Exception ex) {
             System.out.println("Failed to start the game.");
             ex.printStackTrace();
+            System.exit(-1);
         }
     }
 }

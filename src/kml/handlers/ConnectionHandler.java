@@ -64,15 +64,11 @@ class ConnectionHandler extends HttpURLConnection {
                 if (etag != null) {
                     if (!cachedFile.exists() || !cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
                         System.out.println("Caching file for " + this.relay.getURL());
-                        if (!Utils.downloadFile(this.relay, cachedFile)) {
-                            return null;
-                        }
+                        Utils.downloadFile(this.relay, cachedFile);
                     }
                 } else {
                     System.out.println("Caching file without ETAG for " + this.relay.getURL());
-                    if (!Utils.downloadFile(this.relay, cachedFile)) {
-                        return null;
-                    }
+                    Utils.downloadFile(this.relay, cachedFile);
                 }
             }
             try {

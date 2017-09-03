@@ -3,6 +3,8 @@ package kml;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -92,11 +94,21 @@ public class Settings {
             if ("es-es".equals(s) || "en-us".equals(s) || "pt-pt".equals(s) || "pt-br".equals(s) || "val-es".equals(s) || "hu-hu".equals(s)) {
                 this.kernel.getConsole().print("Switched language to " + s);
                 this.locale = s;
-                Language.loadLang(this.locale);
+                try {
+                    Language.loadLang(this.locale);
+                } catch (IOException e) {
+                    this.kernel.getConsole().print("Failed to load language file.");
+                    e.printStackTrace(this.kernel.getConsole().getWriter());
+                }
             } else {
                 this.kernel.getConsole().print("Switched language to en-us");
                 this.locale = "en-us";
-                Language.loadLang(this.locale);
+                try {
+                    Language.loadLang(this.locale);
+                } catch (IOException e) {
+                    this.kernel.getConsole().print("Failed to load language file.");
+                    e.printStackTrace(this.kernel.getConsole().getWriter());
+                }
             }
         }
     }

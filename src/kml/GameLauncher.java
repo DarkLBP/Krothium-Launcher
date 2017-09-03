@@ -51,6 +51,7 @@ public class GameLauncher {
         this.console.print("Game launch work has started.");
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         if (this.isRunning()) {
+            this.started = false;
             throw new GameLauncherException("Game is already started!");
         }
         Versions versions = this.kernel.getVersions();
@@ -63,10 +64,12 @@ public class GameLauncher {
             verID = versions.getLatestSnapshot();
         }
         if (verID == null) {
+            this.started = false;
             throw new GameLauncherException("Version ID is null.");
         }
         Version ver = versions.getVersion(verID);
         if (ver == null) {
+            this.started = false;
             throw new GameLauncherException("Version info could not be obtained.");
         }
         File workingDir = Constants.APPLICATION_WORKING_DIR;

@@ -22,7 +22,6 @@ public class Starter extends Application {
     @Override
     public final void start(Stage primaryStage) throws Exception {
         Utils.ignoreHTTPSCert();
-        Utils.testNetwork();
         new Kernel(primaryStage, this.getHostServices());
     }
 }

@@ -264,9 +264,7 @@ public class MainFX {
                 Optional<ButtonType> result = confirm.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     try {
-                        if (!Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater)) {
-                            throw new Exception("Failed to download the file.");
-                        }
+                        Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater);
                         String currentJar = Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile();
                         ProcessBuilder pb = new ProcessBuilder(Utils.getJavaDir(), "-jar", updater.getAbsolutePath(), currentJar);
                         pb.directory(updater.getParentFile());
@@ -274,7 +272,8 @@ public class MainFX {
                         this.kernel.exitSafely();
                     }
                     catch (Exception e) {
-                        this.console.print("Failed to open update page.\n" + e.getMessage());
+                        this.console.print("Failed download updater.");
+                        e.printStackTrace(this.console.getWriter());
                     }
                 }
             });
@@ -287,7 +286,14 @@ public class MainFX {
     private void fetchAds() {
         String profileID = this.kernel.getAuthentication().getSelectedUser().getProfileID();
         URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
-        String response = Utils.readURL(adsCheck);
+        String response;
+        try {
+            response = Utils.readURL(adsCheck);
+        } catch (IOException ex) {
+            this.console.print("Failed to fetch ads data.");
+            ex.printStackTrace(this.console.getWriter());
+            return;
+        }
         if (response != null) {
             if (!response.isEmpty()) {
                 String[] chunks = response.split(":");
@@ -665,7 +671,7 @@ public class MainFX {
                     continue;
                 }
                 JSONObject content = entry.getJSONObject("content").getJSONObject("en-us");
-                Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"));
+                Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"), this.console);
                 this.slides.add(s);
             }
         } catch (Exception ex) {
@@ -962,13 +968,17 @@ public class MainFX {
                             Platform.runLater(() -> MainFX.this.stage.close());
                         }
                     } catch (DownloaderException e) {
-                        Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(83), Language.get(84));
-                        a.showAndWait();
+                        Platform.runLater(() -> {
+                            Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(83), Language.get(84));
+                            a.showAndWait();
+                        });
                         MainFX.this.console.print("Failed to perform game download task");
                         e.printStackTrace(MainFX.this.console.getWriter());
                     } catch (GameLauncherException e) {
-                        Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(81), Language.get(82));
-                        a.showAndWait();
+                        Platform.runLater(() -> {
+                            Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(81), Language.get(82));
+                            a.showAndWait();
+                        });
                         MainFX.this.console.print("Failed to perform game launch task");
                         e.printStackTrace(MainFX.this.console.getWriter());
                     }

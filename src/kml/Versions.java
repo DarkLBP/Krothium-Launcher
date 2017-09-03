@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -142,7 +142,7 @@ public class Versions {
                 this.add(vm);
             }
             this.console.print("Remote version list loaded.");
-        } catch (JSONException ex) {
+        } catch (JSONException | IOException ex) {
             this.console.print("Failed to fetch remote version list.");
             ex.printStackTrace(this.console.getWriter());
         }
@@ -199,7 +199,7 @@ public class Versions {
                 this.latestSnap = lastSnapshot;
             }
             this.console.print("Local version list loaded.");
-        } catch (JSONException | MalformedURLException ex) {
+        } catch (JSONException | IOException ex) {
             this.console.print("Failed to fetch local version list.");
             ex.printStackTrace(this.console.getWriter());
         }

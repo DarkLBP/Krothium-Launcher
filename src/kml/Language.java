@@ -1,5 +1,7 @@
 package kml;
 
+import java.io.IOException;
+
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -11,7 +13,7 @@ public class Language {
      * Loads a language file
      * @param lang The language to be loaded
      */
-    public static void loadLang(String lang) {
+    public static void loadLang(String lang) throws IOException {
         String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
         if (data != null) {
             langData = data.split(System.lineSeparator());

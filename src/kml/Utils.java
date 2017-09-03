@@ -62,14 +62,9 @@ public final class Utils {
     /**
      * Tests if there is connectivity to the server
      */
-    public static void testNetwork() {
-        try {
-            HttpsURLConnection con = (HttpsURLConnection) Constants.HANDSHAKE_URL.openConnection();
-            int responseCode = con.getResponseCode();
-            Constants.USE_LOCAL = responseCode != 204;
-        } catch (IOException ex) {
-            Constants.USE_LOCAL = true;
-        }
+    public static int testNetwork() throws IOException {
+        HttpsURLConnection con = (HttpsURLConnection) Constants.HANDSHAKE_URL.openConnection();
+        return con.getResponseCode();
     }
 
     /**
@@ -141,7 +136,7 @@ public final class Utils {
      * @param output The output file
      * @return A boolean that indicates if the download has completed
      */
-    public static boolean downloadFile(URLConnection con, File output) {
+    public static void downloadFile(URLConnection con, File output) throws IOException {
         File parent = output.getParentFile();
         if (parent != null && !parent.exists()) {
             parent.mkdirs();
@@ -153,9 +148,6 @@ public final class Utils {
             while ((read = in.read(buffer)) != -1) {
                 fo.write(buffer, 0, read);
             }
-            return true;
-        } catch (IOException ex) {
-            return false;
         }
     }
 
@@ -164,27 +156,24 @@ public final class Utils {
      * @param url The url that will be used to download the file
      * @return The path of the cached file
      */
-    public static File downloadFileCached(URL url) {
+    public static File downloadFileCached(URL url) throws IOException {
         //Requires server ETAG
         //Returns the path of the cached file
-        try {
-            String hash = calculateChecksum(url.toString(), "SHA1");
-            File output = new File(Constants.APPLICATION_CACHE, hash);
-            if (!Constants.USE_LOCAL) {
-                URLConnection con = url.openConnection();
-                String ETag = con.getHeaderField("ETag");
-                if (verifyChecksum(output, ETag.replace("\"", ""), "MD5") || downloadFile(con, output)) {
-                    return output;
-                }
-            } else {
-                if (output.exists() && output.isFile()) {
-                    return output;
-                }
+        String hash = calculateChecksum(url.toString(), "SHA1");
+        File output = new File(Constants.APPLICATION_CACHE, hash);
+        if (!Constants.USE_LOCAL) {
+            URLConnection con = url.openConnection();
+            String ETag = con.getHeaderField("ETag");
+            if (!verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+                downloadFile(con, output);
             }
-            return null;
-        } catch (IOException e) {
-            return null;
+            return output;
+        } else {
+            if (output.exists() && output.isFile()) {
+                return output;
+            }
         }
+        return null;
     }
 
     /**
@@ -193,23 +182,19 @@ public final class Utils {
      * @param output The output file
      * @return A boolean that indicated if the download has completed
      */
-    public static boolean downloadFile(URL url, File output) {
-        try {
-            if ("file".equalsIgnoreCase(url.getProtocol())) {
-                return true;
-            }
-            URLConnection con = url.openConnection();
-            String ETag = con.getHeaderField("ETag");
-            if (output.exists() && output.isFile()) {
-                //Match ETAG with existing file
-                if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
-                    return true;
-                }
-            }
-            return downloadFile(con, output);
-        } catch (IOException ex) {
-            return false;
+    public static void downloadFile(URL url, File output) throws IOException {
+        if ("file".equalsIgnoreCase(url.getProtocol())) {
+            return;
         }
+        URLConnection con = url.openConnection();
+        String ETag = con.getHeaderField("ETag");
+        if (output.exists() && output.isFile()) {
+            //Match ETAG with existing file
+            if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+                return;
+            }
+        }
+        downloadFile(con, output);
     }
 
     /**
@@ -217,54 +202,46 @@ public final class Utils {
      * @param url The source URL
      * @return The read String or null if an error occurred
      */
-    public static String readURL(URL url) {
-        try {
-            URLConnection con = null;
-            StringBuilder content = new StringBuilder();
-            if (url.getProtocol().startsWith("http")) {
-                String hash = calculateChecksum(url.toString(), "SHA1");
-                File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
-                if (!Constants.USE_LOCAL) {
-                    con = url.openConnection();
-                    String ETag = con.getHeaderField("ETag");
-                    if (ETag != null) {
-                        if (!verifyChecksum(cachedFile, ETag.replace("\"", ""), "MD5")) {
-                            if (!downloadFile(con, cachedFile)) {
-                                return null;
-                            }
-                        }
-                    } else {
-                        if (!downloadFile(con, cachedFile)) {
-                            return null;
-                        }
+    public static String readURL(URL url) throws IOException {
+        URLConnection con = null;
+        StringBuilder content = new StringBuilder();
+        if (url.getProtocol().startsWith("http")) {
+            String hash = calculateChecksum(url.toString(), "SHA1");
+            File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
+            if (!Constants.USE_LOCAL) {
+                con = url.openConnection();
+                String ETag = con.getHeaderField("ETag");
+                if (ETag != null) {
+                    if (!verifyChecksum(cachedFile, ETag.replace("\"", ""), "MD5")) {
+                        downloadFile(con, cachedFile);
                     }
+                } else {
+                    downloadFile(con, cachedFile);
+                }
+                con = cachedFile.toURI().toURL().openConnection();
+            } else {
+                if (cachedFile.exists() && cachedFile.isFile()) {
                     con = cachedFile.toURI().toURL().openConnection();
                 } else {
-                    if (cachedFile.exists() && cachedFile.isFile()) {
-                        con = cachedFile.toURI().toURL().openConnection();
-                    } else {
-                        return null;
-                    }
+                    return "";
                 }
             }
-            if (con == null) {
-                con = url.openConnection();
-            }
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")))) {
-                String line;
-                boolean first = true;
-                while ((line = bufferedReader.readLine()) != null) {
-                    if (!first) {
-                        content.append(System.lineSeparator());
-                    } else {
-                        first = false;
-                    }
-                    content.append(line);
+        }
+        if (con == null) {
+            con = url.openConnection();
+        }
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")))) {
+            String line;
+            boolean first = true;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!first) {
+                    content.append(System.lineSeparator());
+                } else {
+                    first = false;
                 }
-                return content.toString();
+                content.append(line);
             }
-        } catch (IOException ex) {
-            return null;
+            return content.toString();
         }
     }
 

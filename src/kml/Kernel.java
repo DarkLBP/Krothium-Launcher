@@ -58,6 +58,14 @@ public final class Kernel {
         }
         Constants.APPLICATION_CACHE.mkdir();
         this.console = new Console();
+        try {
+            int response = Utils.testNetwork();
+            Constants.USE_LOCAL = response != 204;
+        } catch (IOException ex) {
+            Constants.USE_LOCAL = true;
+            this.console.print("Running offline mode.");
+            ex.printStackTrace(this.console.getWriter());
+        }
         this.console.print("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.print("Kernel build: " + Constants.KERNEL_BUILD);
         this.console.print("OS: " + System.getProperty("os.name"));
@@ -101,6 +109,9 @@ public final class Kernel {
         } catch (MalformedURLException | JSONException e) {
             this.console.print("Malformed launcher profiles file.");
             e.printStackTrace(this.console.getWriter());
+        } catch (IOException ex) {
+            this.console.print("Failed to read launcher profiles file.");
+            ex.printStackTrace(this.console.getWriter());
         }
         this.profiles = new Profiles(this);
         this.versions = new Versions(this);
@@ -280,7 +291,13 @@ public final class Kernel {
      * @return The update url
      */
     public String checkForUpdates() {
-        String r = Utils.readURL(Constants.GETLATEST_URL);
+        String r;
+        try {
+            r = Utils.readURL(Constants.GETLATEST_URL);
+        } catch (IOException e) {
+            e.printStackTrace(this.console.getWriter());
+            r = null;
+        }
         if (r == null) {
             this.console.print("Failed to check for updates");
             return null;
