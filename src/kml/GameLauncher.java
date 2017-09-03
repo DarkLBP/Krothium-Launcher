@@ -112,6 +112,8 @@ public class GameLauncher {
                         ex.printStackTrace(this.console.getWriter());
                         gameArgs.add(Utils.getJavaDir());
                     }
+                } else {
+                    gameArgs.add(Utils.getJavaDir());
                 }
             } else {
                 gameArgs.add(Utils.getJavaDir());
