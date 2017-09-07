@@ -8,9 +8,7 @@ import kml.objects.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -275,6 +273,9 @@ public class Downloader {
             for (Downloadable dw : urls) {
                 File path = dw.getRelativePath();
                 File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
+                if (fullPath.getParentFile() != null) {
+                    fullPath.getParentFile().mkdirs();
+                }
                 URL url = dw.getURL();
                 int tries = 0;
                 if (dw.hasFakePath()) {
@@ -284,19 +285,27 @@ public class Downloader {
                 }
                 this.console.print("Downloading " + this.currentFile + " from " + url);
                 while (tries < Constants.DOWNLOAD_TRIES) {
-                    try {
-                        Utils.downloadFile(url, fullPath);
+                    int totalRead = 0;
+                    try (InputStream in = url.openStream();
+                        OutputStream out = new FileOutputStream(fullPath)){
+                        byte[] buffer = new byte[8192];
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, read);
+                            this.downloaded += read;
+                            totalRead += read;
+                        }
                         break;
                     } catch (IOException ex) {
                         this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
                         ex.printStackTrace(this.console.getWriter());
+                        this.downloaded -= totalRead;
                         tries++;
                     }
                 }
                 if (tries == Constants.DOWNLOAD_TRIES) {
                     this.console.print("Failed to download file " + path.getName() + " from " + url);
                 }
-                this.downloaded += dw.getSize();
             }
         }
         this.downloading = false;
