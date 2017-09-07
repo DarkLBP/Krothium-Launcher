@@ -134,7 +134,6 @@ public final class Utils {
      * Downloads a file using a connection
      * @param con An established connection
      * @param output The output file
-     * @return A boolean that indicates if the download has completed
      */
     public static void downloadFile(URLConnection con, File output) throws IOException {
         File parent = output.getParentFile();
@@ -180,7 +179,6 @@ public final class Utils {
      * Downloads a file and even caches it if server ETAG is existent
      * @param url The source URL
      * @param output The output file
-     * @return A boolean that indicated if the download has completed
      */
     public static void downloadFile(URL url, File output) throws IOException {
         if ("file".equalsIgnoreCase(url.getProtocol())) {

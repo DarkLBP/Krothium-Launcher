@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author DarkLBP
@@ -70,7 +67,6 @@ public class Downloader {
             this.downloading = false;
             throw new DownloaderException("Version info could not be obtained.");
         }
-        ExecutorService pool = Executors.newFixedThreadPool(1);
         Collection<Downloadable> urls = new ArrayList<>();
         this.downloaded = 0;
         this.validated = 0;
@@ -277,40 +273,30 @@ public class Downloader {
         } else {
             //Download required files
             for (Downloadable dw : urls) {
-                Runnable thread = () -> {
-                    File path = dw.getRelativePath();
-                    File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
-                    URL url = dw.getURL();
-                    int tries = 0;
-                    if (dw.hasFakePath()) {
-                        this.currentFile = dw.getFakePath();
-                    } else {
-                        this.currentFile = path.getName();
+                File path = dw.getRelativePath();
+                File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
+                URL url = dw.getURL();
+                int tries = 0;
+                if (dw.hasFakePath()) {
+                    this.currentFile = dw.getFakePath();
+                } else {
+                    this.currentFile = path.getName();
+                }
+                this.console.print("Downloading " + this.currentFile + " from " + url);
+                while (tries < Constants.DOWNLOAD_TRIES) {
+                    try {
+                        Utils.downloadFile(url, fullPath);
+                        break;
+                    } catch (IOException ex) {
+                        this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
+                        ex.printStackTrace(this.console.getWriter());
+                        tries++;
                     }
-                    this.console.print("Downloading " + this.currentFile + " from " + url);
-                    while (tries < Constants.DOWNLOAD_TRIES) {
-                        try {
-                            Utils.downloadFile(url, fullPath);
-                            break;
-                        } catch (IOException ex) {
-                            this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
-                            ex.printStackTrace(this.console.getWriter());
-                            tries++;
-                        }
-                    }
-                    if (tries == Constants.DOWNLOAD_TRIES) {
-                        this.console.print("Failed to download file " + path.getName() + " from " + url);
-                    }
-                    this.downloaded += dw.getSize();
-                };
-                pool.execute(thread);
-            }
-            pool.shutdown();
-            try {
-                pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException ex) {
-                this.downloading = false;
-                throw new DownloaderException("Thread pool unexpectedly closed.");
+                }
+                if (tries == Constants.DOWNLOAD_TRIES) {
+                    this.console.print("Failed to download file " + path.getName() + " from " + url);
+                }
+                this.downloaded += dw.getSize();
             }
         }
         this.downloading = false;
