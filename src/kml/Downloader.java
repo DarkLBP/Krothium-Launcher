@@ -10,11 +10,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -65,11 +61,12 @@ public class Downloader {
             this.downloading = false;
             throw new DownloaderException("Version info could not be obtained.");
         }
-        Collection<Downloadable> urls = new ArrayList<>();
+        Set<Downloadable> urls = new HashSet<>();
         this.downloaded = 0;
         this.validated = 0;
         this.total = 0;
         if (Utils.getPlatform() == OS.WINDOWS && !p.hasJavaDir()) {
+            //If user is using Windows, fetch custom java version
             this.console.print("Fetching runtime...");
             try {
                 JSONObject root = new JSONObject(Utils.readURL(Constants.RUNTIME_URL));
@@ -134,15 +131,11 @@ public class Downloader {
                 if (indexJSON.exists() && indexJSON.isFile()) {
                     JSONObject root;
                     try {
-                        root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-                    } catch (UnsupportedEncodingException ex) {
-                        this.downloading = false;
-                        throw new DownloaderException("Your computer does not support ISO-8859-1 encoding.");
+                        root = new JSONObject(Utils.readURL(indexJSON.toURI().toURL()));
                     } catch (IOException ex) {
                         this.downloading = false;
                         throw new DownloaderException("Failed to read asset index json file.");
                     }
-
                     JSONObject objects = root.getJSONObject("objects");
                     Set<String> keys = objects.keySet();
                     Collection<String> processedHashes = new ArrayList<>();
@@ -153,16 +146,10 @@ public class Downloader {
                         URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
                         File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
                         File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
-                        boolean localValid = false;
-                        if (fullPath.exists() && fullPath.isFile()) {
-                            if (fullPath.length() == size && Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
-                                localValid = true;
-                            }
-                        }
                         if (!processedHashes.contains(hash)) {
                             this.total += size;
                             processedHashes.add(hash);
-                            if (!localValid) {
+                            if (!Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
                                 Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
                                 urls.add(d);
                             } else {
@@ -187,7 +174,6 @@ public class Downloader {
                 String jarSHA1 = d.getHash();
                 this.total += d.getSize();
                 File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
-                boolean localValid = false;
                 File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
                 int tries = 0;
                 while (tries < Constants.DOWNLOAD_TRIES) {
@@ -203,12 +189,7 @@ public class Downloader {
                 if (tries == Constants.DOWNLOAD_TRIES) {
                     this.console.print("Failed to download version index " + destPath.getName());
                 }
-                if (destPath.exists() && destPath.isFile()) {
-                    if (destPath.length() == jarSize && d.hasHash()) {
-                        localValid = Utils.verifyChecksum(destPath, jarSHA1, "SHA-1");
-                    }
-                }
-                if (!localValid) {
+                if (!Utils.verifyChecksum(destPath, jarSHA1, "SHA-1")) {
                     urls.add(d);
                 } else {
                     this.validated += jarSize;
@@ -226,40 +207,20 @@ public class Downloader {
                 if (lib.hasArtifactDownload()) {
                     Downloadable a = lib.getArtifactDownload();
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
-                    boolean valid = false;
-                    if (completePath.exists()) {
-                        if (completePath.isFile()) {
-                            if (a.hasSize()) {
-                                if (a.hasHash() && completePath.length() == a.getSize()) {
-                                    valid = Utils.verifyChecksum(completePath, a.getHash(), "SHA-1");
-                                }
-                            } else {
-                                valid = true;
-                            }
-                        }
-                    }
                     this.total += a.getSize();
-                    if (valid) {
+                    if (Utils.verifyChecksum(completePath, a.getHash(), "SHA-1")) {
                         this.validated += a.getSize();
-                    }
-                    if (!urls.contains(a) && !valid) {
+                    } else {
                         urls.add(a);
                     }
                 }
                 if (lib.hasClassifierDownload()) {
                     Downloadable c = lib.getClassifierDownload();
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
-                    boolean valid = false;
-                    if (completePath.exists()) {
-                        if (completePath.isFile()) {
-                            valid = !(c.hasHash() && completePath.length() == c.getSize()) || Utils.verifyChecksum(completePath, c.getHash(), "SHA-1");
-                        }
-                    }
                     this.total += c.getSize();
-                    if (valid) {
+                    if (Utils.verifyChecksum(completePath, c.getHash(), "SHA-1")) {
                         this.validated += c.getSize();
-                    }
-                    if (!urls.contains(c) && !valid) {
+                    } else {
                         urls.add(c);
                     }
                 }

@@ -146,20 +146,21 @@ public class GameLauncher {
             this.console.print("Failed to load GameStarter.");
         }
         for (Library lib : libs) {
-            if (lib.isCompatible()) {
-                if (lib.isNative()) {
-                    try {
-                        File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
-                        FileInputStream input = new FileInputStream(completePath);
-                        Utils.decompressZIP(input, nativesDir, lib.getExtractExclusions());
-                    } catch (IOException ex) {
-                        this.console.print("Failed to extract native: " + lib.getName());
-                        ex.printStackTrace(this.console.getWriter());
-                    }
-                } else {
-                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
-                    libraries.append(completePath.getAbsolutePath()).append(separator);
+            if (!lib.isCompatible()) {
+                continue;
+            }
+            if (lib.isNative()) {
+                try {
+                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
+                    FileInputStream input = new FileInputStream(completePath);
+                    Utils.decompressZIP(input, nativesDir, lib.getExtractExclusions());
+                } catch (IOException ex) {
+                    this.console.print("Failed to extract native: " + lib.getName());
+                    ex.printStackTrace(this.console.getWriter());
                 }
+            } else {
+                File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
+                libraries.append(completePath.getAbsolutePath()).append(separator);
             }
         }
         this.console.print("Preparing game args.");
@@ -183,18 +184,11 @@ public class GameLauncher {
                     Set s = objects.keySet();
                     for (Object value : s) {
                         String name = value.toString();
-                        File assetFile = new File(assetsDir + File.separator + name);
+                        File assetFile = new File(assetsDir, name);
                         JSONObject asset = objects.getJSONObject(name);
-                        long size = asset.getLong("size");
                         String sha = asset.getString("hash");
-                        boolean valid = false;
-                        if (assetFile.exists()) {
-                            if (assetFile.length() == size && Utils.verifyChecksum(assetFile, sha, "SHA-1")) {
-                                valid = true;
-                            }
-                        }
-                        if (!valid) {
-                            File objectFile = new File(assetsRoot + File.separator + "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
+                        if (!Utils.verifyChecksum(assetFile, sha, "SHA-1")) {
+                            File objectFile = new File(assetsRoot, "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
                             if (assetFile.getParentFile() != null) {
                                 assetFile.getParentFile().mkdirs();
                             }

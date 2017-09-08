@@ -58,4 +58,19 @@ public class Downloadable {
     public final String getFakePath() {
         return this.fakePath;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Downloadable that = (Downloadable) o;
+
+        return url != null ? url.equals(that.url) : that.url == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return url != null ? url.hashCode() : 0;
+    }
 }
