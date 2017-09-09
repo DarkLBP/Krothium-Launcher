@@ -145,12 +145,13 @@ public class Downloader {
                 JSONObject objects = root.getJSONObject("objects");
                 Set<String> keys = objects.keySet();
                 Collection<String> processedHashes = new ArrayList<>();
+                File objectsRoot = new File("assets" + File.separator + "objects");
                 for (String key : keys) {
                     JSONObject o = objects.getJSONObject(key);
                     String hash = o.getString("hash");
                     long size = o.getLong("size");
                     URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
-                    File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
+                    File relPath = new File(objectsRoot, hash.substring(0, 2) + File.separator + hash);
                     File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
                     if (!processedHashes.contains(hash)) {
                         this.total += size;
@@ -252,6 +253,10 @@ public class Downloader {
         this.downloading = false;
     }
 
+    /**
+     * Performs the download of a Downloadable
+     * @param dw The target Downloadable
+     */
     private void downloadFile(Downloadable dw) {
         File path = dw.getRelativePath();
         File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
@@ -263,7 +268,7 @@ public class Downloader {
         if (dw.hasFakePath()) {
             this.currentFile = dw.getFakePath();
         } else {
-            this.currentFile = path.getName();
+            this.currentFile = path.toString();
         }
         this.console.print("Downloading " + this.currentFile + " from " + url);
         while (tries < Constants.DOWNLOAD_TRIES) {
@@ -290,6 +295,10 @@ public class Downloader {
         }
     }
 
+    /**
+     * Downloads an entire set of Downloadables
+     * @param list The set of Downloadables
+     */
     private void downloadFiles(Set<Downloadable> list) {
         for (Downloadable d : list) {
             downloadFile(d);
