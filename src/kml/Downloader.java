@@ -110,12 +110,7 @@ public class Downloader {
 
         //Fetch assets
         this.console.print("Fetching asset urls..");
-        AssetIndex index;
-        if (v.hasAssetIndex()) {
-            index = v.getAssetIndex();
-        } else {
-            index = new AssetIndex(v.getAssets());
-        }
+        AssetIndex index = v.getAssetIndex();
         File indexJSON = new File(Constants.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
         tries = 0;
         if (!Utils.verifyChecksum(indexJSON, index.getSHA1(), "SHA-1")) {

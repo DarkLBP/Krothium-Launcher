@@ -728,13 +728,13 @@
          <children>
             <Label id="progressText" fx:id="progressText" text="Here is doing something....">
                <styleClass>
-                  <String fx:value="text-4" />
+                  <String fx:value="text-5" />
                   <String fx:value="color-alt" />
                </styleClass>
                <padding>
-                  <Insets top="10.0" />
+                  <Insets bottom="3.0" top="12.0" />
                </padding></Label>
-            <ProgressBar fx:id="progressBar" maxHeight="30.0" maxWidth="1.7976931348623157E308" minHeight="29.0" prefHeight="29.0" prefWidth="900.0" progress="0.0" />
+            <ProgressBar fx:id="progressBar" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="900.0" progress="0.0" />
          </children>
          <padding>
             <Insets left="25.0" right="25.0" />

@@ -26,7 +26,7 @@ public final class Version {
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final List<Library> libraries = new ArrayList<>();
     private final URL jsonURL;
-    private String mainClass, minecraftArguments, jar, assets;
+    private String mainClass, minecraftArguments, jar;
     private AssetIndex assetIndex;
     private final File relativeJar;
     private final File relativeJSON;
@@ -53,12 +53,6 @@ public final class Version {
         if (version.has("minecraftArguments")) {
             this.minecraftArguments = version.getString("minecraftArguments");
         }
-        if (version.has("assets")) {
-            this.assets = version.getString("assets");
-        }
-        if (version.has("jar")) {
-            this.jar = version.getString("jar");
-        }
         if (version.has("assetIndex")) {
             JSONObject aIndex = version.getJSONObject("assetIndex");
             String id = null;
@@ -82,6 +76,14 @@ public final class Version {
                 sha1 = aIndex.getString("sha1");
             }
             this.assetIndex = new AssetIndex(id, size, totalSize, url, sha1);
+        }
+        if (this.assetIndex == null) {
+            if (version.has("assets")) {
+                this.assetIndex = new AssetIndex(version.getString("assets"));
+            }
+        }
+        if (version.has("jar")) {
+            this.jar = version.getString("jar");
         }
         if (version.has("downloads")) {
             JSONObject downloads = version.getJSONObject("downloads");
@@ -174,13 +176,8 @@ public final class Version {
                     this.jar = ver.jar;
                 }
             }
-            if (ver.hasAssets()) {
-                if (!this.hasAssets()) {
-                    this.assets = ver.assets;
-                }
-            }
-            if (ver.hasAssetIndex()) {
-                if (!this.hasAssetIndex()) {
+            if (ver.assetIndex != null) {
+                if (this.assetIndex != null) {
                     this.assetIndex = ver.assetIndex;
                 }
             }
@@ -194,6 +191,9 @@ public final class Version {
                     this.minecraftArguments = ver.minecraftArguments;
                 }
             }
+        }
+        if (assetIndex == null) {
+            this.assetIndex = new AssetIndex(null);
         }
         String idToUse = this.id;
         if (this.hasJar()) {
@@ -251,18 +251,6 @@ public final class Version {
 
     public List<Library> getLibraries() {
         return this.libraries;
-    }
-
-    public boolean hasAssetIndex() {
-        return this.assetIndex != null;
-    }
-
-    public boolean hasAssets() {
-        return this.assets != null;
-    }
-
-    public String getAssets() {
-        return this.assets;
     }
 
     public AssetIndex getAssetIndex() {

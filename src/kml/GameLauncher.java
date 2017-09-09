@@ -164,44 +164,39 @@ public class GameLauncher {
         this.console.print("Preparing game args.");
         File verPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
-        String assetsID = null;
         File assetsDir;
-        File assetsRoot = new File(workingDir + File.separator + "assets");
-        if (ver.hasAssets()) {
-            assetsID = ver.getAssets();
-            if ("legacy".equals(assetsID)) {
-                assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
-                if (!assetsDir.isDirectory()) {
-                    assetsDir.mkdirs();
-                }
-                this.console.print("Building virtual asset folder.");
-                File indexJSON = new File(assetsRoot + File.separator + "indexes" + File.separator + assetsID + ".json");
-                try {
-                    JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
-                    JSONObject objects = o.getJSONObject("objects");
-                    Set s = objects.keySet();
-                    for (Object value : s) {
-                        String name = value.toString();
-                        File assetFile = new File(assetsDir, name);
-                        JSONObject asset = objects.getJSONObject(name);
-                        String sha = asset.getString("hash");
-                        if (!Utils.verifyChecksum(assetFile, sha, "SHA-1")) {
-                            File objectFile = new File(assetsRoot, "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
-                            if (assetFile.getParentFile() != null) {
-                                assetFile.getParentFile().mkdirs();
-                            }
-                            Files.copy(objectFile.toPath(), assetFile.toPath());
+        AssetIndex index = ver.getAssetIndex();
+        File assetsRoot = new File(workingDir, "assets");
+        if ("legacy".equals(index.getID())) {
+            assetsDir = new File(assetsRoot, "virtual" + File.separator + "legacy");
+            if (!assetsDir.isDirectory()) {
+                assetsDir.mkdirs();
+            }
+            this.console.print("Building virtual asset folder.");
+            File indexJSON = new File(assetsRoot, "indexes" + File.separator + index.getID() + ".json");
+            try {
+                JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
+                JSONObject objects = o.getJSONObject("objects");
+                Set s = objects.keySet();
+                for (Object value : s) {
+                    String name = value.toString();
+                    File assetFile = new File(assetsDir, name);
+                    JSONObject asset = objects.getJSONObject(name);
+                    String sha = asset.getString("hash");
+                    if (!Utils.verifyChecksum(assetFile, sha, "SHA-1")) {
+                        File objectFile = new File(assetsRoot, "objects" + File.separator + sha.substring(0, 2) + File.separator + sha);
+                        if (assetFile.getParentFile() != null) {
+                            assetFile.getParentFile().mkdirs();
                         }
+                        Files.copy(objectFile.toPath(), assetFile.toPath());
                     }
-                } catch (Exception ex) {
-                    this.console.print("Failed to create virtual asset folder.");
-                    ex.printStackTrace(this.console.getWriter());
                 }
-            } else {
-                assetsDir = assetsRoot;
+            } catch (Exception ex) {
+                this.console.print("Failed to create virtual asset folder.");
+                ex.printStackTrace(this.console.getWriter());
             }
         } else {
-            assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
+            assetsDir = assetsRoot;
         }
         gameArgs.add(libraries.toString());
         gameArgs.add("kml.GameStarter");
@@ -248,11 +243,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${game_assets}", assetsDir.getAbsolutePath());
                         break;
                     case "${assets_index_name}":
-                        if (ver.hasAssetIndex()) {
-                            versionArgs[i] = versionArgs[i].replace("${assets_index_name}", assetsID);
-                        } else if (ver.hasAssets()) {
-                            versionArgs[i] = versionArgs[i].replace("${assets_index_name}", assetsID);
-                        }
+                        versionArgs[i] = versionArgs[i].replace("${assets_index_name}", index.getID());
                         break;
                     case "${auth_uuid}":
                         versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID());
