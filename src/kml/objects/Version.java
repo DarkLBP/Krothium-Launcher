@@ -177,7 +177,7 @@ public final class Version {
                 }
             }
             if (ver.assetIndex != null) {
-                if (this.assetIndex != null) {
+                if (this.assetIndex == null) {
                     this.assetIndex = ver.assetIndex;
                 }
             }
