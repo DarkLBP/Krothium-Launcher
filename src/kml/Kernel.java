@@ -53,7 +53,7 @@ public final class Kernel {
     private final Map<ProfileIcon, Image> iconCache;
 
     public Kernel(Stage stage, HostServices hs) {
-        if (!Constants.APPLICATION_WORKING_DIR.exists()) {
+        if (!Constants.APPLICATION_WORKING_DIR.isDirectory()) {
             Constants.APPLICATION_WORKING_DIR.mkdirs();
         }
         Constants.APPLICATION_CACHE.mkdir();
@@ -101,7 +101,7 @@ public final class Kernel {
         this.console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         this.console.print("Reading launcher profiles...");
         try {
-            if (Constants.APPLICATION_CONFIG.exists() && Constants.APPLICATION_CONFIG.isFile()) {
+            if (Constants.APPLICATION_CONFIG.isFile()) {
                 this.launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
             } else {
                 this.console.print("Launcher profiles file does not exists.");

@@ -43,14 +43,6 @@ public class Downloadable {
         return this.hash;
     }
 
-    public final boolean hasHash() {
-        return this.hash != null;
-    }
-
-    public final boolean hasSize() {
-        return this.size != -1;
-    }
-
     public final boolean hasFakePath() {
         return this.fakePath != null;
     }

@@ -1,7 +1,8 @@
 package kml.objects;
 
 
-import java.io.File;
+import kml.Utils;
+
 import java.net.URL;
 
 /**
@@ -10,10 +11,15 @@ import java.net.URL;
  */
 
 public class AssetIndex {
-    private final String id, sha1;
-    private final long size, totalSize;
-    private final URL url;
-    private final File relFile;
+    private final String id;
+    private String sha1;
+    private long size, totalSize;
+    private URL url;
+
+    public AssetIndex(String id) {
+        this.id = id == null ? "legacy" : id;
+        this.url = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + this.id + ".json");
+    }
 
     public AssetIndex(String id, long size, long totalSize, URL url, String sha1) {
         this.id = id;
@@ -21,28 +27,8 @@ public class AssetIndex {
         this.totalSize = totalSize;
         this.url = url;
         this.sha1 = sha1;
-        this.relFile = new File("assets" + File.separator + "indexes" + File.separator + id + ".json");
     }
 
-    public final boolean hasID() {
-        return this.id != null;
-    }
-
-    public final boolean hasSize() {
-        return this.size >= 0;
-    }
-
-    public final boolean hasTotalSize() {
-        return this.totalSize >= 0;
-    }
-
-    public final boolean hasURL() {
-        return this.url != null;
-    }
-
-    public final boolean hasSHA1() {
-        return this.sha1 != null;
-    }
 
     public final String getID() {
         return this.id;
@@ -62,9 +48,5 @@ public class AssetIndex {
 
     public final String getSHA1() {
         return this.sha1;
-    }
-
-    public final File getRelativeFile() {
-        return this.relFile;
     }
 }

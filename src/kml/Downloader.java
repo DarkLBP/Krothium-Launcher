@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -34,13 +36,21 @@ public class Downloader {
      * @throws DownloaderException If the download fails
      */
     public final void download() throws DownloaderException {
+        //Initial values
         this.downloading = true;
+        this.downloaded = 0;
+        this.validated = 0;
+        this.total = 0;
+        int tries;
+
         this.console.print("Download work has started.");
         if (Constants.USE_LOCAL) {
             this.console.print("You are in offline mode.");
             this.downloading = false;
             return;
         }
+
+        //Fetch version used by profile
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         Versions versions = this.kernel.getVersions();
         VersionMeta verID;
@@ -61,10 +71,9 @@ public class Downloader {
             this.downloading = false;
             throw new DownloaderException("Version info could not be obtained.");
         }
+
+        //Get required files to be downloaded
         Set<Downloadable> urls = new HashSet<>();
-        this.downloaded = 0;
-        this.validated = 0;
-        this.total = 0;
         if (Utils.getPlatform() == OS.WINDOWS && !p.hasJavaDir()) {
             //If user is using Windows, fetch custom java version
             this.console.print("Fetching runtime...");
@@ -83,14 +92,14 @@ public class Downloader {
                 long length = jreURL.openConnection().getContentLength();
                 this.total += length;
                 File jreFile = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
-                if (jreFile.exists() && jreFile.isFile() && Utils.verifyChecksum(jreFile, sha1, "sha1")) {
+                if (jreFile.isFile() && Utils.verifyChecksum(jreFile, sha1, "sha1")) {
                     this.console.print("Runtime already downloaded and valid.");
                     this.validated += length;
                 } else {
                     Downloadable d = new Downloadable(jreURL, length, new File("jre.lzma"), sha1, null);
                     urls.add(d);
                     File markFile = new File(Constants.APPLICATION_WORKING_DIR, "jre" + File.separator + "OK");
-                    if (markFile.exists() && markFile.isFile()) {
+                    if (markFile.isFile()) {
                         markFile.delete();
                     }
                 }
@@ -98,26 +107,21 @@ public class Downloader {
                 this.console.print("Failed to fetch runtime.");
             }
         }
-        this.console.print("Fetching asset urls..");
-        File indexJSON;
-        URL assetsURL;
-        String assetID;
+
         //Fetch assets
-        if (v.hasAssetIndex() || v.hasAssets()) {
-            if (v.hasAssetIndex()) {
-                AssetIndex index = v.getAssetIndex();
-                assetID = index.getID();
-                indexJSON = new File(Constants.APPLICATION_WORKING_DIR + File.separator + index.getRelativeFile());
-                assetsURL = index.getURL();
-            } else {
-                assetID = v.getAssets();
-                assetsURL = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetID + ".json"); //Might be deprecated soon
-                indexJSON = new File(Constants.APPLICATION_WORKING_DIR + File.separator + "assets" + File.separator + "indexes" + File.separator + assetID + ".json");
-            }
-            int tries = 0;
+        this.console.print("Fetching asset urls..");
+        AssetIndex index;
+        if (v.hasAssetIndex()) {
+            index = v.getAssetIndex();
+        } else {
+            index = new AssetIndex(v.getAssets());
+        }
+        File indexJSON = new File(Constants.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
+        tries = 0;
+        if (!Utils.verifyChecksum(indexJSON, index.getSHA1(), "SHA-1")) {
             while (tries < Constants.DOWNLOAD_TRIES) {
                 try {
-                    Utils.downloadFile(assetsURL, indexJSON);
+                    Utils.downloadFile(index.getURL(), indexJSON);
                     break;
                 } catch (IOException ex) {
                     this.console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ")");
@@ -125,44 +129,43 @@ public class Downloader {
                     tries++;
                 }
             }
-            if (tries == Constants.DOWNLOAD_TRIES) {
-                this.console.print("Failed to download asset index for version " + assetID);
-            } else {
-                if (indexJSON.exists() && indexJSON.isFile()) {
-                    JSONObject root;
-                    try {
-                        root = new JSONObject(Utils.readURL(indexJSON.toURI().toURL()));
-                    } catch (IOException ex) {
-                        this.downloading = false;
-                        throw new DownloaderException("Failed to read asset index json file.");
-                    }
-                    JSONObject objects = root.getJSONObject("objects");
-                    Set<String> keys = objects.keySet();
-                    Collection<String> processedHashes = new ArrayList<>();
-                    for (String key : keys) {
-                        JSONObject o = objects.getJSONObject(key);
-                        String hash = o.getString("hash");
-                        long size = o.getLong("size");
-                        URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
-                        File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
-                        File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
-                        if (!processedHashes.contains(hash)) {
-                            this.total += size;
-                            processedHashes.add(hash);
-                            if (!Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
-                                Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
-                                urls.add(d);
-                            } else {
-                                this.validated += size;
-                            }
+        }
+        if (tries == Constants.DOWNLOAD_TRIES) {
+            this.console.print("Failed to download asset index for version " + index.getID());
+        } else {
+            //Load assets
+            try {
+                JSONObject root;
+                try {
+                    root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), StandardCharsets.UTF_8));
+                } catch (JSONException | IOException ex) {
+                    this.downloading = false;
+                    throw new DownloaderException("Failed to read asset index json file.");
+                }
+                JSONObject objects = root.getJSONObject("objects");
+                Set<String> keys = objects.keySet();
+                Collection<String> processedHashes = new ArrayList<>();
+                for (String key : keys) {
+                    JSONObject o = objects.getJSONObject(key);
+                    String hash = o.getString("hash");
+                    long size = o.getLong("size");
+                    URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
+                    File relPath = new File("assets" + File.separator + "objects" + File.separator + hash.substring(0, 2) + File.separator + hash);
+                    File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
+                    if (!processedHashes.contains(hash)) {
+                        this.total += size;
+                        processedHashes.add(hash);
+                        if (!Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
+                            Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
+                            urls.add(d);
+                        } else {
+                            this.validated += size;
                         }
                     }
-                } else {
-                    this.console.print("Failed to access asset index json file.");
                 }
+            } catch (JSONException ex) {
+                this.console.print("Failed to parse asset index.");
             }
-        } else {
-            this.console.print("Version " + v.getID() + " does not have any valid assets.");
         }
 
         //Fetch version
@@ -175,7 +178,7 @@ public class Downloader {
                 this.total += d.getSize();
                 File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
                 File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
-                int tries = 0;
+                tries = 0;
                 while (tries < Constants.DOWNLOAD_TRIES) {
                     try {
                         Utils.downloadFile(v.getJSONURL(), jsonFile);
@@ -200,28 +203,41 @@ public class Downloader {
         } else {
             this.console.print("Version file from " + v.getID() + " has no compatible downloadable objects.");
         }
+
+        //Fetch libraries and natives
         this.console.print("Fetching library and native urls..");
         List<Library> libs = v.getLibraries();
         for (Library lib : libs) {
             if (lib.isCompatible()) {
+                //Standard download
                 if (lib.hasArtifactDownload()) {
                     Downloadable a = lib.getArtifactDownload();
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
-                    this.total += a.getSize();
-                    if (Utils.verifyChecksum(completePath, a.getHash(), "SHA-1")) {
-                        this.validated += a.getSize();
+                    if (completePath.isFile() && a.getHash() == null) {
+                        this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
                     } else {
-                        urls.add(a);
+                        this.total += a.getSize();
+                        if (Utils.verifyChecksum(completePath, a.getHash(), "SHA-1")) {
+                            this.validated += a.getSize();
+                        } else {
+                            urls.add(a);
+                        }
                     }
+
                 }
+                //Native download
                 if (lib.hasClassifierDownload()) {
                     Downloadable c = lib.getClassifierDownload();
                     File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
                     this.total += c.getSize();
-                    if (Utils.verifyChecksum(completePath, c.getHash(), "SHA-1")) {
-                        this.validated += c.getSize();
+                    if (completePath.isFile() && c.getHash() == null) {
+                        this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
                     } else {
-                        urls.add(c);
+                        if (Utils.verifyChecksum(completePath, c.getHash(), "SHA-1")) {
+                            this.validated += c.getSize();
+                        } else {
+                            urls.add(c);
+                        }
                     }
                 }
             }
@@ -231,45 +247,53 @@ public class Downloader {
             this.console.print("Nothing to download.");
         } else {
             //Download required files
-            for (Downloadable dw : urls) {
-                File path = dw.getRelativePath();
-                File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
-                if (fullPath.getParentFile() != null) {
-                    fullPath.getParentFile().mkdirs();
-                }
-                URL url = dw.getURL();
-                int tries = 0;
-                if (dw.hasFakePath()) {
-                    this.currentFile = dw.getFakePath();
-                } else {
-                    this.currentFile = path.getName();
-                }
-                this.console.print("Downloading " + this.currentFile + " from " + url);
-                while (tries < Constants.DOWNLOAD_TRIES) {
-                    int totalRead = 0;
-                    try (InputStream in = url.openStream();
-                        OutputStream out = new FileOutputStream(fullPath)){
-                        byte[] buffer = new byte[8192];
-                        int read;
-                        while ((read = in.read(buffer)) != -1) {
-                            out.write(buffer, 0, read);
-                            this.downloaded += read;
-                            totalRead += read;
-                        }
-                        break;
-                    } catch (IOException ex) {
-                        this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
-                        ex.printStackTrace(this.console.getWriter());
-                        this.downloaded -= totalRead;
-                        tries++;
-                    }
-                }
-                if (tries == Constants.DOWNLOAD_TRIES) {
-                    this.console.print("Failed to download file " + path.getName() + " from " + url);
-                }
-            }
+            downloadFiles(urls);
         }
         this.downloading = false;
+    }
+
+    private void downloadFile(Downloadable dw) {
+        File path = dw.getRelativePath();
+        File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
+        if (fullPath.getParentFile() != null) {
+            fullPath.getParentFile().mkdirs();
+        }
+        URL url = dw.getURL();
+        int tries = 0;
+        if (dw.hasFakePath()) {
+            this.currentFile = dw.getFakePath();
+        } else {
+            this.currentFile = path.getName();
+        }
+        this.console.print("Downloading " + this.currentFile + " from " + url);
+        while (tries < Constants.DOWNLOAD_TRIES) {
+            int totalRead = 0;
+            try (InputStream in = url.openStream();
+                 OutputStream out = new FileOutputStream(fullPath)){
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, read);
+                    this.downloaded += read;
+                    totalRead += read;
+                }
+                break;
+            } catch (IOException ex) {
+                this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
+                ex.printStackTrace(this.console.getWriter());
+                this.downloaded -= totalRead;
+                tries++;
+            }
+        }
+        if (tries == Constants.DOWNLOAD_TRIES) {
+            this.console.print("Failed to download file " + path.getName() + " from " + url);
+        }
+    }
+
+    private void downloadFiles(Set<Downloadable> list) {
+        for (Downloadable d : list) {
+            downloadFile(d);
+        }
     }
 
     /**

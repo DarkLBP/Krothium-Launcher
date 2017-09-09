@@ -21,7 +21,7 @@ public class Console {
 
     public Console() {
         File logFolder = Constants.APPLICATION_LOGS;
-        if (logFolder.exists() && logFolder.isDirectory()) {
+        if (logFolder.isDirectory()) {
             File[] logFiles = logFolder.listFiles();
             if (logFiles != null && logFiles.length > 0) {
                 Arrays.sort(logFiles);

@@ -47,13 +47,13 @@ public class Profile implements Comparable<Profile>{
 
         if (gameDir != null) {
             this.gameDir = new File(gameDir);
-            if (!this.gameDir.exists() || !this.gameDir.isDirectory()) {
+            if (!this.gameDir.isDirectory()) {
                 this.gameDir = null;
             }
         }
         if (javaDir != null) {
             this.javaDir = new File(javaDir);
-            if (!this.javaDir.exists() || !this.javaDir.isFile()) {
+            if (!this.javaDir.isFile()) {
                 this.javaDir = null;
             }
         }

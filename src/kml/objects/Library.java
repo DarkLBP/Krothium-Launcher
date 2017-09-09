@@ -144,7 +144,7 @@ public final class Library {
                 if (this.isNative() && this.natives.containsKey(Utils.getPlatform())) {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativeNativePath, null, null);
+                        Downloadable d = new Downloadable(url, 0, this.relativeNativePath, null, null);
                         this.downloads.put("classifier", d);
                     } catch (MalformedURLException ex) {
                         console.print("Invalid " + this.name + " url.");
@@ -152,7 +152,7 @@ public final class Library {
                 } else if (this.hasURL()) {
                     try {
                         URL url = new URL(this.url + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
+                        Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.print("Invalid " + this.name + " url.");
@@ -160,7 +160,7 @@ public final class Library {
                 } else {
                     try {
                         URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, -1, this.relativePath, null, null);
+                        Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
                         this.downloads.put("artifact", d);
                     } catch (MalformedURLException ex) {
                         console.print("Invalid " + this.name + " url.");
@@ -168,10 +168,6 @@ public final class Library {
                 }
             }
         }
-    }
-
-    public boolean hasExtractExclusions() {
-        return !this.exclude.isEmpty();
     }
 
     public List<String> getExtractExclusions() {

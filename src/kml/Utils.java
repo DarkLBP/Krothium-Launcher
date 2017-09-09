@@ -115,7 +115,7 @@ public final class Utils {
      * @param directory The target directory
      */
     public static void deleteDirectory(File directory) {
-        if (directory.exists()) {
+        if (directory.isDirectory()) {
             File[] files = directory.listFiles();
             if (files != null) {
                 for (File f : files) {
@@ -168,7 +168,7 @@ public final class Utils {
             }
             return output;
         } else {
-            if (output.exists() && output.isFile()) {
+            if (output.isFile()) {
                 return output;
             }
         }
@@ -186,7 +186,7 @@ public final class Utils {
         }
         URLConnection con = url.openConnection();
         String ETag = con.getHeaderField("ETag");
-        if (output.exists() && output.isFile()) {
+        if (output.isFile()) {
             //Match ETAG with existing file
             if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
                 return;
@@ -218,7 +218,7 @@ public final class Utils {
                 }
                 con = cachedFile.toURI().toURL().openConnection();
             } else {
-                if (cachedFile.exists() && cachedFile.isFile()) {
+                if (cachedFile.isFile()) {
                     con = cachedFile.toURI().toURL().openConnection();
                 } else {
                     return "";
@@ -251,7 +251,7 @@ public final class Utils {
      * @return A boolean that indicated if the hash matches
      */
     public static boolean verifyChecksum(File file, String hash, String method) {
-        if (hash == null || method == null || !file.exists() || file.isDirectory()) {
+        if (hash == null || method == null || !file.isFile()) {
             return false;
         }
         String fileHash = calculateChecksum(file, method);
@@ -261,15 +261,15 @@ public final class Utils {
     /**
      * Calculates a checksum from a String
      * @param txt The input String
-     * @param method The hash method (md5, sha1...)
+     * @param algorithm The hash method (md5, sha1...)
      * @return The calculated hash
      */
-    public static String calculateChecksum(String txt, String method) {
+    public static String calculateChecksum(String txt, String algorithm) {
         try {
-            MessageDigest sha1 = MessageDigest.getInstance(method);
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
             byte[] data = txt.getBytes();
-            sha1.update(data);
-            byte[] hashBytes = sha1.digest();
+            digest.update(data);
+            byte[] hashBytes = digest.digest();
             StringBuilder sb = new StringBuilder();
             for (byte hashByte : hashBytes) {
                 sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
@@ -283,12 +283,12 @@ public final class Utils {
     /**
      * Calculates a checksum from a File
      * @param file The input File
-     * @param method The hash method (md5, sha1...)
+     * @param algorithm The hash method (md5, sha1...)
      * @return The calculated hash
      */
-    public static String calculateChecksum(File file, String method) {
+    public static String calculateChecksum(File file, String algorithm) {
         try (FileInputStream fis = new FileInputStream(file)){
-            MessageDigest sha1 = MessageDigest.getInstance(method);
+            MessageDigest sha1 = MessageDigest.getInstance(algorithm);
             byte[] data = new byte[8192];
             int read;
             while ((read = fis.read(data)) != -1) {
@@ -316,7 +316,7 @@ public final class Utils {
             if (!f.getParentFile().exists()) {
                 f.getParentFile().mkdirs();
             }
-            out.write(o.getBytes(Charset.forName("UTF-8")));
+            out.write(o.getBytes(StandardCharsets.UTF_8));
             return true;
         } catch (IOException ex) {
             return false;
@@ -440,7 +440,7 @@ public final class Utils {
      * @throws IOException If the process failed
      */
     public static void decompressZIP(InputStream input, File output, Iterable<String> exclusions) throws IOException {
-        if(!output.exists() || !output.isDirectory()){
+        if(!output.isDirectory()){
             output.mkdirs();
         }
         try (ZipInputStream zis = new ZipInputStream(input)){

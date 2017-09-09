@@ -250,7 +250,7 @@ public class MainFX {
     private void checkForUpdates() {
         this.console.print("Checking for updates...");
         File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
-        if (updater.exists() && updater.isFile()) {
+        if (updater.isFile()) {
             if (updater.delete()) {
                 this.console.print("Removed old updater.jar.");
             } else {
@@ -1774,7 +1774,7 @@ public class MainFX {
             chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
         } else {
             File gd = new File(this.gameDir.getText());
-            if (gd.exists() && gd.isDirectory()) {
+            if (gd.isDirectory()) {
                 chooser.setInitialDirectory(gd);
             } else {
                 chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
@@ -1798,9 +1798,9 @@ public class MainFX {
         } else {
             je = new File(this.javaExec.getText());
         }
-        if (je.exists() && je.isFile()) {
+        if (je.isFile()) {
             File jf = je.getParentFile();
-            if (jf.exists() && jf.isDirectory()) {
+            if (jf.isDirectory()) {
                 chooser.setInitialDirectory(jf);
             }
         }

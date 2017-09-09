@@ -75,20 +75,18 @@ public class GameLauncher {
         File workingDir = Constants.APPLICATION_WORKING_DIR;
         this.console.print("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
-        if (nativesRoot.exists()) {
-            if (nativesRoot.isDirectory()) {
-                File[] files = nativesRoot.listFiles();
-                if (files != null) {
-                    for (File f : files) {
-                        if (f.isDirectory() && f.getName().contains("natives")) {
-                            Utils.deleteDirectory(f);
-                        }
+        if (nativesRoot.isDirectory()) {
+            File[] files = nativesRoot.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    if (f.isDirectory() && f.getName().contains("natives")) {
+                        Utils.deleteDirectory(f);
                     }
                 }
             }
         }
-        File nativesDir = new File(workingDir + File.separator + "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
-        if (!nativesDir.exists() || !nativesDir.isDirectory()) {
+        File nativesDir = new File(workingDir, "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
+        if (!nativesDir.isDirectory()) {
             nativesDir.mkdirs();
         }
         this.console.print("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
@@ -100,7 +98,7 @@ public class GameLauncher {
         } else {
             if (Utils.getPlatform() == OS.WINDOWS) {
                 File jre = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
-                if (jre.exists() && jre.isFile()) {
+                if (jre.isFile()) {
                     try {
                         File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
                         if (!new File(jreFolder, "OK").exists()) {
@@ -173,7 +171,7 @@ public class GameLauncher {
             assetsID = ver.getAssets();
             if ("legacy".equals(assetsID)) {
                 assetsDir = new File(assetsRoot + File.separator + "virtual" + File.separator + "legacy");
-                if (!assetsDir.exists() || !assetsDir.isDirectory()) {
+                if (!assetsDir.isDirectory()) {
                     assetsDir.mkdirs();
                 }
                 this.console.print("Building virtual asset folder.");
@@ -209,7 +207,7 @@ public class GameLauncher {
         gameArgs.add("kml.GameStarter");
         if (p.hasGameDir()) {
             File gameDir = p.getGameDir();
-            if (!gameDir.exists() || !gameDir.isDirectory()) {
+            if (!gameDir.isDirectory()) {
                 gameDir.mkdirs();
             }
             gameArgs.add(gameDir.getAbsolutePath());
@@ -235,7 +233,7 @@ public class GameLauncher {
                     case "${game_directory}":
                         if (p.hasGameDir()) {
                             File gameDir = p.getGameDir();
-                            if (!gameDir.exists() || !gameDir.isDirectory()) {
+                            if (!gameDir.isDirectory()) {
                                 gameDir.mkdirs();
                             }
                             versionArgs[i] = versionArgs[i].replace("${game_directory}", gameDir.getAbsolutePath());

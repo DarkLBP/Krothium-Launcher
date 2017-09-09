@@ -151,12 +151,12 @@ public class Versions {
         String latestRelease = "", latestSnapshot = "";
         try {
             File versionsDir = new File(Constants.APPLICATION_WORKING_DIR, "versions");
-            if (versionsDir.exists() && versionsDir.isDirectory()) {
+            if (versionsDir.isDirectory()) {
                 File[] files = versionsDir.listFiles();
                 for (File file : files) {
                     if (file.isDirectory()) {
                         File jsonFile = new File(file.getAbsolutePath(), file.getName() + ".json");
-                        if (jsonFile.exists()) {
+                        if (jsonFile.isFile()) {
                             String id;
                             URL url = jsonFile.toURI().toURL();
                             VersionType type;

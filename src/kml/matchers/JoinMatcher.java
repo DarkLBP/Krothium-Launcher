@@ -36,7 +36,7 @@ public class JoinMatcher implements URLMatcher {
             boolean forge = false;
             for (String file : files) {
                 File f = new File(file);
-                if (f.exists() && f.isFile()) {
+                if (f.isFile()) {
                     if (f.getName().contains("forge")) {
                         forge = true;
                     }
@@ -51,7 +51,7 @@ public class JoinMatcher implements URLMatcher {
             }
             if (forge) {
                 File gameDir = new File(GameStarter.GAME_DIR, "mods");
-                if (gameDir.exists() && gameDir.isDirectory()) {
+                if (gameDir.isDirectory()) {
                     File[] mods = gameDir.listFiles();
                     if (mods != null) {
                         for (File mod : mods) {

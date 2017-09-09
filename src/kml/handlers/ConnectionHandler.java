@@ -62,7 +62,7 @@ class ConnectionHandler extends HttpURLConnection {
             File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
             if (!Constants.USE_LOCAL) {
                 if (etag != null) {
-                    if (!cachedFile.exists() || !cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
+                    if (!cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
                         System.out.println("Caching file for " + this.relay.getURL());
                         Utils.downloadFile(this.relay, cachedFile);
                     }
@@ -72,7 +72,7 @@ class ConnectionHandler extends HttpURLConnection {
                 }
             }
             try {
-                if (cachedFile.exists() && cachedFile.isFile()) {
+                if (cachedFile.isFile()) {
                     this.cached = new ByteArrayInputStream(Files.readAllBytes(cachedFile.toPath()));
                 } else if (Constants.USE_LOCAL) {
                     System.out.println("No cache available for " + this.relay.getURL());
