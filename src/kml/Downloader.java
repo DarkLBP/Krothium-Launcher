@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -266,6 +267,16 @@ public class Downloader {
             this.currentFile = path.toString();
         }
         this.console.print("Downloading " + this.currentFile + " from " + url);
+        if (dw.getSize() == 0) {
+            this.console.print(dw.getURL() + " has no expected size.");
+            try {
+                URLConnection con = url.openConnection();
+                long length = con.getContentLength();
+                this.total += length;
+            } catch (IOException ex) {
+                this.console.print("Failed to determine size from " + dw.getURL());
+            }
+        }
         while (tries < Constants.DOWNLOAD_TRIES) {
             int totalRead = 0;
             try (InputStream in = url.openStream();
