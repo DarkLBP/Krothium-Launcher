@@ -161,10 +161,11 @@ public final class Kernel {
         this.webBrowser.initialize(s);
 
         //Load main form
-        FXMLLoader loader2 = new FXMLLoader();
-        loader2.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
+        loader.setRoot(null);
+        loader.setController(null);
+        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
         try {
-            p = loader2.load();
+            p = loader.load();
         } catch (IOException e) {
             p = null;
             this.console.print("Failed to initialize JavaFX GUI!");
@@ -177,7 +178,7 @@ public final class Kernel {
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.setOnCloseRequest(e -> this.exitSafely());
-        MainFX mainForm = loader2.getController();
+        MainFX mainForm = loader.getController();
         mainForm.initialize(this, stage);
     }
 
