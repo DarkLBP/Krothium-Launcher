@@ -1,6 +1,7 @@
 package kml;
 
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,7 +13,9 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import kml.enums.ProfileIcon;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
@@ -40,14 +43,14 @@ import java.util.Set;
 
 public final class Kernel {
     private final Console console;
-    private final Profiles profiles;
-    private final Versions versions;
-    private final Settings settings;
-    private final Downloader downloader;
-    private final Authentication authentication;
-    private final GameLauncher gameLauncher;
-    private final HostServices hostServices;
-    private final BrowserFX webBrowser;
+    private Profiles profiles;
+    private Versions versions;
+    private Settings settings;
+    private Downloader downloader;
+    private Authentication authentication;
+    private GameLauncher gameLauncher;
+    private HostServices hostServices;
+    private BrowserFX webBrowser;
     private JSONObject launcherProfiles;
     private final Image applicationIcon, profileIcons;
     private final Map<ProfileIcon, Image> iconCache;
@@ -113,73 +116,101 @@ public final class Kernel {
             this.console.print("Failed to read launcher profiles file.");
             ex.printStackTrace(this.console.getWriter());
         }
-        this.profiles = new Profiles(this);
-        this.versions = new Versions(this);
-        this.settings = new Settings(this);
-        this.downloader = new Downloader(this);
-        this.authentication = new Authentication(this);
-        this.gameLauncher = new GameLauncher(this);
-        this.hostServices = hs;
-        this.loadSettings();
-        this.loadVersions();
-        this.loadProfiles();
-        this.loadUsers();
 
         //Initialize constants
         this.profileIcons = new Image("/kml/gui/textures/profile_icons.png");
         this.applicationIcon = new Image("/kml/gui/textures/icon.png");
         this.iconCache = new EnumMap<>(ProfileIcon.class);
 
-        //Load web browser
-        Stage s = new Stage();
+        //Load splash screen
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
-        Parent p;
+        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Splash.fxml"));
+        Parent splash;
         try {
-            p = loader.load();
+            splash = loader.load();
         } catch (IOException e) {
-            p = null;
+            splash = null;
             this.console.print("Failed to initialize JavaFX GUI!");
             e.printStackTrace(this.console.getWriter());
             this.exitSafely();
         }
-        s.getIcons().add(this.applicationIcon);
-        s.setTitle("Krothium Minecraft Launcher");
-        s.setScene(new Scene(p));
-        s.setResizable(false);
-        s.setMaximized(false);
-        s.setOnCloseRequest(e -> {
-            e.consume();
-            Alert ask = this.buildAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
-                    Language.get(96) + System.lineSeparator() + Language.get(97));
-            Optional<ButtonType> response = ask.showAndWait();
-            if (response.isPresent() && response.get() == ButtonType.OK) {
-                this.hostServices.showDocument("https://krothium.com/donaciones/");
-            }
-        });
-        this.webBrowser = loader.getController();
-        this.webBrowser.initialize(s);
-
-        //Load main form
-        loader.setRoot(null);
-        loader.setController(null);
-        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
-        try {
-            p = loader.load();
-        } catch (IOException e) {
-            p = null;
-            this.console.print("Failed to initialize JavaFX GUI!");
-            e.printStackTrace(this.console.getWriter());
-            this.exitSafely();
-        }
-        stage.getIcons().add(this.applicationIcon);
-        stage.setTitle("Krothium Minecraft Launcher");
-        stage.setScene(new Scene(p));
         stage.setResizable(false);
-        stage.setMaximized(false);
-        stage.setOnCloseRequest(e -> this.exitSafely());
-        MainFX mainForm = loader.getController();
-        mainForm.initialize(this, stage);
+        Scene sc = new Scene(splash);
+        sc.setFill(Color.TRANSPARENT);
+        stage.setScene(sc);
+        stage.getIcons().add(this.applicationIcon);
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.show();
+
+        Thread loadThread = new Thread(() -> {
+
+            //Load launcher data
+            this.profiles = new Profiles(this);
+            this.versions = new Versions(this);
+            this.settings = new Settings(this);
+            this.downloader = new Downloader(this);
+            this.authentication = new Authentication(this);
+            this.gameLauncher = new GameLauncher(this);
+            this.hostServices = hs;
+            this.loadSettings();
+            this.loadVersions();
+            this.loadProfiles();
+            this.loadUsers();
+
+            //Load web browser
+            Platform.runLater(() -> {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
+                    Parent p = fxmlLoader.load();
+                    Stage s = new Stage();
+                    s.getIcons().add(this.applicationIcon);
+                    s.setTitle("Krothium Minecraft Launcher");
+                    s.setScene(new Scene(p));
+                    s.setResizable(false);
+                    s.setMaximized(false);
+                    s.setOnCloseRequest(e -> {
+                        e.consume();
+                        Alert ask = this.buildAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+                                Language.get(96) + System.lineSeparator() + Language.get(97));
+                        Optional<ButtonType> response = ask.showAndWait();
+                        if (response.isPresent() && response.get() == ButtonType.OK) {
+                            this.hostServices.showDocument("https://krothium.com/donaciones/");
+                        }
+                    });
+                    this.webBrowser = fxmlLoader.getController();
+                    this.webBrowser.initialize(s);
+                } catch (IOException e) {
+                    this.console.print("Failed to initialize JavaFX GUI!");
+                    e.printStackTrace(this.console.getWriter());
+                    this.exitSafely();
+                }
+            });
+
+            //Load main form
+            Platform.runLater(() -> {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
+                    Parent p = fxmlLoader.load();
+                    Stage st = new Stage();
+                    st.getIcons().add(this.applicationIcon);
+                    st.setTitle("Krothium Minecraft Launcher");
+                    st.setResizable(false);
+                    st.setMaximized(false);
+                    st.setOnCloseRequest(e -> this.exitSafely());
+                    st.setScene(new Scene(p));
+                    MainFX mainForm = fxmlLoader.getController();
+                    mainForm.initialize(this, st);
+                    stage.close();
+                } catch (IOException e) {
+                    this.console.print("Failed to initialize JavaFX GUI!");
+                    e.printStackTrace(this.console.getWriter());
+                    this.exitSafely();
+                }
+
+            });
+        });
+        loadThread.start();
+
     }
 
     /**
