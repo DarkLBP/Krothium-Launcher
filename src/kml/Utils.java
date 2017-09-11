@@ -61,6 +61,8 @@ public final class Utils {
 
     /**
      * Tests if there is connectivity to the server
+     * @throws IOException When connection fails
+     * @return Server response code
      */
     public static int testNetwork() throws IOException {
         HttpsURLConnection con = (HttpsURLConnection) Constants.HANDSHAKE_URL.openConnection();
@@ -134,6 +136,7 @@ public final class Utils {
      * Downloads a file using a connection
      * @param con An established connection
      * @param output The output file
+     * @throws IOException When data read fails
      */
     public static void downloadFile(URLConnection con, File output) throws IOException {
         File parent = output.getParentFile();
@@ -153,6 +156,7 @@ public final class Utils {
     /**
      * Downloads a file to the cache using server's ETAG header
      * @param url The url that will be used to download the file
+     * @throws IOException When data read fails
      * @return The path of the cached file
      */
     public static File downloadFileCached(URL url) throws IOException {
@@ -178,6 +182,7 @@ public final class Utils {
     /**
      * Downloads a file and even caches it if server ETAG is existent
      * @param url The source URL
+     * @throws IOException When data read fails
      * @param output The output file
      */
     public static void downloadFile(URL url, File output) throws IOException {
@@ -198,6 +203,7 @@ public final class Utils {
     /**
      * Reads a String from the source URL
      * @param url The source URL
+     * @throws IOException When data read fails
      * @return The read String or null if an error occurred
      */
     public static String readURL(URL url) throws IOException {

@@ -12,6 +12,7 @@ public class Language {
     /**
      * Loads a language file
      * @param lang The language to be loaded
+     * @throws IOException When data read fails
      */
     public static void loadLang(String lang) throws IOException {
         String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
