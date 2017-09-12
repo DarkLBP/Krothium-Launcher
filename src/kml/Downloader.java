@@ -120,7 +120,7 @@ public class Downloader {
                     Utils.downloadFile(index.getURL(), indexJSON);
                     break;
                 } catch (IOException ex) {
-                    this.console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ")");
+                    this.console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ')');
                     ex.printStackTrace(this.console.getWriter());
                     tries++;
                 }
@@ -181,7 +181,7 @@ public class Downloader {
                         Utils.downloadFile(v.getJSONURL(), jsonFile);
                         break;
                     } catch (IOException ex) {
-                        this.console.print("Failed to download file " + jsonFile.getName() + " (try " + tries + ")");
+                        this.console.print("Failed to download file " + jsonFile.getName() + " (try " + tries + ')');
                         ex.printStackTrace(this.console.getWriter());
                         tries++;
                     }
@@ -290,7 +290,7 @@ public class Downloader {
                 }
                 break;
             } catch (IOException ex) {
-                this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ")");
+                this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ')');
                 ex.printStackTrace(this.console.getWriter());
                 this.downloaded -= totalRead;
                 tries++;

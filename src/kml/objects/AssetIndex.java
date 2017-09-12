@@ -14,7 +14,7 @@ public class AssetIndex {
     private final String id;
     private String sha1;
     private long size, totalSize;
-    private URL url;
+    private final URL url;
 
     public AssetIndex(String id) {
         this.id = id == null ? "legacy" : id;

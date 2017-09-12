@@ -11,8 +11,8 @@ import java.net.URL;
  */
 
 public final class Constants {
-    public static final int KERNEL_BUILD = 41;
-    public static final String KERNEL_BUILD_NAME = "3.0.5";
+    public static final int KERNEL_BUILD = 42;
+    public static final String KERNEL_BUILD_NAME = "3.0.6";
     public static final URL AUTHENTICATE_URL = Utils.stringToURL("https://mc.krothium.com/authenticate");
     public static final URL REFRESH_URL = Utils.stringToURL("https://mc.krothium.com/refresh");
     public static final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");

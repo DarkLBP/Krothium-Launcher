@@ -244,7 +244,7 @@ public final class Kernel {
     /**
      * Saves the profiles
      */
-    public void saveProfiles() {
+    private void saveProfiles() {
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();
         JSONObject authdata = this.authentication.toJSON();
