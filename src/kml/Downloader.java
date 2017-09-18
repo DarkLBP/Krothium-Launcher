@@ -26,6 +26,7 @@ public class Downloader {
     private double downloaded, validated, total;
     private boolean downloading;
     private String currentFile = "";
+    private final int DOWNLOAD_TRIES = 5;
 
     public Downloader(Kernel k) {
         this.kernel = k;
@@ -79,7 +80,8 @@ public class Downloader {
             //If user is using Windows, fetch custom java version
             this.console.print("Fetching runtime...");
             try {
-                JSONObject root = new JSONObject(Utils.readURL(Constants.RUNTIME_URL));
+                URL runtimeURL = Utils.stringToURL("https://launchermeta.mojang.com/mc/launcher.json");
+                JSONObject root = new JSONObject(Utils.readURL(runtimeURL));
                 JSONObject windows = root.getJSONObject("windows");
                 JSONObject arch;
                 if (Utils.getOSArch() == OSArch.OLD) {
@@ -115,7 +117,7 @@ public class Downloader {
         File indexJSON = new File(Constants.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
         tries = 0;
         if (!Utils.verifyChecksum(indexJSON, index.getSHA1(), "SHA-1")) {
-            while (tries < Constants.DOWNLOAD_TRIES) {
+            while (tries < this.DOWNLOAD_TRIES) {
                 try {
                     Utils.downloadFile(index.getURL(), indexJSON);
                     break;
@@ -126,7 +128,7 @@ public class Downloader {
                 }
             }
         }
-        if (tries == Constants.DOWNLOAD_TRIES) {
+        if (tries == this.DOWNLOAD_TRIES) {
             this.console.print("Failed to download asset index for version " + index.getID());
         } else {
             //Load assets
@@ -146,7 +148,7 @@ public class Downloader {
                     JSONObject o = objects.getJSONObject(key);
                     String hash = o.getString("hash");
                     long size = o.getLong("size");
-                    URL downloadURL = Utils.stringToURL(Constants.RESOURCES_URL + hash.substring(0, 2) + '/' + hash);
+                    URL downloadURL = Utils.stringToURL("http://resources.download.minecraft.net/" + hash.substring(0, 2) + '/' + hash);
                     File relPath = new File(objectsRoot, hash.substring(0, 2) + File.separator + hash);
                     File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
                     if (!processedHashes.contains(hash)) {
@@ -176,7 +178,7 @@ public class Downloader {
                 File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
                 File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
                 tries = 0;
-                while (tries < Constants.DOWNLOAD_TRIES) {
+                while (tries < this.DOWNLOAD_TRIES) {
                     try {
                         Utils.downloadFile(v.getJSONURL(), jsonFile);
                         break;
@@ -186,7 +188,7 @@ public class Downloader {
                         tries++;
                     }
                 }
-                if (tries == Constants.DOWNLOAD_TRIES) {
+                if (tries == this.DOWNLOAD_TRIES) {
                     this.console.print("Failed to download version index " + destPath.getName());
                 }
                 if (!Utils.verifyChecksum(destPath, jarSHA1, "SHA-1")) {
@@ -277,7 +279,7 @@ public class Downloader {
                 this.console.print("Failed to determine size from " + dw.getURL());
             }
         }
-        while (tries < Constants.DOWNLOAD_TRIES) {
+        while (tries < this.DOWNLOAD_TRIES) {
             int totalRead = 0;
             try (InputStream in = url.openStream();
                  OutputStream out = new FileOutputStream(fullPath)){
@@ -296,7 +298,7 @@ public class Downloader {
                 tries++;
             }
         }
-        if (tries == Constants.DOWNLOAD_TRIES) {
+        if (tries == this.DOWNLOAD_TRIES) {
             this.console.print("Failed to download file " + path.getName() + " from " + url);
         }
     }

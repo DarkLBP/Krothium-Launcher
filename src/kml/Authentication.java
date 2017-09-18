@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -21,10 +22,13 @@ public class Authentication {
     private boolean authenticated;
     private String selectedProfile, clientToken = UUID.randomUUID().toString();
     private User selectedAccount;
+    private final URL authenticateURL ,refreshURL;
 
     public Authentication(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
+        this.authenticateURL = Utils.stringToURL("https://mc.krothium.com/authenticate");
+        this.refreshURL = Utils.stringToURL("https://mc.krothium.com/refresh");
     }
 
     /**
@@ -110,7 +114,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         try {
-            response = Utils.sendPost(Constants.AUTHENTICATE_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(this.authenticateURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             this.console.print("Failed to send request to authentication server");
             ex.printStackTrace(this.console.getWriter());
@@ -164,7 +168,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         try {
-            response = Utils.sendPost(Constants.REFRESH_URL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(this.refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             if (Constants.USE_LOCAL) {
                 this.authenticated = true;

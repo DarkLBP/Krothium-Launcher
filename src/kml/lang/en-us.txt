@@ -23,13 +23,13 @@ Failed to log in
 You cannot leave the password field empty!
 Change
 Cape PNG File (128KB MAX)
-Delete Cache
+
 Export Logs
 Download Sever
 SKIN
 CAPE
 Are you sure you want to delete your skin?
-Cache deleted successfully!
+
 Failed to delete the skin!
 Skin deleted successfully!
 Logs exported to:
@@ -95,9 +95,9 @@ This ad makes this service alive.
 To close the ad you need to wait 5 seconds and click Skip Ad.
 If you don't want to wait you can always make a donation.
 Do you want to donate now?
-The cache makes things load faster.
-Only delete the cache if something doesn't work properly.
-Are you sure you want to delete the cache?
+
+
+
 Failed to fetch the latest news
 No news available
 No news available to show

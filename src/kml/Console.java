@@ -18,6 +18,7 @@ public class Console {
     private boolean enabled = true;
     private PrintWriter writer;
     private final File log;
+    private final int KEEP_OLD_LOGS = 5;
 
     public Console() {
         File logFolder = Constants.APPLICATION_LOGS;
@@ -40,8 +41,8 @@ public class Console {
                         }
                     }
                 }
-                if (count > Constants.KEEP_OLD_LOGS) {
-                    int toDelete = count - Constants.KEEP_OLD_LOGS;
+                if (count > this.KEEP_OLD_LOGS) {
+                    int toDelete = count - this.KEEP_OLD_LOGS;
                     for (int i = 0; i < toDelete; i++) {
                         for (File f : logFiles) {
                             if (f.isFile()) {
@@ -61,8 +62,9 @@ public class Console {
             }
         }
         this.log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
-        if (!this.log.getParentFile().exists()) {
-            this.log.getParentFile().mkdirs();
+        File parent = this.log.getParentFile();
+        if (!parent.exists()) {
+            parent.mkdirs();
         }
         try {
             this.writer = new PrintWriter(this.log){

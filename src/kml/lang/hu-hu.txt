@@ -23,13 +23,13 @@ Sikertelen bejelentkezés
 A jelszó mezőt nem lehet üresen hagyni!
 Változtatása
 Köpeny PNG fájl (128KB MAX)
-Gyorsítótár Törlése
+
 Logfájlok exportálása
 Szerver letöltése
 SKIN
 KÖPENY
 Biztosan törölni szeretnéd a skined?
-A gyorsítótár sikeresen törölve!
+
 Nem sikerült törölni a skinedet!
 Skin sikeresen törölve!
 Logfájlok exportálva:
@@ -95,9 +95,9 @@ A hírdetések tartják életben ezt a szolgáltatást.
 A hirdetés bezárásához 5 másodpercet kell várni, majd kattintson a Skip AD gombra.
 Ha nem akarod megvárni akkor adományozhatsz.
 Szeretnél adományozni most?
-A gyorsítótár gyorsabbá teszi a dolgokat.
-Csak akkor törölje a gyorsítótárat, ha valami nem működik megfelelően.
-Biztosan törli a gyorsítótárat?
+
+
+
 Nem sikerült lekérni a legfrissebb híreket
 Nincs elérhető hír
 Nincs megjeleníthető hír

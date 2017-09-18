@@ -96,7 +96,8 @@ public class Versions {
         String lr = "", ls = "";
         this.console.print("Fetching remote version list.");
         try {
-            JSONObject root = new JSONObject(Utils.readURL(Constants.VERSION_MANIFEST_FILE));
+            URL versionManifest = Utils.stringToURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+            JSONObject root = new JSONObject(Utils.readURL(versionManifest));
             if (root.has("latest")) {
                 JSONObject latest = root.getJSONObject("latest");
                 if (latest.has("snapshot")) {

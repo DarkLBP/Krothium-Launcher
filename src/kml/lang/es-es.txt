@@ -23,13 +23,13 @@ REGISTRARSE
 ¡No puedes dejar el campo de la contraseña vacio!
 Cambiar
 Archivo PNG de Capa (128KB MAX)
-Eliminar Caché
+
 Exportar Registros
 Descargar Servidor
 SKIN
 CAPA
 ¿Estás seguro de que quieres eliminar tu skin?
-¡Caché eliminada exitosamente!
+
 ¡Fallo al eliminar la skin!
 ¡Skin eliminada exitosamente!
 Registros exportados a:
@@ -95,9 +95,9 @@ Este anuncio mantiene el servicio vivo.
 Para cerrar el anuncio debes esperar 5 segundos y pulsar Saltar Publicidad.
 Si no quieres esperar siempre puedes hacer una donación.
 ¿Quieres hacer una donación ahora?
-La caché hace que las cosas carguen más rápido.
-Elimina la caché solo si algo no funciona correctamente.
-¿Estás seguro de que quieres eliminar la caché?
+
+
+
 Fallo al obtener las útlimas noticias
 No hay noticias disponibles
 No hay noticias disponibles para mostrar

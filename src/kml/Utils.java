@@ -65,7 +65,8 @@ public final class Utils {
      * @return Server response code
      */
     public static int testNetwork() throws IOException {
-        HttpsURLConnection con = (HttpsURLConnection) Constants.HANDSHAKE_URL.openConnection();
+        URL handshakeURL = Utils.stringToURL("https://mc.krothium.com/hello");
+        HttpsURLConnection con = (HttpsURLConnection)handshakeURL.openConnection();
         return con.getResponseCode();
     }
 
@@ -133,53 +134,6 @@ public final class Utils {
     }
 
     /**
-     * Downloads a file using a connection
-     * @param con An established connection
-     * @param output The output file
-     * @throws IOException When data read fails
-     */
-    public static void downloadFile(URLConnection con, File output) throws IOException {
-        File parent = output.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
-        try (InputStream in = con.getInputStream();
-             FileOutputStream fo = new FileOutputStream(output)){
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                fo.write(buffer, 0, read);
-            }
-        }
-    }
-
-    /**
-     * Downloads a file to the cache using server's ETAG header
-     * @param url The url that will be used to download the file
-     * @throws IOException When data read fails
-     * @return The path of the cached file
-     */
-    public static File downloadFileCached(URL url) throws IOException {
-        //Requires server ETAG
-        //Returns the path of the cached file
-        String hash = calculateChecksum(url.toString(), "SHA1");
-        File output = new File(Constants.APPLICATION_CACHE, hash);
-        if (!Constants.USE_LOCAL) {
-            URLConnection con = url.openConnection();
-            String ETag = con.getHeaderField("ETag");
-            if (!verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
-                downloadFile(con, output);
-            }
-            return output;
-        } else {
-            if (output.isFile()) {
-                return output;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Downloads a file and even caches it if server ETAG is existent
      * @param url The source URL
      * @throws IOException When data read fails
@@ -197,7 +151,18 @@ public final class Utils {
                 return;
             }
         }
-        downloadFile(con, output);
+        File parent = output.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        try (InputStream in = con.getInputStream();
+             FileOutputStream fo = new FileOutputStream(output)){
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                fo.write(buffer, 0, read);
+            }
+        }
     }
 
     /**
@@ -207,33 +172,8 @@ public final class Utils {
      * @return The read String or null if an error occurred
      */
     public static String readURL(URL url) throws IOException {
-        URLConnection con = null;
+        URLConnection con = url.openConnection();
         StringBuilder content = new StringBuilder();
-        if (url.getProtocol().startsWith("http")) {
-            String hash = calculateChecksum(url.toString(), "SHA1");
-            File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
-            if (!Constants.USE_LOCAL) {
-                con = url.openConnection();
-                String ETag = con.getHeaderField("ETag");
-                if (ETag != null) {
-                    if (!verifyChecksum(cachedFile, ETag.replace("\"", ""), "MD5")) {
-                        downloadFile(con, cachedFile);
-                    }
-                } else {
-                    downloadFile(con, cachedFile);
-                }
-                con = cachedFile.toURI().toURL().openConnection();
-            } else {
-                if (cachedFile.isFile()) {
-                    con = cachedFile.toURI().toURL().openConnection();
-                } else {
-                    return "";
-                }
-            }
-        }
-        if (con == null) {
-            con = url.openConnection();
-        }
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")))) {
             String line;
             boolean first = true;

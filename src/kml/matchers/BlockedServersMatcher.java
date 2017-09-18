@@ -1,6 +1,6 @@
 package kml.matchers;
 
-import kml.Constants;
+import kml.Utils;
 
 import java.net.URL;
 
@@ -9,17 +9,18 @@ import java.net.URL;
  *         website https://krothium.com
  */
 public class BlockedServersMatcher implements URLMatcher {
-    private static final String BLOCK_URL = "https://sessionserver.mojang.com/blockedservers";
+    private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
+    private final URL blockedServersURL = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
 
     @Override
     public final boolean match(URL url) {
-        return url.toString().equalsIgnoreCase(BLOCK_URL);
+        return url.toString().equalsIgnoreCase(this.blockURL);
     }
 
     @Override
     public final URL handle(URL url) {
-        if (url.toString().equalsIgnoreCase(BLOCK_URL)) {
-            return Constants.BLOCKED_SERVERS;
+        if (url.toString().equalsIgnoreCase(this.blockURL)) {
+            return this.blockedServersURL;
         }
         return null;
     }

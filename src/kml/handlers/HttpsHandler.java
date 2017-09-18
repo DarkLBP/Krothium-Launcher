@@ -1,7 +1,6 @@
 package kml.handlers;
 
-import kml.Constants;
-import kml.matchers.URLMatcher;
+import kml.matchers.*;
 import sun.net.www.protocol.https.Handler;
 
 import java.io.IOException;
@@ -15,6 +14,12 @@ import java.net.URLConnection;
  */
 class HttpsHandler extends Handler {
 
+    private final URLMatcher[] urlMatchers;
+
+    public HttpsHandler() {
+        this.urlMatchers = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
+    }
+
     @Override
     protected final URLConnection openConnection(URL url) throws IOException {
         return this.openConnection(url, null);
@@ -23,7 +28,7 @@ class HttpsHandler extends Handler {
     @Override
     protected final URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url);
-        for (URLMatcher m : Constants.HTTPS_MATCHERS) {
+        for (URLMatcher m : this.urlMatchers) {
             if (m.match(url)) {
                 return new ConnectionHandler(url, m);
             }

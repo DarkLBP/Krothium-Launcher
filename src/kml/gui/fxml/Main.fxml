@@ -352,21 +352,9 @@
                         </VBox>
                         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <Button fx:id="deleteCache" mnemonicParsing="false" onMouseClicked="#deleteCache" prefHeight="45.0" prefWidth="250.0" text="Delete Cache">
-                                 <VBox.margin>
-                                    <Insets top="15.0" />
-                                 </VBox.margin>
-                                 <styleClass>
-                                    <String fx:value="color-alt" />
-                                    <String fx:value="text-5" />
-                                 </styleClass>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Button>
                               <Button fx:id="exportLogs" mnemonicParsing="false" onMouseClicked="#exportLogs" prefHeight="45.0" prefWidth="250.0" text="Export Logs">
                                  <VBox.margin>
-                                    <Insets top="5.0" />
+                                    <Insets top="10.0" />
                                  </VBox.margin>
                                  <styleClass>
                                     <String fx:value="color-alt" />

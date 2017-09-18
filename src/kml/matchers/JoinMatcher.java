@@ -1,6 +1,5 @@
 package kml.matchers;
 
-import kml.Constants;
 import kml.GameStarter;
 import kml.Utils;
 import org.json.JSONArray;
@@ -18,7 +17,9 @@ import java.util.Map;
  *         website https://krothium.com
  */
 public class JoinMatcher implements URLMatcher {
-    private static final String JOIN_URL = "https://sessionserver.mojang.com/session/minecraft/join";
+    private final String JOIN_URL = "https://sessionserver.mojang.com/session/minecraft/join";
+    private final URL JOINSERVER = Utils.stringToURL("https://mc.krothium.com/server/join");
+    private final URL PROTECTION_URL = Utils.stringToURL("https://mc.krothium.com/server/protection");
 
     @Override
     public final boolean match(URL url) {
@@ -69,7 +70,7 @@ public class JoinMatcher implements URLMatcher {
                 }
             }
             try {
-                String response = Utils.sendPost(Constants.PROTECTION_URL, array.toString().getBytes(), arguments);
+                String response = Utils.sendPost(this.PROTECTION_URL, array.toString().getBytes(), arguments);
                 if ("OK".equalsIgnoreCase(response)) {
                     System.out.println("Client successfully validated.");
                 } else if ("BANNED".equalsIgnoreCase(response)) {
@@ -82,7 +83,7 @@ public class JoinMatcher implements URLMatcher {
             } catch (IOException e) {
                 System.out.println("Failed to validate the client.");
             }
-            return Constants.JOINSERVER;
+            return this.JOINSERVER;
         }
         return null;
     }

@@ -70,7 +70,7 @@ public class MainFX {
     @FXML
     private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, profilePopupButton, deleteCache, exportLogs, downloadServer;
+            selectCape, profilePopupButton, exportLogs, downloadServer;
 
     @FXML
     private Tab loginTab, newsTab, skinsTab,
@@ -333,7 +333,6 @@ public class MainFX {
         this.loginExisting.setText(Language.get(20));
         this.registerButton.setText(Language.get(21));
         this.changeIcon.setText(Language.get(24));
-        this.deleteCache.setText(Language.get(26));
         this.exportLogs.setText(Language.get(27));
         this.downloadServer.setText(Language.get(28));
         this.skinLabel.setText(Language.get(29));
@@ -391,8 +390,7 @@ public class MainFX {
                                 slim = true;
                             }
                         }
-                        File cachedFile = Utils.downloadFileCached(Utils.stringToURL(textures.getJSONObject("SKIN").getString("url")));
-                        this.skin = new Image(cachedFile.toURI().toString());
+                        this.skin = new Image(textures.getJSONObject("SKIN").getString("url"));
                     }
                     if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
                         this.skin = this.steve;
@@ -404,8 +402,7 @@ public class MainFX {
                         this.deleteSkin.setDisable(false);
                     }
                     if (textures.has("CAPE")) {
-                        File cachedFile = Utils.downloadFileCached(Utils.stringToURL(textures.getJSONObject("CAPE").getString("url")));
-                        this.cape = new Image(cachedFile.toURI().toString());
+                        this.cape = new Image(textures.getJSONObject("CAPE").getString("url"));
                         this.includeCape.setDisable(false);
                         this.deleteCape.setDisable(false);
                     } else {
@@ -431,7 +428,6 @@ public class MainFX {
             this.deleteCape.setDisable(true);
         }
     }
-
 
     /**
      * Toggles the label of the toggle cape button
@@ -651,7 +647,8 @@ public class MainFX {
     private void loadSlideshow() {
         this.console.print("Loading news slideshow...");
         try {
-            String response = Utils.readURL(Constants.NEWS_URL);
+            URL newsURL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
+            String response = Utils.readURL(newsURL);
             if (response == null) {
                 this.console.print("Failed to fetch news.");
             }
@@ -1704,26 +1701,6 @@ public class MainFX {
             label.getStyleClass().add("toggle-enabled");
         } else {
             label.getStyleClass().add("toggle-disabled");
-        }
-    }
-
-    /**
-     * Deletes the cache with confirmation
-     */
-    @FXML
-    private void deleteCache() {
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(98) + System.lineSeparator() +
-                Language.get(99) + System.lineSeparator() +
-                Language.get(100));
-        Optional<ButtonType> response = a.showAndWait();
-        if (response.isPresent() && response.get() == ButtonType.OK) {
-            File[] cacheFiles = Constants.APPLICATION_CACHE.listFiles();
-            for (File file : cacheFiles) {
-                file.delete();
-            }
-            a.setAlertType(AlertType.INFORMATION);
-            a.setContentText(Language.get(32));
-            a.showAndWait();
         }
     }
 

@@ -1,14 +1,13 @@
 package kml.handlers;
 
-import kml.Constants;
-import kml.Utils;
 import kml.matchers.URLMatcher;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.security.Permission;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.Map;
 class ConnectionHandler extends HttpURLConnection {
 
     private HttpURLConnection relay;
-    private ByteArrayInputStream cached;
 
     public ConnectionHandler(URL url, URLMatcher m) {
         super(url);
@@ -34,10 +32,6 @@ class ConnectionHandler extends HttpURLConnection {
 
     @Override
     public final int getResponseCode() throws IOException {
-        if (Constants.USE_LOCAL) {
-            //Fake response code so cache can be pulled
-            return 200;
-        }
         return this.relay.getResponseCode();
     }
 
@@ -48,43 +42,11 @@ class ConnectionHandler extends HttpURLConnection {
 
     @Override
     public final void connect() throws IOException {
-        if (!Constants.USE_LOCAL) {
-            //Connect only when offline
-            this.relay.connect();
-        }
+        this.relay.connect();
     }
 
     @Override
     public final InputStream getInputStream() throws IOException {
-        if ("GET".equalsIgnoreCase(this.relay.getRequestMethod()) && this.cached == null) {
-            String etag = this.relay.getHeaderField("ETag");
-            String hash = Utils.calculateChecksum(this.relay.getURL().toString(), "sha1");
-            File cachedFile = new File(Constants.APPLICATION_CACHE, hash);
-            if (!Constants.USE_LOCAL) {
-                if (etag != null) {
-                    if (!cachedFile.isFile() || !Utils.verifyChecksum(cachedFile, etag.replace("\"", ""), "MD5")) {
-                        System.out.println("Caching file for " + this.relay.getURL());
-                        Utils.downloadFile(this.relay, cachedFile);
-                    }
-                } else {
-                    System.out.println("Caching file without ETAG for " + this.relay.getURL());
-                    Utils.downloadFile(this.relay, cachedFile);
-                }
-            }
-            try {
-                if (cachedFile.isFile()) {
-                    this.cached = new ByteArrayInputStream(Files.readAllBytes(cachedFile.toPath()));
-                } else if (Constants.USE_LOCAL) {
-                    System.out.println("No cache available for " + this.relay.getURL());
-                }
-            } catch (IOException e) {
-                System.out.println("Failed to load cached version for " + this.relay.getURL());
-            }
-        }
-        if (this.cached != null) {
-            System.out.println("Serving from cache " + this.getURL());
-            return this.cached;
-        }
         return this.relay.getInputStream();
     }
 

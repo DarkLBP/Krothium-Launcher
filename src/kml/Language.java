@@ -1,13 +1,18 @@
 package kml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 /**
  * @author DarkLBP
  *         website https://krothium.com
  */
 public class Language {
-    private static String[] langData;
+    private static ArrayList<String> langData =  new ArrayList<>();
 
     /**
      * Loads a language file
@@ -15,13 +20,14 @@ public class Language {
      * @throws IOException When data read fails
      */
     public static void loadLang(String lang) throws IOException {
-        String data = Utils.readURL(Language.class.getResource("/kml/lang/" + lang + ".txt"));
-        if (data != null) {
-            langData = data.split(System.lineSeparator());
-        } else {
-            data = Utils.readURL(Language.class.getResource("/kml/lang/en-us.txt"));
-            if (data != null) {
-                langData = data.split(System.lineSeparator());
+        URL resource = Language.class.getResource("/kml/lang/" + lang + ".txt");
+        if (resource == null) {
+            resource = Language.class.getResource("/kml/lang/en-us.txt");
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.openStream(), Charset.forName("UTF-8")))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                langData.add(line);
             }
         }
     }
@@ -32,11 +38,8 @@ public class Language {
      * @return The requested localized line
      */
     public static String get(int line) {
-        if (langData == null || langData.length == 0) {
-            return "";
-        }
-        if (line <= langData.length) {
-            return langData[line - 1];
+        if (line <= langData.size()) {
+            return langData.get(line - 1);
         }
         return "";
     }

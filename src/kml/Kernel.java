@@ -30,6 +30,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -59,7 +61,6 @@ public final class Kernel {
         if (!Constants.APPLICATION_WORKING_DIR.isDirectory()) {
             Constants.APPLICATION_WORKING_DIR.mkdirs();
         }
-        Constants.APPLICATION_CACHE.mkdir();
         this.console = new Console();
         try {
             int response = Utils.testNetwork();
@@ -105,7 +106,8 @@ public final class Kernel {
         this.console.print("Reading launcher profiles...");
         try {
             if (Constants.APPLICATION_CONFIG.isFile()) {
-                this.launcherProfiles = new JSONObject(Utils.readURL(Constants.APPLICATION_CONFIG.toURI().toURL()));
+                String data = new String(Files.readAllBytes(Constants.APPLICATION_CONFIG.toPath()), StandardCharsets.UTF_8);
+                this.launcherProfiles = new JSONObject(data);
             } else {
                 this.console.print("Launcher profiles file does not exists.");
             }
@@ -325,7 +327,8 @@ public final class Kernel {
     public String checkForUpdates() {
         String r;
         try {
-            r = Utils.readURL(Constants.GETLATEST_URL);
+            URL updateURL = Utils.stringToURL("https://mc.krothium.com/latestversion");
+            r = Utils.readURL(updateURL);
         } catch (IOException e) {
             e.printStackTrace(this.console.getWriter());
             r = null;
