@@ -205,28 +205,6 @@ public final class Utils {
     }
 
     /**
-     * Calculates a checksum from a String
-     * @param txt The input String
-     * @param algorithm The hash method (md5, sha1...)
-     * @return The calculated hash
-     */
-    public static String calculateChecksum(String txt, String algorithm) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-            byte[] data = txt.getBytes();
-            digest.update(data);
-            byte[] hashBytes = digest.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte hashByte : hashBytes) {
-                sb.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException ex) {
-            return null;
-        }
-    }
-
-    /**
      * Calculates a checksum from a File
      * @param file The input File
      * @param algorithm The hash method (md5, sha1...)
