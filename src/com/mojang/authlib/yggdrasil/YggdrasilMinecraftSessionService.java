@@ -50,6 +50,8 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
     private final Gson gson = (new GsonBuilder()).registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private final LoadingCache<GameProfile, GameProfile> insecureProfiles;
     private final HashMap<String, Map<Type, MinecraftProfileTexture>> cache = new HashMap<>();
+    private final URL GET_PROFILESID = Utils.stringToURL("https://mc.krothium.com/api/profiles/minecraft");
+    private final URL GET_PROFILESID_MOJANG = Utils.stringToURL("https://api.mojang.com/profiles/minecraft");
 
     protected YggdrasilMinecraftSessionService(YggdrasilAuthenticationService authenticationService) {
         super(authenticationService);
@@ -156,7 +158,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                 users.put(profile.getName());
                 byte[] data = users.toString().getBytes();
                 String profileID = null;
-                String response = Utils.sendPost(Constants.GET_PROFILESID, data, new HashMap<>());
+                String response = Utils.sendPost(this.GET_PROFILESID, data, new HashMap<>());
                 JSONArray rdata = new JSONArray(response);
                 if (rdata.length() == 1) {
                     JSONObject user = rdata.getJSONObject(0);
@@ -168,7 +170,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                     System.out.println("No textures found on Krothium for " + profile.getName() + ". Searching in Mojang server...");
                     HashMap<String, String> params = new HashMap<>();
                     params.put("Content-Type", "application/json");
-                    response = Utils.sendPost(Constants.GET_PROFILESID_MOJANG, data, params);
+                    response = Utils.sendPost(this.GET_PROFILESID_MOJANG, data, params);
                     rdata = new JSONArray(response);
                     if (rdata.length() == 1) {
                         JSONObject user = rdata.getJSONObject(0);

@@ -128,6 +128,8 @@ public class MainFX {
     private final Image[] skinPreviews = new Image[4];
     private Image skin, cape, alex, steve;
     private String urlPrefix = "";
+    private final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
+    private final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
 
     /**
      * Initializes all required stuff from the GUI
@@ -502,7 +504,7 @@ public class MainFX {
                         params.put("Skin-Type", "steve");
                     }
                     params.put("Content-Type", "image/png");
-                    String r = Utils.sendPost(Constants.CHANGESKIN_URL, data, params);
+                    String r = Utils.sendPost(this.CHANGESKIN_URL, data, params);
                     if (!"OK".equals(r)) {
                         this.console.print("Failed to change the skin.");
                         this.console.print(r);
@@ -546,7 +548,7 @@ public class MainFX {
                     params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
                     params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
                     params.put("Content-Type", "image/png");
-                    String r = Utils.sendPost(Constants.CHANGECAPE_URL, data, params);
+                    String r = Utils.sendPost(this.CHANGECAPE_URL, data, params);
                     if (!"OK".equals(r)) {
                         this.console.print("Failed to change the cape.");
                         this.console.print(r);
@@ -581,7 +583,7 @@ public class MainFX {
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
             try {
-                String r = Utils.sendPost(Constants.CHANGESKIN_URL, null, params);
+                String r = Utils.sendPost(this.CHANGESKIN_URL, null, params);
                 if (!"OK".equals(r)) {
                     this.console.print("Failed to delete the skin.");
                     this.console.print(r);
@@ -617,7 +619,7 @@ public class MainFX {
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
             try {
-                String r = Utils.sendPost(Constants.CHANGECAPE_URL, null, params);
+                String r = Utils.sendPost(this.CHANGECAPE_URL, null, params);
                 if (!"OK".equals(r)) {
                     this.console.print("Failed to delete the cape.");
                     this.console.print(r);
