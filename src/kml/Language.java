@@ -20,6 +20,7 @@ public class Language {
      * @throws IOException When data read fails
      */
     public static void loadLang(String lang) throws IOException {
+        langData.clear();
         URL resource = Language.class.getResource("/kml/lang/" + lang + ".txt");
         if (resource == null) {
             resource = Language.class.getResource("/kml/lang/en-us.txt");
