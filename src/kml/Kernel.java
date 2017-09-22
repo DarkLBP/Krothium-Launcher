@@ -168,12 +168,12 @@ public final class Kernel {
                     s.setMaximized(false);
                     s.setOnCloseRequest(e -> {
                         e.consume();
-//                        Alert ask = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
-//                                Language.get(96) + System.lineSeparator() + Language.get(97));
-//                        Optional<ButtonType> response = ask.showAndWait();
-//                        if (response.isPresent() && response.get() == ButtonType.OK) {
-//                            this.hostServices.showDocument("https://krothium.com/donaciones/");
-//                        }
+
+                        int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+                                Language.get(96) + System.lineSeparator() + Language.get(97));
+                        if (result == JOptionPane.YES_OPTION) {
+                            this.hostServices.showDocument("https://krothium.com/donaciones/");
+                        }
                     });
                     this.webBrowser = fxmlLoader.getController();
                     this.webBrowser.initialize(s);
