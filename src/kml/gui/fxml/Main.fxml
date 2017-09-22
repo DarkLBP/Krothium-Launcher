@@ -601,21 +601,21 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Label>
-                              <Spinner fx:id="resW" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                              <TextField fx:id="resW" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
                                     <Insets right="313.0" />
                                  </StackPane.margin>
-                              </Spinner>
+                              </TextField>
                               <Label maxWidth="10.0" styleClass="text-4" text="X" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
                                     <Insets right="290.0" />
                                  </StackPane.margin>
                               </Label>
-                              <Spinner fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
+                              <TextField fx:id="resH" layoutX="210.0" layoutY="16.0" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
                                     <Insets right="142.0" />
                                  </StackPane.margin>
-                              </Spinner>
+                              </TextField>
                            </children>
                         </StackPane>
                         <StackPane layoutX="160.0" layoutY="10.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">

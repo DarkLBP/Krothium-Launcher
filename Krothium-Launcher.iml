@@ -13,5 +13,6 @@
     <orderEntry type="library" name="gson-2.8.0" level="project" />
     <orderEntry type="library" name="realms-1.10.17" level="project" />
     <orderEntry type="library" name="commons-codec-1.10" level="project" />
+    <orderEntry type="library" name="lzma" level="project" />
   </component>
 </module>

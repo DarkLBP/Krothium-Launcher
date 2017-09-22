@@ -14,8 +14,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -30,10 +29,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kml.*;
-import kml.enums.OSArch;
-import kml.enums.ProfileIcon;
-import kml.enums.ProfileType;
-import kml.enums.VersionType;
+import kml.enums.*;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
@@ -44,6 +40,7 @@ import kml.objects.VersionMeta;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,10 +92,8 @@ public class MainFX {
     private HBox playPane, tabMenu, slideshowBox;
 
     @FXML
-    private TextField username, profileName,javaExec, gameDir, javaArgs;
-
-    @FXML
-    private Spinner<Integer> resH, resW;
+    private TextField username, profileName,javaExec, gameDir, javaArgs,
+            resH, resW;
 
     @FXML
     private PasswordField password;
@@ -221,8 +216,6 @@ public class MainFX {
         this.playPane.pickOnBoundsProperty().setValue(false);
 
         //Prepare Spinners
-        this.resH.setValueFactory(new IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
-        this.resW.setValueFactory(new IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
         this.resW.setEditable(true);
         this.resH.setEditable(true);
 
@@ -262,9 +255,8 @@ public class MainFX {
         String update = this.kernel.checkForUpdates();
         if (update != null) {
             Platform.runLater(() -> {
-                Alert confirm = this.kernel.buildAlert(AlertType.CONFIRMATION, Language.get(11), Language.get(10));
-                Optional<ButtonType> result = confirm.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
+                int result = this.kernel.showAlert(AlertType.CONFIRMATION, Language.get(11), Language.get(10));
+                if (result == JOptionPane.YES_OPTION) {
                     try {
                         Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater);
                         String currentJar = Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile();
@@ -296,17 +288,15 @@ public class MainFX {
             ex.printStackTrace(this.console.getWriter());
             return;
         }
-        if (response != null) {
-            if (!response.isEmpty()) {
-                String[] chunks = response.split(":");
-                String firstChunk = Utils.fromBase64(chunks[0]);
-                this.urlPrefix = firstChunk == null ? "" : firstChunk;
-                if (chunks.length == 2) {
-                    String secondChunk = Utils.fromBase64(response.split(":")[1]);
-                    String adsURL = secondChunk == null ? "" : secondChunk;
-                    this.kernel.getBrowser().loadWebsite(adsURL);
-                    this.kernel.getBrowser().show(this.stage);
-                }
+        if (!response.isEmpty()) {
+            String[] chunks = response.split(":");
+            String firstChunk = Utils.fromBase64(chunks[0]);
+            this.urlPrefix = firstChunk == null ? "" : firstChunk;
+            if (chunks.length == 2) {
+                String secondChunk = Utils.fromBase64(response.split(":")[1]);
+                String adsURL = secondChunk == null ? "" : secondChunk;
+                this.kernel.getBrowser().loadWebsite(adsURL);
+                this.kernel.getBrowser().show(this.stage);
             }
             this.console.print("Ads loaded.");
         } else {
@@ -489,9 +479,8 @@ public class MainFX {
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
             if (selected.length() > 131072) {
-                Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(105));
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(105));
                 this.console.print("Skin file exceeds 128KB file size limit.");
-                error.showAndWait();
             } else {
                 Map<String, String> params = new HashMap<>();
                 try {
@@ -508,20 +497,17 @@ public class MainFX {
                     if (!"OK".equals(r)) {
                         this.console.print("Failed to change the skin.");
                         this.console.print(r);
-                        Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(42));
-                        error.showAndWait();
+                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(42));
                     }
                     else {
-                        Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(40));
+                        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(40));
                         this.console.print("Skin changed successfully!");
-                        correct.showAndWait();
                         this.parseRemoteTextures();
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the skin.");
                     this.console.print(ex.getMessage());
-                    Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(42));
-                    error.showAndWait();
+                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(42));
                 }
             }
         }
@@ -538,9 +524,8 @@ public class MainFX {
         File selected = chooser.showOpenDialog(null);
         if (selected != null) {
             if (selected.length() > 131072) {
-                Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(104));
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(104));
                 this.console.print("Cape file exceeds 128KB file size limit.");
-                error.showAndWait();
             } else {
                 Map<String, String> params = new HashMap<>();
                 try {
@@ -552,20 +537,17 @@ public class MainFX {
                     if (!"OK".equals(r)) {
                         this.console.print("Failed to change the cape.");
                         this.console.print(r);
-                        Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(43));
-                        error.showAndWait();
+                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(43));
                     }
                     else {
-                        Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(41));
+                        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(41));
                         this.console.print("Cape changed successfully.");
-                        correct.showAndWait();
                         this.parseRemoteTextures();
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the cape.");
                     this.console.print(ex.getMessage());
-                    Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(43));
-                    error.showAndWait();
+                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(43));
                 }
             }
         }
@@ -576,9 +558,8 @@ public class MainFX {
      */
     @FXML
     private void deleteSkin() {
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(31));
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK){
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
+        if (result == JOptionPane.YES_OPTION){
             Map<String, String> params = new HashMap<>();
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
@@ -587,21 +568,18 @@ public class MainFX {
                 if (!"OK".equals(r)) {
                     this.console.print("Failed to delete the skin.");
                     this.console.print(r);
-                    Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(33));
-                    error.showAndWait();
+                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(33));
                 }
                 else {
-                    Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(34));
+                    this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(34));
                     this.console.print("Skin deleted successfully!");
-                    correct.showAndWait();
                     this.parseRemoteTextures();
                 }
             }
             catch (Exception ex) {
                 this.console.print("Failed to delete the skin.");
                 this.console.print(ex.getMessage());
-                Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(33));
-                error.showAndWait();
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(33));
             }
             params.clear();
         }
@@ -612,9 +590,8 @@ public class MainFX {
      */
     @FXML
     private void deleteCape() {
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(36));
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK){
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
+        if (result == JOptionPane.YES_OPTION){
             Map<String, String> params = new HashMap<>();
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
@@ -623,21 +600,18 @@ public class MainFX {
                 if (!"OK".equals(r)) {
                     this.console.print("Failed to delete the cape.");
                     this.console.print(r);
-                    Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(38));
-                    error.showAndWait();
+                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(38));
                 }
                 else {
-                    Alert correct = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(39));
+                    this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(39));
                     this.console.print("Cape deleted successfully!");
-                    correct.showAndWait();
                     this.parseRemoteTextures();
                 }
             }
             catch (Exception ex) {
                 this.console.print("Failed to delete the cape.");
                 this.console.print(ex.getMessage());
-                Alert error = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(38));
-                error.showAndWait();
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(38));
             }
             params.clear();
         }
@@ -946,8 +920,7 @@ public class MainFX {
                         task2.statusProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
                             if (newValue == Status.STOPPED) {
                                 if (gl.hasError()) {
-                                    Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(16), Language.get(15));
-                                    a.showAndWait();
+                                    MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
                                 }
                                 if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
                                     MainFX.this.kernel.exitSafely();
@@ -968,15 +941,13 @@ public class MainFX {
                         }
                     } catch (DownloaderException e) {
                         Platform.runLater(() -> {
-                            Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(83), Language.get(84));
-                            a.showAndWait();
+                            MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84));
                         });
                         MainFX.this.console.print("Failed to perform game download task");
                         e.printStackTrace(MainFX.this.console.getWriter());
                     } catch (GameLauncherException e) {
                         Platform.runLater(() -> {
-                            Alert a = MainFX.this.kernel.buildAlert(AlertType.ERROR, Language.get(81), Language.get(82));
-                            a.showAndWait();
+                            MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82));
                         });
                         MainFX.this.console.print("Failed to perform game launch task");
                         e.printStackTrace(MainFX.this.console.getWriter());
@@ -1206,10 +1177,8 @@ public class MainFX {
                 this.javaArgsBlock.setManaged(false);
             }
             this.toggleEditorOption(this.resolutionLabel, false);
-            this.resW.getEditor().setText(String.valueOf(854));
-            this.resW.getValueFactory().setValue(854);
-            this.resH.getEditor().setText(String.valueOf(480));
-            this.resH.getValueFactory().setValue(480);
+            this.resW.setText(String.valueOf(854));
+            this.resH.setText(String.valueOf(480));
             this.toggleEditorOption(this.gameDirLabel, false);
             this.gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
         } else {
@@ -1265,16 +1234,12 @@ public class MainFX {
 
                 if (p.hasResolution()) {
                     this.toggleEditorOption(this.resolutionLabel, true);
-                    this.resH.getEditor().setText(String.valueOf(p.getResolutionHeight()));
-                    this.resH.getValueFactory().setValue(p.getResolutionHeight());
-                    this.resW.getEditor().setText(String.valueOf(p.getResolutionWidth()));
-                    this.resW.getValueFactory().setValue(p.getResolutionWidth());
+                    this.resH.setText(String.valueOf(p.getResolutionHeight()));
+                    this.resW.setText(String.valueOf(p.getResolutionWidth()));
                 } else {
                     this.toggleEditorOption(this.resolutionLabel, false);
-                    this.resW.getEditor().setText(String.valueOf(854));
-                    this.resW.getValueFactory().setValue(854);
-                    this.resH.getEditor().setText(String.valueOf(480));
-                    this.resH.getValueFactory().setValue(480);
+                    this.resW.setText(String.valueOf(854));
+                    this.resH.setText(String.valueOf(480));
                 }
                 if (p.hasGameDir()) {
                     this.toggleEditorOption(this.gameDirLabel, true);
@@ -1382,8 +1347,8 @@ public class MainFX {
         }
         if (!this.resW.isDisabled()) {
             try {
-                int h = Integer.parseInt(this.resH.getEditor().getText());
-                int w = Integer.parseInt(this.resW.getEditor().getText());
+                int h = Integer.parseInt(this.resH.getText());
+                int w = Integer.parseInt(this.resW.getText());
                 target.setResolution(w, h);
             } catch (NumberFormatException ex) {
                 this.console.print("Invalid resolution given.");
@@ -1408,8 +1373,8 @@ public class MainFX {
                 target.setJavaArgs(null);
             }
         }
-        Alert a = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(57));
-        a.showAndWait();
+
+        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
         this.loadProfileList();
         this.switchTab(this.launchOptionsLabel);
     }
@@ -1419,9 +1384,8 @@ public class MainFX {
      */
     @FXML
     public final void cancelProfile() {
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(55));
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
+        if (result == JOptionPane.YES_OPTION) {
             this.switchTab(this.launchOptionsLabel);
         }
     }
@@ -1431,18 +1395,13 @@ public class MainFX {
      */
     @FXML
     public final void deleteProfile() {
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(61));
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
+        if (result == JOptionPane.YES_OPTION) {
             Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
             if (this.kernel.getProfiles().deleteProfile(this.kernel.getProfiles().getProfile(selectedElement.getId()))) {
-                a.setAlertType(AlertType.INFORMATION);
-                a.setContentText(Language.get(56));
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
             } else {
-                a.setAlertType(AlertType.ERROR);
-                a.setContentText(Language.get(58));
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(58));
             }
             this.loadProfileList();
             this.switchTab(this.launchOptionsLabel);
@@ -1528,13 +1487,10 @@ public class MainFX {
      * Performs an authenticate with the data typed in the login form
      */
     public final void authenticate() {
-        Alert a = this.kernel.buildAlert(AlertType.WARNING, null, null);
         if (this.username.getText().isEmpty()) {
-            a.setContentText(Language.get(17));
-            a.show();
+            this.kernel.showAlert(AlertType.WARNING, null, Language.get(17));
         } else if (this.password.getText().isEmpty()) {
-            a.setContentText(Language.get(23));
-            a.show();
+            this.kernel.showAlert(AlertType.WARNING, null, Language.get(23));
         } else {
             try {
                 Authentication auth = this.kernel.getAuthentication();
@@ -1545,10 +1501,7 @@ public class MainFX {
                 this.fetchAds();
                 this.parseRemoteTextures();
             } catch (AuthenticationException ex) {
-                a.setAlertType(AlertType.ERROR);
-                a.setHeaderText(Language.get(22));
-                a.setContentText(ex.getMessage());
-                a.show();
+                this.kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
                 this.password.setText("");
             }
         }
@@ -1590,8 +1543,7 @@ public class MainFX {
             this.fetchAds();
             this.parseRemoteTextures();
         } catch (AuthenticationException ex) {
-            Alert a = this.kernel.buildAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
-            a.showAndWait();
+            this.kernel.showAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
             this.updateExistingUsers();
         }
     }
@@ -1601,9 +1553,8 @@ public class MainFX {
      */
     public final void logout() {
         User selected = this.existingUsers.getSelectionModel().getSelectedItem();
-        Alert a = this.kernel.buildAlert(AlertType.CONFIRMATION, null, Language.get(8));
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(8));
+        if (result == JOptionPane.YES_OPTION) {
             Authentication auth = this.kernel.getAuthentication();
             auth.removeUser(selected);
             this.updateExistingUsers();
@@ -1664,8 +1615,7 @@ public class MainFX {
             this.toggleLabel(source, s.getShowGameLog());
         } else if (source == this.enableSnapshots) {
             if (!s.getEnableSnapshots()) {
-                Alert a = this.kernel.buildAlert(AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
             }
             s.setEnableSnapshots(!s.getEnableSnapshots());
             this.toggleLabel(source, s.getEnableSnapshots());
@@ -1673,10 +1623,10 @@ public class MainFX {
             this.loadVersionList();
         } else if (source == this.historicalVersions) {
             if (!s.getEnableHistorical()) {
-                Alert a = this.kernel.buildAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
+                this.kernel.showAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
                         + Language.get(74) + System.lineSeparator()
                         + Language.get(75));
-                a.showAndWait();
+
             }
             s.setEnableHistorical(!s.getEnableHistorical());
             this.toggleLabel(source, s.getEnableHistorical());
@@ -1684,8 +1634,7 @@ public class MainFX {
             this.loadVersionList();
         } else if (source == this.advancedSettings) {
             if (!s.getEnableAdvanced()) {
-                Alert a = this.kernel.buildAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
             }
             s.setEnableAdvanced(!s.getEnableAdvanced());
             this.toggleLabel(source, s.getEnableAdvanced());
@@ -1725,11 +1674,9 @@ public class MainFX {
                     out.write(bytes);
                     out.closeEntry();
                 }
-                Alert a = this.kernel.buildAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
             } catch (IOException ex) {
-                Alert a = this.kernel.buildAlert(AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
-                a.showAndWait();
+                this.kernel.showAlert(AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
             }
         }
     }

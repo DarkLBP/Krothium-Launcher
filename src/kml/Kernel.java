@@ -5,17 +5,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import kml.enums.AlertType;
 import kml.enums.ProfileIcon;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
@@ -34,7 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -172,12 +168,12 @@ public final class Kernel {
                     s.setMaximized(false);
                     s.setOnCloseRequest(e -> {
                         e.consume();
-                        Alert ask = this.buildAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
-                                Language.get(96) + System.lineSeparator() + Language.get(97));
-                        Optional<ButtonType> response = ask.showAndWait();
-                        if (response.isPresent() && response.get() == ButtonType.OK) {
-                            this.hostServices.showDocument("https://krothium.com/donaciones/");
-                        }
+//                        Alert ask = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+//                                Language.get(96) + System.lineSeparator() + Language.get(97));
+//                        Optional<ButtonType> response = ask.showAndWait();
+//                        if (response.isPresent() && response.get() == ButtonType.OK) {
+//                            this.hostServices.showDocument("https://krothium.com/donaciones/");
+//                        }
                     });
                     this.webBrowser = fxmlLoader.getController();
                     this.webBrowser.initialize(s);
@@ -688,17 +684,34 @@ public final class Kernel {
     /**
      * Constructs an alert with the application icon
      * @param type The alert type
-     * @param header The header text
+     * @param title The header text
      * @param content The content text
      * @return The built alert
      */
-    public Alert buildAlert(AlertType type, String header, String content) {
-        Alert a = new Alert(type);
-        a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        a.setContentText(content);
-        a.setHeaderText(header);
-        Stage s = (Stage)a.getDialogPane().getScene().getWindow();
-        s.getIcons().add(this.applicationIcon);
-        return a;
+    public int showAlert(AlertType type, String title, String content) {
+        int messageType;
+        switch (type) {
+            case CONFIRMATION:
+                messageType = JOptionPane.QUESTION_MESSAGE;
+                break;
+            case WARNING:
+                messageType = JOptionPane.WARNING_MESSAGE;
+                break;
+            case INFORMATION:
+                messageType = JOptionPane.INFORMATION_MESSAGE;
+                break;
+            case ERROR:
+                messageType = JOptionPane.ERROR_MESSAGE;
+                break;
+            default:
+                messageType = JOptionPane.INFORMATION_MESSAGE;
+
+        }
+        if (type != AlertType.CONFIRMATION) {
+            JOptionPane.showMessageDialog(null, content, title, messageType);
+        } else {
+            return JOptionPane.showConfirmDialog(null, content, title, JOptionPane.YES_NO_OPTION, messageType);
+        }
+        return -1;
     }
 }
