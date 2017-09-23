@@ -305,7 +305,7 @@ public class GameLauncher {
             }
             Thread log_info = new Thread(() -> {
                 try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), Charset.forName("ISO-8859-1"));
-                     BufferedReader br = new BufferedReader(isr);){
+                     BufferedReader br = new BufferedReader(isr)){
                     while (this.isRunning()) {
                         String lineRead = br.readLine();
                         if (lineRead != null) {
@@ -331,7 +331,7 @@ public class GameLauncher {
             log_info.start();
             Thread log_error = new Thread(() -> {
                 try (InputStreamReader isr = new InputStreamReader(this.process.getErrorStream(), Charset.forName("ISO-8859-1"));
-                     BufferedReader br = new BufferedReader(isr);){
+                     BufferedReader br = new BufferedReader(isr)){
                     while (this.isRunning()) {
                         String lineRead = br.readLine();
                         if (lineRead != null) {

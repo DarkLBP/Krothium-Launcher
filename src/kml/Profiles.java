@@ -96,7 +96,7 @@ public class Profiles {
                         if (key.length() != 32) {
                             key = UUID.randomUUID().toString().replace("-", "");
                         } else {
-                            String uuid = key.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");;
+                            String uuid = key.replaceAll("(.{8})(.{4})(.{4})(.{4})(.+)", "$1-$2-$3-$4-$5");
                             UUID.fromString(uuid);
                         }
                     } catch (IllegalArgumentException ex) {

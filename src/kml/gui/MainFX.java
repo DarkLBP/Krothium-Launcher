@@ -944,15 +944,11 @@ public class MainFX {
                             Platform.runLater(() -> MainFX.this.stage.close());
                         }
                     } catch (DownloaderException e) {
-                        Platform.runLater(() -> {
-                            MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84));
-                        });
+                        Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
                         MainFX.this.console.print("Failed to perform game download task");
                         e.printStackTrace(MainFX.this.console.getWriter());
                     } catch (GameLauncherException e) {
-                        Platform.runLater(() -> {
-                            MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82));
-                        });
+                        Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
                         MainFX.this.console.print("Failed to perform game launch task");
                         e.printStackTrace(MainFX.this.console.getWriter());
                     }
