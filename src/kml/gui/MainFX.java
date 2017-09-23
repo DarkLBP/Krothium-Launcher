@@ -906,10 +906,14 @@ public class MainFX {
                             MainFX.this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                         });
                         gl.launch();
-                        MainFX.this.progressPane.setVisible(false);
-                        MainFX.this.playPane.setVisible(true);
-                        Platform.runLater(() -> MainFX.this.playButton.setText(Language.get(14)));
-                        MainFX.this.playButton.setDisable(true);
+
+                        Platform.runLater(() -> {
+                            MainFX.this.progressPane.setVisible(false);
+                            MainFX.this.playPane.setVisible(true);
+                            MainFX.this.playButton.setText(Language.get(14));
+                            MainFX.this.playButton.setDisable(true);
+                        });
+
                         //Keep track of the game process
                         Timeline task2 = new Timeline();
                         KeyFrame frame2 = new KeyFrame(Duration.millis(250), event -> {
