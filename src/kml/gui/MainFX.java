@@ -1344,6 +1344,8 @@ public class MainFX {
                 target.setLatestSnapshot(true);
             } else {
                 target.setVersionID(this.versionList.getSelectionModel().getSelectedItem());
+                target.setLatestRelease(false);
+                target.setLatestSnapshot(false);
             }
             try {
                 target.setIcon(ProfileIcon.valueOf(this.profileIcon.getId()));
