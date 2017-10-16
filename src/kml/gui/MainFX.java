@@ -833,7 +833,11 @@ public class MainFX {
             } else if (p.getType() == ProfileType.SNAPSHOT) {
                 this.gameVersion.setText(Language.get(32));
             } else {
-                if (p.hasVersion()) {
+                if (p.isLatestRelease()) {
+                    this.gameVersion.setText(Language.get(26));
+                } else if (p.isLatestSnapshot()) {
+                    this.gameVersion.setText(Language.get(32));
+                } else if (p.hasVersion()) {
                     VersionMeta version = p.getVersionID();
                     this.gameVersion.setText("Minecraft " + version.getID());
                 }

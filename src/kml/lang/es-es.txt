@@ -19,7 +19,7 @@ Usuario o Email de Krothium:
 Contraseña:
 ENTRAR
 REGISTRARSE
-¡Imposible iniciar sesión
+¡Imposible iniciar sesión!
 ¡No puedes dejar el campo de la contraseña vacio!
 Cambiar
 Archivo PNG de Capa (128KB MAX)
