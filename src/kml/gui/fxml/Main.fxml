@@ -728,24 +728,6 @@
             <Insets left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <HBox fx:id="playPane" alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="100.0" prefWidth="950.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="70.0" prefWidth="220.0" text="PLAY" HBox.hgrow="NEVER">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <styleClass>
-                  <String fx:value="color-alt" />
-                  <String fx:value="text-1" />
-               </styleClass>
-            </Button>
-            <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-         </children>
-      </HBox>
       <ListView fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -782,5 +764,32 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ListView>
+      <VBox fx:id="playPane" alignment="TOP_CENTER" prefHeight="125.0" prefWidth="850.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <HBox alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="72.0" prefWidth="850.0">
+               <children>
+                  <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="70.0" prefWidth="220.0" text="PLAY" HBox.hgrow="NEVER">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="color-alt" />
+                        <String fx:value="text-1" />
+                     </styleClass>
+                  </Button>
+                  <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </HBox>
+            <Label fx:id="gameVersion" styleClass="color-alt" text="Minecraft X.X.XX">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Label>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

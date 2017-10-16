@@ -56,63 +56,46 @@ import java.util.zip.ZipOutputStream;
  */
 public class MainFX {
 
-    @FXML
-    private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
+    @FXML private Label progressText, newsLabel, skinsLabel, settingsLabel, launchOptionsLabel,
             keepLauncherOpen, outputLog, enableSnapshots, historicalVersions,
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
             rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
-            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton;
+            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton, gameVersion;
 
-    @FXML
-    private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
+    @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
             selectCape, profilePopupButton, exportLogs, downloadServer;
 
-    @FXML
-    private Tab loginTab, newsTab, skinsTab,
+    @FXML private Tab loginTab, newsTab, skinsTab,
             settingsTab, launchOptionsTab, profileEditorTab;
 
-    @FXML
-    private ProgressBar progressBar;
+    @FXML private ProgressBar progressBar;
 
-    @FXML
-    private TabPane contentPane;
+    @FXML private TabPane contentPane;
 
-    @FXML
-    private ListView<Label> languagesList, profileList, profilePopupList;
+    @FXML private ListView<Label> languagesList, profileList, profilePopupList;
 
-    @FXML
-    private ListView<ImageView> iconList;
+    @FXML private ListView<ImageView> iconList;
 
-    @FXML
-    private VBox progressPane, existingPanel;
+    @FXML private VBox progressPane, existingPanel, playPane;
 
-    @FXML
-    private HBox playPane, tabMenu, slideshowBox;
+    @FXML private HBox tabMenu, slideshowBox;
 
-    @FXML
-    private TextField username, profileName,javaExec, gameDir, javaArgs,
+    @FXML private TextField username, profileName,javaExec, gameDir, javaArgs,
             resH, resW;
 
-    @FXML
-    private PasswordField password;
+    @FXML private PasswordField password;
 
-    @FXML
-    private ComboBox<User> existingUsers;
+    @FXML private ComboBox<User> existingUsers;
 
-    @FXML
-    private ComboBox<VersionMeta> versionList;
+    @FXML private ComboBox<VersionMeta> versionList;
 
-    @FXML
-    private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
+    @FXML private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
 
-    @FXML
-    private ImageView profileIcon, slideshow, skinPreview;
+    @FXML private ImageView profileIcon, slideshow, skinPreview;
 
-    @FXML
-    private RadioButton skinClassic, skinSlim;
-
+    @FXML private RadioButton skinClassic, skinSlim;
 
     private Kernel kernel;
     private Console console;
@@ -211,9 +194,6 @@ public class MainFX {
         this.toggleLabel(this.enableSnapshots, st.getEnableSnapshots());
         this.toggleLabel(this.historicalVersions, st.getEnableHistorical());
         this.toggleLabel(this.advancedSettings, st.getEnableAdvanced());
-
-        //Make transparent areas to not target mouse events
-        this.playPane.pickOnBoundsProperty().setValue(false);
 
         //Prepare Spinners
         this.resW.setEditable(true);
@@ -759,6 +739,7 @@ public class MainFX {
                 ps.setSelectedProfile(ps.getReleaseProfile());
             }
         }
+        this.updateGameVersion();
 
         //For some reason using the same label for both lists one list appear the items blank
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
@@ -841,6 +822,27 @@ public class MainFX {
     }
 
     /**
+     * Updates the selected minecraft version indicator
+     */
+    private void updateGameVersion() {
+        Profile p = this.kernel.getProfiles().getSelectedProfile();
+        if (p != null) {
+            if (p.getType() == ProfileType.RELEASE) {
+                this.gameVersion.setText("Latest Minecraft Version");
+            } else if (p.getType() == ProfileType.SNAPSHOT) {
+                this.gameVersion.setText("Latest Minecraft Snapshot");
+            } else {
+                if (p.hasVersion()) {
+                    VersionMeta version = p.getVersionID();
+                    this.gameVersion.setText("Minecraft " + version.getID());
+                }
+            }
+        }  else {
+            this.gameVersion.setText("");
+        }
+    }
+
+    /**
      * Loads the profile icons
      */
     private void loadIcons() {
@@ -869,6 +871,7 @@ public class MainFX {
         }
         //Select profile and refresh list
         this.kernel.getProfiles().setSelectedProfile(this.kernel.getProfiles().getProfile(this.profilePopupList.getSelectionModel().getSelectedItem().getId()));
+        this.updateGameVersion();
         this.loadProfileList();
         this.profilePopupList.setVisible(false);
     }
@@ -1062,8 +1065,7 @@ public class MainFX {
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == this.profileEditorTab) {
             //Show play button
-            this.playButton.setVisible(true);
-            this.profilePopupButton.setVisible(true);
+            this.playPane.setVisible(true);
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == this.loginTab) {
             this.newsLabel.getStyleClass().remove("selectedItem");
@@ -1086,8 +1088,7 @@ public class MainFX {
             this.profileList.getSelectionModel().clearSelection();
         } else if (source == this.profileEditorTab) {
             //Hide play button
-            this.playButton.setVisible(false);
-            this.profilePopupButton.setVisible(false);
+            this.playPane.setVisible(false);
             selection.select(this.profileEditorTab);
         }
     }
