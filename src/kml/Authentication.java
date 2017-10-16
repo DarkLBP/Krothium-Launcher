@@ -123,7 +123,12 @@ public class Authentication {
         if (response.isEmpty()) {
             throw new AuthenticationException("Authentication server does not respond.");
         }
-        JSONObject r = new JSONObject(response);
+        JSONObject r;
+        try {
+            r = new JSONObject(response);
+        } catch (JSONException ex) {
+            throw new AuthenticationException("Failed to read authentication response.");
+        }
         if (!r.has("error")) {
             this.clientToken = r.getString("clientToken");
             String accessToken = r.has("accessToken") ? r.getString("accessToken") : null;
@@ -151,7 +156,7 @@ public class Authentication {
      * Performs a refresh request to the server
      * @throws AuthenticationException If the refresh failed
      */
-    public final void refresh() throws AuthenticationException {
+    public final void refresh() throws AuthenticationException, JSONException{
         if (this.selectedAccount == null) {
             throw new AuthenticationException("No user is selected.");
         }
@@ -183,7 +188,12 @@ public class Authentication {
         if (response.isEmpty()) {
             throw new AuthenticationException("Authentication server does not respond.");
         }
-        JSONObject r = new JSONObject(response);
+        JSONObject r;
+        try {
+            r = new JSONObject(response);
+        } catch (JSONException ex) {
+            throw new AuthenticationException("Failed to read authentication response.");
+        }
         if (!r.has("error")) {
             this.clientToken = r.has("clientToken") ? r.getString("clientToken") : this.clientToken;
             if (r.has("accessToken")) {
