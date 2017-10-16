@@ -23,13 +23,13 @@ REGISTRARSE
 ¡No puedes dejar el campo de la contraseña vacio!
 Cambiar
 Archivo PNG de Capa (128KB MAX)
-
+Último Lanzamiento de Minecraft
 Exportar Registros
 Descargar Servidor
 SKIN
 CAPA
 ¿Estás seguro de que quieres eliminar tu skin?
-
+Última Snapshot de Minecraft
 ¡Fallo al eliminar la skin!
 ¡Skin eliminada exitosamente!
 Registros exportados a:
@@ -95,7 +95,7 @@ Este anuncio mantiene el servicio vivo.
 Para cerrar el anuncio debes esperar 5 segundos y pulsar Saltar Publicidad.
 Si no quieres esperar siempre puedes hacer una donación.
 ¿Quieres hacer una donación ahora?
-
+Mi configuración
 
 
 Fallo al obtener las útlimas noticias

@@ -335,6 +335,7 @@ public class MainFX {
         this.skinSlim.setText(Language.get(91));
         this.iconLabel.setText(Language.get(92));
         this.includeCape.setText(Language.get(93));
+        this.profileName.setPromptText(Language.get(98));
         //Load profile list
         this.loadProfileList();
     }
@@ -828,9 +829,9 @@ public class MainFX {
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         if (p != null) {
             if (p.getType() == ProfileType.RELEASE) {
-                this.gameVersion.setText("Latest Minecraft Version");
+                this.gameVersion.setText(Language.get(26));
             } else if (p.getType() == ProfileType.SNAPSHOT) {
-                this.gameVersion.setText("Latest Minecraft Snapshot");
+                this.gameVersion.setText(Language.get(32));
             } else {
                 if (p.hasVersion()) {
                     VersionMeta version = p.getVersionID();

@@ -23,13 +23,13 @@ Imposible inciar sessió
 No pots deixar el camp de la contrasenya buid!
 Canviar
 Arxiu PNG de Capa (128KB MAX)
-
+Últim Llançament de Minecraft
 Exportar Registres
 Descarregar Servidor
 SKIN
 CAPA
 Estás segur de que vols eliminar la teua skin?
-
+Última Snapshot de Minecraft
 Fallada al eliminar la skin!
 Skin eliminada amb èxit!
 Registres exportats a:
@@ -95,7 +95,7 @@ Aquest anunci manté el servei viu.
 Per a tancar l'anunci has d'esperar 5 segons i pretar Saltar Publicitat.
 No vols esperar sempre pots fer una donació.
 Vols fer una donació ara?
-
+La meua configuració
 
 
 Fallada al obtindre les útlimes noticies

@@ -23,13 +23,13 @@ Impossível iniciar sessão
 Você não pode deixar o campo da senha vazio!
 Mudar
 Arquivo PNG de Capa (128KB MAX)
-
+Última Versão do Minecraft
 Exportar Registros
 Baixar Servidor
 SKIN
 CAPA
 Tem certeza de que deseja eliminar sua skin?
-
+Última Snapshot do Minecraft
 Failed to delete the skin!
 Skin eliminada com sucesso!
 Registros exportados para:
@@ -95,7 +95,7 @@ Este anúncio torna este serviço vivo.
 Para fechar o anúncio, você precisa esperar 5 segundos e clicar em Ignorar anúncio.
 Se você não quer esperar, você sempre pode fazer uma doação.
 Você quer doar agora?
-
+Minha configuração
 
 
 Falha ao buscar as últimas notícias

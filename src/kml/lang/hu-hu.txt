@@ -23,13 +23,13 @@ Sikertelen bejelentkezés
 A jelszó mezőt nem lehet üresen hagyni!
 Változtatása
 Köpeny PNG fájl (128KB MAX)
-
+Legfrissebb Minecraft Release
 Logfájlok exportálása
 Szerver letöltése
 SKIN
 KÖPENY
 Biztosan törölni szeretnéd a skined?
-
+Legfrissebb Minecraft Snapshot
 Nem sikerült törölni a skinedet!
 Skin sikeresen törölve!
 Logfájlok exportálva:
@@ -95,7 +95,7 @@ A hírdetések tartják életben ezt a szolgáltatást.
 A hirdetés bezárásához 5 másodpercet kell várni, majd kattintson a Skip AD gombra.
 Ha nem akarod megvárni akkor adományozhatsz.
 Szeretnél adományozni most?
-
+Saját konfiguráció
 
 
 Nem sikerült lekérni a legfrissebb híreket
