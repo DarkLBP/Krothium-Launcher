@@ -14,13 +14,13 @@ Descargando
 JUGANDO
 ¡El juego ha crasheado! Comprueba los registros para mas información.
 El juego ha crasheado
-¡No puedes dejar el campo del usuario vacio!
+¡No puedes dejar el campo del usuario vacío!
 Usuario o Email de Krothium:
 Contraseña:
 ENTRAR
 REGISTRARSE
 ¡Imposible iniciar sesión!
-¡No puedes dejar el campo de la contraseña vacio!
+¡No puedes dejar el campo de la contraseña vacío!
 Cambiar
 Archivo PNG de Capa (128KB MAX)
 Último Lanzamiento de Minecraft
