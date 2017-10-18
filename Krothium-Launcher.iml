@@ -7,12 +7,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="log4j-api-2.0-beta9" level="project" />
-    <orderEntry type="library" name="guava-17.0" level="project" />
-    <orderEntry type="library" name="authlib-1.5.25" level="project" />
-    <orderEntry type="library" name="gson-2.8.0" level="project" />
-    <orderEntry type="library" name="realms-1.10.17" level="project" />
-    <orderEntry type="library" name="commons-codec-1.10" level="project" />
     <orderEntry type="library" name="lzma" level="project" />
+    <orderEntry type="library" name="gson-2.8.0" level="project" />
+    <orderEntry type="library" name="guava-21.0" level="project" />
+    <orderEntry type="library" name="log4j-api-2.8.1" level="project" />
+    <orderEntry type="library" name="authlib-1.5.25" level="project" />
+    <orderEntry type="library" name="commons-codec-1.10" level="project" />
   </component>
 </module>

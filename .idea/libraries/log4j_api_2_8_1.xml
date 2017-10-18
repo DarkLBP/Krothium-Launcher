@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="realms-1.10.17">
+  <library name="log4j-api-2.8.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../realms-1.10.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/log4j-api-2.8.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
