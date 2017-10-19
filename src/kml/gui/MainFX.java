@@ -267,7 +267,7 @@ public class MainFX {
      * Fetches any advertisement available for the logged user
      */
     private void fetchAds() {
-        String profileID = this.kernel.getAuthentication().getSelectedUser().getProfileID();
+        String profileID = this.kernel.getAuthentication().getSelectedUser().getSelectedProfile();
         URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
         String response;
         try {
@@ -355,7 +355,7 @@ public class MainFX {
      */
     private void parseRemoteTextures() {
         try {
-            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + this.kernel.getAuthentication().getSelectedUser().getProfileID() + "?unsigned=true");
+            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + this.kernel.getAuthentication().getSelectedUser().getSelectedProfile() + "?unsigned=true");
             JSONObject root = new JSONObject(Utils.readURL(profileURL));
             JSONArray properties = root.getJSONArray("properties");
             for (int i = 0; i < properties.length(); i++) {

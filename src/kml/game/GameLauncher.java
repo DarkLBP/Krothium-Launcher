@@ -219,7 +219,7 @@ public class GameLauncher {
         }
         Authentication a = this.kernel.getAuthentication();
         User u = a.getSelectedUser();
-        gameArgs.add(u.getProfileID());
+        gameArgs.add(u.getSelectedProfile());
         gameArgs.add(u.getAccessToken());
         gameArgs.add(ver.getMainClass());
         this.console.print("Full game launcher parameters: ");
@@ -254,7 +254,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${assets_index_name}", index.getID());
                         break;
                     case "${auth_uuid}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getProfileID());
+                        versionArgs[i] = versionArgs[i].replace("${auth_uuid}", u.getSelectedProfile());
                         break;
                     case "${auth_access_token}":
                         versionArgs[i] = versionArgs[i].replace("${auth_access_token}", u.getAccessToken());
@@ -269,7 +269,7 @@ public class GameLauncher {
                         versionArgs[i] = versionArgs[i].replace("${user_type}", "mojang");
                         break;
                     case "${auth_session}":
-                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ':' + u.getProfileID().replace("-", ""));
+                        versionArgs[i] = versionArgs[i].replace("${auth_session}", "token:" + u.getAccessToken() + ':' + u.getSelectedProfile().replace("-", ""));
                         break;
                 }
             }

@@ -12,17 +12,24 @@ public class User {
     private String accessToken;
     private final UserType type;
     private final ArrayList<UserProfile> profiles;
+    private final String selectedProfile;
 
-    public User(String ui, String at, String un, UserType type, ArrayList<UserProfile> userProfiles) {
+    public User(String ui, String at, String un, UserType type, ArrayList<UserProfile> userProfiles, String selectedProfile) {
         this.accessToken = at;
         this.id = ui;
         this.username = un;
         this.type = type;
         this.profiles = userProfiles;
+        this.selectedProfile = selectedProfile;
     }
 
     public final String getDisplayName() {
-        return this.displayName;
+        for (UserProfile up : profiles) {
+            if (up.getId().equalsIgnoreCase(selectedProfile)) {
+                return up.getDisplayName();
+            }
+        }
+        return null;
     }
 
     public final String getAccessToken() {
@@ -33,8 +40,12 @@ public class User {
         return this.id;
     }
 
-    public final String getProfileID() {
-        return this.profileUUID;
+    public ArrayList<UserProfile> getProfiles() {
+        return this.profiles;
+    }
+
+    public String getSelectedProfile() {
+        return this.selectedProfile;
     }
 
     public final void updateAccessToken(String accessToken) {
@@ -51,7 +62,7 @@ public class User {
 
     @Override
     public final String toString() {
-        return this.displayName;
+        return this.id;
     }
 
     @Override

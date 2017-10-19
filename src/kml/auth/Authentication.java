@@ -8,6 +8,7 @@ import kml.auth.user.UserType;
 import kml.exceptions.AuthenticationException;
 import kml.auth.user.User;
 import kml.auth.user.UserProfile;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,15 +27,17 @@ public class Authentication {
     private final Set<User> userDatabase = new HashSet<>();
     private final Kernel kernel;
     private boolean authenticated;
-    private String selectedProfile, clientToken = UUID.randomUUID().toString();
+    private String clientToken = UUID.randomUUID().toString();
     private User selectedAccount;
-    private final URL authenticateURL ,refreshURL;
+    private final String authenticatePath ,refreshPath;
+    private final String mojangDomain = "authserver.mojang.com";
+    private final String krothiumDomain = "mc.krothium.com";
 
     public Authentication(Kernel k) {
         this.kernel = k;
         this.console = k.getConsole();
-        this.authenticateURL = Utils.stringToURL("https://mc.krothium.com/authenticate");
-        this.refreshURL = Utils.stringToURL("https://mc.krothium.com/refresh");
+        this.authenticatePath = "/authenticate";
+        this.refreshPath = "/refresh";
     }
 
     /**
@@ -64,7 +67,6 @@ public class Authentication {
             this.userDatabase.remove(u);
             if (u.equals(this.selectedAccount)) {
                 this.selectedAccount = null;
-                this.selectedProfile = null;
             }
             return true;
         } else {
@@ -89,12 +91,10 @@ public class Authentication {
         if (user != null) {
             if (this.userDatabase.contains(user)) {
                 this.selectedAccount = user;
-                this.selectedProfile = user.getProfileID();
                 return;
             }
         }
         this.selectedAccount = null;
-        this.selectedProfile = null;
     }
 
     /**
@@ -103,12 +103,19 @@ public class Authentication {
      * @param password The password
      * @throws AuthenticationException If authentication failed
      */
-    public final void authenticate(String username, String password, UserType type) throws AuthenticationException {
+    public final void authenticate(String username, String password) throws AuthenticationException {
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
+        UserType type;
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("agent", agent);
+        if (username.startsWith("mojang:")) {
+            type = UserType.MOJANG;
+            username = username.replace("mojang:", "");
+        } else {
+            type = UserType.KROTHIUM;
+        }
         request.put("username", username);
         request.put("password", password);
         if (this.clientToken != null) {
@@ -119,8 +126,14 @@ public class Authentication {
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
+        URL authURL;
+        if ( type == UserType.MOJANG) {
+            authURL = Utils.stringToURL("https://" + mojangDomain + authenticatePath);
+        } else {
+            authURL = Utils.stringToURL("https://" + krothiumDomain + authenticatePath);
+        }
         try {
-            response = Utils.sendPost(this.authenticateURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(authURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             this.console.print("Failed to send request to authentication server");
             ex.printStackTrace(this.console.getWriter());
@@ -136,16 +149,26 @@ public class Authentication {
             throw new AuthenticationException("Failed to read authentication response.");
         }
         if (!r.has("error")) {
-            this.clientToken = r.getString("clientToken");
-            String accessToken = r.has("accessToken") ? r.getString("accessToken") : null;
-            String profileID = r.has("selectedProfile") ? r.getJSONObject("selectedProfile").getString("id") : null;
-            String profileName = r.has("selectedProfile") ? r.getJSONObject("selectedProfile").getString("name") : null;
-            String userID = r.has("user") ? r.getJSONObject("user").getString("id") : null;
-            User u = new User(profileName, accessToken, userID, username, profileID, type);
-            this.addUser(u);
-            this.selectedAccount = u;
-            this.selectedProfile = profileID;
-            this.authenticated = true;
+            try {
+                String accessToken = r.getString("accessToken");
+                String selectedProfile = r.getJSONObject("selectedProfile").getString("id");
+                String userID = r.getJSONObject("user").getString("id");
+                this.clientToken = r.getString("clientToken");
+                ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                JSONArray uprofs = r.getJSONArray("availableProfiles");
+                for (int i = 0; i < uprofs.length(); i++){
+                    JSONObject prof = uprofs.getJSONObject(i);
+                    UserProfile up = new UserProfile(prof.getString("id"), prof.getString("name"));
+                    userProfiles.add(up);
+                }
+                User u = new User(userID, accessToken, username, type, userProfiles, selectedProfile);
+                this.selectedAccount = u;
+                this.authenticated = true;
+                this.addUser(u);
+            } catch (JSONException ex) {
+                ex.printStackTrace(this.console.getWriter());
+                throw new AuthenticationException("Authentication server replied wrongly.");
+            }
         } else {
             this.authenticated = false;
             if (r.has("errorMessage")) {
@@ -178,8 +201,14 @@ public class Authentication {
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
+        URL refreshURL;
+        if (u.getType() == UserType.MOJANG) {
+            refreshURL = Utils.stringToURL("https://" + mojangDomain + refreshPath);
+        } else {
+            refreshURL = Utils.stringToURL("https://" + krothiumDomain + refreshPath);
+        }
         try {
-            response = Utils.sendPost(this.refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
+            response = Utils.sendPost(refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             if (Constants.USE_LOCAL) {
                 this.authenticated = true;
@@ -201,11 +230,14 @@ public class Authentication {
             throw new AuthenticationException("Failed to read authentication response.");
         }
         if (!r.has("error")) {
-            this.clientToken = r.has("clientToken") ? r.getString("clientToken") : this.clientToken;
-            if (r.has("accessToken")) {
+            try {
+                this.clientToken = r.getString("clientToken");
                 u.updateAccessToken(r.getString("accessToken"));
+                this.authenticated = true;
+            } catch (JSONException ex) {
+                ex.printStackTrace(this.console.getWriter());
+                throw new AuthenticationException("Authentication server replied wrongly.");
             }
-            this.authenticated = true;
         } else {
             this.authenticated = false;
             this.removeUser(this.selectedAccount);
@@ -243,6 +275,7 @@ public class Authentication {
         JSONObject root = this.kernel.getLauncherProfiles();
         if (root != null) {
             String selectedUser = null;
+            String selectedProfile = null;
             if (root.has("clientToken")) {
                 this.clientToken = root.getString("clientToken");
             }
@@ -250,6 +283,9 @@ public class Authentication {
                 JSONObject selected = root.getJSONObject("selectedUser");
                 if (selected.has("account")) {
                     selectedUser = selected.getString("account");
+                }
+                if (selected.has("profile")) {
+                    selectedProfile = selected.getString("profile");
                 }
             }
             if (root.has("authenticationDatabase")) {
@@ -273,11 +309,14 @@ public class Authentication {
                                     userProfiles.add(up);
                                 }
                             }
-                            User u = new User(userID, user.getString("accessToken"), username, userType, userProfiles);
-                            this.addUser(u);
-                            if (u.getUserID().equalsIgnoreCase(selectedUser)) {
+                            User u;
+                            if (userID.equalsIgnoreCase(selectedUser)) {
+                                u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, selectedProfile);
                                 this.setSelectedUser(u);
+                            } else {
+                                u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, null);
                             }
+                            this.addUser(u);
                         }
                     }
                 }
@@ -310,9 +349,11 @@ public class Authentication {
                 user.put("username", u.getUsername());
                 user.put("type", u.getType().name());
                 JSONObject profile = new JSONObject();
-                JSONObject profileInfo = new JSONObject();
-                profileInfo.put("displayName", u.getDisplayName());
-                profile.put(u.getProfileID(), profileInfo);
+                for (UserProfile up : u.getProfiles()) {
+                    JSONObject profileInfo = new JSONObject();
+                    profileInfo.put("displayName", u.getDisplayName());
+                    profile.put(up.getId(), profileInfo);
+                }
                 user.put("profiles", profile);
                 db.put(u.getUserID(), user);
             }
@@ -321,7 +362,7 @@ public class Authentication {
             if (this.selectedAccount != null) {
                 selectedUser.put("account", this.selectedAccount.getUserID());
             }
-            selectedUser.put("profile", this.selectedProfile);
+            selectedUser.put("profile", this.selectedAccount.getSelectedProfile());
             o.put("selectedUser", selectedUser);
         }
         return o;
