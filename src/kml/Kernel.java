@@ -12,10 +12,16 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import kml.enums.AlertType;
-import kml.enums.ProfileIcon;
+import kml.auth.Authentication;
+import kml.gui.AlertType;
+import kml.game.profile.ProfileIcon;
+import kml.game.GameLauncher;
+import kml.game.download.Downloader;
+import kml.game.profile.Profiles;
+import kml.game.version.Versions;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
+import kml.gui.lang.Language;
 import org.json.JSONException;
 import org.json.JSONObject;
 

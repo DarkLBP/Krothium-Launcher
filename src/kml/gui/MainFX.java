@@ -29,14 +29,22 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kml.*;
-import kml.enums.*;
+import kml.auth.Authentication;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
-import kml.objects.Profile;
-import kml.objects.Slide;
-import kml.objects.User;
-import kml.objects.VersionMeta;
+import kml.game.GameLauncher;
+import kml.game.download.Downloader;
+import kml.game.profile.ProfileIcon;
+import kml.game.profile.ProfileType;
+import kml.game.profile.Profiles;
+import kml.game.profile.Profile;
+import kml.auth.user.User;
+import kml.game.version.VersionMeta;
+import kml.game.version.VersionType;
+import kml.game.version.Versions;
+import kml.game.version.asset.TexturePreview;
+import kml.gui.lang.Language;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -61,11 +69,12 @@ public class MainFX {
             advancedSettings, resolutionLabel, gameDirLabel, javaExecLabel, javaArgsLabel, accountButton,
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
             rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
-            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton, gameVersion;
+            nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton, gameVersion,
+            authenticationLabel;
 
     @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, profilePopupButton, exportLogs, downloadServer;
+            selectCape, exportLogs, downloadServer;
 
     @FXML private Tab loginTab, newsTab, skinsTab,
             settingsTab, launchOptionsTab, profileEditorTab;
@@ -95,7 +104,7 @@ public class MainFX {
 
     @FXML private ImageView profileIcon, slideshow, skinPreview;
 
-    @FXML private RadioButton skinClassic, skinSlim;
+    @FXML private RadioButton skinClassic, skinSlim, authKrothium, authMojang;
 
     private Kernel kernel;
     private Console console;
@@ -336,6 +345,7 @@ public class MainFX {
         this.iconLabel.setText(Language.get(92));
         this.includeCape.setText(Language.get(93));
         this.profileName.setPromptText(Language.get(98));
+        this.authenticationLabel.setText(Language.get(99));
         //Load profile list
         this.loadProfileList();
     }

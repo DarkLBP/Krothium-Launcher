@@ -1,5 +1,6 @@
 package kml;
 
+import kml.gui.lang.Language;
 import org.json.JSONException;
 import org.json.JSONObject;
 

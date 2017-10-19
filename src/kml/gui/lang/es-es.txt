@@ -1,0 +1,105 @@
+//es-ES language file by DarkLBP (https://krothium.com)
+Ayuda
+CERRAR SESIÓN
+Noticias
+Skins
+Ajustes
+Opciones de lanzamiento
+¿Estás seguro de que quieres cerrar la sesión?
+Fallo al cargar JavaFX. Por favor, actualiza Java.
+¡Una nueva versión del lanzador está disponible! ¿Quieres descargarla?
+Nueva versión disponible
+JUGAR
+Descargando
+JUGANDO
+¡El juego ha crasheado! Comprueba los registros para mas información.
+El juego ha crasheado
+¡No puedes dejar el campo del usuario vacío!
+Usuario o Email de Krothium:
+Contraseña:
+ENTRAR
+REGISTRARSE
+¡Imposible iniciar sesión!
+¡No puedes dejar el campo de la contraseña vacío!
+Cambiar
+Archivo PNG de Capa (128KB MAX)
+Último Lanzamiento de Minecraft
+Exportar Registros
+Descargar Servidor
+SKIN
+CAPA
+¿Estás seguro de que quieres eliminar tu skin?
+Última Snapshot de Minecraft
+¡Fallo al eliminar la skin!
+¡Skin eliminada exitosamente!
+Registros exportados a:
+¿Estás seguro de que quieres eliminar tu capa?
+Fallo al exportar los registros
+¡Fallo al eliminar la capa!
+Capa eliminada exitosamente!
+Skin cambiada exitosamente!
+Capa cambiada exitosamente!
+¡Fallo al cambiar la skin!
+¡Fallo al cambiar la capa!
+Archivo PNG de Skin (128KB MAX)
+AJUSTES DEL LANZADOR
+Mantener el lanzador abierto mientras se ejecuta el juego
+Abrir el registro de salida al iniciar el juego
+Habilitar snapshots
+Versiones históricas
+Ajustes avanzados
+Añadir Nuevo Perfil
+Guardar Perfil
+Cancelar
+Eliminar Perfil
+¿Estás seguro? ¡Cualquier cambio hecho no se guardará!
+¡Perfil eliminado satisfactoriamente!
+¡Perfil guardado exitosamente!
+Fallo al eliminar el perfil.
+Último Lanzamiento
+Última Snapshot
+¿Estás seguro de que quieres eliminar este perfil?
+¡No pudimos iniciar las sesión de nuevo con ese usuario!
+Nombre
+Versión
+Resolución
+Directorio del juego
+Ejecutable de Java
+Argumentos JVM
+Salida del Juego
+Perfil sin Nombre
+Las snapshots son versiones de prueba en desarrollo, no podemos garantizar la estabilidad y podrían dañar tu mundo.
+Se aconseja ejecutarlas en directorios separados o crear copias de seguridad regularmente.
+Esto permite seleccionar versiones alfa y beta antiguas cuando añadas una nueva opción de lanzamiento.
+Dichas versiones están desactualizadas y podrían ser inestables. Cualquier error, cuelgue del juego, característica ausente o similares no se solucionarán.
+Es muy recomendable ejecutar estas versiones en directorios separados para evitar que se produzcan daños en los mundos guardados.
+Esto te permite modificar ajustes avanzados de Java cuando añadas una nueva opción de lanzamiento.
+Estos cambios podrían causar un mal funcionamiento del juego.
+Preparando ejecución...
+JUGAR SIN LÍNEA
+Noticias No Disponibles
+Ejecución fallida
+¡Fallo al ejecutar la tarea de ejecución del juego! Comprueba los registros para más información.
+Descarga fallida
+¡Fallo al ejecutar la tarea de descarga del juego! Comprueba los registros para más información.
+Usuarios Existentes:
+Cambiar Cuenta
+SELECCIONAR
+ELIMINAR
+MODELO DEL JUGADOR
+Clásico
+Delgado
+Icono
+Mostrar capa en la previsualización
+Este anuncio mantiene el servicio vivo.
+Para cerrar el anuncio debes esperar 5 segundos y pulsar Saltar Publicidad.
+Si no quieres esperar siempre puedes hacer una donación.
+¿Quieres hacer una donación ahora?
+Mi configuración
+Servidor de Autenticación:
+
+Fallo al obtener las útlimas noticias
+No hay noticias disponibles
+No hay noticias disponibles para mostrar
+El archivo de la capa excede el tamaño máximo de 128KB.
+El archivo de la skin excede el tamaño máximo de 128KB.

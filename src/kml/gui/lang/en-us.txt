@@ -1,0 +1,105 @@
+//en-US language file by DarkLBP (https://krothium.com)
+Help
+LOGOUT
+News
+Skins
+Settings
+Launch Options
+Are you sure you want to logout?
+Failed to load JavaFX. Please update Java.
+A new launcher version is available! Do you want to download it?
+New version available
+PLAY
+Downloading
+PLAYING
+The game has crashed! Check the logs for more information.
+Game crashed
+You cannot leave the username field empty!
+Krothium Username or Email:
+Password:
+LOGIN
+REGISTER
+Failed to log in
+You cannot leave the password field empty!
+Change
+Cape PNG File (128KB MAX)
+Latest Minecraft Release
+Export Logs
+Download Sever
+SKIN
+CAPE
+Are you sure you want to delete your skin?
+Latest Minecraft Snapshot
+Failed to delete the skin!
+Skin deleted successfully!
+Logs exported to:
+Are you sure you want to delete your cape?
+Failed to export the logs
+Failed to delete the cape!
+Cape deleted successfully!
+Skin changed successfully!
+Cape changed successfully!
+Failed to change the skin!
+Failed to change the cape!
+Skin PNG File (128KB MAX)
+LAUNCHER SETTINGS
+Keep the launcher open when the game is running
+Open output log when the game starts
+Enable snapshots
+Historical versions
+Advanced settings
+Add New Profile
+Save Profile
+Cancel
+Delete Profile
+Are you sure? Any change made won't be saved!
+Profile deleted successfully.
+Profile saved successfully!
+Failed to delete the profile.
+Latest Release
+Latest Snapshot
+Are you sure you want to delete this profile?
+We could not log you back with that user!
+Name
+Version
+Resolution
+Game directory
+Java executable
+JVM arguments
+Game Output
+Unnamed Profile
+Snapshots are development versions which are not guaranteed to be stable and may corrupt your world.
+You're advised to run them in separate directories or create regular backups.
+This enables selecting old alpha and beta versions when you add a new launch option.
+These are out of date and may be unstable. Any bugs, crashes, missing features or similar will not be fixed.
+It is strongly recommended you run these versions in separate directories to avoid world corruption.
+This enables changing advanced Java settings when you add a new launch option.
+Changing these may cause the game to malfunction.
+Preparing runtime...
+PLAY OFFLINE
+News Unavailable
+Launch failed
+Failed to perform game launch task! Check the logs for more information.
+Download failed
+Failed to perform game download task! Check the logs for more information.
+Existing Users:
+Switch Account
+SELECT
+DELETE
+PLAYER MODEL
+Classic
+Slim
+Icon
+Show cape in preview
+This ad makes this service alive.
+To close the ad you need to wait 5 seconds and click Skip Ad.
+If you don't want to wait you can always make a donation.
+Do you want to donate now?
+My configuration
+Authentication Server:
+
+Failed to fetch the latest news
+No news available
+No news available to show
+Cape file exceeds 128KB file size limit.
+Skin file exceeds 128KB file size limit.
