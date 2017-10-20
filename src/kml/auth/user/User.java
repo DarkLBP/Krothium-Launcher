@@ -64,10 +64,6 @@ public class User {
         this.selectedProfile = selectedProfile;
     }
 
-    public void setProfiles(ArrayList<UserProfile> profiles) {
-        this.profiles = profiles;
-    }
-
     @Override
     public final String toString() {
         return this.id;

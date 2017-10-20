@@ -87,14 +87,8 @@ public class Authentication {
      * Sets the selected user
      * @param user The user to be selected
      */
-    public final void setSelectedUser(User user) {
-        if (user != null) {
-            if (this.userDatabase.contains(user)) {
-                this.selectedAccount = user;
-                return;
-            }
-        }
-        this.selectedAccount = null;
+    public void setSelectedUser(User user) {
+        this.selectedAccount = user;
     }
 
     /**
@@ -194,6 +188,7 @@ public class Authentication {
         User u = this.selectedAccount;
         agent.put("name", "Minecraft");
         agent.put("version", 1);
+        request.put("agent", agent);
         request.put("accessToken", u.getAccessToken());
         request.put("clientToken", this.clientToken);
         request.put("requestUser", true);
@@ -234,14 +229,6 @@ public class Authentication {
                 this.clientToken = r.getString("clientToken");
                 u.setAccessToken(r.getString("accessToken"));
                 String selectedProfile = r.getJSONObject("selectedProfile").getString("id");
-                ArrayList<UserProfile> userProfiles = new ArrayList<>();
-                JSONArray uprofs = r.getJSONArray("availableProfiles");
-                for (int i = 0; i < uprofs.length(); i++){
-                    JSONObject prof = uprofs.getJSONObject(i);
-                    UserProfile up = new UserProfile(prof.getString("id"), prof.getString("name"));
-                    userProfiles.add(up);
-                }
-                u.setProfiles(userProfiles);
                 u.setSelectedProfile(selectedProfile);
                 this.authenticated = true;
             } catch (JSONException ex) {

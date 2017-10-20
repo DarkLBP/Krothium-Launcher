@@ -267,14 +267,10 @@ public class Profiles {
      * @param p Profile to be selected
      * @return A boolean that indicates if the profile has been selected
      */
-    public final boolean setSelectedProfile(Profile p) {
-        if (this.profiles.contains(p)) {
-            p.setLastUsed(new Timestamp(System.currentTimeMillis()));
-            this.console.print("Profile " + p + " has been selected.");
-            this.selected = p;
-            return true;
-        }
-        return false;
+    public void setSelectedProfile(Profile p) {
+        p.setLastUsed(new Timestamp(System.currentTimeMillis()));
+        this.selected = p;
+        this.console.print("Profile " + p + " has been selected.");
     }
 
     /**
