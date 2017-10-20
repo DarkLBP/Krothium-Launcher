@@ -1475,7 +1475,6 @@ public class MainFX {
             this.existingPanel.setVisible(false);
             this.existingPanel.setManaged(false);
         }
-
     }
 
     /**

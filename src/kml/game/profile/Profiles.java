@@ -181,35 +181,36 @@ public class Profiles {
                 }
                 if (this.releaseProfile == null) {
                     this.releaseProfile = new Profile(ProfileType.RELEASE);
+                    if (first == null) {
+                        first = this.releaseProfile;
+                    }
                     this.addProfile(this.releaseProfile);
                 }
                 if (this.snapshotProfile == null) {
                     this.snapshotProfile = new Profile(ProfileType.SNAPSHOT);
                     this.addProfile(this.snapshotProfile);
                 }
-                if (!this.profiles.isEmpty()) {
-                    if (latestUsedID != null) {
-                        Settings settings = this.kernel.getSettings();
-                        if (latestUsedID.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
+                if (latestUsedID != null) {
+                    Settings settings = this.kernel.getSettings();
+                    if (latestUsedID.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
+                        this.setSelectedProfile(this.releaseProfile);
+                    } else if (latestUsedID.getType() == ProfileType.CUSTOM) {
+                        VersionType type = latestUsedID.getVersionID().getType();
+                        if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
                             this.setSelectedProfile(this.releaseProfile);
-                        } else if (latestUsedID.getType() == ProfileType.CUSTOM) {
-                            VersionType type = latestUsedID.getVersionID().getType();
-                            if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                                this.setSelectedProfile(this.releaseProfile);
-                            } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
-                                this.setSelectedProfile(this.releaseProfile);
-                            } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
-                                this.setSelectedProfile(this.releaseProfile);
-                            } else {
-                                this.setSelectedProfile(latestUsedID);
-                            }
+                        } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
+                            this.setSelectedProfile(this.releaseProfile);
+                        } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
+                            this.setSelectedProfile(this.releaseProfile);
                         } else {
                             this.setSelectedProfile(latestUsedID);
                         }
                     } else {
-                        this.console.print("No profile is selected! Using first loaded (" + first + ')');
-                        this.setSelectedProfile(first);
+                        this.setSelectedProfile(latestUsedID);
                     }
+                } else {
+                    this.console.print("No profile is selected! Using first loaded (" + first + ')');
+                    this.setSelectedProfile(first);
                 }
             } catch (JSONException ex) {
                 this.console.print("Failed to fetch profiles.");
