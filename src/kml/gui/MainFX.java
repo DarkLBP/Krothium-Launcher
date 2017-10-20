@@ -1525,7 +1525,7 @@ public class MainFX {
                 Authentication auth = this.kernel.getAuthentication();
                 String username;
                 if (authKrothium.isSelected()) {
-                    username = "krothium:" + this.username.getText();
+                    username = "krothium://" + this.username.getText();
                 } else {
                     username = this.username.getText();
                 }

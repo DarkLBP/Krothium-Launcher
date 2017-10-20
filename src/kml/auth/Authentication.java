@@ -104,13 +104,15 @@ public class Authentication {
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("agent", agent);
-        if (username.startsWith("krothium:")) {
+        String tmpUser;
+        if (username.startsWith("krothium://")) {
             type = UserType.KROTHIUM;
-            username = username.replace("krothium:", "");
+            tmpUser = username.replace("krothium://", "");
         } else {
             type = UserType.MOJANG;
+            tmpUser = username;
         }
-        request.put("username", username);
+        request.put("username", tmpUser);
         request.put("password", password);
         if (this.clientToken != null) {
             request.put("clientToken", this.clientToken);
@@ -293,7 +295,7 @@ public class Authentication {
                     JSONObject user = users.getJSONObject(userID);
                     if (user.has("accessToken") && user.has("username") && user.has("profiles")) {
                         String username = user.getString("username");
-                        UserType userType = username.startsWith("krothium:") ? UserType.KROTHIUM : UserType.MOJANG;
+                        UserType userType = username.startsWith("krothium://") ? UserType.KROTHIUM : UserType.MOJANG;
                         JSONObject profiles = user.getJSONObject("profiles");
                         Set profileSet = profiles.keySet();
                         if (profileSet.size() > 0) {
@@ -343,11 +345,7 @@ public class Authentication {
             for (User u : this.userDatabase) {
                 JSONObject user = new JSONObject();
                 user.put("accessToken", u.getAccessToken());
-                if (u.getType() == UserType.KROTHIUM) {
-                    user.put("username", "krothium:" + u.getUsername());
-                } else {
-                    user.put("username", u.getUsername());
-                }
+                user.put("username", u.getUsername());
                 JSONObject profile = new JSONObject();
                 for (UserProfile up : u.getProfiles()) {
                     JSONObject profileInfo = new JSONObject();
