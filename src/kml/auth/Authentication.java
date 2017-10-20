@@ -371,8 +371,8 @@ public class Authentication {
             JSONObject selectedUser = new JSONObject();
             if (this.selectedAccount != null) {
                 selectedUser.put("account", this.selectedAccount.getUserID());
+                selectedUser.put("profile", this.selectedAccount.getSelectedProfile());
             }
-            selectedUser.put("profile", this.selectedAccount.getSelectedProfile());
             o.put("selectedUser", selectedUser);
         }
         return o;
