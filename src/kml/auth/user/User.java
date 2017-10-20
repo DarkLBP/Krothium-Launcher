@@ -11,8 +11,8 @@ public class User {
     private final String id, username;
     private String accessToken;
     private final UserType type;
-    private final ArrayList<UserProfile> profiles;
-    private final String selectedProfile;
+    private ArrayList<UserProfile> profiles;
+    private String selectedProfile;
 
     public User(String ui, String at, String un, UserType type, ArrayList<UserProfile> userProfiles, String selectedProfile) {
         this.accessToken = at;
@@ -48,7 +48,7 @@ public class User {
         return this.selectedProfile;
     }
 
-    public final void updateAccessToken(String accessToken) {
+    public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
@@ -58,6 +58,14 @@ public class User {
 
     public final UserType getType() {
         return this.type;
+    }
+
+    public void setSelectedProfile(String selectedProfile) {
+        this.selectedProfile = selectedProfile;
+    }
+
+    public void setProfiles(ArrayList<UserProfile> profiles) {
+        this.profiles = profiles;
     }
 
     @Override

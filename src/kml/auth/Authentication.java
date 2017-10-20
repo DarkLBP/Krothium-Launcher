@@ -127,7 +127,7 @@ public class Authentication {
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
         URL authURL;
-        if ( type == UserType.MOJANG) {
+        if (type == UserType.MOJANG) {
             authURL = Utils.stringToURL("https://" + mojangDomain + authenticatePath);
         } else {
             authURL = Utils.stringToURL("https://" + krothiumDomain + authenticatePath);
@@ -232,7 +232,17 @@ public class Authentication {
         if (!r.has("error")) {
             try {
                 this.clientToken = r.getString("clientToken");
-                u.updateAccessToken(r.getString("accessToken"));
+                u.setAccessToken(r.getString("accessToken"));
+                String selectedProfile = r.getJSONObject("selectedProfile").getString("id");
+                ArrayList<UserProfile> userProfiles = new ArrayList<>();
+                JSONArray uprofs = r.getJSONArray("availableProfiles");
+                for (int i = 0; i < uprofs.length(); i++){
+                    JSONObject prof = uprofs.getJSONObject(i);
+                    UserProfile up = new UserProfile(prof.getString("id"), prof.getString("name"));
+                    userProfiles.add(up);
+                }
+                u.setProfiles(userProfiles);
+                u.setSelectedProfile(selectedProfile);
                 this.authenticated = true;
             } catch (JSONException ex) {
                 ex.printStackTrace(this.console.getWriter());
