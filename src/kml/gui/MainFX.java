@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import kml.*;
 import kml.auth.Authentication;
+import kml.auth.user.UserType;
 import kml.exceptions.AuthenticationException;
 import kml.exceptions.DownloaderException;
 import kml.exceptions.GameLauncherException;
@@ -87,7 +88,7 @@ public class MainFX {
 
     @FXML private ListView<ImageView> iconList;
 
-    @FXML private VBox progressPane, existingPanel, playPane;
+    @FXML private VBox progressPane, existingPanel, playPane, skinActions;
 
     @FXML private HBox tabMenu, slideshowBox;
 
@@ -355,7 +356,18 @@ public class MainFX {
      */
     private void parseRemoteTextures() {
         try {
-            URL profileURL = Utils.stringToURL("https://mc.krothium.com/profiles/" + this.kernel.getAuthentication().getSelectedUser().getSelectedProfile() + "?unsigned=true");
+            User selected = this.kernel.getAuthentication().getSelectedUser();
+            String domain;
+            if (selected.getType() == UserType.MOJANG) {
+                domain = "sessionserver.mojang.com/session/minecraft/profile/";
+                this.skinActions.setVisible(false);
+                this.skinActions.setManaged(false);
+            } else {
+                domain = "mc.krothium.com/profiles/";
+                this.skinActions.setVisible(true);
+                this.skinActions.setManaged(true);
+            }
+            URL profileURL = Utils.stringToURL("https://" + domain + selected.getSelectedProfile() + "?unsigned=true");
             JSONObject root = new JSONObject(Utils.readURL(profileURL));
             JSONArray properties = root.getJSONArray("properties");
             for (int i = 0; i < properties.length(); i++) {

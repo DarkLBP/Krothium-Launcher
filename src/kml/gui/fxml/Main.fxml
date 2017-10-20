@@ -253,7 +253,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <VBox prefHeight="240.0" prefWidth="289.0">
+                              <VBox fx:id="skinActions" prefHeight="240.0" prefWidth="289.0">
                                  <children>
                                     <Label fx:id="modelLabel" prefHeight="26.0" prefWidth="287.0" styleClass="text-3" text="PLAYER MODEL">
                                        <VBox.margin>
@@ -529,12 +529,12 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" maxWidth="655.0" prefHeight="50.0" prefWidth="655.0">
                            <children>
-                              <RadioButton fx:id="authKrothium" mnemonicParsing="false" selected="true" text="Krothium">
+                              <RadioButton fx:id="authKrothium" mnemonicParsing="false" selected="true" styleClass="text-5" text="Krothium">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="authType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="authMojang" mnemonicParsing="false" text="Mojang" toggleGroup="$authType">
+                              <RadioButton fx:id="authMojang" mnemonicParsing="false" styleClass="text-5" text="Mojang" toggleGroup="$authType">
                                  <HBox.margin>
                                     <Insets left="15.0" />
                                  </HBox.margin>

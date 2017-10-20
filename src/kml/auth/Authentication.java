@@ -343,8 +343,11 @@ public class Authentication {
             for (User u : this.userDatabase) {
                 JSONObject user = new JSONObject();
                 user.put("accessToken", u.getAccessToken());
-                user.put("username", u.getUsername());
-                user.put("type", u.getType().name());
+                if (u.getType() == UserType.KROTHIUM) {
+                    user.put("username", "krothium:" + u.getUsername());
+                } else {
+                    user.put("username", u.getUsername());
+                }
                 JSONObject profile = new JSONObject();
                 for (UserProfile up : u.getProfiles()) {
                     JSONObject profileInfo = new JSONObject();

@@ -29,6 +29,9 @@ public class User {
                 return up.getDisplayName();
             }
         }
+        if (!profiles.isEmpty()) {
+            return profiles.get(0).getDisplayName();
+        }
         return null;
     }
 
@@ -66,7 +69,7 @@ public class User {
 
     @Override
     public final String toString() {
-        return this.id;
+        return this.getDisplayName();
     }
 
     @Override
