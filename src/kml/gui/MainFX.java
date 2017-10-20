@@ -1512,7 +1512,13 @@ public class MainFX {
         } else {
             try {
                 Authentication auth = this.kernel.getAuthentication();
-                auth.authenticate(this.username.getText(), this.password.getText());
+                String username;
+                if (authKrothium.isSelected()) {
+                    username = "krothium:" + this.username.getText();
+                } else {
+                    username = this.username.getText();
+                }
+                auth.authenticate(username, this.password.getText());
                 this.username.setText("");
                 this.password.setText("");
                 this.showLoginPrompt(false);

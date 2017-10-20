@@ -110,11 +110,11 @@ public class Authentication {
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("agent", agent);
-        if (username.startsWith("mojang:")) {
-            type = UserType.MOJANG;
-            username = username.replace("mojang:", "");
-        } else {
+        if (username.startsWith("krothium:")) {
             type = UserType.KROTHIUM;
+            username = username.replace("krothium:", "");
+        } else {
+            type = UserType.MOJANG;
         }
         request.put("username", username);
         request.put("password", password);
@@ -306,7 +306,7 @@ public class Authentication {
                     JSONObject user = users.getJSONObject(userID);
                     if (user.has("accessToken") && user.has("username") && user.has("profiles")) {
                         String username = user.getString("username");
-                        UserType userType = username.startsWith("mojang:") ? UserType.MOJANG : UserType.KROTHIUM;
+                        UserType userType = username.startsWith("krothium:") ? UserType.KROTHIUM : UserType.MOJANG;
                         JSONObject profiles = user.getJSONObject("profiles");
                         Set profileSet = profiles.keySet();
                         if (profileSet.size() > 0) {
