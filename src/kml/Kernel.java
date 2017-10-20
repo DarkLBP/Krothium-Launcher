@@ -350,10 +350,10 @@ public final class Kernel {
                     this.console.print("No updates found.");
                 }
             } catch (NumberFormatException e) {
-                this.console.print("Invalid check for updates reponse from the server.");
+                this.console.print("Invalid check for updates response from the server.");
             }
         } else {
-            this.console.print("Invalid check for updates reponse from the server.");
+            this.console.print("Invalid check for updates response from the server.");
         }
         return null;
     }
