@@ -133,10 +133,6 @@ public class MainFX {
         this.console = k.getConsole();
         this.stage = s;
 
-        //Check for updates
-        Thread updateThread = new Thread(this::checkForUpdates);
-        updateThread.start();
-
         //Update version label
         this.versionLabel.setText(Constants.KERNEL_BUILD_NAME);
 
@@ -226,41 +222,6 @@ public class MainFX {
         //Show window
         if (!this.kernel.getBrowser().isVisible()) {
             this.stage.show();
-        }
-    }
-
-    /**
-     * Checks for launcher updates
-     */
-    private void checkForUpdates() {
-        this.console.print("Checking for updates...");
-        File updater = new File(Constants.APPLICATION_WORKING_DIR, "updater.jar");
-        if (updater.isFile()) {
-            if (updater.delete()) {
-                this.console.print("Removed old updater.jar.");
-            } else {
-                this.console.print("Failed to remove old updater.jar.");
-            }
-        }
-        String update = this.kernel.checkForUpdates();
-        if (update != null) {
-            Platform.runLater(() -> {
-                int result = this.kernel.showAlert(AlertType.CONFIRMATION, Language.get(11), Language.get(10));
-                if (result == JOptionPane.YES_OPTION) {
-                    try {
-                        Utils.downloadFile(new URL("http://mc.krothium.com/content/updater.jar"), updater);
-                        String currentJar = Starter.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-                        ProcessBuilder pb = new ProcessBuilder(Utils.getJavaDir(), "-jar", updater.getAbsolutePath(), currentJar);
-                        pb.directory(updater.getParentFile());
-                        pb.start();
-                        this.kernel.exitSafely();
-                    }
-                    catch (Exception e) {
-                        this.console.print("Failed download updater.");
-                        e.printStackTrace(this.console.getWriter());
-                    }
-                }
-            });
         }
     }
 
