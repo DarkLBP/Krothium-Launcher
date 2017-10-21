@@ -13,6 +13,7 @@ import kml.auth.Authentication;
 import kml.auth.user.User;
 import kml.OS;
 import kml.OSArch;
+import kml.auth.user.UserType;
 import kml.game.profile.ProfileType;
 import kml.exceptions.GameLauncherException;
 import kml.game.profile.Profile;
@@ -145,11 +146,15 @@ public class GameLauncher {
         StringBuilder libraries = new StringBuilder();
         List<Library> libs = ver.getLibraries();
         String separator = System.getProperty("path.separator");
-        try {
-            File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            libraries.append(launchPath.getAbsolutePath()).append(separator);
-        } catch (URISyntaxException ex) {
-            this.console.print("Failed to load GameStarter.");
+        Authentication a = this.kernel.getAuthentication();
+        User u = a.getSelectedUser();
+        if (u.getType() == UserType.KROTHIUM) {
+            try {
+                File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                libraries.append(launchPath.getAbsolutePath()).append(separator);
+            } catch (URISyntaxException ex) {
+                this.console.print("Failed to load GameStarter.");
+            }
         }
         for (Library lib : libs) {
             if (!lib.isCompatible()) {
@@ -207,21 +212,24 @@ public class GameLauncher {
             assetsDir = assetsRoot;
         }
         gameArgs.add(libraries.toString());
-        gameArgs.add("kml.game.GameStarter");
-        if (p.hasGameDir()) {
-            File gameDir = p.getGameDir();
-            if (!gameDir.isDirectory()) {
-                gameDir.mkdirs();
+        if (u.getType() == UserType.KROTHIUM) {
+            gameArgs.add("kml.game.GameStarter");
+            if (p.hasGameDir()) {
+                File gameDir = p.getGameDir();
+                if (!gameDir.isDirectory()) {
+                    gameDir.mkdirs();
+                }
+                gameArgs.add(gameDir.getAbsolutePath());
+            } else {
+                gameArgs.add(workingDir.getAbsolutePath());
             }
-            gameArgs.add(gameDir.getAbsolutePath());
+
+            gameArgs.add(u.getSelectedProfile());
+            gameArgs.add(u.getAccessToken());
+            gameArgs.add(ver.getMainClass());
         } else {
-            gameArgs.add(workingDir.getAbsolutePath());
+            gameArgs.add(ver.getMainClass());
         }
-        Authentication a = this.kernel.getAuthentication();
-        User u = a.getSelectedUser();
-        gameArgs.add(u.getSelectedProfile());
-        gameArgs.add(u.getAccessToken());
-        gameArgs.add(ver.getMainClass());
         this.console.print("Full game launcher parameters: ");
         String[] versionArgs = ver.getMinecraftArguments().split(" ");
         for (int i = 0; i < versionArgs.length; i++) {
