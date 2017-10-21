@@ -467,23 +467,28 @@
                      <children>
                         <VBox fx:id="existingPanel" alignment="TOP_CENTER" prefHeight="69.0" prefWidth="950.0">
                            <children>
-                              <Label id="loginLabel" fx:id="existingLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Existing Users:" />
-                              <HBox alignment="CENTER_LEFT" maxWidth="650.0" prefHeight="45.0" prefWidth="650.0">
+                              <Label id="loginLabel" fx:id="existingLabel" prefHeight="23.0" prefWidth="700.0" styleClass="text-5" text="Existing Users:" />
+                              <HBox alignment="CENTER_LEFT" maxWidth="700.0" prefHeight="45.0" prefWidth="700.0">
                                  <children>
-                                    <ComboBox fx:id="existingUsers" prefHeight="39.0" prefWidth="288.0" styleClass="text-5" />
-                                    <Button fx:id="loginExisting" maxHeight="49.0" mnemonicParsing="false" onMouseClicked="#refresh" prefHeight="49.0" prefWidth="146.0" text="LOGIN">
+                                    <ComboBox fx:id="existingUsers" onAction="#updateAuthServer" prefHeight="39.0" prefWidth="280.0" styleClass="text-5" />
+                                    <Label fx:id="authServer" prefHeight="15.0" prefWidth="105.0" text="(Krothium)">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Button fx:id="loginExisting" maxHeight="49.0" mnemonicParsing="false" onMouseClicked="#refresh" prefHeight="49.0" prefWidth="160.0" text="LOGIN">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                        <HBox.margin>
-                                          <Insets left="10.0" />
+                                          <Insets left="5.0" />
                                        </HBox.margin>
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-alt" />
                                        </styleClass>
                                     </Button>
-                                    <Button fx:id="logoutButton" mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="209.0" text="LOGOUT">
+                                    <Button fx:id="logoutButton" mnemonicParsing="false" onMouseClicked="#logout" prefHeight="49.0" prefWidth="160.0" text="LOGOUT">
                                        <cursor>
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
@@ -502,32 +507,32 @@
                               <Insets />
                            </VBox.margin>
                         </VBox>
-                        <Label id="loginLabel" fx:id="usernameLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Krothium Username or Email:">
+                        <Label id="loginLabel" fx:id="usernameLabel" prefHeight="23.0" prefWidth="700.0" styleClass="text-5" text="Krothium Username or Email:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" top="15.0" />
                            </VBox.margin>
                         </Label>
-                        <TextField fx:id="username" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="653.0" styleClass="text-5">
+                        <TextField fx:id="username" maxWidth="700.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="700.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </TextField>
-                        <Label fx:id="passwordLabel" prefHeight="23.0" prefWidth="655.0" styleClass="text-5" text="Password:">
+                        <Label fx:id="passwordLabel" prefHeight="23.0" prefWidth="700.0" styleClass="text-5" text="Password:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <PasswordField fx:id="password" maxWidth="650.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="656.0" styleClass="text-5">
+                        <PasswordField fx:id="password" maxWidth="700.0" onKeyPressed="#triggerAuthenticate" prefHeight="38.0" prefWidth="700.0" styleClass="text-5">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </PasswordField>
-                        <Label fx:id="authenticationLabel" prefWidth="655.0" text="Authentication Server:">
+                        <Label fx:id="authenticationLabel" prefWidth="700.0" text="Authentication Server:">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" maxWidth="655.0" prefHeight="50.0" prefWidth="655.0">
+                        <HBox alignment="CENTER_LEFT" maxWidth="700.0" prefHeight="50.0" prefWidth="700.0">
                            <children>
                               <RadioButton fx:id="authKrothium" mnemonicParsing="false" selected="true" styleClass="text-5" text="Krothium">
                                  <toggleGroup>

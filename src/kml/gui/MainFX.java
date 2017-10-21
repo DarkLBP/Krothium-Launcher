@@ -71,7 +71,7 @@ public class MainFX {
             switchAccountButton, languageButton, newsTitle, newsText, slideBack, slideForward, rotateRight,
             rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
             nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton, gameVersion,
-            authenticationLabel;
+            authenticationLabel, authServer;
 
     @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
@@ -393,8 +393,7 @@ public class MainFX {
     /**
      * Toggles the label of the toggle cape button
      */
-    @FXML
-    public final void toggleCapePreview() {
+    @FXML public final void toggleCapePreview() {
         if (this.includeCape.getStyleClass().contains("toggle-enabled")) {
             this.toggleLabel(this.includeCape, false);
         } else {
@@ -406,8 +405,7 @@ public class MainFX {
     /**
      * Changes the skin type
      */
-    @FXML
-    public final void toggleSkinType() {
+    @FXML public final void toggleSkinType() {
         if (this.deleteSkin.isDisabled()) {
             if (this.skinClassic.isSelected()) {
                 this.skin = this.steve;
@@ -440,12 +438,8 @@ public class MainFX {
     /**
      * Changes the skin of the user
      */
-    @FXML
-    private void changeSkin() {
-        FileChooser chooser = new FileChooser();
-        ExtensionFilter filter = new ExtensionFilter(Language.get(44), "*.png");
-        chooser.getExtensionFilters().add(filter);
-        File selected = chooser.showOpenDialog(null);
+    @FXML private void changeSkin() {
+        File selected = this.selectFile(Language.get(44), "*.png", "open");
         if (selected != null) {
             if (selected.length() > 131072) {
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(105));
@@ -485,12 +479,8 @@ public class MainFX {
     /**
      * Changes the cape of the user
      */
-    @FXML
-    private void changeCape() {
-        FileChooser chooser = new FileChooser();
-        ExtensionFilter filter = new ExtensionFilter(Language.get(25), "*.png");
-        chooser.getExtensionFilters().add(filter);
-        File selected = chooser.showOpenDialog(null);
+    @FXML private void changeCape() {
+        File selected = this.selectFile(Language.get(25), "*.png", "open");
         if (selected != null) {
             if (selected.length() > 131072) {
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(104));
@@ -525,8 +515,7 @@ public class MainFX {
     /**
      * Deletes the skin of the user
      */
-    @FXML
-    private void deleteSkin() {
+    @FXML private void deleteSkin() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
         if (result == JOptionPane.YES_OPTION){
             Map<String, String> params = new HashMap<>();
@@ -557,8 +546,7 @@ public class MainFX {
     /**
      * Deletes the cape of the user
      */
-    @FXML
-    private void deleteCape() {
+    @FXML private void deleteCape() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
         if (result == JOptionPane.YES_OPTION){
             Map<String, String> params = new HashMap<>();
@@ -594,9 +582,6 @@ public class MainFX {
         try {
             URL newsURL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
             String response = Utils.readURL(newsURL);
-            if (response == null) {
-                this.console.print("Failed to fetch news.");
-            }
             JSONObject root = new JSONObject(response);
             JSONArray entries = root.getJSONArray("entries");
             for (int i = 0; i < entries.length(); i++) {
@@ -639,8 +624,7 @@ public class MainFX {
      * Changes the news slide
      * @param e The trigger event
      */
-    @FXML
-    public final void changeSlide(MouseEvent e) {
+    @FXML public final void changeSlide(MouseEvent e) {
         if (this.slides.isEmpty()) {
             //No slides
             return;
@@ -668,8 +652,7 @@ public class MainFX {
     /**
      * Performs an action when a slide is clicked
      */
-    @FXML
-    public final void performSlideAction() {
+    @FXML public final void performSlideAction() {
         if (this.slides.isEmpty()) {
             //No slides
             return;
@@ -682,8 +665,7 @@ public class MainFX {
      * Rotates the skin preview
      * @param e The trigger event
      */
-    @FXML
-    public final void rotatePreview(MouseEvent e) {
+    @FXML public final void rotatePreview(MouseEvent e) {
         Label src = (Label)e.getSource();
         if (src == this.rotateRight) {
             if (this.currentPreview < 3) {
@@ -707,8 +689,7 @@ public class MainFX {
     /**
      * Loads the profile lists
      */
-    @FXML
-    private void loadProfileList() {
+    @FXML private void loadProfileList() {
         Profiles ps = this.kernel.getProfiles();
 
         //Check if selected profile passes the current settings
@@ -856,8 +837,7 @@ public class MainFX {
     /**
      * Selects the selected profile from the list
      */
-    @FXML
-    private void selectProfile() {
+    @FXML private void selectProfile() {
         if (this.profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
@@ -872,8 +852,7 @@ public class MainFX {
     /**
      * Downloads and launches the game
      */
-    @FXML
-    public final void launchGame() {
+    @FXML public final void launchGame() {
         this.progressPane.setVisible(true);
         this.playPane.setVisible(false);
         this.progressBar.setProgress(0);
@@ -959,8 +938,7 @@ public class MainFX {
     /**
      * Shows the language list
      */
-    @FXML
-    public final void showLanguages() {
+    @FXML public final void showLanguages() {
         if (this.languagesList.isVisible()) {
             this.languagesList.setVisible(false);
         } else {
@@ -971,8 +949,7 @@ public class MainFX {
     /**
      * Deselects the current user and allows to select another
      */
-    @FXML
-    public final void switchAccount() {
+    @FXML public final void switchAccount() {
         this.showAccountOptions();
         Authentication a = this.kernel.getAuthentication();
         a.setSelectedUser(null);
@@ -983,8 +960,7 @@ public class MainFX {
     /**
      * Shows the profile popup list
      */
-    @FXML
-    public final void showProfiles() {
+    @FXML public final void showProfiles() {
         if (this.profilePopupList.isVisible()) {
             this.profilePopupList.setVisible(false);
         } else {
@@ -999,8 +975,7 @@ public class MainFX {
     /**
      * Shows the profile editor profile icons
      */
-    @FXML
-    public final void showIcons() {
+    @FXML public final void showIcons() {
         if (this.iconList.isVisible()) {
             this.iconList.setVisible(false);
         } else {
@@ -1015,8 +990,7 @@ public class MainFX {
     /**
      * Shows the Switch Account option when the user label is clicked
      */
-    @FXML
-    public final void showAccountOptions() {
+    @FXML public final void showAccountOptions() {
         if (this.switchAccountButton.isVisible()) {
             this.switchAccountButton.setVisible(false);
         } else {
@@ -1036,8 +1010,7 @@ public class MainFX {
      * Switched the selected tab according to the clicked label
      * @param e The trigger event
      */
-    @FXML
-    public final void switchTab(Event e) {
+    @FXML public final void switchTab(Event e) {
         this.switchTab(e.getSource());
     }
 
@@ -1090,8 +1063,7 @@ public class MainFX {
      * Hides any open popup that triggers this method
      * @param e The event trigger
      */
-    @FXML
-    public final void hidePopup(Event e) {
+    @FXML public final void hidePopup(Event e) {
         Node ls = (Node)e.getSource();
         if (ls.isVisible()) {
             ls.setVisible(false);
@@ -1101,8 +1073,7 @@ public class MainFX {
     /**
      * Updates the selected language
      */
-    @FXML
-    public final void updateLanguage() {
+    @FXML public final void updateLanguage() {
         if (this.languagesList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
@@ -1117,8 +1088,7 @@ public class MainFX {
     /**
      * Updates the selected icon
      */
-    @FXML
-    public final void updateIcon() {
+    @FXML public final void updateIcon() {
         if (this.iconList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
@@ -1132,8 +1102,7 @@ public class MainFX {
     /**
      * Prepares the editor with the selected profile or with a new one
      */
-    @FXML
-    public final void loadEditor() {
+    @FXML public final void loadEditor() {
         if (this.profileList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
@@ -1306,8 +1275,7 @@ public class MainFX {
     /**
      * Saves the profile data from the profile editor
      */
-    @FXML
-    public final void saveProfile() {
+    @FXML public final void saveProfile() {
         Profile target;
         if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
             target = new Profile(ProfileType.CUSTOM);
@@ -1378,8 +1346,7 @@ public class MainFX {
     /**
      * Discards the changes of the profile editor
      */
-    @FXML
-    public final void cancelProfile() {
+    @FXML public final void cancelProfile() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
         if (result == JOptionPane.YES_OPTION) {
             this.switchTab(this.launchOptionsLabel);
@@ -1389,8 +1356,7 @@ public class MainFX {
     /**
      * Deletes the profile loaded by the profile editor
      */
-    @FXML
-    public final void deleteProfile() {
+    @FXML public final void deleteProfile() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
         if (result == JOptionPane.YES_OPTION) {
             Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
@@ -1430,8 +1396,7 @@ public class MainFX {
      * Update editor when clicking labels. This method fetches the adjacent sibling to determine if is disabled
      * @param e The event trigger
      */
-    @FXML
-    public final void updateEditor(MouseEvent e) {
+    @FXML public final void updateEditor(MouseEvent e) {
         Label l = (Label)e.getSource();
         this.toggleEditorOption(l, l.getParent().getChildrenUnmodifiable().get(1).isDisable());
     }
@@ -1565,8 +1530,7 @@ public class MainFX {
     /**
      * Opens the register page
      */
-    @FXML
-    public final void register() {
+    @FXML public final void register() {
         //Open register page
         if (this.authKrothium.isSelected()) {
             this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/register");
@@ -1578,8 +1542,7 @@ public class MainFX {
     /**
      * Opens the help page
      */
-    @FXML
-    public final void openHelp() {
+    @FXML public final void openHelp() {
         //Open help page
         this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/forum/12-soporte/");
     }
@@ -1587,8 +1550,7 @@ public class MainFX {
     /**
      * Opens the news page
      */
-    @FXML
-    public final void openNews() {
+    @FXML public final void openNews() {
         //Open news page
         this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/forum/3-noticias/");
     }
@@ -1597,8 +1559,7 @@ public class MainFX {
      * Performs an authenticate if the Enter key is pressed in the Username or Password field
      * @param e The trigger event
      */
-    @FXML
-    public final void triggerAuthenticate(KeyEvent e) {
+    @FXML public final void triggerAuthenticate(KeyEvent e) {
         if (e.getCode() == KeyCode.ENTER) {
             this.authenticate();
         }
@@ -1608,8 +1569,7 @@ public class MainFX {
      * Updates the settings according to the label cicked
      * @param e The trigger event
      */
-    @FXML
-    public final void updateSettings(MouseEvent e) {
+    @FXML public final void updateSettings(MouseEvent e) {
         Label source = (Label)e.getSource();
         Settings s = this.kernel.getSettings();
         if (source == this.keepLauncherOpen) {
@@ -1663,12 +1623,8 @@ public class MainFX {
     /**
      * Exports the logs to a ZIP file
      */
-    @FXML
-    private void exportLogs() {
-        FileChooser chooser = new FileChooser();
-        ExtensionFilter filter = new ExtensionFilter("ZIP", "*.zip");
-        chooser.getExtensionFilters().add(filter);
-        File selected = chooser.showSaveDialog(null);
+    @FXML private void exportLogs() {
+        File selected = this.selectFile("ZIP", "*.zip", "save");
         if (selected != null) {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(selected))) {
                 File[] files = Constants.APPLICATION_LOGS.listFiles();
@@ -1689,8 +1645,7 @@ public class MainFX {
     /**
      * Opens the URL of the selected version server in the default user web browser
      */
-    @FXML
-    private void downloadServer() {
+    @FXML private void downloadServer() {
         VersionMeta selectedItem = this.versionList.getSelectionModel().getSelectedItem();
         this.kernel.getHostServices().showDocument(this.urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
     }
@@ -1698,8 +1653,7 @@ public class MainFX {
     /**
      * Selects a game directory for the profile editor
      */
-    @FXML
-    private void selectGameDirectory() {
+    @FXML private void selectGameDirectory() {
         DirectoryChooser chooser = new DirectoryChooser();
         if (this.gameDir.getText().isEmpty()) {
             chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
@@ -1720,24 +1674,45 @@ public class MainFX {
     /**
      * Selects the java executable for the profile editor
      */
-    @FXML
-    private void selectJavaExecutable() {
-        FileChooser chooser = new FileChooser();
-        File je;
-        if (this.javaExec.getText().isEmpty()) {
-            je = new File(Utils.getJavaDir());
-        } else {
-            je = new File(this.javaExec.getText());
-        }
-        if (je.isFile()) {
-            File jf = je.getParentFile();
-            if (jf.isDirectory()) {
-                chooser.setInitialDirectory(jf);
-            }
-        }
-        File selected = chooser.showOpenDialog(null);
+    @FXML private void selectJavaExecutable() {
+        File selected = this.selectFile(null, null, "open");
         if (selected != null && selected.isFile()) {
             this.javaExec.setText(selected.getAbsolutePath());
         }
+    }
+
+    /**
+     * Update auth server label on existing users
+     */
+    @FXML public void updateAuthServer() {
+        User user = this.existingUsers.getValue();
+        if (user != null) {
+            if (user.getType() == UserType.KROTHIUM) {
+                this.authServer.setText("(Krothium)");
+            } else {
+                this.authServer.setText("(Mojang)");
+            }
+        }
+    }
+
+    /**
+     * Selects a file
+     * @param extensionName The extension name
+     * @param extension The extension
+     * @param method Method to select the file
+     * @return The selected file
+     */
+    private File selectFile(String extensionName, String extension, String method) {
+        FileChooser chooser = new FileChooser();
+        if (extension != null) {
+            ExtensionFilter filter = new ExtensionFilter(extensionName, extension);
+            chooser.getExtensionFilters().add(filter);
+        }
+        if (method.equalsIgnoreCase("open")) {
+            return chooser.showOpenDialog(null);
+        } else if (method.equalsIgnoreCase("save")) {
+            return chooser.showSaveDialog(null);
+        }
+        return null;
     }
 }
