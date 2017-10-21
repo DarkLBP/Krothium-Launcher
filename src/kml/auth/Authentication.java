@@ -48,10 +48,10 @@ public class Authentication {
         if (this.userDatabase.contains(u)) {
             this.userDatabase.remove(u);
             this.userDatabase.add(u);
-            this.console.print("User " + u.getDisplayName() + " updated.");
+            this.console.print("User " + u.getUserID() + " updated.");
         } else {
             this.userDatabase.add(u);
-            this.console.print("User " + u.getDisplayName() + " loaded.");
+            this.console.print("User " + u.getUserID() + " loaded.");
         }
 
     }
@@ -59,19 +59,16 @@ public class Authentication {
     /**
      * Removes a user for the database
      * @param u The User to be removed
-     * @return A boolean that indicates if the user has been found and removed
      */
-    public final boolean removeUser(User u) {
+    public void removeUser(User u) {
         if (this.userDatabase.contains(u)) {
-            this.console.print("User " + u.getDisplayName() + " deleted.");
+            this.console.print("User " + u.getUserID() + " deleted.");
             this.userDatabase.remove(u);
             if (u.equals(this.selectedAccount)) {
                 this.selectedAccount = null;
             }
-            return true;
         } else {
             this.console.print("userID " + u.getUserID() + " is not registered.");
-            return false;
         }
     }
 
@@ -88,7 +85,10 @@ public class Authentication {
      * @param user The user to be selected
      */
     public void setSelectedUser(User user) {
-        this.selectedAccount = user;
+        if (user != null) {
+            this.selectedAccount = user;
+            this.console.print("User " + user.getUserID() + " is now selected.");
+        }
     }
 
     /**
@@ -311,11 +311,12 @@ public class Authentication {
                             User u;
                             if (userID.equalsIgnoreCase(selectedUser)) {
                                 u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, selectedProfile);
+                                this.addUser(u);
                                 this.setSelectedUser(u);
                             } else {
                                 u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, null);
+                                this.addUser(u);
                             }
-                            this.addUser(u);
                         }
                     }
                 }

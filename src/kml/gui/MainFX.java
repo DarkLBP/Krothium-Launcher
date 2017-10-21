@@ -323,6 +323,7 @@ public class MainFX {
      */
     private void loadTextures() {
         try {
+            this.console.print("Loading textures...");
             User selected = this.kernel.getAuthentication().getSelectedUser();
             String domain;
             if (selected.getType() == UserType.MOJANG) {
@@ -377,6 +378,7 @@ public class MainFX {
                         this.skinClassic.setSelected(true);
                     }
                     this.texturesLoaded = true;
+                    this.console.print("Textures loaded.");
                     this.updatePreview();
                 }
             }
@@ -1481,16 +1483,18 @@ public class MainFX {
      * Refreshes latest session
      */
     private void refreshSession() {
+        Authentication a = this.kernel.getAuthentication();
         try {
-            if (this.kernel.getAuthentication().getSelectedUser() != null) {
-                this.kernel.getAuthentication().refresh();
+            if (a.getSelectedUser() != null) {
+                a.refresh();
             } else {
                 this.console.print("No user is selected.");
             }
         } catch (AuthenticationException ex) {
+            username.setText(a.getSelectedUser().getUsername());
             this.console.print("Couldn't refresh your session.");
         } finally {
-            if (this.kernel.getAuthentication().isAuthenticated()) {
+            if (a.isAuthenticated()) {
                 this.showLoginPrompt(false);
                 this.fetchAds();
             } else {
