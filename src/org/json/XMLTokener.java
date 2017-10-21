@@ -64,11 +64,8 @@ public class XMLTokener extends JSONTokener {
         char         c;
         int          i;
         StringBuilder sb = new StringBuilder();
-        for (;;) {
+        while (more()) {
             c = next();
-            if (end()) {
-                throw syntaxError("Unclosed CDATA");
-            }
             sb.append(c);
             i = sb.length() - 3;
             if (i >= 0 && sb.charAt(i) == ']' &&
@@ -77,6 +74,7 @@ public class XMLTokener extends JSONTokener {
                 return sb.toString();
             }
         }
+        throw syntaxError("Unclosed CDATA");
     }
 
 
@@ -103,7 +101,10 @@ public class XMLTokener extends JSONTokener {
         }
         sb = new StringBuilder();
         for (;;) {
-            if (c == '<' || c == 0) {
+            if (c == 0) {
+                return sb.toString().trim();
+            }
+            if (c == '<') {
                 back();
                 return sb.toString().trim();
             }
@@ -137,8 +138,37 @@ public class XMLTokener extends JSONTokener {
             }
         }
         String string = sb.toString();
-        Object object = entity.get(string);
-        return object != null ? object : ampersand + string + ";";
+        return unescapeEntity(string);
+    }
+    
+    /**
+     * Unescapes an XML entity encoding;
+     * @param e entity (only the actual entity value, not the preceding & or ending ;
+     * @return
+     */
+    static String unescapeEntity(String e) {
+        // validate
+        if (e == null || e.isEmpty()) {
+            return "";
+        }
+        // if our entity is an encoded unicode point, parse it.
+        if (e.charAt(0) == '#') {
+            int cp;
+            if (e.charAt(1) == 'x') {
+                // hex encoded unicode
+                cp = Integer.parseInt(e.substring(2), 16);
+            } else {
+                // decimal encoded unicode
+                cp = Integer.parseInt(e.substring(1));
+            }
+            return new String(new int[] {cp},0,1);
+        } 
+        Character knownEntity = entity.get(e);
+        if(knownEntity==null) {
+            // we don't know the entity so keep it encoded
+            return '&' + e + ';';
+        }
+        return knownEntity.toString();
     }
 
 

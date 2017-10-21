@@ -1,7 +1,7 @@
 package kml.proxy.matchers;
 
-import kml.game.GameStarter;
 import kml.Utils;
+import kml.game.GameStarter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

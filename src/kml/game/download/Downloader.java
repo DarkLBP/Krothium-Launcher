@@ -1,13 +1,15 @@
 package kml.game.download;
 
-import kml.*;
 import kml.Console;
-import kml.OS;
-import kml.OSArch;
-import kml.game.profile.ProfileType;
+import kml.Constants;
+import kml.Kernel;
+import kml.Utils;
 import kml.exceptions.DownloaderException;
 import kml.game.profile.Profile;
-import kml.game.version.*;
+import kml.game.profile.ProfileType;
+import kml.game.version.Version;
+import kml.game.version.VersionMeta;
+import kml.game.version.Versions;
 import kml.game.version.asset.AssetIndex;
 import kml.game.version.library.Library;
 import org.json.JSONException;

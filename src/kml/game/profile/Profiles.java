@@ -3,8 +3,8 @@ package kml.game.profile;
 import kml.Console;
 import kml.Kernel;
 import kml.Settings;
-import kml.game.version.VersionType;
 import kml.game.version.VersionMeta;
+import kml.game.version.VersionType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
