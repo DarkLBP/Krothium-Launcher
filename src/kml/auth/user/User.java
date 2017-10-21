@@ -11,7 +11,7 @@ public class User {
     private final String id, username;
     private String accessToken;
     private final UserType type;
-    private ArrayList<UserProfile> profiles;
+    private final ArrayList<UserProfile> profiles;
     private String selectedProfile;
 
     public User(String ui, String at, String un, UserType type, ArrayList<UserProfile> userProfiles, String selectedProfile) {

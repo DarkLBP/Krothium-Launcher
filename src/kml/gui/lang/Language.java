@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *         website https://krothium.com
  */
 public class Language {
-    private static ArrayList<String> langData =  new ArrayList<>();
+    private static final ArrayList<String> langData =  new ArrayList<>();
 
     /**
      * Loads a language file

@@ -18,7 +18,6 @@ public class Console {
     private boolean enabled = true;
     private PrintWriter writer;
     private final File log;
-    private final int KEEP_OLD_LOGS = 5;
 
     public Console() {
         File logFolder = Constants.APPLICATION_LOGS;
@@ -41,8 +40,9 @@ public class Console {
                         }
                     }
                 }
-                if (count > this.KEEP_OLD_LOGS) {
-                    int toDelete = count - this.KEEP_OLD_LOGS;
+                final int KEEP_OLD_LOGS = 10;
+                if (count > KEEP_OLD_LOGS) {
+                    int toDelete = count - KEEP_OLD_LOGS;
                     for (int i = 0; i < toDelete; i++) {
                         for (File f : logFiles) {
                             if (f.isFile()) {

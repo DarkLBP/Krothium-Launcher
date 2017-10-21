@@ -38,16 +38,13 @@ public class Profiles {
     /**
      * Adds a profile to the database
      * @param p The profile to be added
-     * @return A boolean that indicates if the profile has been added
      */
-    public final boolean addProfile(Profile p) {
+    public final void addProfile(Profile p) {
         if (!this.profiles.contains(p)) {
             this.profiles.add(p);
             this.console.print("Profile " + p + " added");
-            return true;
         }
         this.console.print("Profile " + p + " already exists!");
-        return false;
     }
 
     /**
