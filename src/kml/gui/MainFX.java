@@ -268,29 +268,34 @@ public class MainFX {
      * Fetches any advertisement available for the logged user
      */
     private void fetchAds() {
-        String profileID = this.kernel.getAuthentication().getSelectedUser().getSelectedProfile();
-        URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
-        String response;
-        try {
-            response = Utils.readURL(adsCheck);
-        } catch (IOException ex) {
-            this.console.print("Failed to fetch ads data.");
-            ex.printStackTrace(this.console.getWriter());
-            return;
-        }
-        if (!response.isEmpty()) {
-            String[] chunks = response.split(":");
-            String firstChunk = Utils.fromBase64(chunks[0]);
-            this.urlPrefix = firstChunk == null ? "" : firstChunk;
-            if (chunks.length == 2) {
-                String secondChunk = Utils.fromBase64(response.split(":")[1]);
-                String adsURL = secondChunk == null ? "" : secondChunk;
-                this.kernel.getBrowser().loadWebsite(adsURL);
-                this.kernel.getBrowser().show(this.stage);
+        User user = this.kernel.getAuthentication().getSelectedUser();
+        if (user.getType() != UserType.MOJANG) {
+            String profileID = user.getSelectedProfile();
+            URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
+            String response;
+            try {
+                response = Utils.readURL(adsCheck);
+            } catch (IOException ex) {
+                this.console.print("Failed to fetch ads data.");
+                ex.printStackTrace(this.console.getWriter());
+                return;
             }
-            this.console.print("Ads loaded.");
+            if (!response.isEmpty()) {
+                String[] chunks = response.split(":");
+                String firstChunk = Utils.fromBase64(chunks[0]);
+                this.urlPrefix = firstChunk == null ? "" : firstChunk;
+                if (chunks.length == 2) {
+                    String secondChunk = Utils.fromBase64(response.split(":")[1]);
+                    String adsURL = secondChunk == null ? "" : secondChunk;
+                    this.kernel.getBrowser().loadWebsite(adsURL);
+                    this.kernel.getBrowser().show(this.stage);
+                }
+                this.console.print("Ads loaded.");
+            } else {
+                this.console.print("Ads info not available.");
+            }
         } else {
-            this.console.print("Ads info not available.");
+            this.console.print("Ads not available for Mojang user.");
         }
     }
 
