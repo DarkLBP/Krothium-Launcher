@@ -261,6 +261,11 @@ public final class Kernel {
             output.put(name, authdata.get(name));
         }
         output.put("settings", this.settings.toJSON());
+        JSONObject launcherVersion = new JSONObject();
+        launcherVersion.put("name", Constants.KERNEL_BUILD_NAME);
+        launcherVersion.put("format", Constants.KERNEL_FORMAT);
+        launcherVersion.put("profilesFormat", Constants.KERNEL_PROFILES_FORMAT);
+        output.put("launcherVersion", launcherVersion);
         if (!Utils.writeToFile(output.toString(4), Constants.APPLICATION_CONFIG)) {
             this.console.print("Failed to save the profiles file!");
         }
@@ -318,42 +323,6 @@ public final class Kernel {
         this.console.print("Shutting down launcher...");
         this.console.close();
         System.exit(0);
-    }
-
-    /**
-     * Checks for launcher updates
-     * @return The update url
-     */
-    public String checkForUpdates() {
-        String r;
-        try {
-            URL updateURL = Utils.stringToURL("https://mc.krothium.com/latestversion");
-            r = Utils.readURL(updateURL);
-        } catch (IOException e) {
-            e.printStackTrace(this.console.getWriter());
-            r = null;
-        }
-        if (r == null) {
-            this.console.print("Failed to check for updates");
-            return null;
-        }
-        String[] data = r.split(":");
-        if (data.length == 2) {
-            try {
-                int version = Integer.parseInt(Utils.fromBase64(data[0]));
-                if (version > Constants.KERNEL_BUILD) {
-                    this.console.print("New kernel build available: " + version);
-                    return data[1];
-                } else {
-                    this.console.print("No updates found.");
-                }
-            } catch (NumberFormatException e) {
-                this.console.print("Invalid check for updates response from the server.");
-            }
-        } else {
-            this.console.print("Invalid check for updates response from the server.");
-        }
-        return null;
     }
 
     /**
@@ -662,15 +631,12 @@ public final class Kernel {
     public Image resampleImage(Image input, int scaleFactor) {
         int W = (int) input.getWidth();
         int H = (int) input.getHeight();
-
         WritableImage output = new WritableImage(
                 W * scaleFactor,
                 H * scaleFactor
         );
-
         PixelReader reader = input.getPixelReader();
         PixelWriter writer = output.getPixelWriter();
-
         for (int y = 0; y < H; y++) {
             for (int x = 0; x < W; x++) {
                 int argb = reader.getArgb(x, y);
@@ -681,7 +647,6 @@ public final class Kernel {
                 }
             }
         }
-
         return output;
     }
 

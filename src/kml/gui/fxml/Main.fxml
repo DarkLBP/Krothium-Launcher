@@ -523,7 +523,7 @@
                                     <ToggleGroup fx:id="authType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton mnemonicParsing="false" styleClass="text-5" text="Mojang" toggleGroup="$authType">
+                              <RadioButton fx:id="authMojang" mnemonicParsing="false" styleClass="text-5" text="Mojang" toggleGroup="$authType">
                                  <HBox.margin>
                                     <Insets left="15.0" />
                                  </HBox.margin>

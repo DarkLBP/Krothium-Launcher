@@ -105,7 +105,7 @@ public class MainFX {
 
     @FXML private ImageView profileIcon, slideshow, skinPreview;
 
-    @FXML private RadioButton skinClassic, skinSlim, authKrothium;
+    @FXML private RadioButton skinClassic, skinSlim, authKrothium, authMojang;
 
     private Kernel kernel;
     private Console console;
@@ -1472,6 +1472,7 @@ public class MainFX {
                 this.password.setText("");
                 this.showLoginPrompt(false);
                 this.fetchAds();
+                this.texturesLoaded = false;
             } catch (AuthenticationException ex) {
                 this.kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
                 this.password.setText("");
@@ -1484,14 +1485,21 @@ public class MainFX {
      */
     private void refreshSession() {
         Authentication a = this.kernel.getAuthentication();
+        User u = a.getSelectedUser();
         try {
-            if (a.getSelectedUser() != null) {
+            if (u != null) {
                 a.refresh();
+                this.texturesLoaded = false;
             } else {
                 this.console.print("No user is selected.");
             }
         } catch (AuthenticationException ex) {
-            username.setText(a.getSelectedUser().getUsername());
+            username.setText(u.getUsername());
+            if (u.getType() == UserType.KROTHIUM) {
+                authKrothium.setSelected(true);
+            } else {
+                authMojang.setSelected(true);
+            }
             this.console.print("Couldn't refresh your session.");
         } finally {
             if (a.isAuthenticated()) {
@@ -1512,6 +1520,7 @@ public class MainFX {
         try {
             auth.setSelectedUser(selected);
             auth.refresh();
+            this.texturesLoaded = false;
             this.showLoginPrompt(false);
             this.fetchAds();
         } catch (AuthenticationException ex) {

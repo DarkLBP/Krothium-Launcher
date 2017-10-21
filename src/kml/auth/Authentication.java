@@ -65,7 +65,7 @@ public class Authentication {
             this.console.print("User " + u.getUserID() + " deleted.");
             this.userDatabase.remove(u);
             if (u.equals(this.selectedAccount)) {
-                this.selectedAccount = null;
+                this.setSelectedUser(null);
             }
         } else {
             this.console.print("userID " + u.getUserID() + " is not registered.");
