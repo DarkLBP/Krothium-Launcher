@@ -15,7 +15,7 @@ JOGANDO
 O jogo crashou! Verifique os logs para obter mais informações.
 O jogo crashou
 You cannot leave the username field empty!
-Nome de usuário do Krothium ou Email:
+Nome de usuário ou Email:
 Senha:
 ENTRAR
 REGISTRE-SE

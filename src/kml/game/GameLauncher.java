@@ -105,29 +105,7 @@ public class GameLauncher {
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
         } else {
-            if (Utils.getPlatform() == OS.WINDOWS) {
-                File jre = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
-                if (jre.isFile()) {
-                    try {
-                        File jreFolder = new File(Constants.APPLICATION_WORKING_DIR, "jre");
-                        if (!new File(jreFolder, "OK").exists()) {
-                            this.console.print("Decompressing runtime...");
-                            LzmaInputStream input = new LzmaInputStream(new FileInputStream(jre));
-                            Utils.decompressZIP(input, jreFolder, null);
-                        }
-                        gameArgs.add(new File(jreFolder, "bin" + File.separator + "javaw.exe").getAbsolutePath());
-                        this.console.print("Using custom runtime.");
-                    } catch (Exception ex) {
-                        this.console.print("Failed to decompress runtime.");
-                        ex.printStackTrace(this.console.getWriter());
-                        gameArgs.add(Utils.getJavaDir());
-                    }
-                } else {
-                    gameArgs.add(Utils.getJavaDir());
-                }
-            } else {
-                gameArgs.add(Utils.getJavaDir());
-            }
+            gameArgs.add(Utils.getJavaDir());
         }
         if (!p.hasJavaArgs()) {
             if (Utils.getOSArch() == OSArch.OLD) {

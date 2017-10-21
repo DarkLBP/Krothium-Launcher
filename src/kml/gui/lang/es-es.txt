@@ -15,7 +15,7 @@ JUGANDO
 ¡El juego ha crasheado! Comprueba los registros para mas información.
 El juego ha crasheado
 ¡No puedes dejar el campo del usuario vacío!
-Usuario o Email de Krothium:
+Usuario o Email:
 Contraseña:
 ENTRAR
 REGISTRARSE

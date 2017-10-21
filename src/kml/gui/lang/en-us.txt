@@ -15,7 +15,7 @@ PLAYING
 The game has crashed! Check the logs for more information.
 Game crashed
 You cannot leave the username field empty!
-Krothium Username or Email:
+Username or Email:
 Password:
 LOGIN
 REGISTER

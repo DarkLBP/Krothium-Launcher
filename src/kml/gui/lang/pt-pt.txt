@@ -15,7 +15,7 @@ JOGANDO
 O jogo crashed! Verifique os logs para obter mais informações.
 O jogo crashed
 You cannot leave the username field empty!
-Krothium Nome de Usuário ou Email:
+Nome de Usuário ou Email:
 Senha:
 ENTRAR
 REGISTRE-SE

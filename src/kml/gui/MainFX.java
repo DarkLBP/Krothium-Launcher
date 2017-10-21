@@ -105,7 +105,7 @@ public class MainFX {
 
     @FXML private ImageView profileIcon, slideshow, skinPreview;
 
-    @FXML private RadioButton skinClassic, skinSlim, authKrothium, authMojang;
+    @FXML private RadioButton skinClassic, skinSlim, authKrothium;
 
     private Kernel kernel;
     private Console console;
@@ -115,6 +115,7 @@ public class MainFX {
     private int currentPreview; // 0 = front / 1 = right / 2 = back / 3 = left
     private final Image[] skinPreviews = new Image[4];
     private Image skin, cape, alex, steve;
+    private boolean texturesLoaded;
     private String urlPrefix = "";
     private final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
     private final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
@@ -320,7 +321,7 @@ public class MainFX {
     /**
      * Loads the skin preview for the logged user
      */
-    private void parseRemoteTextures() {
+    private void loadTextures() {
         try {
             User selected = this.kernel.getAuthentication().getSelectedUser();
             String domain;
@@ -375,6 +376,7 @@ public class MainFX {
                     } else {
                         this.skinClassic.setSelected(true);
                     }
+                    this.texturesLoaded = true;
                     this.updatePreview();
                 }
             }
@@ -465,7 +467,7 @@ public class MainFX {
                     else {
                         this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(40));
                         this.console.print("Skin changed successfully!");
-                        this.parseRemoteTextures();
+                        this.loadTextures();
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the skin.");
@@ -501,7 +503,7 @@ public class MainFX {
                     else {
                         this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(41));
                         this.console.print("Cape changed successfully.");
-                        this.parseRemoteTextures();
+                        this.loadTextures();
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the cape.");
@@ -531,7 +533,7 @@ public class MainFX {
                 else {
                     this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(34));
                     this.console.print("Skin deleted successfully!");
-                    this.parseRemoteTextures();
+                    this.loadTextures();
                 }
             }
             catch (Exception ex) {
@@ -562,7 +564,7 @@ public class MainFX {
                 else {
                     this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(39));
                     this.console.print("Cape deleted successfully!");
-                    this.parseRemoteTextures();
+                    this.loadTextures();
                 }
             }
             catch (Exception ex) {
@@ -1045,6 +1047,9 @@ public class MainFX {
         } else if (source == this.skinsLabel) {
             this.skinsLabel.getStyleClass().add("selectedItem");
             selection.select(this.skinsTab);
+            if (!this.texturesLoaded) {
+                this.loadTextures();
+            }
         } else if (source == this.settingsLabel) {
             this.settingsLabel.getStyleClass().add("selectedItem");
             selection.select(this.settingsTab);
@@ -1465,7 +1470,6 @@ public class MainFX {
                 this.password.setText("");
                 this.showLoginPrompt(false);
                 this.fetchAds();
-                this.parseRemoteTextures();
             } catch (AuthenticationException ex) {
                 this.kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
                 this.password.setText("");
@@ -1489,7 +1493,6 @@ public class MainFX {
             if (this.kernel.getAuthentication().isAuthenticated()) {
                 this.showLoginPrompt(false);
                 this.fetchAds();
-                this.parseRemoteTextures();
             } else {
                 this.showLoginPrompt(true);
             }
@@ -1507,7 +1510,6 @@ public class MainFX {
             auth.refresh();
             this.showLoginPrompt(false);
             this.fetchAds();
-            this.parseRemoteTextures();
         } catch (AuthenticationException ex) {
             this.kernel.showAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
             this.updateExistingUsers();

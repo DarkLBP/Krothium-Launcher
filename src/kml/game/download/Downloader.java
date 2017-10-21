@@ -81,40 +81,6 @@ public class Downloader {
 
         //Get required files to be downloaded
         Set<Downloadable> urls = new HashSet<>();
-        if (Utils.getPlatform() == OS.WINDOWS && !p.hasJavaDir()) {
-            //If user is using Windows, fetch custom java version
-            this.console.print("Fetching runtime...");
-            try {
-                URL runtimeURL = Utils.stringToURL("https://launchermeta.mojang.com/mc/launcher.json");
-                JSONObject root = new JSONObject(Utils.readURL(runtimeURL));
-                JSONObject windows = root.getJSONObject("windows");
-                JSONObject arch;
-                if (Utils.getOSArch() == OSArch.OLD) {
-                    arch = windows.getJSONObject("32");
-                } else {
-                    arch = windows.getJSONObject("64");
-                }
-                JSONObject jre = arch.getJSONObject("jre");
-                String sha1 = jre.getString("sha1");
-                URL jreURL = Utils.stringToURL(jre.getString("url"));
-                long length = jreURL.openConnection().getContentLength();
-                this.total += length;
-                File jreFile = new File(Constants.APPLICATION_WORKING_DIR, "jre.lzma");
-                if (jreFile.isFile() && Utils.verifyChecksum(jreFile, sha1, "sha1")) {
-                    this.console.print("Runtime already downloaded and valid.");
-                    this.validated += length;
-                } else {
-                    Downloadable d = new Downloadable(jreURL, length, new File("jre.lzma"), sha1, null);
-                    urls.add(d);
-                    File markFile = new File(Constants.APPLICATION_WORKING_DIR, "jre" + File.separator + "OK");
-                    if (markFile.isFile()) {
-                        markFile.delete();
-                    }
-                }
-            } catch (IOException | JSONException ex) {
-                this.console.print("Failed to fetch runtime.");
-            }
-        }
 
         //Fetch assets
         this.console.print("Fetching asset urls..");

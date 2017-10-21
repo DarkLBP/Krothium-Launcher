@@ -15,7 +15,7 @@ JÁTÉKBAN
 A játék összeomlott! Nézd meg a log fájlokat további információkért.
 Játék összeomlott
 A felhasználónév mezőt nem lehet üresen hagyni!
-Krothium Felhasználónév vagy Email:
+Felhasználónév vagy Email:
 Jelszó:
 BEJELENTKEZÉS
 REGISZTRÁCIÓ

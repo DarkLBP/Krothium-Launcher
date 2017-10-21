@@ -162,13 +162,13 @@
                <content>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="280.0" prefWidth="200.0">
                            <children>
                               <Label fx:id="slideBack" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0" styleClass="left-arrow">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Label>
-                              <ImageView fx:id="slideshow" fitHeight="253.0" fitWidth="615.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="slideshow" fitHeight="280.0" fitWidth="700.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
                                  </viewport>
@@ -507,7 +507,7 @@
                               <Insets />
                            </VBox.margin>
                         </VBox>
-                        <Label id="loginLabel" fx:id="usernameLabel" prefHeight="23.0" prefWidth="700.0" styleClass="text-5" text="Krothium Username or Email:">
+                        <Label id="loginLabel" fx:id="usernameLabel" prefHeight="23.0" prefWidth="700.0" styleClass="text-5" text="Username or Email:">
                            <VBox.margin>
                               <Insets left="15.0" right="15.0" top="15.0" />
                            </VBox.margin>
@@ -539,7 +539,7 @@
                                     <ToggleGroup fx:id="authType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="authMojang" mnemonicParsing="false" styleClass="text-5" text="Mojang" toggleGroup="$authType">
+                              <RadioButton mnemonicParsing="false" styleClass="text-5" text="Mojang" toggleGroup="$authType">
                                  <HBox.margin>
                                     <Insets left="15.0" />
                                  </HBox.margin>
@@ -790,15 +790,6 @@
             <String fx:value="highlight" />
          </styleClass>
       </Label>
-      <Label fx:id="versionLabel" onMouseClicked="#openNews" text="Version" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
-         <styleClass>
-            <String fx:value="color-alt" />
-            <String fx:value="text-6" />
-         </styleClass>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Label>
       <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
             <Cursor fx:constant="HAND" />
@@ -831,5 +822,14 @@
             </Label>
          </children>
       </VBox>
+      <Label fx:id="versionLabel" onMouseClicked="#openNews" text="Version" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
+         <styleClass>
+            <String fx:value="color-alt" />
+            <String fx:value="text-5" />
+         </styleClass>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Label>
    </children>
 </AnchorPane>

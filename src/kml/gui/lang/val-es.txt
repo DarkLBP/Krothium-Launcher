@@ -15,7 +15,7 @@ JUGANT
 El joc ha crashejat! Comprova els registres per a mes informació.
 Joc crashejat
 No pots deixa el camp de l´usuario buid!
-Usuari o Email de Krothium:
+Usuari o Email:
 Contrasenya:
 ENTRAR
 REGISTRAR-SE

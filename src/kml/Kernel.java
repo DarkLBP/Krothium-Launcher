@@ -170,15 +170,14 @@ public final class Kernel {
                     s.getIcons().add(this.applicationIcon);
                     s.setTitle("Krothium Minecraft Launcher");
                     s.setScene(new Scene(p));
-                    s.setResizable(false);
                     s.setMaximized(false);
                     s.setOnCloseRequest(e -> {
                         e.consume();
-
                         int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
                                 Language.get(96) + System.lineSeparator() + Language.get(97));
                         if (result == JOptionPane.YES_OPTION) {
                             this.hostServices.showDocument("https://krothium.com/donaciones/");
+                            this.exitSafely();
                         }
                     });
                     this.webBrowser = fxmlLoader.getController();
@@ -210,7 +209,6 @@ public final class Kernel {
                     e.printStackTrace(this.console.getWriter());
                     this.exitSafely();
                 }
-
             });
         });
         loadThread.start();
