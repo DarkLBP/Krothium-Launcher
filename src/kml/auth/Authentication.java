@@ -86,9 +86,11 @@ public class Authentication {
      */
     public void setSelectedUser(User user) {
         if (user != null) {
-            this.selectedAccount = user;
             this.console.print("User " + user.getUserID() + " is now selected.");
+        } else if (this.selectedAccount != null) {
+            this.console.print(this.selectedAccount.getUserID() + " is not longer selected.");
         }
+        this.selectedAccount = user;
     }
 
     /**
