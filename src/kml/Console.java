@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -21,51 +22,36 @@ public class Console {
 
     public Console() {
         File logFolder = Constants.APPLICATION_LOGS;
-        if (logFolder.isDirectory()) {
-            File[] logFiles = logFolder.listFiles();
-            if (logFiles != null && logFiles.length > 0) {
-                Arrays.sort(logFiles);
-                int count = 0;
-                for (File f : logFiles) {
-                    if (f.isFile()) {
-                        String name = f.getName();
-                        if (name.startsWith("krothium-unclosed")) {
-                            if (f.delete()) {
-                                System.out.println("Successfully deleted unclosed log file: " + name);
-                            } else {
-                                System.out.println("Failed to delete unclosed log file: " + name);
-                            }
-                        } else if (name.startsWith("krothium")) {
-                            count++;
-                        }
+        if (!logFolder.isDirectory()) {
+            logFolder.mkdirs();
+        }
+        File[] logFiles = logFolder.listFiles();
+        if (logFiles != null && logFiles.length > 0) {
+            final int KEEP_OLD_LOGS = 10;
+            Arrays.sort(logFiles, Collections.reverseOrder());
+            int count = 0;
+            for (File f : logFiles) {
+                String name = f.getName();
+                if (name.startsWith("krothium-unclosed")) {
+                    if (f.delete()) {
+                        System.out.println("Successfully deleted unclosed log file: " + name);
+                    } else {
+                        System.out.println("Failed to delete unclosed log file: " + name);
                     }
-                }
-                final int KEEP_OLD_LOGS = 10;
-                if (count > KEEP_OLD_LOGS) {
-                    int toDelete = count - KEEP_OLD_LOGS;
-                    for (int i = 0; i < toDelete; i++) {
-                        for (File f : logFiles) {
-                            if (f.isFile()) {
-                                String name = f.getName();
-                                if (name.startsWith("krothium") && !name.contains("-unclosed-")) {
-                                    if (f.delete()) {
-                                        System.out.println("Successfully deleted old log file: " + name);
-                                    } else {
-                                        System.out.println("Failed to delete old log file: " + name);
-                                    }
-                                    break;
-                                }
-                            }
+                } else if (name.startsWith("krothium")) {
+                    if (count == KEEP_OLD_LOGS - 1) {
+                        if (f.delete()) {
+                            System.out.println("Successfully deleted old log file: " + name);
+                        } else {
+                            System.out.println("Failed to delete old log file: " + name);
                         }
+                    } else {
+                        count++;
                     }
                 }
             }
         }
         this.log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
-        File parent = this.log.getParentFile();
-        if (!parent.exists()) {
-            parent.mkdirs();
-        }
         try {
             this.writer = new PrintWriter(this.log){
                 @Override
@@ -157,7 +143,8 @@ public class Console {
     public final void close() {
         if (this.enabled) {
             this.writer.close();
-            this.log.renameTo(new File(this.log.getAbsolutePath().replace("-unclosed", "")));
+            File target = new File(Constants.APPLICATION_LOGS, this.log.getName().replace("-unclosed", ""));
+            this.log.renameTo(target);
         }
     }
 }
