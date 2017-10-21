@@ -7,7 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lzma" level="project" />
     <orderEntry type="library" name="gson-2.8.0" level="project" />
     <orderEntry type="library" name="guava-21.0" level="project" />
     <orderEntry type="library" name="log4j-api-2.8.1" level="project" />
