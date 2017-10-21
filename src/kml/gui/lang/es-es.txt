@@ -7,8 +7,8 @@ Ajustes
 Opciones de lanzamiento
 ¿Estás seguro de que quieres cerrar la sesión?
 Fallo al cargar JavaFX. Por favor, actualiza Java.
-¡Una nueva versión del lanzador está disponible! ¿Quieres descargarla?
-Nueva versión disponible
+
+
 JUGAR
 Descargando
 JUGANDO

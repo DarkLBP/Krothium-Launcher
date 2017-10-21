@@ -7,8 +7,8 @@ Ajustos
 Opcions de llançament
 Estás segur de que vols tancar la sessió?
 No s'ha pogut carregar JavaFX. Per favor, actualitza Java.
-Una nova versió del llançador está disponible! Vols descarregar-la?
-Nova versió disponible
+
+
 JUGAR
 Descarregant
 JUGANT

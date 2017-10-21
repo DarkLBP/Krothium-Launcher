@@ -7,8 +7,8 @@ Definições
 Opções de início
 Tem certeza de que deseja terminar o sessão?
 Falha ao carregar o JavaFX. Atualize o Java.
-Uma nova versão do lançador está disponível! Deseja fazer o download?
-Nova versão disponível
+
+
 JOGAR
 Baixando
 JOGANDO

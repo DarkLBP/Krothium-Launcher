@@ -7,8 +7,8 @@ Settings
 Launch Options
 Are you sure you want to logout?
 Failed to load JavaFX. Please update Java.
-A new launcher version is available! Do you want to download it?
-New version available
+
+
 PLAY
 Downloading
 PLAYING

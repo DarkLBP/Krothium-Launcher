@@ -7,8 +7,8 @@ Configurações
 Opções de início
 Tem certeza de que deseja sair da sua conta?
 Falha ao carregar o JavaFX. Atualize o Java.
-Uma nova versão do launcher está disponível! Deseja fazer o download?
-Nova versão disponível
+
+
 JOGAR
 Baixando
 JOGANDO

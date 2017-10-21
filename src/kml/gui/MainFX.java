@@ -1568,7 +1568,11 @@ public class MainFX {
     @FXML
     public final void register() {
         //Open register page
-        this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/register");
+        if (this.authKrothium.isSelected()) {
+            this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/register");
+        } else {
+            this.kernel.getHostServices().showDocument("https://minecraft.net/");
+        }
     }
 
     /**
