@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -297,7 +297,7 @@ public class GameLauncher {
                 });
             }
             Thread log_info = new Thread(() -> {
-                try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), Charset.forName("ISO-8859-1"));
+                try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), StandardCharsets.ISO_8859_1);
                      BufferedReader br = new BufferedReader(isr)){
                     while (this.isRunning()) {
                         String lineRead = br.readLine();
@@ -323,7 +323,7 @@ public class GameLauncher {
             });
             log_info.start();
             Thread log_error = new Thread(() -> {
-                try (InputStreamReader isr = new InputStreamReader(this.process.getErrorStream(), Charset.forName("ISO-8859-1"));
+                try (InputStreamReader isr = new InputStreamReader(this.process.getErrorStream(), StandardCharsets.ISO_8859_1);
                      BufferedReader br = new BufferedReader(isr)){
                     while (this.isRunning()) {
                         String lineRead = br.readLine();

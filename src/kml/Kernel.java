@@ -127,8 +127,7 @@ public final class Kernel {
         this.iconCache = new EnumMap<>(ProfileIcon.class);
 
         //Load splash screen
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Splash.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Splash.fxml"));
         Parent splash;
         try {
             splash = loader.load();
@@ -147,7 +146,6 @@ public final class Kernel {
         stage.show();
 
         Thread loadThread = new Thread(() -> {
-
             //Load launcher data
             this.profiles = new Profiles(this);
             this.versions = new Versions(this);
