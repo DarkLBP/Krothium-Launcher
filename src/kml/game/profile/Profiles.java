@@ -39,10 +39,11 @@ public class Profiles {
      * Adds a profile to the database
      * @param p The profile to be added
      */
-    public final void addProfile(Profile p) {
+    public void addProfile(Profile p) {
         if (!this.profiles.contains(p)) {
             this.profiles.add(p);
             this.console.print("Profile " + p + " added");
+            return;
         }
         this.console.print("Profile " + p + " already exists!");
     }
