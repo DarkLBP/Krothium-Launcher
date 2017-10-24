@@ -1494,11 +1494,12 @@ public class MainFX {
                 this.console.print("No user is selected.");
             }
         } catch (AuthenticationException ex) {
-            username.setText(u.getUsername());
             if (u.getType() == UserType.KROTHIUM) {
                 authKrothium.setSelected(true);
+                username.setText(u.getUsername().replace("krothium://", ""));
             } else {
                 authMojang.setSelected(true);
+                username.setText(u.getUsername());
             }
             this.console.print("Couldn't refresh your session.");
         } finally {
