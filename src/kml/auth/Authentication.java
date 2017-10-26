@@ -281,12 +281,17 @@ public class Authentication {
                 this.clientToken = root.getString("clientToken");
             }
             if (root.has("selectedUser")) {
-                JSONObject selected = root.getJSONObject("selectedUser");
-                if (selected.has("account")) {
-                    selectedUser = selected.getString("account");
-                }
-                if (selected.has("profile")) {
-                    selectedProfile = selected.getString("profile");
+                Object selected = root.get("selectedUser");
+                if (selected instanceof JSONObject) {
+                    JSONObject s = (JSONObject)selected;
+                    if (s.has("account")) {
+                        selectedUser = s.getString("account");
+                    }
+                    if (s.has("profile")) {
+                        selectedProfile = s.getString("profile");
+                    }
+                } else {
+                    this.console.print("Legacy launcher_profiles.json found");
                 }
             }
             if (root.has("authenticationDatabase")) {
