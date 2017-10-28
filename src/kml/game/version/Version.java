@@ -54,6 +54,19 @@ public final class Version {
         }
         if (version.has("minecraftArguments")) {
             this.minecraftArguments = version.getString("minecraftArguments");
+        } else if (version.has("arguments")) {
+            JSONObject arguments = version.getJSONObject("arguments");
+            JSONArray game = arguments.has("game") ? arguments.getJSONArray("game") : null;
+            if (game != null) {
+                StringBuilder b = new StringBuilder();
+                for (int i = 0; i < game.length(); i++){
+                    Object element = game.get(i);
+                    if (element instanceof String) {
+                        b.append(element).append(" ");
+                    }
+                }
+                this.minecraftArguments = b.toString().trim();
+            }
         }
         if (version.has("assetIndex")) {
             JSONObject aIndex = version.getJSONObject("assetIndex");
