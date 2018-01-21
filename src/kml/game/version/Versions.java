@@ -11,10 +11,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -125,7 +122,7 @@ public class Versions {
                 }
                 if (ver.has("type")) {
                     try {
-                        type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                        type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
                     } catch (IllegalArgumentException ex) {
                         type = VersionType.RELEASE;
                         this.console.print("Invalid type for version " + id);
@@ -170,7 +167,7 @@ public class Versions {
                             }
                             if (ver.has("type")) {
                                 try {
-                                    type = VersionType.valueOf(ver.getString("type").toUpperCase());
+                                    type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
                                 } catch (IllegalArgumentException ex) {
                                     type = VersionType.RELEASE;
                                     this.console.print("Invalid type for version " + id);

@@ -135,7 +135,7 @@ public class Profiles {
                         }
                         version = this.kernel.getVersions().getVersionMeta(ver);
                         try {
-                            icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase()) : null;
+                            icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase(Locale.ENGLISH)) : null;
                         } catch (IllegalArgumentException ex) {
                             icon = null;
                             this.console.print("Invalid profile icon for profile " + key);
@@ -304,7 +304,7 @@ public class Profiles {
                     }
                 }
                 if (p.hasIcon()) {
-                    prof.put("icon", p.getIcon().name().toLowerCase());
+                    prof.put("icon", p.getIcon().name().toLowerCase(Locale.ENGLISH));
                 }
             }
             if (p.hasCreated()) {

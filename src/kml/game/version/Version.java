@@ -11,10 +11,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -44,7 +41,7 @@ public final class Version {
             throw new Exception("Invalid version id.");
         }
         if (version.has("type")) {
-            this.type = VersionType.valueOf(version.getString("type").toUpperCase());
+            this.type = VersionType.valueOf(version.getString("type").toUpperCase(Locale.ENGLISH));
         } else {
             this.type = VersionType.RELEASE;
             console.print("Remote version " + this.id + " has no version type. Will be loaded as a RELEASE.");

@@ -47,12 +47,12 @@ public final class Library {
                 LibraryRule action = null;
                 OS o = null;
                 if (rule.has("action")) {
-                    action = LibraryRule.valueOf(rule.getString("action").toUpperCase());
+                    action = LibraryRule.valueOf(rule.getString("action").toUpperCase(Locale.ENGLISH));
                 }
                 if (rule.has("os")) {
                     JSONObject os = rule.getJSONObject("os");
                     if (os.has("name")) {
-                        o = OS.valueOf(os.getString("name").toUpperCase());
+                        o = OS.valueOf(os.getString("name").toUpperCase(Locale.ENGLISH));
                     }
                 }
                 if (o != null && action != null) {
@@ -72,7 +72,7 @@ public final class Library {
             Iterator it = natives.keys();
             while (it.hasNext()) {
                 String index = it.next().toString();
-                OS os = OS.valueOf(index.toUpperCase());
+                OS os = OS.valueOf(index.toUpperCase(Locale.ENGLISH));
                 String value = natives.getString(index).replace("${arch}", osArch);
                 this.natives.put(os, value);
             }
