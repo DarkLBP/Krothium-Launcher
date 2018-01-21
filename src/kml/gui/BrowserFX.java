@@ -17,12 +17,13 @@ public class BrowserFX {
         this.stage = s;
         WebEngine engine = this.webBrowser.getEngine();
         String userAgent = engine.getUserAgent();
-        engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:56.0) Gecko/20100101 Firefox/56.0");
+        engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:57.0) Gecko/20100101 Firefox/57.0");
         engine.setJavaScriptEnabled(true);
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(State.SUCCEEDED)) {
                 String location = engine.getLocation();
-                if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com") && !location.contains("about:blank")) {
+                if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com")
+                        && !location.contains("about:blank") && !location.contains("872429")) {
                     this.webBrowser.getEngine().load("about:blank");
                 }
                 if (location.contains("about:blank") && !this.toHide.isShowing()) {
