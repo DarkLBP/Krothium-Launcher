@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -49,7 +48,6 @@ import kml.gui.lang.Language;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -521,7 +519,7 @@ public class MainFX {
      */
     @FXML private void deleteSkin() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
-        if (result == JOptionPane.YES_OPTION){
+        if (result == 1){
             Map<String, String> params = new HashMap<>();
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
@@ -552,7 +550,7 @@ public class MainFX {
      */
     @FXML private void deleteCape() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
-        if (result == JOptionPane.YES_OPTION){
+        if (result == 1){
             Map<String, String> params = new HashMap<>();
             params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
             params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
@@ -1355,7 +1353,7 @@ public class MainFX {
      */
     @FXML public final void cancelProfile() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
-        if (result == JOptionPane.YES_OPTION) {
+        if (result == 1) {
             this.switchTab(this.launchOptionsLabel);
         }
     }
@@ -1365,7 +1363,7 @@ public class MainFX {
      */
     @FXML public final void deleteProfile() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
-        if (result == JOptionPane.YES_OPTION) {
+        if (result == 1) {
             Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
             if (this.kernel.getProfiles().deleteProfile(this.kernel.getProfiles().getProfile(selectedElement.getId()))) {
                 this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
@@ -1536,7 +1534,7 @@ public class MainFX {
     public final void logout() {
         User selected = this.existingUsers.getSelectionModel().getSelectedItem();
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(8));
-        if (result == JOptionPane.YES_OPTION) {
+        if (result == 1) {
             Authentication auth = this.kernel.getAuthentication();
             auth.removeUser(selected);
             this.updateExistingUsers();

@@ -5,6 +5,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -173,7 +175,7 @@ public final class Kernel {
                         e.consume();
                         int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
                                 Language.get(96) + System.lineSeparator() + Language.get(97));
-                        if (result == JOptionPane.YES_OPTION) {
+                        if (result == 1) {
                             this.hostServices.showDocument("https://krothium.com/donaciones/");
                             this.exitSafely();
                         }
@@ -656,28 +658,50 @@ public final class Kernel {
      * @return The built alert
      */
     public int showAlert(AlertType type, String title, String content) {
-        int messageType;
-        switch (type) {
-            case CONFIRMATION:
-                messageType = JOptionPane.QUESTION_MESSAGE;
-                break;
-            case WARNING:
-                messageType = JOptionPane.WARNING_MESSAGE;
-                break;
-            case INFORMATION:
-                messageType = JOptionPane.INFORMATION_MESSAGE;
-                break;
-            case ERROR:
-                messageType = JOptionPane.ERROR_MESSAGE;
-                break;
-            default:
-                messageType = JOptionPane.INFORMATION_MESSAGE;
+        try {
+            Class.forName("javafx.scene.control.Alert");
+            Alert a = new Alert(Alert.AlertType.valueOf(type.name()));
+            ((Stage)a.getDialogPane().getScene().getWindow()).getIcons().add(this.applicationIcon);
+            a.setTitle(title);
+            a.setHeaderText(title);
+            a.setContentText(content);
+            if (type != AlertType.CONFIRMATION) {
+                a.show();
+            } else {
+                a.showAndWait();
+                if (a.getResult() == ButtonType.OK) {
+                    return 1;
+                }
+                return 0;
+            }
+        } catch( ClassNotFoundException e ) {
+            //Using legacy
+            int messageType;
+            switch (type) {
+                case CONFIRMATION:
+                    messageType = JOptionPane.QUESTION_MESSAGE;
+                    break;
+                case WARNING:
+                    messageType = JOptionPane.WARNING_MESSAGE;
+                    break;
+                case INFORMATION:
+                    messageType = JOptionPane.INFORMATION_MESSAGE;
+                    break;
+                case ERROR:
+                    messageType = JOptionPane.ERROR_MESSAGE;
+                    break;
+                default:
+                    messageType = JOptionPane.INFORMATION_MESSAGE;
 
-        }
-        if (type != AlertType.CONFIRMATION) {
-            JOptionPane.showMessageDialog(null, content, title, messageType);
-        } else {
-            return JOptionPane.showConfirmDialog(null, content, title, JOptionPane.YES_NO_OPTION, messageType);
+            }
+            if (type != AlertType.CONFIRMATION) {
+                JOptionPane.showMessageDialog(null, content, title, messageType);
+            } else {
+                if (JOptionPane.showConfirmDialog(null, content, title, JOptionPane.YES_NO_OPTION, messageType) == JOptionPane.YES_OPTION) {
+                    return 1;
+                }
+                return 0;
+            }
         }
         return -1;
     }
