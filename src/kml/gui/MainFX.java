@@ -118,6 +118,8 @@ public class MainFX {
     private final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
     private final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
 
+    private boolean iconListLoaded = false;
+
     /**
      * Initializes all required stuff from the GUI
      * @param k The Kernel instance
@@ -203,9 +205,6 @@ public class MainFX {
         //Prepare Spinners
         this.resW.setEditable(true);
         this.resH.setEditable(true);
-
-        //Load icons
-        this.loadIcons();
 
         //If offline mode make play button bigger for language support
         if (Constants.USE_LOCAL) {
@@ -729,21 +728,21 @@ public class MainFX {
             if (p.getType() == ProfileType.RELEASE) {
                 Image img = this.kernel.getProfileIcon(ProfileIcon.GRASS);
                 ImageView iv = new ImageView(img);
-                iv.setFitWidth(64);
-                iv.setFitHeight(64);
+                iv.setFitWidth(68);
+                iv.setFitHeight(68);
                 ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(64);
-                iv2.setFitHeight(64);
+                iv2.setFitWidth(68);
+                iv2.setFitHeight(68);
                 l = new Label(Language.get(59), iv);
                 l2 = new Label(Language.get(59), iv2);
             } else if (p.getType() == ProfileType.SNAPSHOT) {
                 Image img = this.kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE);
                 ImageView iv = new ImageView(img);
-                iv.setFitWidth(64);
-                iv.setFitHeight(64);
+                iv.setFitWidth(68);
+                iv.setFitHeight(68);
                 ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(64);
-                iv2.setFitHeight(64);
+                iv2.setFitWidth(68);
+                iv2.setFitHeight(68);
                 l = new Label(Language.get(60), iv);
                 l2 = new Label(Language.get(60), iv2);
             } else {
@@ -751,11 +750,11 @@ public class MainFX {
                 ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
                 Image img = this.kernel.getProfileIcon(pi);
                 ImageView iv = new ImageView(img);
-                iv.setFitWidth(64);
-                iv.setFitHeight(64);
+                iv.setFitWidth(68);
+                iv.setFitHeight(68);
                 ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(64);
-                iv2.setFitHeight(64);
+                iv2.setFitWidth(68);
+                iv2.setFitHeight(68);
                 l = new Label(name, iv);
                 l2 = new Label(name, iv2);
             }
@@ -827,8 +826,8 @@ public class MainFX {
         for (ProfileIcon p : ProfileIcon.values()) {
             if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
                 ImageView imv = new ImageView(this.kernel.getProfileIcon(p));
-                imv.setFitHeight(64);
-                imv.setFitWidth(64);
+                imv.setFitHeight(68);
+                imv.setFitWidth(68);
                 imv.setId(p.name());
                 icons.add(imv);
             }
@@ -981,10 +980,10 @@ public class MainFX {
         if (this.iconList.isVisible()) {
             this.iconList.setVisible(false);
         } else {
-            //Calculate change icon button position on scene
-            Bounds b = this.changeIcon.localToScene(this.changeIcon.getBoundsInLocal());
-            this.iconList.setTranslateX(b.getMinX());
-            this.iconList.setTranslateY(b.getMaxY());
+            if (!this.iconListLoaded) {
+                this.loadIcons();
+                this.iconListLoaded = true;
+            }
             this.iconList.setVisible(true);
         }
     }

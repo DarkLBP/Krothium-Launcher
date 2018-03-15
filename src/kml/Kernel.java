@@ -346,7 +346,7 @@ public final class Kernel {
         if (this.iconCache.containsKey(p)) {
             return this.iconCache.get(p);
         }
-        WritableImage wi = new WritableImage(136, 136);
+        WritableImage wi = new WritableImage(68, 68);
         PixelWriter pw = wi.getPixelWriter();
         int blockX = 0;
         int blockY = 0;
@@ -617,7 +617,7 @@ public final class Kernel {
                 blockY = 7;
                 break;
         }
-        pw.setPixels(0, 0, 136, 136, pr, blockX * 136, blockY * 136);
+        pw.setPixels(0, 0, 68, 68, pr, blockX * 68, blockY * 68);
         this.iconCache.put(p, wi);
         return wi;
     }
