@@ -119,6 +119,7 @@ public class MainFX {
     private final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
 
     private boolean iconListLoaded = false;
+    private boolean versionListLoaded = false;
 
     /**
      * Initializes all required stuff from the GUI
@@ -210,9 +211,6 @@ public class MainFX {
         if (Constants.USE_LOCAL) {
             this.playButton.setMinWidth(290);
         }
-
-        //Load version list
-        this.loadVersionList();
 
         //Localize elements
         this.localizeElements();
@@ -1111,6 +1109,9 @@ public class MainFX {
             //Nothing has been selected
             return;
         }
+        if (!this.versionListLoaded) {
+            this.loadVersionList();
+        }
         if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
             this.profileName.setEditable(true);
             this.profileName.setText("");
@@ -1256,6 +1257,7 @@ public class MainFX {
      * Loads the list of version for the profile editor
      */
     private void loadVersionList() {
+        this.console.print("Loading version list...");
         ObservableList<VersionMeta> vers = FXCollections.observableArrayList();
         VersionMeta latestVersion = new VersionMeta(Language.get(59), null, null);
         vers.add(latestVersion);
@@ -1598,7 +1600,7 @@ public class MainFX {
             s.setEnableSnapshots(!s.getEnableSnapshots());
             this.toggleLabel(source, s.getEnableSnapshots());
             this.loadProfileList();
-            this.loadVersionList();
+            this.versionListLoaded = false;
         } else if (source == this.historicalVersions) {
             if (!s.getEnableHistorical()) {
                 this.kernel.showAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
@@ -1609,7 +1611,7 @@ public class MainFX {
             s.setEnableHistorical(!s.getEnableHistorical());
             this.toggleLabel(source, s.getEnableHistorical());
             this.loadProfileList();
-            this.loadVersionList();
+            this.versionListLoaded = false;
         } else if (source == this.advancedSettings) {
             if (!s.getEnableAdvanced()) {
                 this.kernel.showAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
