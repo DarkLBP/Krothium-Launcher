@@ -120,6 +120,7 @@ public class MainFX {
 
     private boolean iconListLoaded = false;
     private boolean versionListLoaded = false;
+    private boolean languageListLoaded = false;
 
     /**
      * Initializes all required stuff from the GUI
@@ -155,45 +156,7 @@ public class MainFX {
 
         //Prepare language list
         String locale = this.kernel.getSettings().getLocale();
-        Image flag_es, flag_pt, flag_us, flag_val, flag_br, flag_hu;
-        flag_es = new Image("/kml/gui/textures/flags/flag_es-es.png");
-        flag_us = new Image("/kml/gui/textures/flags/flag_en-us.png");
-        flag_pt = new Image("/kml/gui/textures/flags/flag_pt-pt.png");
-        flag_val = new Image("/kml/gui/textures/flags/flag_val-es.png");
-        flag_br = new Image("/kml/gui/textures/flags/flag_pt-br.png");
-        flag_hu = new Image("/kml/gui/textures/flags/flag_hu-hu.png");
-        Label en = new Label("English - United States", new ImageView(flag_us));
-        en.setId("en-us");
-        if (locale.equalsIgnoreCase(en.getId())) {
-            this.languageButton.setText(en.getText());
-        }
-        Label es = new Label("Español - España", new ImageView(flag_es));
-        es.setId("es-es");
-        if (locale.equalsIgnoreCase(es.getId())) {
-            this.languageButton.setText(es.getText());
-        }
-        Label val = new Label("Valencià - C. Valenciana", new ImageView(flag_val));
-        val.setId("val-es");
-        if (locale.equalsIgnoreCase(val.getId())) {
-            this.languageButton.setText(val.getText());
-        }
-        Label pt = new Label("Português - Portugal", new ImageView(flag_pt));
-        pt.setId("pt-pt");
-        if (locale.equalsIgnoreCase(pt.getId())) {
-            this.languageButton.setText(pt.getText());
-        }
-        Label br = new Label("Português - Brasil", new ImageView(flag_br));
-        br.setId("pt-br");
-        if (locale.equalsIgnoreCase(br.getId())) {
-            this.languageButton.setText(br.getText());
-        }
-        Label hu = new Label("Hungarian - Magyar", new ImageView(flag_hu));
-        hu.setId("hu-hu");
-        if (locale.equalsIgnoreCase(hu.getId())) {
-            this.languageButton.setText(hu.getText());
-        }
-        ObservableList<Label> languageListItems = FXCollections.observableArrayList(en, es, val, pt, br, hu);
-        this.languagesList.setItems(languageListItems);
+        this.languageButton.setText(this.kernel.getSettings().getSupportedLocales().get(locale));
 
         //Update settings labels
         Settings st = this.kernel.getSettings();
@@ -219,6 +182,21 @@ public class MainFX {
         if (!this.kernel.getBrowser().isVisible()) {
             this.stage.show();
         }
+    }
+
+    /**
+     * Load language list
+     */
+    private void loadLanguages() {
+        this.console.print("Loading languages...");
+        HashMap<String, String> supportedLocales = this.kernel.getSettings().getSupportedLocales();
+        ObservableList<Label> languageListItems = FXCollections.observableArrayList();
+        for (String key : this.kernel.getSettings().getSupportedLocales().keySet()) {
+            Image i = new Image("/kml/gui/textures/flags/flag_" + key + ".png");
+            Label l = new Label(supportedLocales.get(key), new ImageView(i));
+            languageListItems.add(l);
+        }
+        this.languagesList.setItems(languageListItems);
     }
 
     /**
@@ -941,6 +919,10 @@ public class MainFX {
         if (this.languagesList.isVisible()) {
             this.languagesList.setVisible(false);
         } else {
+            if (!this.languageListLoaded) {
+                this.loadLanguages();
+                this.languageListLoaded = true;
+            }
             this.languagesList.setVisible(true);
         }
     }
@@ -1111,6 +1093,7 @@ public class MainFX {
         }
         if (!this.versionListLoaded) {
             this.loadVersionList();
+            this.versionListLoaded = true;
         }
         if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
             this.profileName.setEditable(true);

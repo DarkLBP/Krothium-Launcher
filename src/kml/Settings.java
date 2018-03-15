@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * @author DarkLBP
@@ -13,10 +14,17 @@ import java.io.IOException;
 public class Settings {
     private final Kernel kernel;
     private String locale = "en-us";
+    private final HashMap<String, String> supportedLocales = new HashMap();
     private boolean keepLauncherOpen, showGameLog, enableAdvanced, enableHistorical, enableSnapshots;
 
     public Settings(Kernel k) {
         this.kernel = k;
+        this.supportedLocales.put("en-us", "English - United States");
+        this.supportedLocales.put("es-es", "Español - España");
+        this.supportedLocales.put("val-es", "Valencià - C. Valenciana");
+        this.supportedLocales.put("pt-pt", "Português - Portugal");
+        this.supportedLocales.put("pt-br", "Português - Brasil");
+        this.supportedLocales.put("hu-hu", "Hungarian - Magyar");
     }
 
     /**
@@ -92,7 +100,7 @@ public class Settings {
      */
     public final void setLocale(String s) {
         if (s != null) {
-            if ("es-es".equals(s) || "en-us".equals(s) || "pt-pt".equals(s) || "pt-br".equals(s) || "val-es".equals(s) || "hu-hu".equals(s)) {
+            if (this.supportedLocales.containsKey(s)) {
                 this.kernel.getConsole().print("Switched language to " + s);
                 this.locale = s;
                 try {
@@ -152,6 +160,14 @@ public class Settings {
      */
     public final boolean getEnableHistorical() {
         return this.enableHistorical;
+    }
+
+    /**
+     * Returns a map of supported locales
+     * @return List of supported locales
+     */
+    public final HashMap<String, String> getSupportedLocales() {
+        return this.supportedLocales;
     }
 
     /**
