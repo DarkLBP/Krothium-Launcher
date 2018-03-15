@@ -600,7 +600,7 @@ public class MainFX {
                     continue;
                 }
                 JSONObject content = entry.getJSONObject("content").getJSONObject("en-us");
-                Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"), this.console);
+                Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"));
                 this.slides.add(s);
             }
         } catch (Exception ex) {
