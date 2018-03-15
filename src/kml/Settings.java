@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class Settings {
     private final Kernel kernel;
     private String locale = "en-us";
-    private final HashMap<String, String> supportedLocales = new HashMap();
+    private final HashMap<String, String> supportedLocales = new HashMap<>();
     private boolean keepLauncherOpen, showGameLog, enableAdvanced, enableHistorical, enableSnapshots;
 
     public Settings(Kernel k) {
@@ -100,24 +100,17 @@ public class Settings {
      */
     public final void setLocale(String s) {
         if (s != null) {
-            if (this.supportedLocales.containsKey(s)) {
-                this.kernel.getConsole().print("Switched language to " + s);
-                this.locale = s;
-                try {
-                    Language.loadLang(this.locale);
-                } catch (IOException e) {
-                    this.kernel.getConsole().print("Failed to load language file.");
-                    e.printStackTrace(this.kernel.getConsole().getWriter());
-                }
-            } else {
-                this.kernel.getConsole().print("Switched language to en-us");
+            if (!this.supportedLocales.containsKey(s)) {
                 this.locale = "en-us";
-                try {
-                    Language.loadLang(this.locale);
-                } catch (IOException e) {
-                    this.kernel.getConsole().print("Failed to load language file.");
-                    e.printStackTrace(this.kernel.getConsole().getWriter());
-                }
+            } else {
+                this.locale = s;
+            }
+            this.kernel.getConsole().print("Switched language to " + this.locale);
+            try {
+                Language.loadLang(this.locale);
+            } catch (IOException e) {
+                this.kernel.getConsole().print("Failed to load language file.");
+                e.printStackTrace(this.kernel.getConsole().getWriter());
             }
         }
     }
