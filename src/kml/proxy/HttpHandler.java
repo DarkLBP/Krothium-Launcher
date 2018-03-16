@@ -32,7 +32,7 @@ class HttpHandler extends Handler{
     protected final URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url);
         for (URLMatcher m : urlMatchers) {
-            if (m.match(url)) {
+            if (m.match(url.toString())) {
                 return new ConnectionHandler(url, m);
             }
         }

@@ -9,10 +9,10 @@ import java.net.URL;
 
 public class VersionMeta {
     private final String id;
-    private final URL url;
+    private final String url;
     private final VersionType type;
 
-    public VersionMeta(String id, URL url, VersionType type) {
+    public VersionMeta(String id, String url, VersionType type) {
         this.id = id;
         this.url = url;
         this.type = type;
@@ -22,7 +22,7 @@ public class VersionMeta {
         return this.id;
     }
 
-    public final URL getURL() {
+    public final String getURL() {
         return this.url;
     }
 

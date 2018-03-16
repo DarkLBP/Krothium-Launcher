@@ -1,8 +1,5 @@
 package kml.proxy.matchers;
 
-import kml.Utils;
-
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,25 +8,20 @@ import java.util.regex.Pattern;
  *         website https://krothium.com
  */
 public class CapeMatcher implements URLMatcher {
-    private final Pattern capeRegex = Pattern.compile("/MinecraftCloaks/(.+?)\\.png");
+    private final Pattern capeRegex = Pattern.compile("http://skins.minecraft.net/MinecraftCloaks/(.+)\\.png");
 
     @Override
-    public final boolean match(URL url) {
-        String capeHost = "skins.minecraft.net";
-        String capeHostLegacy = "s3.amazonaws.com";
-        if (url.getHost().equalsIgnoreCase(capeHost) || url.getHost().equalsIgnoreCase(capeHostLegacy)) {
-            Matcher m = this.capeRegex.matcher(url.getPath());
-            return m.matches();
-        }
-        return false;
+    public final boolean match(String url) {
+        Matcher m = this.capeRegex.matcher(url);
+        return m.matches();
     }
 
     @Override
-    public final URL handle(URL url) {
-        Matcher m = this.capeRegex.matcher(url.getPath());
+    public final String handle(String url) {
+        Matcher m = this.capeRegex.matcher(url);
         if (m.matches()) {
             String name = m.group(1);
-            return Utils.stringToURL("http://mc.krothium.com/capes/" + name + ".png");
+            return "http://mc.krothium.com/capes/" + name + ".png";
         }
         return null;
     }

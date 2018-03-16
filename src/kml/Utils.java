@@ -5,7 +5,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -63,7 +62,7 @@ public final class Utils {
      * @return Server response code
      */
     public static int testNetwork() throws IOException {
-        URL handshakeURL = Utils.stringToURL("https://mc.krothium.com/hello");
+        URL handshakeURL = new URL("https://mc.krothium.com/hello");
         HttpsURLConnection con = (HttpsURLConnection)handshakeURL.openConnection();
         return con.getResponseCode();
     }
@@ -137,15 +136,12 @@ public final class Utils {
      * @throws IOException When data read fails
      * @param output The output file
      */
-    public static void downloadFile(URL url, File output) throws IOException {
-        if ("file".equalsIgnoreCase(url.getProtocol())) {
-            return;
-        }
-        URLConnection con = url.openConnection();
+    public static void downloadFile(String url, File output) throws IOException {
+        URLConnection con = new URL(url).openConnection();
         String ETag = con.getHeaderField("ETag");
-        if (output.isFile()) {
-            //Match ETAG with existing file
-            if (ETag != null && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
+        //Match ETAG with existing file
+        if (ETag != null) {
+            if (output.isFile() && verifyChecksum(output, ETag.replace("\"", ""), "MD5")) {
                 return;
             }
         }
@@ -153,26 +149,12 @@ public final class Utils {
         if (parent != null && !parent.exists()) {
             parent.mkdirs();
         }
-        try (InputStream in = con.getInputStream();
-             FileOutputStream fo = new FileOutputStream(output)){
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                fo.write(buffer, 0, read);
-            }
-        }
+        pipeStreams(con.getInputStream(), new FileOutputStream(output));
     }
 
-    /**
-     * Reads a String from the source URL
-     * @param url The source URL
-     * @throws IOException When data read fails
-     * @return The read String or null if an error occurred
-     */
-    public static String readURL(URL url) throws IOException {
-        URLConnection con = url.openConnection();
+    private static String readText(InputStream is) {
         StringBuilder content = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) {
             String line;
             boolean first = true;
             while ((line = bufferedReader.readLine()) != null) {
@@ -184,7 +166,64 @@ public final class Utils {
                 content.append(line);
             }
             return content.toString();
+        } catch (IOException ex) {
+            return "";
         }
+    }
+
+    private static void pipeStreams(InputStream in, OutputStream out) {
+        try {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } catch (IOException ignored) {
+            //No problem
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ignored) {
+                //Nothing we can do
+            }
+            try {
+                out.close();
+            } catch (IOException ignored) {
+                //Nothing we can do
+            }
+        }
+    }
+
+    public static InputStream readCachedStream(String url) {
+        try {
+            URLConnection con = new URL(url).openConnection();
+            String ETag = con.getHeaderField("ETag");
+            if (ETag != null) {
+                ETag = ETag.replace("\"", "");
+                File cachedFile = new File(Kernel.APPLICATION_CACHE, ETag);
+                if (!cachedFile.isFile() || cachedFile.length() != con.getContentLength()) {
+                    pipeStreams(con.getInputStream(), new FileOutputStream(cachedFile));
+                }
+                return new FileInputStream(cachedFile);
+            }
+            return con.getInputStream();
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Reads a String from the source URL
+     * @param url The source URL
+     * @throws IOException When data read fails
+     * @return The read String or null if an error occurred
+     */
+    public static String readURL(String url) throws IOException {
+        InputStream in = readCachedStream(url);
+        if (in != null) {
+            return readText(in);
+        }
+        return "";
     }
 
     /**
@@ -267,19 +306,6 @@ public final class Utils {
     }
 
     /**
-     * Converts a String to an URL
-     * @param url Input url String
-     * @return Return the URL or null if it is not a valid URL
-     */
-    public static URL stringToURL(String url) {
-        try {
-            return new URL(url);
-        } catch (MalformedURLException ex) {
-            return null;
-        }
-    }
-
-    /**
      * Sends a post to the desired target
      * @param url The POST URL
      * @param data The data to be sent
@@ -287,8 +313,8 @@ public final class Utils {
      * @return The response of the server
      * @throws IOException If connection failed
      */
-    public static String sendPost(URL url, byte[] data, Map<String, String> params) throws IOException {
-        HttpURLConnection con = (HttpURLConnection)url.openConnection();
+    public static String sendPost(String url, byte[] data, Map<String, String> params) throws IOException {
+        HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
         con.setDoOutput(true);
         con.setRequestMethod("POST");
         if (!params.isEmpty()) {

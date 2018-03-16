@@ -1,10 +1,5 @@
 package kml.game.version.asset;
 
-
-import kml.Utils;
-
-import java.net.URL;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -14,14 +9,14 @@ public class AssetIndex {
     private final String id;
     private String sha1;
     private long size, totalSize;
-    private final URL url;
+    private final String url;
 
     public AssetIndex(String id) {
         this.id = id == null ? "legacy" : id;
-        this.url = Utils.stringToURL("https://s3.amazonaws.com/Minecraft.Download/indexes/" + this.id + ".json");
+        this.url = "https://s3.amazonaws.com/Minecraft.Download/indexes/" + this.id + ".json";
     }
 
-    public AssetIndex(String id, long size, long totalSize, URL url, String sha1) {
+    public AssetIndex(String id, long size, long totalSize, String url, String sha1) {
         this.id = id;
         this.size = size;
         this.totalSize = totalSize;
@@ -42,7 +37,7 @@ public class AssetIndex {
         return this.totalSize;
     }
 
-    public final URL getURL() {
+    public final String getURL() {
         return this.url;
     }
 

@@ -93,7 +93,7 @@ public class Versions {
         String lr = "", ls = "";
         this.console.print("Fetching remote version list.");
         try {
-            URL versionManifest = Utils.stringToURL("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+            String versionManifest = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
             JSONObject root = new JSONObject(Utils.readURL(versionManifest));
             if (root.has("latest")) {
                 JSONObject latest = root.getJSONObject("latest");
@@ -109,12 +109,12 @@ public class Versions {
                 JSONObject ver = vers.getJSONObject(i);
                 String id = null;
                 VersionType type;
-                URL url = null;
+                String url = null;
                 if (ver.has("id")) {
                     id = ver.getString("id");
                 }
                 if (ver.has("url")) {
-                    url = Utils.stringToURL(ver.getString("url"));
+                    url = ver.getString("url");
                 }
                 if (id == null || url == null) {
                     continue;
@@ -156,7 +156,7 @@ public class Versions {
                         File jsonFile = new File(file.getAbsolutePath(), file.getName() + ".json");
                         if (jsonFile.isFile()) {
                             String id;
-                            URL url = jsonFile.toURI().toURL();
+                            String url = jsonFile.toURI().toURL().toString();
                             VersionType type;
                             JSONObject ver = new JSONObject(Utils.readURL(url));
                             if (ver.has("id")) {

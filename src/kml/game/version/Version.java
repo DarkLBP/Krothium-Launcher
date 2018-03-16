@@ -24,13 +24,13 @@ public final class Version {
     private final VersionType type;
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final List<Library> libraries = new ArrayList<>();
-    private final URL jsonURL;
+    private final String jsonURL;
     private String mainClass, minecraftArguments, jar;
     private AssetIndex assetIndex;
     private final File relativeJar;
     private final File relativeJSON;
 
-    public Version(URL durl, Kernel k) throws Exception {
+    public Version(String durl, Kernel k) throws Exception {
         Console console = k.getConsole();
         this.jsonURL = durl;
         console.print("Getting version info from " + durl);
@@ -70,7 +70,7 @@ public final class Version {
             String id = null;
             long totalSize = -1;
             long size = -1;
-            URL url = null;
+            String url = null;
             String sha1 = null;
             if (aIndex.has("id")) {
                 id = aIndex.getString("id");
@@ -82,7 +82,7 @@ public final class Version {
                 size = aIndex.getLong("size");
             }
             if (aIndex.has("url")) {
-                url = Utils.stringToURL(aIndex.getString("url"));
+                url = aIndex.getString("url");
             }
             if (aIndex.has("sha1")) {
                 sha1 = aIndex.getString("sha1");
@@ -101,11 +101,11 @@ public final class Version {
             JSONObject downloads = version.getJSONObject("downloads");
             if (downloads.has("client")) {
                 JSONObject client = downloads.getJSONObject("client");
-                URL url = null;
+                String url = null;
                 long size = 0;
                 String sha1 = null;
                 if (client.has("url")) {
-                    url = Utils.stringToURL(client.getString("url"));
+                    url = client.getString("url");
                 }
                 if (client.has("size")) {
                     size = client.getLong("size");
@@ -119,11 +119,11 @@ public final class Version {
             }
             if (downloads.has("server")) {
                 JSONObject server = downloads.getJSONObject("server");
-                URL url = null;
+                String url = null;
                 long size = 0;
                 String sha1 = null;
                 if (server.has("url")) {
-                    url = Utils.stringToURL(server.getString("url"));
+                    url = server.getString("url");
                 }
                 if (server.has("size")) {
                     size = server.getLong("size");
@@ -137,11 +137,11 @@ public final class Version {
             }
             if (downloads.has("windows_server")) {
                 JSONObject windows_server = downloads.getJSONObject("windows_server");
-                URL url = null;
+                String url = null;
                 long size = 0;
                 String sha1 = null;
                 if (windows_server.has("url")) {
-                    url = Utils.stringToURL(windows_server.getString("url"));
+                    url = windows_server.getString("url");
                 }
                 if (windows_server.has("size")) {
                     size = windows_server.getLong("size");
@@ -229,7 +229,7 @@ public final class Version {
         return this.relativeJSON;
     }
 
-    public URL getJSONURL() {
+    public String getJSONURL() {
         return this.jsonURL;
     }
 

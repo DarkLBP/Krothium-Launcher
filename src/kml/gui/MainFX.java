@@ -115,8 +115,8 @@ public class MainFX {
     private Image skin, cape, alex, steve;
     private boolean texturesLoaded;
     private String urlPrefix = "";
-    private final URL CHANGESKIN_URL = Utils.stringToURL("https://mc.krothium.com/changeskin");
-    private final URL CHANGECAPE_URL = Utils.stringToURL("https://mc.krothium.com/changecape");
+    private final String CHANGESKIN_URL = "https://mc.krothium.com/changeskin";
+    private final String CHANGECAPE_URL = "https://mc.krothium.com/changecape";
 
     private boolean iconListLoaded = false;
     private boolean versionListLoaded = false;
@@ -207,7 +207,7 @@ public class MainFX {
         User user = this.kernel.getAuthentication().getSelectedUser();
         if (user.getType() != UserType.MOJANG) {
             String profileID = user.getSelectedProfile();
-            URL adsCheck = Utils.stringToURL("https://mc.krothium.com/ads.php?profileID=" + profileID);
+            String adsCheck = "https://mc.krothium.com/ads.php?profileID=" + profileID;
             String response;
             try {
                 response = Utils.readURL(adsCheck);
@@ -309,7 +309,7 @@ public class MainFX {
                 this.skinActions.setVisible(true);
                 this.skinActions.setManaged(true);
             }
-            URL profileURL = Utils.stringToURL("https://" + domain + selected.getSelectedProfile() + "?unsigned=true");
+            String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
             JSONObject root = new JSONObject(Utils.readURL(profileURL));
             JSONArray properties = root.getJSONArray("properties");
             for (int i = 0; i < properties.length(); i++) {
@@ -558,7 +558,7 @@ public class MainFX {
     private void loadSlideshow() {
         this.console.print("Loading news slideshow...");
         try {
-            URL newsURL = Utils.stringToURL("https://launchermeta.mojang.com/mc/news.json");
+            String newsURL = "https://launchermeta.mojang.com/mc/news.json";
             String response = Utils.readURL(newsURL);
             JSONObject root = new JSONObject(response);
             JSONArray entries = root.getJSONArray("entries");

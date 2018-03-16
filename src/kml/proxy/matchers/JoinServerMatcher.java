@@ -1,8 +1,5 @@
 package kml.proxy.matchers;
 
-import kml.Utils;
-
-import java.net.URL;
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -11,14 +8,15 @@ public class JoinServerMatcher implements URLMatcher {
     private final String JOIN_URL = "http://session.minecraft.net/game/joinserver.jsp";
 
     @Override
-    public final boolean match(URL url) {
-        return url.toString().contains(JOIN_URL) && url.getQuery() != null;
+    public final boolean match(String url) {
+        return url.contains(JOIN_URL) && url.split("\\?").length == 2;
     }
 
     @Override
-    public final URL handle(URL url) {
-        if (url.toString().contains(JOIN_URL) && url.getQuery() != null) {
-            return Utils.stringToURL("http://mc.krothium.com/server/joinserver?" + url.getQuery());
+    public final String handle(String url) {
+        String[] segments = url.split("\\?");
+        if (url.contains(JOIN_URL) && segments.length == 2) {
+            return "http://mc.krothium.com/server/joinserver?" + segments[1];
         }
         return null;
     }

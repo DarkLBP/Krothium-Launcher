@@ -1,13 +1,11 @@
 package kml.proxy.matchers;
 
-import java.net.URL;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com
  */
 public interface URLMatcher {
-    boolean match(URL url);
+    boolean match(String url);
 
-    URL handle(URL url);
+    String handle(String url);
 }

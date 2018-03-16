@@ -21,11 +21,7 @@ public class Console {
     private final File log;
 
     public Console() {
-        File logFolder = Kernel.APPLICATION_LOGS;
-        if (!logFolder.isDirectory()) {
-            logFolder.mkdirs();
-        }
-        File[] logFiles = logFolder.listFiles();
+        File[] logFiles = Kernel.APPLICATION_LOGS.listFiles();
         if (logFiles != null && logFiles.length > 0) {
             final int KEEP_OLD_LOGS = 10;
             Arrays.sort(logFiles, Collections.reverseOrder());

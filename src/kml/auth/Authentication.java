@@ -123,11 +123,11 @@ public class Authentication {
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
-        URL authURL;
+        String authURL;
         if (type == UserType.MOJANG) {
-            authURL = Utils.stringToURL("https://" + mojangDomain + authenticatePath);
+            authURL = "https://" + mojangDomain + authenticatePath;
         } else {
-            authURL = Utils.stringToURL("https://" + krothiumDomain + authenticatePath);
+            authURL = "https://" + krothiumDomain + authenticatePath;
         }
         try {
             response = Utils.sendPost(authURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
@@ -199,11 +199,11 @@ public class Authentication {
         postParams.put("Content-Type", "application/json; charset=utf-8");
         postParams.put("Content-Length", String.valueOf(request.toString().length()));
         String response;
-        URL refreshURL;
+        String refreshURL;
         if (u.getType() == UserType.MOJANG) {
-            refreshURL = Utils.stringToURL("https://" + mojangDomain + refreshPath);
+            refreshURL = "https://" + mojangDomain + refreshPath;
         } else {
-            refreshURL = Utils.stringToURL("https://" + krothiumDomain + refreshPath);
+            refreshURL = "https://" + krothiumDomain + refreshPath;
         }
         try {
             response = Utils.sendPost(refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);

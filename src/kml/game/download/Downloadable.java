@@ -10,12 +10,12 @@ import java.net.URL;
 
 public class Downloadable {
     private final long size;
-    private final URL url;
+    private final String url;
     private final File relPath;
     private final String hash;
     private final String fakePath;
 
-    public Downloadable(URL url, long size, File path, String hash, String fakePath) {
+    public Downloadable(String url, long size, File path, String hash, String fakePath) {
         this.url = url;
         this.size = size;
         this.relPath = path;
@@ -31,7 +31,7 @@ public class Downloadable {
         return this.url != null;
     }
 
-    public final URL getURL() {
+    public final String getURL() {
         return this.url;
     }
 

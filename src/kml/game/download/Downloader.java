@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -120,7 +121,7 @@ public class Downloader {
                     JSONObject o = objects.getJSONObject(key);
                     String hash = o.getString("hash");
                     long size = o.getLong("size");
-                    URL downloadURL = Utils.stringToURL("http://resources.download.minecraft.net/" + hash.substring(0, 2) + '/' + hash);
+                    String downloadURL = "http://resources.download.minecraft.net/" + hash.substring(0, 2) + '/' + hash;
                     File relPath = new File(objectsRoot, hash.substring(0, 2) + File.separator + hash);
                     File fullPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + relPath);
                     if (!processedHashes.contains(hash)) {
@@ -233,7 +234,13 @@ public class Downloader {
         if (fullPath.getParentFile() != null) {
             fullPath.getParentFile().mkdirs();
         }
-        URL url = dw.getURL();
+        URL url = null;
+        try {
+            url = new URL(dw.getURL());
+        } catch (MalformedURLException e) {
+            this.console.print("Invalid URL " + dw.getURL());
+            e.printStackTrace(this.console.getWriter());
+        }
         int tries = 0;
         if (dw.hasFakePath()) {
             this.currentFile = dw.getFakePath();

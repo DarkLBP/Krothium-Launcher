@@ -9,10 +9,10 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse;
-import kml.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,8 +27,17 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
     private static final int DELAY_BETWEEN_PAGES = 100;
     private static final int DELAY_BETWEEN_FAILURES = 750;
     private final YggdrasilAuthenticationService authenticationService;
-    private final URL GET_PROFILESID = Utils.stringToURL("https://mc.krothium.com/api/profiles/minecraft");
-    private final URL GET_PROFILESID_MOJANG = Utils.stringToURL("https://api.mojang.com/profiles/minecraft");
+    private static URL GET_PROFILESID;
+    private static URL GET_PROFILESID_MOJANG;
+
+    static {
+        try {
+            GET_PROFILESID = new URL("https://mc.krothium.com/api/profiles/minecraft");
+            GET_PROFILESID_MOJANG = new URL("https://api.mojang.com/profiles/minecraft");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public YggdrasilGameProfileRepository(YggdrasilAuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
@@ -57,7 +66,7 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
                 boolean failed = false;
 
                 try {
-                    ProfileSearchResultsResponse var18 = (ProfileSearchResultsResponse) this.authenticationService.makeRequest(this.GET_PROFILESID, var21, ProfileSearchResultsResponse.class);
+                    ProfileSearchResultsResponse var18 = (ProfileSearchResultsResponse) this.authenticationService.makeRequest(GET_PROFILESID, var21, ProfileSearchResultsResponse.class);
                     var22 = 0;
                     LOGGER.debug("Page {} returned {} results, parsing", new Object[]{Integer.valueOf(var211), Integer.valueOf(var18.getProfiles().length)});
                     HashSet var23 = Sets.newHashSet(var21);
@@ -74,7 +83,7 @@ public class YggdrasilGameProfileRepository implements GameProfileRepository {
                     Iterator var261 = Iterables.partition(var23, ENTRIES_PER_PAGE).iterator();
                     while (var261.hasNext()) {
                         List var30 = (List) var261.next();
-                        var18 = (ProfileSearchResultsResponse) this.authenticationService.makeRequest(this.GET_PROFILESID_MOJANG, var30, ProfileSearchResultsResponse.class);
+                        var18 = (ProfileSearchResultsResponse) this.authenticationService.makeRequest(GET_PROFILESID_MOJANG, var30, ProfileSearchResultsResponse.class);
                         var22 = 0;
                         LOGGER.debug("Page {} returned {} results, parsing", new Object[]{Integer.valueOf(var211), Integer.valueOf(var18.getProfiles().length)});
                         var23 = Sets.newHashSet(var21);

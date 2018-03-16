@@ -6,8 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -17,7 +15,7 @@ import java.util.*;
 
 public final class Library {
     private final String name;
-    private final URL url;
+    private final String url;
     private final Map<String, Downloadable> downloads = new HashMap<>();
     private final Map<OS, LibraryRule> rules = new EnumMap<>(OS.class);
     private final File relativePath, relativeNativePath;
@@ -32,7 +30,7 @@ public final class Library {
             throw new Exception("Invalid name for a library.");
         }
         if (lib.has("url")) {
-            this.url = Utils.stringToURL(lib.getString("url"));
+            this.url = lib.getString("url");
         } else {
             this.url = null;
         }
@@ -96,11 +94,11 @@ public final class Library {
             JSONObject downloads = lib.getJSONObject("downloads");
             if (downloads.has("artifact")) {
                 JSONObject artifact = downloads.getJSONObject("artifact");
-                URL url = null;
+                String url = null;
                 long size = 0;
                 String sha1 = null;
                 if (artifact.has("url")) {
-                    url = Utils.stringToURL(artifact.getString("url"));
+                    url = artifact.getString("url");
                 }
                 if (artifact.has("size")) {
                     size = artifact.getLong("size");
@@ -117,11 +115,11 @@ public final class Library {
                 if (current != null) {
                     if (classif.has(current)) {
                         JSONObject download = classif.getJSONObject(current);
-                        URL url = null;
+                        String url = null;
                         long size = 0;
                         String sha1 = null;
                         if (download.has("url")) {
-                            url = Utils.stringToURL(download.getString("url"));
+                            url = download.getString("url");
                         }
                         if (download.has("size")) {
                             size = download.getLong("size");
@@ -138,29 +136,17 @@ public final class Library {
         } else {
             if (this.isCompatible()) {
                 if (this.isNative() && this.natives.containsKey(Utils.getPlatform())) {
-                    try {
-                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar"));
-                        Downloadable d = new Downloadable(url, 0, this.relativeNativePath, null, null);
-                        this.downloads.put("classifier", d);
-                    } catch (MalformedURLException ex) {
-                        console.print("Invalid " + this.name + " url.");
-                    }
+                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar");
+                    Downloadable d = new Downloadable(url, 0, this.relativeNativePath, null, null);
+                    this.downloads.put("classifier", d);
                 } else if (this.hasURL()) {
-                    try {
-                        URL url = new URL(this.url + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
-                        this.downloads.put("artifact", d);
-                    } catch (MalformedURLException ex) {
-                        console.print("Invalid " + this.name + " url.");
-                    }
+                    String url = this.url + Utils.getArtifactPath(this.name, "jar");
+                    Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
+                    this.downloads.put("artifact", d);
                 } else {
-                    try {
-                        URL url = new URL("https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar"));
-                        Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
-                        this.downloads.put("artifact", d);
-                    } catch (MalformedURLException ex) {
-                        console.print("Invalid " + this.name + " url.");
-                    }
+                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar");
+                    Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
+                    this.downloads.put("artifact", d);
                 }
             }
         }
@@ -186,7 +172,7 @@ public final class Library {
         return this.url != null;
     }
 
-    public URL getURL() {
+    public String getURL() {
         return this.url;
     }
 

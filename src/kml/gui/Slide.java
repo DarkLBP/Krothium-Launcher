@@ -1,6 +1,7 @@
 package kml.gui;
 
 import javafx.scene.image.Image;
+import kml.Utils;
 
 public class Slide {
     private final String action;
@@ -23,7 +24,7 @@ public class Slide {
 
     public final Image getImage() {
         if (this.loadedImage == null) {
-            this.loadedImage = new Image(this.image, true);
+            this.loadedImage = new Image(Utils.readCachedStream(this.image));
         }
         return this.loadedImage;
     }

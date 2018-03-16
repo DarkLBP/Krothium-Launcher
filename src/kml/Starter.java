@@ -17,10 +17,9 @@ public class Starter extends Application {
     /**
      * Loads the JavaFX environment
      * @param primaryStage The main stage
-     * @throws Exception If something went wrong
      */
     @Override
-    public final void start(Stage primaryStage) throws Exception {
+    public final void start(Stage primaryStage) {
         Utils.ignoreHTTPSCert();
         new Kernel(primaryStage, this.getHostServices());
     }

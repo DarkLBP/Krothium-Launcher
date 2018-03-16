@@ -1,25 +1,21 @@
 package kml.proxy.matchers;
 
-import kml.Utils;
-
-import java.net.URL;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com
  */
 public class BlockedServersMatcher implements URLMatcher {
     private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
-    private final URL blockedServersURL = Utils.stringToURL("https://mc.krothium.com/server/blockedservers");
+    private final String blockedServersURL = "https://mc.krothium.com/server/blockedservers";
 
     @Override
-    public final boolean match(URL url) {
-        return url.toString().equalsIgnoreCase(this.blockURL);
+    public final boolean match(String url) {
+        return url.equalsIgnoreCase(this.blockURL);
     }
 
     @Override
-    public final URL handle(URL url) {
-        if (url.toString().equalsIgnoreCase(this.blockURL)) {
+    public final String handle(String url) {
+        if (url.equalsIgnoreCase(this.blockURL)) {
             return this.blockedServersURL;
         }
         return null;

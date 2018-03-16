@@ -1,8 +1,5 @@
 package kml.proxy.matchers;
 
-import kml.Utils;
-
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,24 +8,23 @@ import java.util.regex.Pattern;
  *         website https://krothium.com
  */
 public class ProfileMatcher implements URLMatcher {
-    private final Pattern profileRegex = Pattern.compile("/session/minecraft/profile/([0-9a-fA-F]+?)");
+    private final Pattern profileRegex = Pattern.compile("https://sessionserver.mojang.com/session/minecraft/profile/(\\w+).+");
 
     @Override
-    public final boolean match(URL url) {
-        String profileHost = "sessionserver.mojang.com";
-        if (url.getHost().equalsIgnoreCase(profileHost)) {
-            Matcher m = this.profileRegex.matcher(url.getPath());
-            return m.matches();
-        }
-        return false;
+    public final boolean match(String url) {
+        Matcher m = this.profileRegex.matcher(url);
+        return m.matches();
     }
 
     @Override
-    public final URL handle(URL url) {
-        Matcher m = this.profileRegex.matcher(url.getPath());
+    public final String handle(String url) {
+        Matcher m = this.profileRegex.matcher(url);
         if (m.matches()) {
             String profileID = m.group(1);
-            return Utils.stringToURL("https://mc.krothium.com/profiles/" + profileID + (url.getQuery() != null ? '?' + url.getQuery() : ""));
+            String[] segments = url.split("\\?");
+            return "https://mc.krothium.com/profiles/" + profileID + (segments.length == 2 ? '?' + segments[1] : "");
+        } else {
+            System.out.println("NOPE");
         }
         return null;
     }

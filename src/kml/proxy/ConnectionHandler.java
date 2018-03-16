@@ -23,7 +23,7 @@ class ConnectionHandler extends HttpURLConnection {
     public ConnectionHandler(URL url, URLMatcher m) {
         super(url);
         try {
-            this.relay = (HttpURLConnection)m.handle(url).openConnection();
+            this.relay = (HttpURLConnection)new URL(m.handle(url.toString())).openConnection();
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
