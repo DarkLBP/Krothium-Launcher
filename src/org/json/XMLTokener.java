@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import java.io.Reader;
+
 /**
  * The XMLTokener extends the JSONTokener to provide additional methods
  * for the parsing of XML texts.
@@ -46,6 +48,14 @@ public class XMLTokener extends JSONTokener {
        entity.put("lt",   XML.LT);
        entity.put("quot", XML.QUOT);
    }
+
+    /**
+     * Construct an XMLTokener from a Reader.
+     * @param r A source reader.
+     */
+    public XMLTokener(Reader r) {
+        super(r);
+    }
 
     /**
      * Construct an XMLTokener from a string.
@@ -326,9 +336,11 @@ public class XMLTokener extends JSONTokener {
      * Skip characters until past the requested string.
      * If it is not found, we are left at the end of the source with a result of false.
      * @param to A string to skip past.
-     * @throws JSONException
      */
-    public boolean skipPast(String to) throws JSONException {
+    // The Android implementation of JSONTokener has a public method of public void skipPast(String to)
+    // even though ours does not have that method, to have API compatibility, our method in the subclass
+    // should match.
+    public void skipPast(String to) {
         boolean b;
         char c;
         int i;
@@ -345,7 +357,7 @@ public class XMLTokener extends JSONTokener {
         for (i = 0; i < length; i += 1) {
             c = next();
             if (c == 0) {
-                return false;
+                return;
             }
             circle[i] = c;
         }
@@ -372,14 +384,14 @@ public class XMLTokener extends JSONTokener {
             /* If we exit the loop with b intact, then victory is ours. */
 
             if (b) {
-                return true;
+                return;
             }
 
             /* Get the next character. If there isn't one, then defeat is ours. */
 
             c = next();
             if (c == 0) {
-                return false;
+                return;
             }
             /*
              * Shove the character in the circle buffer and advance the

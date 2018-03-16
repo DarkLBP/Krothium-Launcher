@@ -30,7 +30,12 @@ import java.io.Writer;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a
@@ -103,7 +108,13 @@ public class JSONArray implements Iterable<Object> {
         if (x.nextClean() != '[') {
             throw x.syntaxError("A JSONArray text must start with '['");
         }
-        if (x.nextClean() != ']') {
+        
+        char nextChar = x.nextClean();
+        if (nextChar == 0) {
+            // array is unclosed. No ']' found, instead EOF
+            throw x.syntaxError("Expected a ',' or ']'");
+        }
+        if (nextChar != ']') {
             x.back();
             for (;;) {
                 if (x.nextClean() == ',') {
@@ -114,8 +125,16 @@ public class JSONArray implements Iterable<Object> {
                     this.myArrayList.add(x.nextValue());
                 }
                 switch (x.nextClean()) {
+                case 0:
+                    // array is unclosed. No ']' found, instead EOF
+                    throw x.syntaxError("Expected a ',' or ']'");
                 case ',':
-                    if (x.nextClean() == ']') {
+                    nextChar = x.nextClean();
+                    if (nextChar == 0) {
+                        // array is unclosed. No ']' found, instead EOF
+                        throw x.syntaxError("Expected a ',' or ']'");
+                    }
+                    if (nextChar == ']') {
                         return;
                     }
                     x.back();
@@ -164,7 +183,7 @@ public class JSONArray implements Iterable<Object> {
      * Construct a JSONArray from an array
      *
      * @throws JSONException
-     *             If not an array.
+     *             If not an array or if an array value is non-finite number.
      */
     public JSONArray(Object array) throws JSONException {
         this();
@@ -447,11 +466,11 @@ public class JSONArray implements Iterable<Object> {
     }
 
     /**
-     * Determine if the value is null.
+     * Determine if the value is <code>null</code>.
      *
      * @param index
      *            The index must be between 0 and length() - 1.
-     * @return true if the value at the index is null, or if there is no value.
+     * @return true if the value at the index is <code>null</code>, or if there is no value.
      */
     public boolean isNull(int index) {
         return JSONObject.NULL.equals(this.opt(index));
@@ -935,8 +954,7 @@ public class JSONArray implements Iterable<Object> {
      * @return this.
      */
     public JSONArray put(boolean value) {
-        this.put(value ? Boolean.TRUE : Boolean.FALSE);
-        return this;
+        return this.put(value ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
@@ -946,10 +964,11 @@ public class JSONArray implements Iterable<Object> {
      * @param value
      *            A Collection value.
      * @return this.
+     * @throws JSONException
+     *            If the value is non-finite number.
      */
     public JSONArray put(Collection<?> value) {
-        this.put(new JSONArray(value));
-        return this;
+        return this.put(new JSONArray(value));
     }
 
     /**
@@ -957,15 +976,25 @@ public class JSONArray implements Iterable<Object> {
      *
      * @param value
      *            A double value.
+     * @return this.
      * @throws JSONException
      *             if the value is not finite.
-     * @return this.
      */
     public JSONArray put(double value) throws JSONException {
-        Double d = new Double(value);
-        JSONObject.testValidity(d);
-        this.put(d);
-        return this;
+        return this.put(Double.valueOf(value));
+    }
+    
+    /**
+     * Append a float value. This increases the array's length by one.
+     *
+     * @param value
+     *            A float value.
+     * @return this.
+     * @throws JSONException
+     *             if the value is not finite.
+     */
+    public JSONArray put(float value) throws JSONException {
+        return this.put(Float.valueOf(value));
     }
 
     /**
@@ -976,8 +1005,7 @@ public class JSONArray implements Iterable<Object> {
      * @return this.
      */
     public JSONArray put(int value) {
-        this.put(new Integer(value));
-        return this;
+        return this.put(Integer.valueOf(value));
     }
 
     /**
@@ -988,8 +1016,7 @@ public class JSONArray implements Iterable<Object> {
      * @return this.
      */
     public JSONArray put(long value) {
-        this.put(new Long(value));
-        return this;
+        return this.put(Long.valueOf(value));
     }
 
     /**
@@ -999,10 +1026,13 @@ public class JSONArray implements Iterable<Object> {
      * @param value
      *            A Map value.
      * @return this.
+     * @throws JSONException
+     *            If a value in the map is non-finite number.
+     * @throws NullPointerException
+     *            If a key in the map is <code>null</code>
      */
     public JSONArray put(Map<?, ?> value) {
-        this.put(new JSONObject(value));
-        return this;
+        return this.put(new JSONObject(value));
     }
 
     /**
@@ -1013,8 +1043,11 @@ public class JSONArray implements Iterable<Object> {
      *            Integer, JSONArray, JSONObject, Long, or String, or the
      *            JSONObject.NULL object.
      * @return this.
+     * @throws JSONException
+     *            If the value is non-finite number.
      */
     public JSONArray put(Object value) {
+        JSONObject.testValidity(value);
         this.myArrayList.add(value);
         return this;
     }
@@ -1033,8 +1066,7 @@ public class JSONArray implements Iterable<Object> {
      *             If the index is negative.
      */
     public JSONArray put(int index, boolean value) throws JSONException {
-        this.put(index, value ? Boolean.TRUE : Boolean.FALSE);
-        return this;
+        return this.put(index, value ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
@@ -1047,11 +1079,10 @@ public class JSONArray implements Iterable<Object> {
      *            A Collection value.
      * @return this.
      * @throws JSONException
-     *             If the index is negative or if the value is not finite.
+     *             If the index is negative or if the value is non-finite.
      */
     public JSONArray put(int index, Collection<?> value) throws JSONException {
-        this.put(index, new JSONArray(value));
-        return this;
+        return this.put(index, new JSONArray(value));
     }
 
     /**
@@ -1065,11 +1096,27 @@ public class JSONArray implements Iterable<Object> {
      *            A double value.
      * @return this.
      * @throws JSONException
-     *             If the index is negative or if the value is not finite.
+     *             If the index is negative or if the value is non-finite.
      */
     public JSONArray put(int index, double value) throws JSONException {
-        this.put(index, new Double(value));
-        return this;
+        return this.put(index, Double.valueOf(value));
+    }
+
+    /**
+     * Put or replace a float value. If the index is greater than the length of
+     * the JSONArray, then null elements will be added as necessary to pad it
+     * out.
+     *
+     * @param index
+     *            The subscript.
+     * @param value
+     *            A float value.
+     * @return this.
+     * @throws JSONException
+     *             If the index is negative or if the value is non-finite.
+     */
+    public JSONArray put(int index, float value) throws JSONException {
+        return this.put(index, Float.valueOf(value));
     }
 
     /**
@@ -1086,8 +1133,7 @@ public class JSONArray implements Iterable<Object> {
      *             If the index is negative.
      */
     public JSONArray put(int index, int value) throws JSONException {
-        this.put(index, new Integer(value));
-        return this;
+        return this.put(index, Integer.valueOf(value));
     }
 
     /**
@@ -1104,8 +1150,7 @@ public class JSONArray implements Iterable<Object> {
      *             If the index is negative.
      */
     public JSONArray put(int index, long value) throws JSONException {
-        this.put(index, new Long(value));
-        return this;
+        return this.put(index, Long.valueOf(value));
     }
 
     /**
@@ -1120,6 +1165,8 @@ public class JSONArray implements Iterable<Object> {
      * @throws JSONException
      *             If the index is negative or if the the value is an invalid
      *             number.
+     * @throws NullPointerException
+     *             If a key in the map is <code>null</code>
      */
     public JSONArray put(int index, Map<?, ?> value) throws JSONException {
         this.put(index, new JSONObject(value));
@@ -1143,25 +1190,26 @@ public class JSONArray implements Iterable<Object> {
      *             number.
      */
     public JSONArray put(int index, Object value) throws JSONException {
-        JSONObject.testValidity(value);
         if (index < 0) {
             throw new JSONException("JSONArray[" + index + "] not found.");
         }
         if (index < this.length()) {
+            JSONObject.testValidity(value);
             this.myArrayList.set(index, value);
-        } else if(index == this.length()){
-            // simple append
-            this.put(value);
-        } else {
-            // if we are inserting past the length, we want to grow the array all at once
-            // instead of incrementally.
-            this.myArrayList.ensureCapacity(index + 1);
-            while (index != this.length()) {
-                this.put(JSONObject.NULL);
-            }
-            this.put(value);
+            return this;
         }
-        return this;
+        if(index == this.length()){
+            // simple append
+            return this.put(value);
+        }
+        // if we are inserting past the length, we want to grow the array all at once
+        // instead of incrementally.
+        this.myArrayList.ensureCapacity(index + 1);
+        while (index != this.length()) {
+            // we don't need to test validity of NULL objects
+            this.myArrayList.add(JSONObject.NULL);
+        }
+        return this.put(value);
     }
     
     /**
@@ -1271,7 +1319,7 @@ public class JSONArray implements Iterable<Object> {
             Object valueThis = this.myArrayList.get(i);
             Object valueOther = ((JSONArray)other).myArrayList.get(i);
             if(valueThis == valueOther) {
-            	return true;
+            	continue;
             }
             if(valueThis == null) {
             	return false;
