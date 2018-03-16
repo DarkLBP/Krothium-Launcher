@@ -194,6 +194,7 @@ public class MainFX {
         for (String key : this.kernel.getSettings().getSupportedLocales().keySet()) {
             Image i = new Image("/kml/gui/textures/flags/flag_" + key + ".png");
             Label l = new Label(supportedLocales.get(key), new ImageView(i));
+            l.setId(key);
             languageListItems.add(l);
         }
         this.languagesList.setItems(languageListItems);
