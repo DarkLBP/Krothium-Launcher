@@ -55,9 +55,9 @@ public final class Kernel {
     private HostServices hostServices;
     private BrowserFX webBrowser;
     private JSONObject launcherProfiles;
-    private final Image applicationIcon, profileIcons;
-    private final Map<ProfileIcon, Image> iconCache;
 
+    private final Image profileIcons;
+    private final Map<ProfileIcon, Image> iconCache;
     public static final String KERNEL_BUILD_NAME = "3.1.5";
     public static final int KERNEL_FORMAT = 21;
     public static final int KERNEL_PROFILES_FORMAT = 2;
@@ -65,6 +65,7 @@ public final class Kernel {
     public static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
+    public static Image APPLICATION_ICON;
     public static boolean USE_LOCAL;
 
     public Kernel(Stage stage, HostServices hs) {
@@ -131,8 +132,8 @@ public final class Kernel {
         }
 
         //Initialize constants
+        APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
         this.profileIcons = new Image("/kml/gui/textures/profile_icons.png");
-        this.applicationIcon = new Image("/kml/gui/textures/icon.png");
         this.iconCache = new EnumMap<>(ProfileIcon.class);
 
         //Prepare loader
@@ -156,7 +157,7 @@ public final class Kernel {
             loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
             Parent p = loader.load();
             Stage s = new Stage();
-            s.getIcons().add(this.applicationIcon);
+            s.getIcons().add(APPLICATION_ICON);
             s.setTitle("Krothium Minecraft Launcher");
             s.setScene(new Scene(p));
             s.setMaximized(false);
@@ -183,7 +184,7 @@ public final class Kernel {
             loader.setRoot(null);
             loader.setController(null);
             Parent p = loader.load();
-            stage.getIcons().add(this.applicationIcon);
+            stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
             stage.setMaximized(false);
             stage.setOnCloseRequest(e -> this.exitSafely());
@@ -647,7 +648,7 @@ public final class Kernel {
         try {
             Class.forName("javafx.scene.control.Alert");
             Alert a = new Alert(Alert.AlertType.valueOf(type.name()));
-            ((Stage) a.getDialogPane().getScene().getWindow()).getIcons().add(this.applicationIcon);
+            ((Stage) a.getDialogPane().getScene().getWindow()).getIcons().add(APPLICATION_ICON);
             a.setTitle(title);
             a.setHeaderText(title);
             a.setContentText(content);

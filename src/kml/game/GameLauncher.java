@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import kml.Console;
 import kml.Kernel;
@@ -29,10 +28,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author DarkLBP
@@ -45,6 +41,8 @@ public class GameLauncher {
     private Process process;
     private boolean error;
     private boolean started;
+    private OutputFX output;
+    private Stage outputGUI;
 
     public GameLauncher(Kernel k) {
         this.kernel = k;
@@ -275,7 +273,6 @@ public class GameLauncher {
         pb.directory(workingDir);
         try {
             this.process = pb.start();
-            OutputFX[] out = new OutputFX[1];
             if (this.kernel.getSettings().getShowGameLog()) {
                 Platform.runLater(() -> {
                     FXMLLoader loader = new FXMLLoader();
@@ -289,64 +286,65 @@ public class GameLauncher {
                         e.printStackTrace(this.console.getWriter());
                     }
                     Stage stage = new Stage();
-                    stage.getIcons().add(new Image("/kml/gui/textures/icon.png"));
+                    stage.getIcons().add(Kernel.APPLICATION_ICON);
                     stage.setTitle("Krothium Minecraft Launcher - " + Language.get(69));
                     stage.setScene(new Scene(parent));
                     stage.setResizable(true);
                     stage.setMaximized(false);
                     stage.show();
-                    out[0] = loader.getController();
+                    this.output = loader.getController();
+                    this.outputGUI = stage;
                 });
             }
             Thread log_info = new Thread(() -> {
-                try (InputStreamReader isr = new InputStreamReader(this.process.getInputStream(), StandardCharsets.ISO_8859_1);
-                     BufferedReader br = new BufferedReader(isr)){
-                    while (this.isRunning()) {
-                        String lineRead = br.readLine();
-                        if (lineRead != null) {
-                            if (this.kernel.getSettings().getShowGameLog()) {
-                                Platform.runLater(() -> out[0].pushString(lineRead));
-                            }
-                            this.console.print(lineRead);
-                        }
-                    }
-                    if (this.process.exitValue() != 0) {
-                        this.error = true;
-                        this.console.print("Game stopped unexpectedly.");
-                    }
-                } catch (Exception ex) {
-                    this.error = true;
-                    this.console.print("Game stopped unexpectedly.");
-                    ex.printStackTrace(this.console.getWriter());
-                }
-                this.started = false;
-                this.console.print("Deleteting natives dir.");
-                Utils.deleteDirectory(nativesDir);
+                pipeOutput(this.process.getInputStream());
             });
             log_info.start();
             Thread log_error = new Thread(() -> {
-                try (InputStreamReader isr = new InputStreamReader(this.process.getErrorStream(), StandardCharsets.ISO_8859_1);
-                     BufferedReader br = new BufferedReader(isr)){
-                    while (this.isRunning()) {
-                        String lineRead = br.readLine();
-                        if (lineRead != null) {
-                            if (this.kernel.getSettings().getShowGameLog()) {
-                                Platform.runLater(() -> out[0].pushString(lineRead));
-                            }
-                            this.console.print(lineRead);
-                        }
-                    }
-                } catch (IOException ignored) {
-                    this.console.print("Failed to read game error stream.");
-                    ignored.printStackTrace(this.console.getWriter());
-                }
+                pipeOutput(this.process.getErrorStream());
             });
             log_error.start();
+            Timer timer = new Timer();
+            TimerTask process_status = new TimerTask() {
+                @Override
+                public void run() {
+                    if (!GameLauncher.this.isRunning()) {
+                        if (GameLauncher.this.process.exitValue() != 0) {
+                            GameLauncher.this.error = true;
+                            GameLauncher.this.console.print("Game stopped unexpectedly.");
+                        }
+                        GameLauncher.this.started = false;
+                        GameLauncher.this.console.print("Deleteting natives dir.");
+                        Utils.deleteDirectory(nativesDir);
+                        timer.cancel();
+                        timer.purge();
+                    }
+                }
+            };
+            timer.schedule(process_status, 0, 500);
         } catch (IOException ex) {
             this.error = true;
             this.started = false;
             this.console.print("Game returned an error code.");
             ex.printStackTrace(this.console.getWriter());
+        }
+    }
+
+    private void pipeOutput(InputStream in) {
+        try (InputStreamReader isr = new InputStreamReader(in, StandardCharsets.ISO_8859_1);
+             BufferedReader br = new BufferedReader(isr)){
+            while (this.isRunning()) {
+                String lineRead = br.readLine();
+                if (lineRead != null) {
+                    if (this.kernel.getSettings().getShowGameLog() && this.outputGUI.isShowing()) {
+                        Platform.runLater(() -> this.output.pushString(lineRead));
+                    }
+                    this.console.print(lineRead);
+                }
+            }
+        } catch (IOException ignored) {
+            this.console.print("Failed to read stream.");
+            ignored.printStackTrace(this.console.getWriter());
         }
     }
 
