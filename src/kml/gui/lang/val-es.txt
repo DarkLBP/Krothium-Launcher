@@ -21,7 +21,7 @@ ENTRAR
 REGISTRAR-SE
 Imposible inciar sessió
 No pots deixar el camp de la contrasenya buid!
-Canviar
+
 Arxiu PNG de Capa (128KB MAX)
 Últim Llançament de Minecraft
 Exportar Registres
