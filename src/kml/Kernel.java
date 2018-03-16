@@ -1,7 +1,6 @@
 package kml;
 
 import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,9 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import kml.auth.Authentication;
 import kml.game.GameLauncher;
 import kml.game.download.Downloader;
@@ -44,7 +41,7 @@ import java.util.Set;
 
 /**
  * @author DarkLBP
- *         website https://krothium.com
+ * website https://krothium.com
  */
 
 public final class Kernel {
@@ -90,7 +87,7 @@ public final class Kernel {
         this.console.print("Java Vendor: " + System.getProperty("java.vendor"));
         this.console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
         try {
-            this.getClass().getClassLoader().loadClass("javafx.embed.swing.JFXPanel");
+            Class.forName("javafx.fxml.FXMLLoader");
             this.console.print("JavaFX loaded.");
         } catch (ClassNotFoundException e) {
             File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
@@ -135,95 +132,71 @@ public final class Kernel {
         this.applicationIcon = new Image("/kml/gui/textures/icon.png");
         this.iconCache = new EnumMap<>(ProfileIcon.class);
 
-        //Load splash screen
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Splash.fxml"));
-        Parent splash;
+        //Prepare loader
+        FXMLLoader loader = new FXMLLoader();
+
+        //Load launcher data
+        this.profiles = new Profiles(this);
+        this.versions = new Versions(this);
+        this.settings = new Settings(this);
+        this.downloader = new Downloader(this);
+        this.authentication = new Authentication(this);
+        this.gameLauncher = new GameLauncher(this);
+        this.hostServices = hs;
+        this.loadSettings();
+        this.loadVersions();
+        this.loadProfiles();
+        this.loadUsers();
+
+        //Load web browser
         try {
-            splash = loader.load();
+            loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
+            Parent p = loader.load();
+            Stage s = new Stage();
+            s.getIcons().add(this.applicationIcon);
+            s.setTitle("Krothium Minecraft Launcher");
+            s.setScene(new Scene(p));
+            s.setMaximized(false);
+            s.setOnCloseRequest(e -> {
+                e.consume();
+                int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
+                        Language.get(96) + System.lineSeparator() + Language.get(97));
+                if (result == 1) {
+                    this.hostServices.showDocument("https://krothium.com/donaciones/");
+                    this.exitSafely();
+                }
+            });
+            this.webBrowser = loader.getController();
+            this.webBrowser.initialize(s);
         } catch (IOException e) {
-            splash = null;
-            this.console.print("Failed to initialize JavaFX GUI!");
+            this.console.print("Failed to initialize web browser.");
             e.printStackTrace(this.console.getWriter());
             this.exitSafely();
         }
-        stage.setResizable(false);
-        Scene sc = new Scene(splash);
-        sc.setFill(Color.TRANSPARENT);
-        stage.setScene(sc);
-        stage.getIcons().add(this.applicationIcon);
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.show();
 
-        Thread loadThread = new Thread(() -> {
-            //Load launcher data
-            this.profiles = new Profiles(this);
-            this.versions = new Versions(this);
-            this.settings = new Settings(this);
-            this.downloader = new Downloader(this);
-            this.authentication = new Authentication(this);
-            this.gameLauncher = new GameLauncher(this);
-            this.hostServices = hs;
-            this.loadSettings();
-            this.loadVersions();
-            this.loadProfiles();
-            this.loadUsers();
-
-            //Load web browser
-            Platform.runLater(() -> {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
-                    Parent p = fxmlLoader.load();
-                    Stage s = new Stage();
-                    s.getIcons().add(this.applicationIcon);
-                    s.setTitle("Krothium Minecraft Launcher");
-                    s.setScene(new Scene(p));
-                    s.setMaximized(false);
-                    s.setOnCloseRequest(e -> {
-                        e.consume();
-                        int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
-                                Language.get(96) + System.lineSeparator() + Language.get(97));
-                        if (result == 1) {
-                            this.hostServices.showDocument("https://krothium.com/donaciones/");
-                            this.exitSafely();
-                        }
-                    });
-                    this.webBrowser = fxmlLoader.getController();
-                    this.webBrowser.initialize(s);
-                } catch (IOException e) {
-                    this.console.print("Failed to initialize JavaFX GUI!");
-                    e.printStackTrace(this.console.getWriter());
-                    this.exitSafely();
-                }
-            });
-
-            //Load main form
-            Platform.runLater(() -> {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
-                    Parent p = fxmlLoader.load();
-                    Stage st = new Stage();
-                    st.getIcons().add(this.applicationIcon);
-                    st.setTitle("Krothium Minecraft Launcher");
-                    st.setResizable(false);
-                    st.setMaximized(false);
-                    st.setOnCloseRequest(e -> this.exitSafely());
-                    st.setScene(new Scene(p));
-                    MainFX mainForm = fxmlLoader.getController();
-                    mainForm.initialize(this, st);
-                    stage.close();
-                } catch (IOException e) {
-                    this.console.print("Failed to initialize JavaFX GUI!");
-                    e.printStackTrace(this.console.getWriter());
-                    this.exitSafely();
-                }
-            });
-        });
-        loadThread.start();
-
+        //Load main form
+        try {
+            loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
+            loader.setRoot(null);
+            loader.setController(null);
+            Parent p = loader.load();
+            stage.getIcons().add(this.applicationIcon);
+            stage.setTitle("Krothium Minecraft Launcher");
+            stage.setMaximized(false);
+            stage.setOnCloseRequest(e -> this.exitSafely());
+            stage.setScene(new Scene(p));
+            MainFX mainForm = loader.getController();
+            mainForm.initialize(this, stage);
+        } catch (IOException e) {
+            this.console.print("Failed to initialize main interface.");
+            e.printStackTrace(this.console.getWriter());
+            this.exitSafely();
+        }
     }
 
     /**
      * Loads a JAR file dynamically
+     *
      * @param file The JAR file to be laoded
      * @return A boolean indicating if the file has been loaded
      */
@@ -346,6 +319,7 @@ public final class Kernel {
 
     /**
      * Gets a profile icon from the icons map
+     *
      * @param p The desired profile icon
      * @return The image with the profile icon
      */
@@ -631,7 +605,8 @@ public final class Kernel {
 
     /**
      * This method receives an image scales it
-     * @param input Input image
+     *
+     * @param input       Input image
      * @param scaleFactor Output scale factor
      * @return The resampled image
      */
@@ -659,8 +634,9 @@ public final class Kernel {
 
     /**
      * Constructs an alert with the application icon
-     * @param type The alert type
-     * @param title The header text
+     *
+     * @param type    The alert type
+     * @param title   The header text
      * @param content The content text
      * @return The built alert
      */
@@ -668,7 +644,7 @@ public final class Kernel {
         try {
             Class.forName("javafx.scene.control.Alert");
             Alert a = new Alert(Alert.AlertType.valueOf(type.name()));
-            ((Stage)a.getDialogPane().getScene().getWindow()).getIcons().add(this.applicationIcon);
+            ((Stage) a.getDialogPane().getScene().getWindow()).getIcons().add(this.applicationIcon);
             a.setTitle(title);
             a.setHeaderText(title);
             a.setContentText(content);
@@ -681,7 +657,7 @@ public final class Kernel {
                 }
                 return 0;
             }
-        } catch( ClassNotFoundException e ) {
+        } catch (ClassNotFoundException e) {
             //Using legacy
             int messageType;
             switch (type) {
