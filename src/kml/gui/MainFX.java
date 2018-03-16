@@ -199,6 +199,7 @@ public class MainFX {
             languageListItems.add(l);
         }
         this.languagesList.setItems(languageListItems);
+        this.console.print("Languages loaded.");
     }
 
     /**
@@ -605,6 +606,7 @@ public class MainFX {
             this.newsTitle.setText(Language.get(102));
             this.newsText.setText(Language.get(103));
         }
+        this.console.print("News slideshow loaded.");
     }
 
     /**
@@ -819,6 +821,7 @@ public class MainFX {
             }
         }
         this.iconList.setItems(icons);
+        this.console.print("Icons loaded.");
     }
 
     /**
@@ -1269,6 +1272,7 @@ public class MainFX {
         }
         this.versionList.setItems(vers);
         this.versionList.getSelectionModel().select(0);
+        this.console.print("Version list loaded.");
     }
 
     /**
