@@ -651,10 +651,8 @@ public final class Kernel {
             a.setTitle(title);
             a.setHeaderText(title);
             a.setContentText(content);
-            if (type != AlertType.CONFIRMATION) {
-                a.show();
-            } else {
-                a.showAndWait();
+            a.showAndWait();
+            if (type == AlertType.CONFIRMATION) {
                 if (a.getResult() == ButtonType.OK) {
                     return 1;
                 }
