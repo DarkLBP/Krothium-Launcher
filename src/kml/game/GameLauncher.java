@@ -333,14 +333,12 @@ public class GameLauncher {
     private void pipeOutput(InputStream in) {
         try (InputStreamReader isr = new InputStreamReader(in, StandardCharsets.ISO_8859_1);
              BufferedReader br = new BufferedReader(isr)){
-            while (this.isRunning()) {
-                String lineRead = br.readLine();
-                if (lineRead != null) {
-                    if (this.kernel.getSettings().getShowGameLog() && this.outputGUI.isShowing()) {
-                        Platform.runLater(() -> this.output.pushString(lineRead));
-                    }
-                    this.console.print(lineRead);
+            String lineRead;
+            while ((lineRead = br.readLine()) != null) {
+                if (this.kernel.getSettings().getShowGameLog() && this.outputGUI.isShowing()) {
+                    this.output.pushString(lineRead);
                 }
+                this.console.print(lineRead);
             }
         } catch (IOException ignored) {
             this.console.print("Failed to read stream.");

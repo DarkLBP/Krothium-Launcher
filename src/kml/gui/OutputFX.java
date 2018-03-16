@@ -1,5 +1,6 @@
 package kml.gui;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -20,8 +21,10 @@ public class OutputFX {
     }
 
     public final void pushString(String str) {
-        this.outputList.getItems().add(str);
-        this.outputList.scrollTo(this.outputList.getItems().size() - 1);
+        Platform.runLater(() -> {
+            this.outputList.getItems().add(str);
+            this.outputList.scrollTo(this.outputList.getItems().size() - 1);
+        });
     }
 
     @FXML
