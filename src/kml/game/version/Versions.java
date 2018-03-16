@@ -1,7 +1,6 @@
 package kml.game.version;
 
 import kml.Console;
-import kml.Constants;
 import kml.Kernel;
 import kml.Utils;
 import org.json.JSONArray;
@@ -149,7 +148,7 @@ public class Versions {
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
         try {
-            File versionsDir = new File(Constants.APPLICATION_WORKING_DIR, "versions");
+            File versionsDir = new File(Kernel.APPLICATION_WORKING_DIR, "versions");
             if (versionsDir.isDirectory()) {
                 File[] files = versionsDir.listFiles();
                 for (File file : files) {

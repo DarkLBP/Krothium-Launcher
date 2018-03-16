@@ -1,7 +1,6 @@
 package kml.game.download;
 
 import kml.Console;
-import kml.Constants;
 import kml.Kernel;
 import kml.Utils;
 import kml.exceptions.DownloaderException;
@@ -53,7 +52,7 @@ public class Downloader {
         int tries;
 
         this.console.print("Download work has started.");
-        if (Constants.USE_LOCAL) {
+        if (Kernel.USE_LOCAL) {
             this.console.print("You are in offline mode.");
             this.downloading = false;
             return;
@@ -87,7 +86,7 @@ public class Downloader {
         //Fetch assets
         this.console.print("Fetching asset urls..");
         AssetIndex index = v.getAssetIndex();
-        File indexJSON = new File(Constants.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
+        File indexJSON = new File(Kernel.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
         tries = 0;
         if (!Utils.verifyChecksum(indexJSON, index.getSHA1(), "SHA-1")) {
             while (tries < this.DOWNLOAD_TRIES) {
@@ -123,7 +122,7 @@ public class Downloader {
                     long size = o.getLong("size");
                     URL downloadURL = Utils.stringToURL("http://resources.download.minecraft.net/" + hash.substring(0, 2) + '/' + hash);
                     File relPath = new File(objectsRoot, hash.substring(0, 2) + File.separator + hash);
-                    File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + relPath);
+                    File fullPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + relPath);
                     if (!processedHashes.contains(hash)) {
                         this.total += size;
                         processedHashes.add(hash);
@@ -148,8 +147,8 @@ public class Downloader {
                 long jarSize = d.getSize();
                 String jarSHA1 = d.getHash();
                 this.total += d.getSize();
-                File destPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
-                File jsonFile = new File(Constants.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
+                File destPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
+                File jsonFile = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
                 tries = 0;
                 while (tries < this.DOWNLOAD_TRIES) {
                     try {
@@ -184,7 +183,7 @@ public class Downloader {
                 //Standard download
                 if (lib.hasArtifactDownload()) {
                     Downloadable a = lib.getArtifactDownload();
-                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
+                    File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
                     if (completePath.isFile() && a.getHash() == null) {
                         this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
                     } else {
@@ -200,7 +199,7 @@ public class Downloader {
                 //Native download
                 if (lib.hasClassifierDownload()) {
                     Downloadable c = lib.getClassifierDownload();
-                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
+                    File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
                     this.total += c.getSize();
                     if (completePath.isFile() && c.getHash() == null) {
                         this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
@@ -230,7 +229,7 @@ public class Downloader {
      */
     private void downloadFile(Downloadable dw) {
         File path = dw.getRelativePath();
-        File fullPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + path);
+        File fullPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + path);
         if (fullPath.getParentFile() != null) {
             fullPath.getParentFile().mkdirs();
         }

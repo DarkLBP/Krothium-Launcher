@@ -1,7 +1,6 @@
 package kml.auth;
 
 import kml.Console;
-import kml.Constants;
 import kml.Kernel;
 import kml.Utils;
 import kml.auth.user.User;
@@ -209,7 +208,7 @@ public class Authentication {
         try {
             response = Utils.sendPost(refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
-            if (Constants.USE_LOCAL) {
+            if (Kernel.USE_LOCAL) {
                 this.authenticated = true;
                 this.console.print("Authenticated locally.");
                 return;

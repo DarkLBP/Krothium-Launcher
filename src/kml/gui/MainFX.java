@@ -137,7 +137,7 @@ public class MainFX {
         this.stage = s;
 
         //Update version label
-        this.versionLabel.setText(Constants.KERNEL_BUILD_NAME);
+        this.versionLabel.setText(Kernel.KERNEL_BUILD_NAME);
 
         //Load news slideshow
         this.slideshowBox.setVisible(false);
@@ -171,7 +171,7 @@ public class MainFX {
         this.resH.setEditable(true);
 
         //If offline mode make play button bigger for language support
-        if (Constants.USE_LOCAL) {
+        if (Kernel.USE_LOCAL) {
             this.playButton.setMinWidth(290);
         }
 
@@ -245,7 +245,7 @@ public class MainFX {
         this.skinsLabel.setText(Language.get(5));
         this.settingsLabel.setText(Language.get(6));
         this.launchOptionsLabel.setText(Language.get(7));
-        if (Constants.USE_LOCAL) {
+        if (Kernel.USE_LOCAL) {
             this.playButton.setText(Language.get(79));
         } else {
             this.playButton.setText(Language.get(12));
@@ -360,7 +360,7 @@ public class MainFX {
             this.console.print("Failed to parse remote profile textures.");
             ex.printStackTrace(this.console.getWriter());
         }
-        if (Constants.USE_LOCAL) {
+        if (Kernel.USE_LOCAL) {
             this.selectSkin.setDisable(true);
             this.selectCape.setDisable(true);
             this.deleteSkin.setDisable(true);
@@ -883,7 +883,7 @@ public class MainFX {
                                     MainFX.this.kernel.exitSafely();
                                 }
                                 MainFX.this.playButton.setDisable(false);
-                                if (Constants.USE_LOCAL) {
+                                if (Kernel.USE_LOCAL) {
                                     MainFX.this.playButton.setText(Language.get(79));
                                 } else {
                                     MainFX.this.playButton.setText(Language.get(12));
@@ -1626,7 +1626,7 @@ public class MainFX {
         File selected = this.selectFile("ZIP", "*.zip", "save");
         if (selected != null) {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(selected))) {
-                File[] files = Constants.APPLICATION_LOGS.listFiles();
+                File[] files = Kernel.APPLICATION_LOGS.listFiles();
                 for (File file : files) {
                     ZipEntry entry = new ZipEntry(file.getName());
                     out.putNextEntry(entry);
@@ -1655,13 +1655,13 @@ public class MainFX {
     @FXML private void selectGameDirectory() {
         DirectoryChooser chooser = new DirectoryChooser();
         if (this.gameDir.getText().isEmpty()) {
-            chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
+            chooser.setInitialDirectory(Kernel.APPLICATION_WORKING_DIR);
         } else {
             File gd = new File(this.gameDir.getText());
             if (gd.isDirectory()) {
                 chooser.setInitialDirectory(gd);
             } else {
-                chooser.setInitialDirectory(Constants.APPLICATION_WORKING_DIR);
+                chooser.setInitialDirectory(Kernel.APPLICATION_WORKING_DIR);
             }
         }
         File selectedFolder = chooser.showDialog(null);

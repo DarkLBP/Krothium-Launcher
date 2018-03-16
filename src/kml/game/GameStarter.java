@@ -1,6 +1,6 @@
 package kml.game;
 
-import kml.Constants;
+import kml.Kernel;
 import kml.Utils;
 import kml.proxy.URLHandler;
 
@@ -22,10 +22,10 @@ public class GameStarter {
         }
         try {
             int response = Utils.testNetwork();
-            Constants.USE_LOCAL = response != 204;
+            Kernel.USE_LOCAL = response != 204;
         } catch (IOException ex) {
             System.out.println("Running offline mode.");
-            Constants.USE_LOCAL = true;
+            Kernel.USE_LOCAL = true;
             ex.printStackTrace();
         }
         URL.setURLStreamHandlerFactory(new URLHandler());

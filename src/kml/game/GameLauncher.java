@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import kml.Console;
-import kml.*;
+import kml.Kernel;
+import kml.OSArch;
+import kml.Utils;
 import kml.auth.Authentication;
 import kml.auth.user.User;
 import kml.auth.user.UserType;
@@ -80,7 +82,7 @@ public class GameLauncher {
             this.started = false;
             throw new GameLauncherException("Version info could not be obtained.");
         }
-        File workingDir = Constants.APPLICATION_WORKING_DIR;
+        File workingDir = Kernel.APPLICATION_WORKING_DIR;
         this.console.print("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
         if (nativesRoot.isDirectory()) {
@@ -139,7 +141,7 @@ public class GameLauncher {
             }
             if (lib.isNative()) {
                 try {
-                    File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
+                    File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + lib.getRelativeNativePath());
                     FileInputStream input = new FileInputStream(completePath);
                     Utils.decompressZIP(input, nativesDir, lib.getExtractExclusions());
                 } catch (IOException ex) {
@@ -147,12 +149,12 @@ public class GameLauncher {
                     ex.printStackTrace(this.console.getWriter());
                 }
             } else {
-                File completePath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
+                File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
                 libraries.append(completePath.getAbsolutePath()).append(separator);
             }
         }
         this.console.print("Preparing game args.");
-        File verPath = new File(Constants.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
+        File verPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
         File assetsDir;
         AssetIndex index = ver.getAssetIndex();

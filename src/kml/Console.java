@@ -21,7 +21,7 @@ public class Console {
     private final File log;
 
     public Console() {
-        File logFolder = Constants.APPLICATION_LOGS;
+        File logFolder = Kernel.APPLICATION_LOGS;
         if (!logFolder.isDirectory()) {
             logFolder.mkdirs();
         }
@@ -51,7 +51,7 @@ public class Console {
                 }
             }
         }
-        this.log = new File(Constants.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
+        this.log = new File(Kernel.APPLICATION_LOGS, "krothium-unclosed-" + System.currentTimeMillis() + ".log");
         try {
             this.writer = new PrintWriter(this.log){
                 @Override
@@ -143,7 +143,7 @@ public class Console {
     public final void close() {
         if (this.enabled) {
             this.writer.close();
-            File target = new File(Constants.APPLICATION_LOGS, this.log.getName().replace("-unclosed", ""));
+            File target = new File(Kernel.APPLICATION_LOGS, this.log.getName().replace("-unclosed", ""));
             this.log.renameTo(target);
         }
     }

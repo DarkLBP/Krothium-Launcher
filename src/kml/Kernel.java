@@ -61,21 +61,28 @@ public final class Kernel {
     private final Image applicationIcon, profileIcons;
     private final Map<ProfileIcon, Image> iconCache;
 
+    public static final String KERNEL_BUILD_NAME = "3.1.5";
+    public static int KERNEL_FORMAT = 21;
+    public static int KERNEL_PROFILES_FORMAT = 2;
+    public static File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
+    public static File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
+    public static File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
+    public static boolean USE_LOCAL;
+
     public Kernel(Stage stage, HostServices hs) {
-        if (!Constants.APPLICATION_WORKING_DIR.isDirectory()) {
-            Constants.APPLICATION_WORKING_DIR.mkdirs();
+        if (!APPLICATION_WORKING_DIR.isDirectory()) {
+            APPLICATION_WORKING_DIR.mkdirs();
         }
         this.console = new Console();
         try {
             int response = Utils.testNetwork();
-            Constants.USE_LOCAL = response != 204;
+            USE_LOCAL = response != 204;
         } catch (IOException ex) {
-            Constants.USE_LOCAL = true;
+            USE_LOCAL = true;
             this.console.print("Running offline mode.");
             ex.printStackTrace(this.console.getWriter());
         }
-        this.console.print("KML v" + Constants.KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
-        this.console.print("Kernel build: " + Constants.KERNEL_BUILD);
+        this.console.print("KML v" + KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         this.console.print("OS: " + System.getProperty("os.name"));
         this.console.print("OS Version: " + System.getProperty("os.version"));
         this.console.print("OS Architecture: " + System.getProperty("os.arch"));
@@ -109,8 +116,8 @@ public final class Kernel {
         this.console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         this.console.print("Reading launcher profiles...");
         try {
-            if (Constants.APPLICATION_CONFIG.isFile()) {
-                String data = new String(Files.readAllBytes(Constants.APPLICATION_CONFIG.toPath()), StandardCharsets.UTF_8);
+            if (APPLICATION_CONFIG.isFile()) {
+                String data = new String(Files.readAllBytes(APPLICATION_CONFIG.toPath()), StandardCharsets.UTF_8);
                 this.launcherProfiles = new JSONObject(data);
             } else {
                 this.console.print("Launcher profiles file does not exists.");
@@ -262,11 +269,11 @@ public final class Kernel {
         }
         output.put("settings", this.settings.toJSON());
         JSONObject launcherVersion = new JSONObject();
-        launcherVersion.put("name", Constants.KERNEL_BUILD_NAME);
-        launcherVersion.put("format", Constants.KERNEL_FORMAT);
-        launcherVersion.put("profilesFormat", Constants.KERNEL_PROFILES_FORMAT);
+        launcherVersion.put("name", KERNEL_BUILD_NAME);
+        launcherVersion.put("format", KERNEL_FORMAT);
+        launcherVersion.put("profilesFormat", KERNEL_PROFILES_FORMAT);
         output.put("launcherVersion", launcherVersion);
-        if (!Utils.writeToFile(output.toString(4), Constants.APPLICATION_CONFIG)) {
+        if (!Utils.writeToFile(output.toString(4), APPLICATION_CONFIG)) {
             this.console.print("Failed to save the profiles file!");
         }
     }
