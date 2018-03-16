@@ -121,6 +121,7 @@ public class MainFX {
     private boolean iconListLoaded = false;
     private boolean versionListLoaded = false;
     private boolean languageListLoaded = false;
+    private boolean loadingTextures = false;
 
     /**
      * Initializes all required stuff from the GUI
@@ -296,76 +297,84 @@ public class MainFX {
      * Loads the skin preview for the logged user
      */
     private void loadTextures() {
-        try {
-            this.console.print("Loading textures...");
-            User selected = this.kernel.getAuthentication().getSelectedUser();
-            String domain;
-            if (selected.getType() == UserType.MOJANG) {
-                domain = "sessionserver.mojang.com/session/minecraft/profile/";
-                this.skinActions.setVisible(false);
-                this.skinActions.setManaged(false);
-            } else {
-                domain = "mc.krothium.com/profiles/";
-                this.skinActions.setVisible(true);
-                this.skinActions.setManaged(true);
-            }
-            String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
-            JSONObject root = new JSONObject(Utils.readURL(profileURL));
-            JSONArray properties = root.getJSONArray("properties");
-            for (int i = 0; i < properties.length(); i++) {
-                JSONObject property = properties.getJSONObject(i);
-                if ("textures".equalsIgnoreCase(property.getString("name"))) {
-                    JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
-                    JSONObject textures = data.getJSONObject("textures");
-                    this.skin = null;
-                    this.cape = null;
-                    boolean slim = false;
-                    if (textures.has("SKIN")) {
-                        JSONObject skinData = textures.getJSONObject("SKIN");
-                        if (skinData.has("metadata")) {
-                            if ("slim".equalsIgnoreCase(skinData.getJSONObject("metadata").getString("model"))) {
-                                slim = true;
-                            }
-                        }
-                        this.skin = new Image(textures.getJSONObject("SKIN").getString("url"));
-                    }
-                    if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
-                        this.skin = this.steve;
-                        this.deleteSkin.setDisable(true);
-                    } else if (this.skin.getHeight() == 0) {
-                        this.skin = this.alex;
-                        this.deleteSkin.setDisable(true);
-                    } else {
-                        this.deleteSkin.setDisable(false);
-                    }
-                    if (textures.has("CAPE")) {
-                        this.cape = new Image(textures.getJSONObject("CAPE").getString("url"));
-                        this.includeCape.setDisable(false);
-                        this.deleteCape.setDisable(false);
-                    } else {
-                        this.includeCape.setDisable(true);
-                        this.deleteCape.setDisable(true);
-                    }
-                    if (slim) {
-                        this.skinSlim.setSelected(true);
-                    } else {
-                        this.skinClassic.setSelected(true);
-                    }
-                    this.texturesLoaded = true;
-                    this.console.print("Textures loaded.");
-                    this.updatePreview();
-                }
-            }
-        } catch (Exception ex) {
-            this.console.print("Failed to parse remote profile textures.");
-            ex.printStackTrace(this.console.getWriter());
-        }
-        if (Kernel.USE_LOCAL) {
+        if (this.loadingTextures) {
+            return;
+        } else if (Kernel.USE_LOCAL) {
             this.selectSkin.setDisable(true);
             this.selectCape.setDisable(true);
             this.deleteSkin.setDisable(true);
             this.deleteCape.setDisable(true);
+            return;
         }
+        Thread t = new Thread(() -> {
+            try {
+                this.console.print("Loading textures...");
+                this.loadingTextures = true;
+                User selected = this.kernel.getAuthentication().getSelectedUser();
+                String domain;
+                if (selected.getType() == UserType.MOJANG) {
+                    domain = "sessionserver.mojang.com/session/minecraft/profile/";
+                    this.skinActions.setVisible(false);
+                    this.skinActions.setManaged(false);
+                } else {
+                    domain = "mc.krothium.com/profiles/";
+                    this.skinActions.setVisible(true);
+                    this.skinActions.setManaged(true);
+                }
+                String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
+                JSONObject root = new JSONObject(Utils.readURL(profileURL));
+                JSONArray properties = root.getJSONArray("properties");
+                for (int i = 0; i < properties.length(); i++) {
+                    JSONObject property = properties.getJSONObject(i);
+                    if ("textures".equalsIgnoreCase(property.getString("name"))) {
+                        JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
+                        JSONObject textures = data.getJSONObject("textures");
+                        this.skin = null;
+                        this.cape = null;
+                        boolean slim = false;
+                        if (textures.has("SKIN")) {
+                            JSONObject skinData = textures.getJSONObject("SKIN");
+                            if (skinData.has("metadata")) {
+                                if ("slim".equalsIgnoreCase(skinData.getJSONObject("metadata").getString("model"))) {
+                                    slim = true;
+                                }
+                            }
+                            this.skin = new Image(textures.getJSONObject("SKIN").getString("url"));
+                        }
+                        if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
+                            this.skin = this.steve;
+                            this.deleteSkin.setDisable(true);
+                        } else if (this.skin.getHeight() == 0) {
+                            this.skin = this.alex;
+                            this.deleteSkin.setDisable(true);
+                        } else {
+                            this.deleteSkin.setDisable(false);
+                        }
+                        if (textures.has("CAPE")) {
+                            this.cape = new Image(textures.getJSONObject("CAPE").getString("url"));
+                            this.includeCape.setDisable(false);
+                            this.deleteCape.setDisable(false);
+                        } else {
+                            this.includeCape.setDisable(true);
+                            this.deleteCape.setDisable(true);
+                        }
+                        if (slim) {
+                            this.skinSlim.setSelected(true);
+                        } else {
+                            this.skinClassic.setSelected(true);
+                        }
+                        this.texturesLoaded = true;
+                        this.console.print("Textures loaded.");
+                        this.updatePreview();
+                    }
+                }
+            } catch (Exception ex) {
+                this.console.print("Failed to parse remote profile textures.");
+                ex.printStackTrace(this.console.getWriter());
+            }
+            this.loadingTextures = false;
+        });
+        t.start();
     }
 
     /**
