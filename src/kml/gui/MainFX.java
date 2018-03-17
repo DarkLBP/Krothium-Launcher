@@ -938,7 +938,8 @@ public class MainFX {
     /**
      * Shows the language list
      */
-    @FXML public final void showLanguages() {
+    @FXML public final void showLanguages(Event e) {
+        e.consume();
         if (this.languagesList.isVisible()) {
             this.languagesList.setVisible(false);
         } else {
@@ -950,11 +951,28 @@ public class MainFX {
         }
     }
 
+    public final void checkPopups(MouseEvent e) {
+        if (this.languagesList.isVisible()) {
+            this.languagesList.setVisible(false);
+        }
+        if (this.switchAccountButton.isVisible()) {
+            this.switchAccountButton.setVisible(false);
+        }
+        if (this.profilePopupList.isVisible()) {
+            this.profilePopupList.setVisible(false);
+        }
+        if (this.iconList.isVisible()) {
+            this.iconList.setVisible(false);
+        }
+    }
+
     /**
      * Deselects the current user and allows to select another
      */
     @FXML public final void switchAccount() {
-        this.showAccountOptions();
+        if (this.switchAccountButton.isVisible()) {
+            this.switchAccountButton.setVisible(false);
+        }
         Authentication a = this.kernel.getAuthentication();
         a.setSelectedUser(null);
         this.showLoginPrompt(true);
@@ -979,7 +997,8 @@ public class MainFX {
     /**
      * Shows the profile editor profile icons
      */
-    @FXML public final void showIcons() {
+    @FXML public final void showIcons(Event e) {
+        e.consume();
         if (this.iconList.isVisible()) {
             this.iconList.setVisible(false);
         } else {
@@ -994,7 +1013,8 @@ public class MainFX {
     /**
      * Shows the Switch Account option when the user label is clicked
      */
-    @FXML public final void showAccountOptions() {
+    @FXML public final void showAccountOptions(Event e) {
+        e.consume();
         if (this.switchAccountButton.isVisible()) {
             this.switchAccountButton.setVisible(false);
         } else {
