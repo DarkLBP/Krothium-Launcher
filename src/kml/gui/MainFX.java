@@ -251,7 +251,6 @@ public class MainFX {
         this.loginButton.setText(Language.get(20));
         this.loginExisting.setText(Language.get(20));
         this.registerButton.setText(Language.get(21));
-        this.changeIcon.setText(Language.get(24));
         this.exportLogs.setText(Language.get(27));
         this.downloadServer.setText(Language.get(28));
         this.skinLabel.setText(Language.get(29));

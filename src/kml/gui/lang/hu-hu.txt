@@ -21,7 +21,7 @@ BEJELENTKEZÉS
 REGISZTRÁCIÓ
 Sikertelen bejelentkezés
 A jelszó mezőt nem lehet üresen hagyni!
-Változtatása
+
 Köpeny PNG fájl (128KB MAX)
 Legfrissebb Minecraft Release
 Logfájlok exportálása

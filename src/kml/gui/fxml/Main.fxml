@@ -598,9 +598,9 @@
                                     <Insets right="410.0" />
                                  </StackPane.margin>
                               </ImageView>
-                              <Button fx:id="changeIcon" mnemonicParsing="false" onMouseClicked="#showIcons" prefHeight="34.0" prefWidth="112.0" text="Change" StackPane.alignment="CENTER_RIGHT">
+                              <Button fx:id="changeIcon" mnemonicParsing="false" onMouseClicked="#showIcons" prefHeight="34.0" prefWidth="63.0" text="▼" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
-                                    <Insets right="290.0" />
+                                    <Insets right="335.0" />
                                  </StackPane.margin>
                                  <cursor>
                                     <Cursor fx:constant="HAND" />

@@ -21,7 +21,7 @@ LOGIN
 REGISTER
 Failed to log in
 You cannot leave the password field empty!
-Change
+
 Cape PNG File (128KB MAX)
 Latest Minecraft Release
 Export Logs

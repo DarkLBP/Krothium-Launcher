@@ -21,7 +21,7 @@ ENTRAR
 REGISTRARSE
 ¡Imposible iniciar sesión!
 ¡No puedes dejar el campo de la contraseña vacío!
-Cambiar
+
 Archivo PNG de Capa (128KB MAX)
 Último Lanzamiento de Minecraft
 Exportar Registros
