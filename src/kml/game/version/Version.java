@@ -2,7 +2,7 @@ package kml.game.version;
 
 import kml.Console;
 import kml.Kernel;
-import kml.Utils;
+import kml.utils.Utils;
 import kml.game.download.Downloadable;
 import kml.game.version.asset.AssetIndex;
 import kml.game.version.library.Library;
@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.URL;
 import java.util.*;
 
 /**

@@ -21,6 +21,7 @@ import kml.gui.AlertType;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
 import kml.gui.lang.Language;
+import kml.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -1,7 +1,9 @@
 package kml.gui;
 
 import javafx.scene.image.Image;
-import kml.Utils;
+import kml.utils.Utils;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Slide {
     private final String action;
@@ -24,7 +26,13 @@ public class Slide {
 
     public final Image getImage() {
         if (this.loadedImage == null) {
-            this.loadedImage = new Image(Utils.readCachedStream(this.image));
+            InputStream stream = Utils.readCachedStream(this.image);
+            this.loadedImage = new Image(stream);
+            try {
+                stream.close();
+            } catch (IOException e) {
+
+            }
         }
         return this.loadedImage;
     }

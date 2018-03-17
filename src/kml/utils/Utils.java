@@ -1,4 +1,8 @@
-package kml;
+package kml.utils;
+
+import kml.Kernel;
+import kml.OS;
+import kml.OSArch;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -202,8 +206,10 @@ public final class Utils {
                 ETag = ETag.replace("\"", "");
                 File cachedFile = new File(Kernel.APPLICATION_CACHE, ETag);
                 if (!cachedFile.isFile() || cachedFile.length() != con.getContentLength()) {
-                    pipeStreams(con.getInputStream(), new FileOutputStream(cachedFile));
+                    System.out.println("Parsing cache for " + url);
+                    return new CachedInputStream(con.getInputStream(), cachedFile);
                 }
+                System.out.println("Using cached version for " + url);
                 return new FileInputStream(cachedFile);
             }
             return con.getInputStream();

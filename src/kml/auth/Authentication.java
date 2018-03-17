@@ -2,7 +2,7 @@ package kml.auth;
 
 import kml.Console;
 import kml.Kernel;
-import kml.Utils;
+import kml.utils.Utils;
 import kml.auth.user.User;
 import kml.auth.user.UserProfile;
 import kml.auth.user.UserType;
@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package kml.game;
 
 import kml.Kernel;
-import kml.Utils;
+import kml.utils.Utils;
 import kml.proxy.URLHandler;
 
 import java.io.IOException;

@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import kml.Console;
 import kml.Kernel;
 import kml.OSArch;
-import kml.Utils;
+import kml.utils.Utils;
 import kml.auth.Authentication;
 import kml.auth.user.User;
 import kml.auth.user.UserType;

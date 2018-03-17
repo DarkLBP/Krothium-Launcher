@@ -2,14 +2,13 @@ package kml.game.version;
 
 import kml.Console;
 import kml.Kernel;
-import kml.Utils;
+import kml.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 /**

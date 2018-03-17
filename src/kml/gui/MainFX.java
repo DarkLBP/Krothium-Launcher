@@ -45,13 +45,13 @@ import kml.game.version.VersionType;
 import kml.game.version.Versions;
 import kml.game.version.asset.TexturePreview;
 import kml.gui.lang.Language;
+import kml.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -590,6 +590,7 @@ public class MainFX {
                 this.slides.add(s);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             this.newsTitle.setText(Language.get(80));
             this.newsText.setText(Language.get(101));
             this.console.print("Couldn't parse news data. (" + ex.getMessage() + ')');
@@ -633,8 +634,12 @@ public class MainFX {
             }
         }
         Slide s = this.slides.get(this.currentSlide);
-        this.slideshow.setImage(s.getImage());
+        Thread t = new Thread(() -> {
+            this.slideshow.setImage(s.getImage());
+        });
+        t.start();
         this.newsTitle.setText(s.getTitle());
+
         this.newsText.setText(s.getText());
     }
 

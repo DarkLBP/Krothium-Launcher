@@ -2,7 +2,7 @@ package kml.game.download;
 
 import kml.Console;
 import kml.Kernel;
-import kml.Utils;
+import kml.utils.Utils;
 import kml.exceptions.DownloaderException;
 import kml.game.profile.Profile;
 import kml.game.profile.ProfileType;
