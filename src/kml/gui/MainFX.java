@@ -850,6 +850,7 @@ public class MainFX {
         }
         this.profileListPopupLoaded = false;
         this.profilePopupList.setVisible(false);
+        this.kernel.saveProfiles();
     }
 
     /**
@@ -1391,7 +1392,9 @@ public class MainFX {
         }
 
         this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
-        this.loadProfileList();
+        this.kernel.saveProfiles();
+        this.profileListLoaded = false;
+        this.profileListPopupLoaded = false;
         this.switchTab(this.launchOptionsLabel);
     }
 
@@ -1536,6 +1539,7 @@ public class MainFX {
             if (u != null) {
                 a.refresh();
                 this.texturesLoaded = false;
+                this.kernel.saveProfiles();
                 this.console.print("Session refreshed.");
             } else {
                 this.console.print("No user is selected.");
@@ -1667,6 +1671,7 @@ public class MainFX {
             s.setEnableAdvanced(!s.getEnableAdvanced());
             this.toggleLabel(source, s.getEnableAdvanced());
         }
+        this.kernel.saveProfiles();
     }
 
     /**

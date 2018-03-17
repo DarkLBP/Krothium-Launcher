@@ -60,10 +60,10 @@ public final class Kernel {
     private final Image profileIcons;
     private final Map<ProfileIcon, Image> iconCache;
     public static final String KERNEL_BUILD_NAME = "3.1.5";
-    public static final int KERNEL_FORMAT = 21;
-    public static final int KERNEL_PROFILES_FORMAT = 2;
+    private static final int KERNEL_FORMAT = 21;
+    private static final int KERNEL_PROFILES_FORMAT = 2;
     public static final File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
-    public static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
+    private static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
     public static Image APPLICATION_ICON;
@@ -232,7 +232,8 @@ public final class Kernel {
     /**
      * Saves the profiles
      */
-    private void saveProfiles() {
+    public void saveProfiles() {
+        this.console.print("Saving profiles...");
         JSONObject output = new JSONObject();
         JSONObject profiles = this.profiles.toJSON();
         JSONObject authdata = this.authentication.toJSON();
@@ -254,6 +255,8 @@ public final class Kernel {
         output.put("launcherVersion", launcherVersion);
         if (!Utils.writeToFile(output.toString(4), APPLICATION_CONFIG)) {
             this.console.print("Failed to save the profiles file!");
+        } else {
+            this.console.print("Profiles saved.");
         }
     }
 
@@ -305,7 +308,6 @@ public final class Kernel {
      * Saves the profiles and shuts down the launcher
      */
     public void exitSafely() {
-        this.saveProfiles();
         this.console.print("Shutting down launcher...");
         this.console.close();
         System.exit(0);
