@@ -206,10 +206,8 @@ public final class Utils {
                 ETag = ETag.replace("\"", "");
                 File cachedFile = new File(Kernel.APPLICATION_CACHE, ETag);
                 if (!cachedFile.isFile() || cachedFile.length() != con.getContentLength()) {
-                    System.out.println("Parsing cache for " + url);
                     return new CachedInputStream(con.getInputStream(), cachedFile);
                 }
-                System.out.println("Using cached version for " + url);
                 return new FileInputStream(cachedFile);
             }
             return con.getInputStream();

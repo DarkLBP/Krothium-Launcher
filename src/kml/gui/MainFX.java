@@ -1,13 +1,8 @@
 package kml.gui;
 
-import javafx.animation.Animation;
-import javafx.animation.Animation.Status;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.css.Styleable;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -26,7 +21,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import kml.*;
 import kml.auth.Authentication;
 import kml.auth.user.User;
@@ -118,11 +112,7 @@ public class MainFX {
     private String urlPrefix = "";
     private final String CHANGESKIN_URL = "https://mc.krothium.com/changeskin";
     private final String CHANGECAPE_URL = "https://mc.krothium.com/changecape";
-
-    private boolean iconListLoaded = false;
-    private boolean versionListLoaded = false;
-    private boolean languageListLoaded = false;
-    private boolean loadingTextures = false;
+    private boolean iconListLoaded, versionListLoaded, languageListLoaded, loadingTextures, profileListLoaded, profileListPopupLoaded;
 
     /**
      * Initializes all required stuff from the GUI
@@ -184,6 +174,9 @@ public class MainFX {
         if (!this.kernel.getBrowser().isVisible()) {
             this.stage.show();
         }
+
+        //Validate selected profile
+        this.validateSelectedProfile();
     }
 
     /**
@@ -291,8 +284,6 @@ public class MainFX {
         this.includeCape.setText(Language.get(93));
         this.profileName.setPromptText(Language.get(98));
         this.authenticationLabel.setText(Language.get(99));
-        //Load profile list
-        this.loadProfileList();
     }
 
     /**
@@ -686,76 +677,59 @@ public class MainFX {
     }
 
     /**
-     * Loads the profile lists
+     * Loads profiles list items
      */
-    @FXML private void loadProfileList() {
-        Profiles ps = this.kernel.getProfiles();
-
-        //Check if selected profile passes the current settings
-        Profile selected = ps.getSelectedProfile();
-        VersionMeta selectedVersion = selected.getVersionID();
-        Settings settings = this.kernel.getSettings();
-
-        if (selected.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
-            ps.setSelectedProfile(ps.getReleaseProfile());
-        } else if (selected.getType() == ProfileType.CUSTOM) {
-            VersionType type = selectedVersion.getType();
-            if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                ps.setSelectedProfile(ps.getReleaseProfile());
-            } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
-                ps.setSelectedProfile(ps.getReleaseProfile());
-            } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
-                ps.setSelectedProfile(ps.getReleaseProfile());
-            }
-        }
-        this.updateGameVersion();
-
-        //For some reason using the same label for both lists one list appear the items blank
-        ObservableList<Label> profileListItems = FXCollections.observableArrayList();
-        ObservableList<Label> profileListItems2 = FXCollections.observableArrayList();
+    private void loadProfileList() {
+        this.console.print("Loading profile list...");
+        ObservableList<Label> profileListItems = this.getProfileList();
 
         //Add "Add New Profile" item
-        Label l = new Label(Language.get(51), new ImageView(new Image("/kml/gui/textures/add.png")));
-        profileListItems.add(l);
+        profileListItems.add(0, new Label(Language.get(51), new ImageView(new Image("/kml/gui/textures/add.png"))));
+        this.profileList.setItems(profileListItems);
+        this.profileListLoaded = true;
+        this.console.print("Profile list loaded.");
+    }
 
-        Label l2;
+    /**
+     * Loads profiles popup list items
+     */
+    private void loadProfileListPopup() {
+        this.console.print("Loading profile list popup...");
+        ObservableList<Label> profileListItems = this.getProfileList();
+        this.profilePopupList.setItems(profileListItems);
+        this.profileListPopupLoaded = true;
+        this.console.print("Profile list popup loaded.");
+    }
+
+    /**
+     * Generates an ObservableList of Labels representing each profile
+     * @return The profiles ObservableList
+     */
+    private ObservableList<Label> getProfileList() {
+        ObservableList<Label> profileListItems = FXCollections.observableArrayList();
+        Profiles ps = this.kernel.getProfiles();
+        Settings settings = this.kernel.getSettings();
+        Label l;
+        ImageView iv;
+        String text;
         for (Profile p : ps.getProfiles()) {
             if (p.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
                 continue;
             }
             if (p.getType() == ProfileType.RELEASE) {
-                Image img = this.kernel.getProfileIcon(ProfileIcon.GRASS);
-                ImageView iv = new ImageView(img);
-                iv.setFitWidth(68);
-                iv.setFitHeight(68);
-                ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(68);
-                iv2.setFitHeight(68);
-                l = new Label(Language.get(59), iv);
-                l2 = new Label(Language.get(59), iv2);
+                iv = new ImageView(this.kernel.getProfileIcon(ProfileIcon.GRASS));
+                text = Language.get(59);
             } else if (p.getType() == ProfileType.SNAPSHOT) {
-                Image img = this.kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE);
-                ImageView iv = new ImageView(img);
-                iv.setFitWidth(68);
-                iv.setFitHeight(68);
-                ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(68);
-                iv2.setFitHeight(68);
-                l = new Label(Language.get(60), iv);
-                l2 = new Label(Language.get(60), iv2);
+                iv = new ImageView(this.kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                text = Language.get(60);
             } else {
-                String name = p.hasName() ? p.getName() : Language.get(70);
+                text = p.hasName() ? p.getName() : Language.get(70);
                 ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
-                Image img = this.kernel.getProfileIcon(pi);
-                ImageView iv = new ImageView(img);
-                iv.setFitWidth(68);
-                iv.setFitHeight(68);
-                ImageView iv2 = new ImageView(img);
-                iv2.setFitWidth(68);
-                iv2.setFitHeight(68);
-                l = new Label(name, iv);
-                l2 = new Label(name, iv2);
+                iv = new ImageView(this.kernel.getProfileIcon(pi));
             }
+            iv.setFitWidth(68);
+            iv.setFitHeight(68);
+            l = new Label(text, iv);
             //Fetch Minecraft version used by the profile
             VersionMeta verID;
             if (p.getType() == ProfileType.CUSTOM) {
@@ -767,7 +741,6 @@ public class MainFX {
                 verID = this.kernel.getVersions().getLatestSnapshot();
             }
             l.setId(p.getID());
-            l2.setId(p.getID());
             if (verID != null) {
                 //If profile has any known version just show it below the profile name
                 if (verID.getType() == VersionType.SNAPSHOT && !this.kernel.getSettings().getEnableSnapshots()) {
@@ -776,18 +749,14 @@ public class MainFX {
                 if ((verID.getType() == VersionType.OLD_ALPHA || verID.getType() == VersionType.OLD_BETA) && !this.kernel.getSettings().getEnableHistorical()) {
                     continue;
                 }
-                l.setText(l2.getText() + '\n' + verID.getID());
-                l2.setText(l2.getText() + '\n' + verID.getID());
+                l.setText(l.getText() + '\n' + verID.getID());
             }
             if (ps.getSelectedProfile().equals(p)) {
                 l.getStyleClass().add("selectedProfile");
-                l2.getStyleClass().add("selectedProfile");
             }
             profileListItems.add(l);
-            profileListItems2.add(l2);
         }
-        this.profileList.setItems(profileListItems);
-        this.profilePopupList.setItems(profileListItems2);
+        return profileListItems;
     }
 
     /**
@@ -835,6 +804,33 @@ public class MainFX {
     }
 
     /**
+     * Validates the selected profile according to the constraints
+     */
+    private void validateSelectedProfile() {
+        Profiles ps = this.kernel.getProfiles();
+
+        //Check if selected profile passes the current settings
+        Profile selected = ps.getSelectedProfile();
+        VersionMeta selectedVersion = selected.getVersionID();
+        Settings settings = this.kernel.getSettings();
+
+        if (selected.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
+            ps.setSelectedProfile(ps.getReleaseProfile());
+        } else if (selected.getType() == ProfileType.CUSTOM) {
+            VersionType type = selectedVersion.getType();
+            if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
+                ps.setSelectedProfile(ps.getReleaseProfile());
+            }
+        }
+
+        this.updateGameVersion();
+    }
+
+    /**
      * Selects the selected profile from the list
      */
     @FXML private void selectProfile() {
@@ -845,7 +841,14 @@ public class MainFX {
         //Select profile and refresh list
         this.kernel.getProfiles().setSelectedProfile(this.kernel.getProfiles().getProfile(this.profilePopupList.getSelectionModel().getSelectedItem().getId()));
         this.updateGameVersion();
-        this.loadProfileList();
+        SingleSelectionModel<Tab> selection = this.contentPane.getSelectionModel();
+        Tab selectedTab = selection.getSelectedItem();
+        if (selectedTab == this.launchOptionsTab) {
+            this.loadProfileList();
+        } else {
+            this.profileListLoaded = false;
+        }
+        this.profileListPopupLoaded = false;
         this.profilePopupList.setVisible(false);
     }
 
@@ -875,7 +878,7 @@ public class MainFX {
             //Begin download and game launch task
             try {
                 Timer timer = new Timer();
-                timer.schedule(progressTask, 0, 250);
+                timer.schedule(progressTask, 0, 500);
                 d.download();
                 timer.cancel();
                 timer.purge();
@@ -980,6 +983,9 @@ public class MainFX {
         if (this.profilePopupList.isVisible()) {
             this.profilePopupList.setVisible(false);
         } else {
+            if (!this.profileListPopupLoaded) {
+                this.loadProfileListPopup();
+            }
             Bounds b = this.playButton.localToScene(this.playButton.getBoundsInLocal());
             this.profilePopupList.setTranslateX(b.getMinX() - 100);
             this.profilePopupList.setTranslateY(b.getMinY() - 180);
@@ -1072,6 +1078,9 @@ public class MainFX {
         } else if (source == this.launchOptionsLabel) {
             this.launchOptionsLabel.getStyleClass().add("selectedItem");
             selection.select(this.launchOptionsTab);
+            if (!this.profileListLoaded) {
+                this.loadProfileList();
+            }
             this.profileList.getSelectionModel().clearSelection();
         } else if (source == this.profileEditorTab) {
             //Hide play button
@@ -1103,6 +1112,19 @@ public class MainFX {
         this.languageButton.setText(selected.getText());
         this.kernel.getSettings().setLocale(selected.getId());
         this.languagesList.setVisible(false);
+        SingleSelectionModel<Tab> selection = this.contentPane.getSelectionModel();
+        Tab selectedTab = selection.getSelectedItem();
+        if (selectedTab == this.launchOptionsTab) {
+            this.loadProfileList();
+        } else {
+            this.profileListLoaded = false;
+        }
+        if (selectedTab == this.profileEditorTab) {
+            this.loadVersionList();
+        } else {
+            this.versionListLoaded = false;
+        }
+        this.profileListPopupLoaded = false;
         this.localizeElements();
     }
 
@@ -1130,7 +1152,6 @@ public class MainFX {
         }
         if (!this.versionListLoaded) {
             this.loadVersionList();
-            this.versionListLoaded = true;
         }
         if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
             this.profileName.setEditable(true);
@@ -1294,8 +1315,12 @@ public class MainFX {
                 vers.add(v);
             }
         }
+
         this.versionList.setItems(vers);
-        this.versionList.getSelectionModel().select(0);
+        if (!this.versionListLoaded) {
+            this.versionList.getSelectionModel().select(0);
+            this.versionListLoaded = true;
+        }
         this.console.print("Version list loaded.");
     }
 
