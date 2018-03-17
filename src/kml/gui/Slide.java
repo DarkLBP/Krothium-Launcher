@@ -30,9 +30,7 @@ public class Slide {
             this.loadedImage = new Image(stream);
             try {
                 stream.close();
-            } catch (IOException e) {
-
-            }
+            } catch (IOException ignored) {}
         }
         return this.loadedImage;
     }

@@ -52,6 +52,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -340,7 +341,9 @@ public class MainFX {
                                     slim = true;
                                 }
                             }
-                            this.skin = new Image(textures.getJSONObject("SKIN").getString("url"));
+                            InputStream stream = Utils.readCachedStream(textures.getJSONObject("SKIN").getString("url"));
+                            this.skin = new Image(stream);
+                            stream.close();
                         }
                         if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
                             this.skin = this.steve;
@@ -352,7 +355,9 @@ public class MainFX {
                             this.deleteSkin.setDisable(false);
                         }
                         if (textures.has("CAPE")) {
-                            this.cape = new Image(textures.getJSONObject("CAPE").getString("url"));
+                            InputStream stream = Utils.readCachedStream(textures.getJSONObject("CAPE").getString("url"));
+                            this.cape = new Image(stream);
+                            stream.close();
                             this.includeCape.setDisable(false);
                             this.deleteCape.setDisable(false);
                         } else {
