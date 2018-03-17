@@ -859,80 +859,74 @@ public class MainFX {
         this.progressText.setText("");
         Downloader d = this.kernel.getDownloader();
         GameLauncher gl = this.kernel.getGameLauncher();
-        //Begin download and game launch task
-        Task runTask = new Task() {
+
+        //Keep track of the progress
+        TimerTask progressTask = new TimerTask() {
             @Override
-            protected Object call() throws Exception {
-                if (!d.isDownloading() && !gl.isRunning()) {
-                    //Keep track of the progress
-                    Timeline task = new Timeline();
-                    KeyFrame frame = new KeyFrame(Duration.millis(250), event -> {
-                        MainFX.this.progressBar.setProgress(d.getProgress() / 100.0);
-                        MainFX.this.progressText.setText(Language.get(13) + ' ' + d.getCurrentFile() + "...");
-                    });
-                    task.getKeyFrames().add(frame);
-                    task.setCycleCount(Animation.INDEFINITE);
-                    task.play();
-                    try {
-                        d.download();
-                        task.stop();
-                        Platform.runLater(() -> {
-                            MainFX.this.progressText.setText(Language.get(78));
-                            MainFX.this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-                        });
-                        gl.launch();
-
-                        Platform.runLater(() -> {
-                            MainFX.this.progressPane.setVisible(false);
-                            MainFX.this.playPane.setVisible(true);
-                            MainFX.this.playButton.setText(Language.get(14));
-                            MainFX.this.playButton.setDisable(true);
-                        });
-
-                        //Keep track of the game process
-                        Timeline task2 = new Timeline();
-                        KeyFrame frame2 = new KeyFrame(Duration.millis(250), event -> {
-                            if (!gl.isStarted()) {
-                                task2.stop();
-                            }
-                        });
-                        task2.statusProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-                            if (newValue == Status.STOPPED) {
-                                if (gl.hasError()) {
-                                    MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
-                                }
-                                if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
-                                    MainFX.this.kernel.exitSafely();
-                                }
-                                MainFX.this.playButton.setDisable(false);
-                                if (Kernel.USE_LOCAL) {
-                                    MainFX.this.playButton.setText(Language.get(79));
-                                } else {
-                                    MainFX.this.playButton.setText(Language.get(12));
-                                }
-                            }
-                        }));
-                        task2.getKeyFrames().add(frame2);
-                        task2.setCycleCount(Animation.INDEFINITE);
-                        task2.play();
-                        if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
-                            Platform.runLater(() -> MainFX.this.stage.close());
-                        }
-                    } catch (DownloaderException e) {
-                        Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
-                        MainFX.this.console.print("Failed to perform game download task");
-                        e.printStackTrace(MainFX.this.console.getWriter());
-                    } catch (GameLauncherException e) {
-                        Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
-                        MainFX.this.console.print("Failed to perform game launch task");
-                        e.printStackTrace(MainFX.this.console.getWriter());
-                    }
-                }
-                return null;
+            public void run() {
+                Platform.runLater(() -> {
+                    MainFX.this.progressBar.setProgress(d.getProgress());
+                    MainFX.this.progressText.setText(Language.get(13) + ' ' + d.getCurrentFile() + "...");
+                });
             }
         };
-        Thread t = new Thread(runTask);
-        t.start();
+
+        Thread runThread = new Thread(() -> {
+            //Begin download and game launch task
+            try {
+                Timer timer = new Timer();
+                timer.schedule(progressTask, 0, 250);
+                d.download();
+                timer.cancel();
+                timer.purge();
+                Platform.runLater(() -> {
+                    this.progressText.setText(Language.get(78));
+                    this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                });
+                gl.launch(this);
+
+                Platform.runLater(() -> {
+                    this.progressPane.setVisible(false);
+                    this.playPane.setVisible(true);
+                    this.playButton.setText(Language.get(14));
+                    this.playButton.setDisable(true);
+                });
+
+                if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
+                    Platform.runLater(() -> MainFX.this.stage.close());
+                }
+            } catch (DownloaderException e) {
+                Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
+                MainFX.this.console.print("Failed to perform game download task");
+                e.printStackTrace(MainFX.this.console.getWriter());
+            } catch (GameLauncherException e) {
+                Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
+                MainFX.this.console.print("Failed to perform game launch task");
+                e.printStackTrace(MainFX.this.console.getWriter());
+            }
+        });
+        runThread.start();
+    }
+
+    /**
+     * Callback from Game Launcher
+     * @param error True if an error happened during launch
+     */
+    public final void gameEnded(boolean error) {
+        if (error) {
+            this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
+        }
+        if (!this.kernel.getSettings().getKeepLauncherOpen()) {
+            this.kernel.exitSafely();
+        }
+        this.playButton.setDisable(false);
+        Platform.runLater(() -> {
+            if (Kernel.USE_LOCAL) {
+                this.playButton.setText(Language.get(79));
+            } else {
+                this.playButton.setText(Language.get(12));
+            }
+        });
     }
 
     /**
@@ -1510,12 +1504,14 @@ public class MainFX {
      * Refreshes latest session
      */
     private void refreshSession() {
+        this.console.print("Refreshing session...");
         Authentication a = this.kernel.getAuthentication();
         User u = a.getSelectedUser();
         try {
             if (u != null) {
                 a.refresh();
                 this.texturesLoaded = false;
+                this.console.print("Session refreshed.");
             } else {
                 this.console.print("No user is selected.");
             }

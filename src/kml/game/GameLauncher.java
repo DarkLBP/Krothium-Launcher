@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import kml.Console;
 import kml.Kernel;
 import kml.OSArch;
+import kml.gui.MainFX;
 import kml.utils.Utils;
 import kml.auth.Authentication;
 import kml.auth.user.User;
@@ -39,8 +40,6 @@ public class GameLauncher {
     private final Console console;
     private final Kernel kernel;
     private Process process;
-    private boolean error;
-    private boolean started;
     private OutputFX output;
     private Stage outputGUI;
 
@@ -53,13 +52,10 @@ public class GameLauncher {
      * Prepares and launcher the game
      * @throws GameLauncherException If an error has been thrown
      */
-    public final void launch() throws GameLauncherException {
-        this.started = true;
-        this.error = false;
+    public final void launch(MainFX mainFX) throws GameLauncherException {
         this.console.print("Game launch work has started.");
         Profile p = this.kernel.getProfiles().getSelectedProfile();
         if (this.isRunning()) {
-            this.started = false;
             throw new GameLauncherException("Game is already started!");
         }
         Versions versions = this.kernel.getVersions();
@@ -72,12 +68,10 @@ public class GameLauncher {
             verID = versions.getLatestSnapshot();
         }
         if (verID == null) {
-            this.started = false;
             throw new GameLauncherException("Version ID is null.");
         }
         Version ver = versions.getVersion(verID);
         if (ver == null) {
-            this.started = false;
             throw new GameLauncherException("Version info could not be obtained.");
         }
         File workingDir = Kernel.APPLICATION_WORKING_DIR;
@@ -309,24 +303,25 @@ public class GameLauncher {
                 @Override
                 public void run() {
                     if (!GameLauncher.this.isRunning()) {
+                        boolean error;
                         if (GameLauncher.this.process.exitValue() != 0) {
-                            GameLauncher.this.error = true;
+                            error = true;
                             GameLauncher.this.console.print("Game stopped unexpectedly.");
+                        } else {
+                            error = false;
                         }
-                        GameLauncher.this.started = false;
                         GameLauncher.this.console.print("Deleteting natives dir.");
                         Utils.deleteDirectory(nativesDir);
                         timer.cancel();
                         timer.purge();
+                        mainFX.gameEnded(error);
                     }
                 }
             };
             timer.schedule(process_status, 0, 500);
         } catch (IOException ex) {
-            this.error = true;
-            this.started = false;
-            this.console.print("Game returned an error code.");
             ex.printStackTrace(this.console.getWriter());
+            throw new GameLauncherException("Game returned an error code.");
         }
     }
 
@@ -347,28 +342,11 @@ public class GameLauncher {
     }
 
     /**
-     * Checks if the game launch process is started
-     * @return A boolean that indicates if the launcher process is started
-     */
-    public final boolean isStarted() {
-        return this.started;
-    }
-
-    /**
      * Checks if the game process is running
      * @return A boolean with the current state
      */
-    public final boolean isRunning() {
+    private boolean isRunning() {
         return this.process != null && this.process.isAlive();
     }
 
-    /**
-     * Checks if there is an error. Once is called the error marker disappears.
-     * @return If there is an error
-     */
-    public final boolean hasError() {
-        boolean current = this.error;
-        this.error = false;
-        return current;
-    }
 }

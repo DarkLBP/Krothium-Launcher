@@ -300,7 +300,7 @@ public class Downloader {
         if (!this.downloading) {
             return 0;
         }
-        return (this.downloaded + this.validated) / this.total * 100;
+        return (this.downloaded + this.validated) / this.total;
     }
 
     /**
