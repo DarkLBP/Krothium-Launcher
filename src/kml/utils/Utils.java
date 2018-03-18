@@ -160,6 +160,9 @@ public final class Utils {
     }
 
     private static String readText(InputStream is) {
+        if (is == null) {
+            return "";
+        }
         StringBuilder content = new StringBuilder();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) {
             String line;
@@ -179,6 +182,9 @@ public final class Utils {
     }
 
     private static void pipeStreams(InputStream in, OutputStream out) {
+        if (in == null || out == null) {
+            return;
+        }
         try {
             byte[] buffer = new byte[8192];
             int read;
@@ -336,23 +342,11 @@ public final class Utils {
                 out.write(data);
             }
         }
-        StringBuilder response = new StringBuilder();
-        try (InputStream i = con.getInputStream();
-             BufferedReader in = new BufferedReader(new InputStreamReader(i))){
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-        } catch (IOException ex) {
-            try (InputStream i = con.getErrorStream();
-                 BufferedReader in = new BufferedReader(new InputStreamReader(i))) {
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-            }
+        if (con.getResponseCode() == 200) {
+            return readText(con.getInputStream());
+        } else {
+            return readText(con.getErrorStream());
         }
-        return response.toString();
     }
 
     /**
