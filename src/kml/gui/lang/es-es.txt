@@ -7,8 +7,8 @@ Ajustes
 Opciones de lanzamiento
 ¿Estás seguro de que quieres cerrar la sesión?
 Fallo al cargar JavaFX. Por favor, actualiza Java.
-
-
+¿Estás seguro de que quieres eliminar la cache?
+Cache eliminada correctamente
 JUGAR
 Descargando
 JUGANDO

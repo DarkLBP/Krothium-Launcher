@@ -24,7 +24,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onMouseClicked="#checkPopups" prefHeight="665.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
-      <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
+      <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
             <Label id="languageButton" fx:id="languageButton" onMouseClicked="#showLanguages" text="Language" StackPane.alignment="CENTER_LEFT">
                <StackPane.margin>
@@ -398,6 +398,18 @@
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
+                              </Button>
+                              <Button fx:id="deleteCache" layoutX="310.0" layoutY="20.0" mnemonicParsing="false" onMouseClicked="#deleteCache" prefHeight="45.0" prefWidth="250.0" text="Delete Cache">
+                                 <styleClass>
+                                    <String fx:value="color-alt" />
+                                    <String fx:value="text-5" />
+                                 </styleClass>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
                               </Button>
                            </children>
                         </VBox>
@@ -787,7 +799,7 @@
             <Insets left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <ListView fx:id="languagesList" maxHeight="230.0" maxWidth="270.0" minHeight="230.0" minWidth="270.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0">
+      <ListView fx:id="languagesList" maxHeight="230.0" maxWidth="270.0" minHeight="230.0" minWidth="270.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="34.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
@@ -796,7 +808,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ListView>
-      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+      <Label id="switchAccountButton" fx:id="switchAccountButton" maxHeight="35.0" minHeight="35.0" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="34.0">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" />
          </padding>

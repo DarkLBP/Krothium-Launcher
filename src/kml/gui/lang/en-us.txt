@@ -7,8 +7,8 @@ Settings
 Launch Options
 Are you sure you want to logout?
 Failed to load JavaFX. Please update Java.
-
-
+Are you sure you want to delete the cache?
+Cache deleted successfully
 PLAY
 Downloading
 PLAYING

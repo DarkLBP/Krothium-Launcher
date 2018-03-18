@@ -1707,6 +1707,22 @@ public class MainFX {
     }
 
     /**
+     * Removes the launcher cache
+     */
+    @FXML private void deleteCache() {
+        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(10));
+        if (result == 1) {
+            File[] files = Kernel.APPLICATION_CACHE.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    f.delete();
+                }
+            }
+            this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(11));
+        }
+    }
+
+    /**
      * Opens the URL of the selected version server in the default user web browser
      */
     @FXML private void downloadServer() {

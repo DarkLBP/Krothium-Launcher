@@ -7,8 +7,8 @@ Ajustos
 Opcions de llançament
 Estás segur de que vols tancar la sessió?
 No s'ha pogut carregar JavaFX. Per favor, actualitza Java.
-
-
+Estás seguro de que vols eliminar la cache?
+Cache eliminada correctament
 JUGAR
 Descarregant
 JUGANT

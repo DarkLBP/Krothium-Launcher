@@ -7,8 +7,8 @@ Beállítások
 Indítási opciók
 Biztosan kiszeretnél jelentkezni?
 A JavaFX betöltése sikertelen volt. Kérjük, frissítsed a Java-t.
-
-
+Biztosan törli a gyorsítótárat?
+A gyorsítótár sikeresen törölve
 INDÍTÁS
 Letöltés
 JÁTÉKBAN
