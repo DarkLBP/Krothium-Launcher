@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.css.Styleable;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -1020,14 +1019,6 @@ public class MainFX {
         if (this.switchAccountButton.isVisible()) {
             this.switchAccountButton.setVisible(false);
         } else {
-            Bounds b = this.accountButton.localToScene(this.accountButton.getBoundsInLocal());
-            //Avoid the label getting out of bounds
-            if (b.getMinX() - 5 + this.switchAccountButton.getWidth() > this.stage.getWidth()) {
-                this.switchAccountButton.setTranslateX(this.stage.getWidth() - this.switchAccountButton.getWidth() - 5);
-            } else {
-                this.switchAccountButton.setTranslateX(b.getMinX() - 5);
-            }
-            this.switchAccountButton.setTranslateY(35);
             this.switchAccountButton.setVisible(true);
         }
     }
@@ -1495,7 +1486,7 @@ public class MainFX {
             this.accountButton.setVisible(true);
             this.playPane.setVisible(true);
             //Set account name for current user
-            this.accountButton.setText(this.kernel.getAuthentication().getSelectedUser().getDisplayName() + " ▼");
+            this.accountButton.setText(this.kernel.getAuthentication().getSelectedUser().getDisplayName());
         }
     }
 

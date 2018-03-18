@@ -41,7 +41,7 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" maxWidth="282.0" prefHeight="35.0" prefWidth="282.0" StackPane.alignment="CENTER_RIGHT">
                <children>
-                  <Label fx:id="accountButton" onMouseClicked="#showAccountOptions" text="Account ▼">
+                  <Label fx:id="accountButton" contentDisplay="RIGHT" onMouseClicked="#showAccountOptions" text="Account">
                      <padding>
                         <Insets right="5.0" />
                      </padding>
@@ -164,10 +164,14 @@
                      <children>
                         <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="260.0" prefWidth="200.0">
                            <children>
-                              <Label fx:id="slideBack" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0" styleClass="left-arrow">
+                              <Label fx:id="slideBack" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
-                                 </cursor></Label>
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="left-arrow" />
+                                    <String fx:value="arrow" />
+                                 </styleClass></Label>
                               <ImageView fx:id="slideshow" fitHeight="260.0" fitWidth="700.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
@@ -178,10 +182,14 @@
                                  <HBox.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin></ImageView>
-                              <Label fx:id="slideForward" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0" styleClass="right-arrow">
+                              <Label fx:id="slideForward" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
-                                 </cursor></Label>
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="right-arrow" />
+                                    <String fx:value="arrow" />
+                                 </styleClass></Label>
                            </children>
                         </HBox>
                         <Label fx:id="newsTitle" onMouseClicked="#performSlideAction" styleClass="text-3" text="No news available">
@@ -220,22 +228,30 @@
                                  <children>
                                     <StackPane minWidth="300.0" prefHeight="270.0" prefWidth="210.0">
                                        <children>
-                                          <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" styleClass="left-arrow" StackPane.alignment="CENTER_LEFT">
+                                          <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" StackPane.alignment="CENTER_LEFT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                              <StackPane.margin>
                                                 <Insets left="10.0" />
                                              </StackPane.margin>
+                                             <styleClass>
+                                                <String fx:value="left-arrow" />
+                                                <String fx:value="arrow" />
+                                             </styleClass>
                                           </Label>
                                           <ImageView fx:id="skinPreview" fitHeight="250.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" smooth="false" StackPane.alignment="CENTER" />
-                                          <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" styleClass="right-arrow" StackPane.alignment="CENTER_RIGHT">
+                                          <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" StackPane.alignment="CENTER_RIGHT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                              <StackPane.margin>
                                                 <Insets right="10.0" />
                                              </StackPane.margin>
+                                             <styleClass>
+                                                <String fx:value="arrow" />
+                                                <String fx:value="right-arrow" />
+                                             </styleClass>
                                           </Label>
                                        </children>
                                        <VBox.margin>
@@ -601,7 +617,7 @@
                                     <Insets right="410.0" />
                                  </StackPane.margin>
                               </ImageView>
-                              <Button fx:id="changeIcon" mnemonicParsing="false" onMouseClicked="#showIcons" prefHeight="34.0" prefWidth="112.0" text="Change" StackPane.alignment="CENTER_RIGHT">
+                              <Button fx:id="changeIcon" maxHeight="34.0" maxWidth="112.0" minHeight="34.0" minWidth="112.0" mnemonicParsing="false" onMouseClicked="#showIcons" text="Change" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
                                     <Insets right="290.0" />
                                  </StackPane.margin>
@@ -771,16 +787,16 @@
             <Insets left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <ListView fx:id="languagesList" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="230.0" prefWidth="270.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0">
+      <ListView fx:id="languagesList" maxHeight="230.0" maxWidth="270.0" minHeight="230.0" minWidth="270.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
-      <ListView fx:id="iconList" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="111.0" visible="false" AnchorPane.leftAnchor="398.0" AnchorPane.topAnchor="275.0">
+      <ListView fx:id="iconList" maxHeight="190.0" maxWidth="111.0" minHeight="190.0" minWidth="111.0" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" visible="false" AnchorPane.leftAnchor="398.0" AnchorPane.topAnchor="275.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </ListView>
-      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label id="switchAccountButton" fx:id="switchAccountButton" onMouseClicked="#switchAccount" onMouseExited="#hidePopup" text="Switch Account" visible="false" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" />
          </padding>
@@ -793,16 +809,16 @@
             <String fx:value="highlight" />
          </styleClass>
       </Label>
-      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="203.0">
+      <ListView fx:id="profilePopupList" maxHeight="180.0" maxWidth="430.0" minHeight="180.0" minWidth="430.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="210.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </ListView>
       <VBox fx:id="playPane" alignment="TOP_CENTER" prefHeight="125.0" prefWidth="850.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <HBox alignment="TOP_CENTER" maxHeight="151.0" minHeight="32.0" prefHeight="72.0" prefWidth="850.0">
+            <HBox alignment="TOP_CENTER" maxHeight="65.0" minHeight="65.0">
                <children>
-                  <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onMouseClicked="#launchGame" prefHeight="70.0" prefWidth="220.0" text="PLAY" HBox.hgrow="NEVER">
+                  <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="65.0" maxWidth="210.0" minHeight="65.0" minWidth="210.0" mnemonicParsing="false" onMouseClicked="#launchGame" text="PLAY" HBox.hgrow="NEVER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -811,7 +827,7 @@
                         <String fx:value="text-1" />
                      </styleClass>
                   </Button>
-                  <Button id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="37.0" minHeight="70.0" minWidth="37.0" mnemonicParsing="false" onMouseClicked="#showProfiles" prefHeight="70.0" prefWidth="37.0" HBox.hgrow="NEVER">
+                  <Button id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="65.0" maxWidth="34.0" minHeight="65.0" minWidth="34.0" mnemonicParsing="false" onMouseClicked="#showProfiles" HBox.hgrow="NEVER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -824,6 +840,9 @@
                </VBox.margin>
             </Label>
          </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
       </VBox>
       <Label fx:id="versionLabel" onMouseClicked="#openNews" text="Version" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
          <styleClass>

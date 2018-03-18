@@ -141,6 +141,9 @@ public final class Utils {
      * @param output The output file
      */
     public static void downloadFile(String url, File output) throws IOException {
+        if (url.startsWith("file")) {
+            return;
+        }
         URLConnection con = new URL(url).openConnection();
         String ETag = con.getHeaderField("ETag");
         //Match ETAG with existing file
@@ -228,6 +231,12 @@ public final class Utils {
             return readText(in);
         }
         return "";
+    }
+
+
+    public static String readFile(File file) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        return readText(in);
     }
 
     /**

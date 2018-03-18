@@ -45,6 +45,10 @@
     -fx-graphic: url("textures/language.png");
 }
 
+#accountButton {
+    -fx-graphic: url("textures/dropdown.png");
+}
+
 .selectedItem {
     -fx-background-image: url("textures/menu_label.png");
     -fx-background-repeat: stretch;
@@ -91,39 +95,39 @@
     -fx-background-image: url("textures/button_hover.png");
 }
 
-.left-arrow {
+.arrow {
     -fx-background-repeat: stretch;
     -fx-background-position: center center;
     -fx-background-size: 100% 100%;
     -fx-background-insets: 0;
+}
+
+.left-arrow {
     -fx-background-image: url("textures/left_arrow.png");
 }
 
 .right-arrow{
-    -fx-background-repeat: stretch;
-    -fx-background-position: center center;
-    -fx-background-size: 100% 100%;
-    -fx-background-insets: 0;
     -fx-background-image: url("textures/right_arrow.png");
 }
+
 .text-field {
     -fx-text-box-border: black;
 }
 
 .text-1 {
-    -fx-font-size: 24px;
+    -fx-font-size: 22px;
 }
 
 .text-2 {
-    -fx-font-size: 21.5px;
+    -fx-font-size: 20px;
 }
 
 .text-3 {
-    -fx-font-size: 19px;
+    -fx-font-size: 18px;
 }
 
 .text-4 {
-    -fx-font-size: 16.5px;
+    -fx-font-size: 16px;
 }
 
 .text-5 {
@@ -131,7 +135,7 @@
 }
 
 .text-6 {
-    -fx-font-size: 11.5px;
+    -fx-font-size: 12px;
 }
 
 .toggle-disabled {
