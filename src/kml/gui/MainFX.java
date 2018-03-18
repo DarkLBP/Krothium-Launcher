@@ -68,7 +68,7 @@ public class MainFX {
 
     @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, exportLogs, downloadServer;
+            selectCape, exportLogs, downloadServer, deleteCache;
 
     @FXML private Tab loginTab, newsTab, skinsTab,
             settingsTab, launchOptionsTab, profileEditorTab;
@@ -284,6 +284,7 @@ public class MainFX {
         this.skinSlim.setText(Language.get(91));
         this.iconLabel.setText(Language.get(92));
         this.includeCape.setText(Language.get(93));
+        this.deleteCache.setText(Language.get(94));
         this.profileName.setPromptText(Language.get(98));
         this.authenticationLabel.setText(Language.get(99));
     }
@@ -1692,12 +1693,15 @@ public class MainFX {
         if (selected != null) {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(selected))) {
                 File[] files = Kernel.APPLICATION_LOGS.listFiles();
-                for (File file : files) {
-                    ZipEntry entry = new ZipEntry(file.getName());
-                    out.putNextEntry(entry);
-                    byte[] bytes = Files.readAllBytes(file.toPath());
-                    out.write(bytes);
-                    out.closeEntry();
+                if (files != null) {
+                    byte[] bytes;
+                    for (File file : files) {
+                        ZipEntry entry = new ZipEntry(file.getName());
+                        out.putNextEntry(entry);
+                        bytes = Files.readAllBytes(file.toPath());
+                        out.write(bytes);
+                        out.closeEntry();
+                    }
                 }
                 this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
             } catch (IOException ex) {

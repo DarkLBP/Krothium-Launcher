@@ -91,7 +91,7 @@ Clássico
 Delgado
 Ícone
 Mostrar capa na visualização
-
+Eliminar Cache
 
 
 

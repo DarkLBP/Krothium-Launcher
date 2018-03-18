@@ -91,7 +91,7 @@ Classic
 Slim
 Icon
 Show cape in preview
-
+Delete Cache
 
 
 

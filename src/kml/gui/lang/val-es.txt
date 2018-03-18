@@ -91,7 +91,7 @@ Clàssic
 Prim
 Icona
 Mostrar capa a la vista prèvia
-
+Eliminar Cache
 
 
 

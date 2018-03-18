@@ -91,7 +91,7 @@ Klasszikus
 Vékony
 Ikon
 Köpeny előnézet engedélyezése
-
+Cache Törlése
 
 
 
