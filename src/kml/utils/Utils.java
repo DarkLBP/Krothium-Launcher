@@ -233,12 +233,6 @@ public final class Utils {
         return "";
     }
 
-
-    public static String readFile(File file) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return readText(in);
-    }
-
     /**
      * Verifies a checksum from a file
      * @param file The file to be checked
