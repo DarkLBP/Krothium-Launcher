@@ -91,10 +91,10 @@ Clásico
 Delgado
 Icono
 Mostrar capa en la previsualización
-Este anuncio mantiene el servicio vivo.
-Para cerrar el anuncio debes esperar 5 segundos y pulsar Saltar Publicidad.
-Si no quieres esperar siempre puedes hacer una donación.
-¿Quieres hacer una donación ahora?
+
+
+
+
 Mi configuración
 Servidor de Autenticación:
 

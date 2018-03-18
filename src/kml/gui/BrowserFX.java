@@ -2,6 +2,7 @@ package kml.gui;
 
 import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -11,10 +12,12 @@ public class BrowserFX {
     private WebView webBrowser;
 
     private Stage stage;
-    private Stage toHide;
+    private Scene browser;
+    private Scene main;
 
-    public final void initialize(Stage s) {
+    public final void initialize(Stage s, Scene browser) {
         this.stage = s;
+        this.browser = browser;
         WebEngine engine = this.webBrowser.getEngine();
         String userAgent = engine.getUserAgent();
         engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:57.0) Gecko/20100101 Firefox/57.0");
@@ -26,9 +29,8 @@ public class BrowserFX {
                         && !location.contains("about:blank") && !location.contains("872429")) {
                     this.webBrowser.getEngine().load("about:blank");
                 }
-                if (location.contains("about:blank") && !this.toHide.isShowing()) {
-                    this.toHide.show();
-                    s.close();
+                if (location.contains("about:blank")) {
+                    this.stage.setScene(main);
                 }
             }
         });
@@ -38,10 +40,9 @@ public class BrowserFX {
         this.webBrowser.getEngine().load(url);
     }
 
-    public final void show(Stage toHide) {
-        this.toHide = toHide;
-        toHide.close();
-        this.stage.show();
+    public final void show(Scene main) {
+        this.main = main;
+        this.stage.setScene(this.browser);
     }
 
     public final boolean isVisible() {

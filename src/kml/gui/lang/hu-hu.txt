@@ -91,10 +91,10 @@ Klasszikus
 Vékony
 Ikon
 Köpeny előnézet engedélyezése
-A hírdetések tartják életben ezt a szolgáltatást.
-A hirdetés bezárásához 5 másodpercet kell várni, majd kattintson a Skip AD gombra.
-Ha nem akarod megvárni akkor adományozhatsz.
-Szeretnél adományozni most?
+
+
+
+
 Saját konfiguráció
 Hitelesítési Kiszolgáló:
 

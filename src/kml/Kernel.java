@@ -157,22 +157,9 @@ public final class Kernel {
         try {
             loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
             Parent p = loader.load();
-            Stage s = new Stage();
-            s.getIcons().add(APPLICATION_ICON);
-            s.setTitle("Krothium Minecraft Launcher");
-            s.setScene(new Scene(p));
-            s.setMaximized(false);
-            s.setOnCloseRequest(e -> {
-                e.consume();
-                int result = this.showAlert(AlertType.CONFIRMATION, null, Language.get(94) + System.lineSeparator() + Language.get(95) + System.lineSeparator() +
-                        Language.get(96) + System.lineSeparator() + Language.get(97));
-                if (result == 1) {
-                    this.hostServices.showDocument("https://krothium.com/donaciones/");
-                    this.exitSafely();
-                }
-            });
+            Scene browser = new Scene(p);
             this.webBrowser = loader.getController();
-            this.webBrowser.initialize(s);
+            this.webBrowser.initialize(stage, browser);
         } catch (IOException e) {
             this.console.print("Failed to initialize web browser.");
             e.printStackTrace(this.console.getWriter());
@@ -185,14 +172,15 @@ public final class Kernel {
             loader.setRoot(null);
             loader.setController(null);
             Parent p = loader.load();
+            Scene main = new Scene(p);
             stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
             stage.setMaximized(false);
             stage.setResizable(false);
             stage.setOnCloseRequest(e -> this.exitSafely());
-            stage.setScene(new Scene(p));
+            stage.setScene(main);
             MainFX mainForm = loader.getController();
-            mainForm.initialize(this, stage);
+            mainForm.initialize(this, stage, main);
         } catch (IOException e) {
             this.console.print("Failed to initialize main interface.");
             e.printStackTrace(this.console.getWriter());

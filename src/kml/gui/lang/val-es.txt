@@ -91,10 +91,10 @@ Clàssic
 Prim
 Icona
 Mostrar capa a la vista prèvia
-Aquest anunci manté el servei viu.
-Per a tancar l'anunci has d'esperar 5 segons i pretar Saltar Publicitat.
-No vols esperar sempre pots fer una donació.
-Vols fer una donació ara?
+
+
+
+
 La meua configuració
 Servidor de Autenticació:
 

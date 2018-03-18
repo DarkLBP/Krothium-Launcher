@@ -8,6 +8,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -103,6 +104,7 @@ public class MainFX {
     private Kernel kernel;
     private Console console;
     private Stage stage;
+    private Scene mainScene;
     private final List<Slide> slides = new ArrayList<>();
     private int currentSlide;
     private int currentPreview; // 0 = front / 1 = right / 2 = back / 3 = left
@@ -119,7 +121,7 @@ public class MainFX {
      * @param k The Kernel instance
      * @param s The Stage instance
      */
-    public final void initialize(Kernel k, Stage s) {
+    public final void initialize(Kernel k, Stage s, Scene scene) {
         //Require to exit using Platform.exit()
         Platform.setImplicitExit(false);
 
@@ -127,6 +129,7 @@ public class MainFX {
         this.kernel = k;
         this.console = k.getConsole();
         this.stage = s;
+        this.mainScene = scene;
 
         //Update version label
         this.versionLabel.setText(Kernel.KERNEL_BUILD_NAME);
@@ -220,7 +223,7 @@ public class MainFX {
                     String secondChunk = Utils.fromBase64(response.split(":")[1]);
                     String adsURL = secondChunk == null ? "" : secondChunk;
                     this.kernel.getBrowser().loadWebsite(adsURL);
-                    this.kernel.getBrowser().show(this.stage);
+                    this.kernel.getBrowser().show(this.mainScene);
                 }
                 this.console.print("Ads loaded.");
             } else {
@@ -987,9 +990,6 @@ public class MainFX {
             if (!this.profileListPopupLoaded) {
                 this.loadProfileListPopup();
             }
-            Bounds b = this.playButton.localToScene(this.playButton.getBoundsInLocal());
-            this.profilePopupList.setTranslateX(b.getMinX() - 100);
-            this.profilePopupList.setTranslateY(b.getMinY() - 180);
             this.profilePopupList.setVisible(true);
             this.profilePopupList.getSelectionModel().clearSelection();
         }

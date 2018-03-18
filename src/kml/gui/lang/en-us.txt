@@ -91,10 +91,10 @@ Classic
 Slim
 Icon
 Show cape in preview
-This ad makes this service alive.
-To close the ad you need to wait 5 seconds and click Skip Ad.
-If you don't want to wait you can always make a donation.
-Do you want to donate now?
+
+
+
+
 My configuration
 Authentication Server:
 
