@@ -1408,6 +1408,7 @@ public class MainFX {
         if (result == 1) {
             Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
             if (this.kernel.getProfiles().deleteProfile(this.kernel.getProfiles().getProfile(selectedElement.getId()))) {
+                this.kernel.saveProfiles();
                 this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
             } else {
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(58));
