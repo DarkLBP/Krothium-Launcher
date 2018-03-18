@@ -27,6 +27,9 @@ public class Slide {
     public final Image getImage() {
         if (this.loadedImage == null) {
             InputStream stream = Utils.readCachedStream(this.image);
+            if (stream == null) {
+                return null;
+            }
             this.loadedImage = new Image(stream);
             try {
                 stream.close();

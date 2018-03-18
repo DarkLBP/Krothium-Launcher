@@ -598,7 +598,10 @@ public class MainFX {
             this.slideshowBox.setVisible(true);
             this.slideshowBox.setManaged(true);
             Slide s = this.slides.get(0);
-            this.slideshow.setImage(s.getImage());
+            Image i = s.getImage();
+            if (i != null) {
+                this.slideshow.setImage(s.getImage());
+            }
             this.newsTitle.setText(s.getTitle());
             this.newsText.setText(s.getText());
         } else {
@@ -633,7 +636,10 @@ public class MainFX {
         }
         Slide s = this.slides.get(this.currentSlide);
         Thread t = new Thread(() -> {
-            this.slideshow.setImage(s.getImage());
+            Image i = s.getImage();
+            if (i != null) {
+                this.slideshow.setImage(i);
+            }
         });
         t.start();
         this.newsTitle.setText(s.getTitle());
