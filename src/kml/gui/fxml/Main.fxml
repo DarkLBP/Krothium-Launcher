@@ -775,7 +775,7 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
-      <ListView fx:id="iconList" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="113.0" visible="false" AnchorPane.leftAnchor="394.0" AnchorPane.topAnchor="274.0">
+      <ListView fx:id="iconList" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="111.0" visible="false" AnchorPane.leftAnchor="398.0" AnchorPane.topAnchor="275.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -793,7 +793,7 @@
             <String fx:value="highlight" />
          </styleClass>
       </Label>
-      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="203.0" AnchorPane.topAnchor="360.0">
+      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="203.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

@@ -920,14 +920,14 @@ public class MainFX {
      * @param error True if an error happened during launch
      */
     public final void gameEnded(boolean error) {
-        if (error) {
-            this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
-        }
-        if (!this.kernel.getSettings().getKeepLauncherOpen()) {
-            this.kernel.exitSafely();
-        }
-        this.playButton.setDisable(false);
         Platform.runLater(() -> {
+            if (error) {
+                this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
+            }
+            if (!this.kernel.getSettings().getKeepLauncherOpen()) {
+                this.kernel.exitSafely();
+            }
+            this.playButton.setDisable(false);
             if (Kernel.USE_LOCAL) {
                 this.playButton.setText(Language.get(79));
             } else {

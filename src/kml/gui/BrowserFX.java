@@ -20,7 +20,7 @@ public class BrowserFX {
         this.browser = browser;
         WebEngine engine = this.webBrowser.getEngine();
         String userAgent = engine.getUserAgent();
-        engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:57.0) Gecko/20100101 Firefox/57.0");
+        engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:59.0) Gecko/20100101 Firefox/59.0");
         engine.setJavaScriptEnabled(true);
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(State.SUCCEEDED)) {
@@ -32,7 +32,6 @@ public class BrowserFX {
                 if (location.contains("about:blank")) {
                     this.stage.setScene(main);
                     this.stage.setResizable(false);
-                    System.out.println(this.stage.getHeight());
                     this.stage.setWidth(850);
                     this.stage.setHeight(700);
                 }
