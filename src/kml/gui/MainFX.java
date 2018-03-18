@@ -898,17 +898,17 @@ public class MainFX {
                     this.playButton.setDisable(true);
                 });
 
-                if (!MainFX.this.kernel.getSettings().getKeepLauncherOpen()) {
+                if (!this.kernel.getSettings().getKeepLauncherOpen()) {
                     Platform.runLater(() -> MainFX.this.stage.close());
                 }
             } catch (DownloaderException e) {
-                Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
-                MainFX.this.console.print("Failed to perform game download task");
-                e.printStackTrace(MainFX.this.console.getWriter());
+                Platform.runLater(() -> this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
+                this.console.print("Failed to perform game download task");
+                e.printStackTrace(this.console.getWriter());
             } catch (GameLauncherException e) {
-                Platform.runLater(() -> MainFX.this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
-                MainFX.this.console.print("Failed to perform game launch task");
-                e.printStackTrace(MainFX.this.console.getWriter());
+                Platform.runLater(() -> this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
+                this.console.print("Failed to perform game launch task");
+                e.printStackTrace(this.console.getWriter());
             }
         });
         runThread.start();
@@ -1048,7 +1048,9 @@ public class MainFX {
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == this.profileEditorTab) {
             //Show play button
-            this.playPane.setVisible(true);
+            if (!this.progressPane.isVisible()) {
+                this.playPane.setVisible(true);
+            }
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == this.loginTab) {
             this.newsLabel.getStyleClass().remove("selectedItem");
