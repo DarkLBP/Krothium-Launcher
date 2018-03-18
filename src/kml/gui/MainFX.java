@@ -455,7 +455,7 @@ public class MainFX {
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the skin.");
-                    this.console.print(ex.getMessage());
+                    ex.printStackTrace(this.console.getWriter());
                     this.kernel.showAlert(AlertType.ERROR, null, Language.get(42));
                 }
             }
@@ -491,7 +491,7 @@ public class MainFX {
                     }
                 } catch (Exception ex) {
                     this.console.print("Failed to change the cape.");
-                    this.console.print(ex.getMessage());
+                    ex.printStackTrace(this.console.getWriter());
                     this.kernel.showAlert(AlertType.ERROR, null, Language.get(43));
                 }
             }
@@ -522,7 +522,7 @@ public class MainFX {
             }
             catch (Exception ex) {
                 this.console.print("Failed to delete the skin.");
-                this.console.print(ex.getMessage());
+                ex.printStackTrace(this.console.getWriter());
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(33));
             }
             params.clear();
@@ -553,7 +553,7 @@ public class MainFX {
             }
             catch (Exception ex) {
                 this.console.print("Failed to delete the cape.");
-                this.console.print(ex.getMessage());
+                ex.printStackTrace(this.console.getWriter());
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(38));
             }
             params.clear();
@@ -588,10 +588,10 @@ public class MainFX {
                 this.slides.add(s);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             this.newsTitle.setText(Language.get(80));
             this.newsText.setText(Language.get(101));
-            this.console.print("Couldn't parse news data. (" + ex.getMessage() + ')');
+            this.console.print("Couldn't parse news data.");
+            ex.printStackTrace(this.console.getWriter());
             return;
         }
         if (!this.slides.isEmpty()) {
