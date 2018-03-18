@@ -295,11 +295,13 @@ public class MainFX {
     private void loadTextures() {
         if (this.loadingTextures) {
             return;
-        } else if (Kernel.USE_LOCAL) {
-            this.selectSkin.setDisable(true);
-            this.selectCape.setDisable(true);
-            this.deleteSkin.setDisable(true);
-            this.deleteCape.setDisable(true);
+        }
+        this.selectSkin.setDisable(true);
+        this.selectCape.setDisable(true);
+        this.deleteSkin.setDisable(true);
+        this.deleteCape.setDisable(true);
+        this.includeCape.setDisable(true);
+        if (Kernel.USE_LOCAL) {
             return;
         }
         Thread t = new Thread(() -> {
@@ -341,10 +343,8 @@ public class MainFX {
                         }
                         if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
                             this.skin = this.steve;
-                            this.deleteSkin.setDisable(true);
                         } else if (this.skin.getHeight() == 0) {
                             this.skin = this.alex;
-                            this.deleteSkin.setDisable(true);
                         } else {
                             this.deleteSkin.setDisable(false);
                         }
@@ -354,9 +354,6 @@ public class MainFX {
                             stream.close();
                             this.includeCape.setDisable(false);
                             this.deleteCape.setDisable(false);
-                        } else {
-                            this.includeCape.setDisable(true);
-                            this.deleteCape.setDisable(true);
                         }
                         if (slim) {
                             this.skinSlim.setSelected(true);
@@ -368,6 +365,8 @@ public class MainFX {
                         this.updatePreview();
                     }
                 }
+                this.selectSkin.setDisable(false);
+                this.selectCape.setDisable(false);
             } catch (Exception ex) {
                 this.console.print("Failed to parse remote profile textures.");
                 ex.printStackTrace(this.console.getWriter());
