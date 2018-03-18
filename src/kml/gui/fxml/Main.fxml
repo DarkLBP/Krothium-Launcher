@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onMouseClicked="#checkPopups" prefHeight="675.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onMouseClicked="#checkPopups" prefHeight="665.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
       <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="950.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
@@ -162,13 +162,13 @@
                <content>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="280.0" prefWidth="200.0">
+                        <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="260.0" prefWidth="200.0">
                            <children>
                               <Label fx:id="slideBack" onMouseClicked="#changeSlide" prefHeight="65.0" prefWidth="35.0" styleClass="left-arrow">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Label>
-                              <ImageView fx:id="slideshow" fitHeight="280.0" fitWidth="700.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="slideshow" fitHeight="260.0" fitWidth="700.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
                                  </viewport>
@@ -201,6 +201,9 @@
                            </cursor>
                         </Label>
                      </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
                   </VBox>
                </content>
             </Tab>
@@ -215,7 +218,7 @@
                                     <Insets right="25.0" />
                                  </HBox.margin>
                                  <children>
-                                    <StackPane minWidth="300.0" prefHeight="290.0" prefWidth="210.0">
+                                    <StackPane minWidth="300.0" prefHeight="270.0" prefWidth="210.0">
                                        <children>
                                           <Label fx:id="rotateLeft" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" styleClass="left-arrow" StackPane.alignment="CENTER_LEFT">
                                              <cursor>
@@ -225,7 +228,7 @@
                                                 <Insets left="10.0" />
                                              </StackPane.margin>
                                           </Label>
-                                          <ImageView fx:id="skinPreview" fitHeight="290.0" fitWidth="190.0" pickOnBounds="true" preserveRatio="true" smooth="false" StackPane.alignment="CENTER" />
+                                          <ImageView fx:id="skinPreview" fitHeight="250.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" smooth="false" StackPane.alignment="CENTER" />
                                           <Label fx:id="rotateRight" onMouseClicked="#rotatePreview" prefHeight="65.0" prefWidth="35.0" styleClass="right-arrow" StackPane.alignment="CENTER_RIGHT">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
@@ -269,7 +272,7 @@
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin></Label>
-                                    <Button fx:id="selectSkin" mnemonicParsing="false" onMouseClicked="#changeSkin" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                    <Button fx:id="selectSkin" mnemonicParsing="false" onMouseClicked="#changeSkin" prefHeight="40.0" prefWidth="180.0" text="SELECT">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-alt" />
@@ -278,7 +281,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </Button>
-                                    <Button fx:id="deleteSkin" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#deleteSkin" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                    <Button fx:id="deleteSkin" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#deleteSkin" prefHeight="40.0" prefWidth="180.0" text="DELETE">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-warn" />
@@ -295,7 +298,7 @@
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="selectCape" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#changeCape" prefHeight="44.0" prefWidth="201.0" text="SELECT">
+                                    <Button fx:id="selectCape" layoutX="10.0" layoutY="151.0" mnemonicParsing="false" onMouseClicked="#changeCape" prefHeight="40.0" prefWidth="180.0" text="SELECT">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-alt" />
@@ -304,7 +307,7 @@
                                           <Cursor fx:constant="HAND" />
                                        </cursor>
                                     </Button>
-                                    <Button fx:id="deleteCape" layoutX="10.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#deleteCape" prefHeight="44.0" prefWidth="201.0" text="DELETE">
+                                    <Button fx:id="deleteCape" layoutX="10.0" layoutY="200.0" mnemonicParsing="false" onMouseClicked="#deleteCape" prefHeight="40.0" prefWidth="180.0" text="DELETE">
                                        <styleClass>
                                           <String fx:value="text-5" />
                                           <String fx:value="color-warn" />
@@ -768,11 +771,11 @@
             <Insets left="25.0" right="25.0" />
          </padding>
       </VBox>
-      <ListView fx:id="languagesList" maxHeight="242.0" maxWidth="300.0" minHeight="187.0" minWidth="300.0" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="242.0" prefWidth="288.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <ListView fx:id="languagesList" onMouseClicked="#updateLanguage" onMouseExited="#hidePopup" prefHeight="230.0" prefWidth="270.0" styleClass="text-6" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
-      <ListView fx:id="iconList" maxWidth="110.0" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="110.0" visible="false" AnchorPane.leftAnchor="404.0" AnchorPane.topAnchor="275.0">
+      <ListView fx:id="iconList" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" prefHeight="190.0" prefWidth="113.0" visible="false" AnchorPane.leftAnchor="394.0" AnchorPane.topAnchor="274.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -790,7 +793,7 @@
             <String fx:value="highlight" />
          </styleClass>
       </Label>
-      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="203.0" AnchorPane.topAnchor="382.0">
+      <ListView fx:id="profilePopupList" maxWidth="450.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" prefHeight="180.0" prefWidth="450.0" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="203.0" AnchorPane.topAnchor="360.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

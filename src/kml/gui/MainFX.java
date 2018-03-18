@@ -976,6 +976,7 @@ public class MainFX {
         }
         Authentication a = this.kernel.getAuthentication();
         a.setSelectedUser(null);
+        this.kernel.saveProfiles();
         this.showLoginPrompt(true);
         this.updateExistingUsers();
     }
@@ -1026,7 +1027,7 @@ public class MainFX {
             } else {
                 this.switchAccountButton.setTranslateX(b.getMinX() - 5);
             }
-            this.switchAccountButton.setTranslateY(b.getMaxY() + 5);
+            this.switchAccountButton.setTranslateY(35);
             this.switchAccountButton.setVisible(true);
         }
     }
@@ -1516,6 +1517,7 @@ public class MainFX {
                     username = this.username.getText();
                 }
                 auth.authenticate(username, this.password.getText());
+                this.kernel.saveProfiles();
                 this.username.setText("");
                 this.password.setText("");
                 this.showLoginPrompt(false);
@@ -1572,6 +1574,7 @@ public class MainFX {
         try {
             auth.setSelectedUser(selected);
             auth.refresh();
+            this.kernel.saveProfiles();
             this.texturesLoaded = false;
             this.showLoginPrompt(false);
             this.fetchAds();
@@ -1590,6 +1593,7 @@ public class MainFX {
         if (result == 1) {
             Authentication auth = this.kernel.getAuthentication();
             auth.removeUser(selected);
+            this.kernel.saveProfiles();
             this.updateExistingUsers();
         }
     }

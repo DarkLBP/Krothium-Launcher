@@ -31,6 +31,10 @@ public class BrowserFX {
                 }
                 if (location.contains("about:blank")) {
                     this.stage.setScene(main);
+                    this.stage.setResizable(false);
+                    System.out.println(this.stage.getHeight());
+                    this.stage.setWidth(850);
+                    this.stage.setHeight(700);
                 }
             }
         });
@@ -42,6 +46,9 @@ public class BrowserFX {
 
     public final void show(Scene main) {
         this.main = main;
+        this.stage.setWidth(850);
+        this.stage.setHeight(700);
+        this.stage.setResizable(true);
         this.stage.setScene(this.browser);
     }
 

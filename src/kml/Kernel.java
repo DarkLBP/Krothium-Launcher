@@ -175,10 +175,11 @@ public final class Kernel {
             Scene main = new Scene(p);
             stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
-            stage.setMaximized(false);
             stage.setResizable(false);
             stage.setOnCloseRequest(e -> this.exitSafely());
             stage.setScene(main);
+            stage.setWidth(850);
+            stage.setHeight(700);
             MainFX mainForm = loader.getController();
             mainForm.initialize(this, stage, main);
         } catch (IOException e) {
