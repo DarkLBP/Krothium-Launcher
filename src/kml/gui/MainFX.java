@@ -1800,9 +1800,9 @@ public class MainFX {
             chooser.getExtensionFilters().add(filter);
         }
         if (method.equalsIgnoreCase("open")) {
-            return chooser.showOpenDialog(null);
+            return chooser.showOpenDialog(this.stage);
         } else if (method.equalsIgnoreCase("save")) {
-            return chooser.showSaveDialog(null);
+            return chooser.showSaveDialog(this.stage);
         }
         return null;
     }
