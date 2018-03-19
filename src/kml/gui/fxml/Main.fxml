@@ -839,7 +839,7 @@
                         <String fx:value="text-1" />
                      </styleClass>
                   </Button>
-                  <Button id="profilesButton" contentDisplay="GRAPHIC_ONLY" maxHeight="65.0" maxWidth="34.0" minHeight="65.0" minWidth="34.0" mnemonicParsing="false" onMouseClicked="#showProfiles" HBox.hgrow="NEVER">
+                  <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="65.0" maxWidth="34.0" minHeight="65.0" minWidth="34.0" mnemonicParsing="false" onMouseClicked="#showProfiles" HBox.hgrow="NEVER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

@@ -68,7 +68,7 @@ public class MainFX {
 
     @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
-            selectCape, exportLogs, downloadServer, deleteCache;
+            selectCape, exportLogs, downloadServer, deleteCache, profilePopupButton;
 
     @FXML private Tab loginTab, newsTab, skinsTab,
             settingsTab, launchOptionsTab, profileEditorTab;
@@ -113,7 +113,8 @@ public class MainFX {
     private String urlPrefix = "";
     private final String CHANGESKIN_URL = "https://mc.krothium.com/changeskin";
     private final String CHANGECAPE_URL = "https://mc.krothium.com/changecape";
-    private boolean iconListLoaded, versionListLoaded, languageListLoaded, loadingTextures, profileListLoaded, profileListPopupLoaded;
+    private boolean iconListLoaded, versionListLoaded, languageListLoaded, loadingTextures, profileListLoaded,
+            profileListPopupLoaded;
 
     /**
      * Initializes all required stuff from the GUI
@@ -243,10 +244,14 @@ public class MainFX {
         this.skinsLabel.setText(Language.get(5));
         this.settingsLabel.setText(Language.get(6));
         this.launchOptionsLabel.setText(Language.get(7));
-        if (Kernel.USE_LOCAL) {
-            this.playButton.setText(Language.get(79));
+        if (this.kernel.getGameLauncher().isRunning()) {
+            this.playButton.setText(Language.get(14));
         } else {
-            this.playButton.setText(Language.get(12));
+            if (Kernel.USE_LOCAL) {
+                this.playButton.setText(Language.get(79));
+            } else {
+                this.playButton.setText(Language.get(12));
+            }
         }
         this.usernameLabel.setText(Language.get(18));
         this.passwordLabel.setText(Language.get(19));
@@ -902,6 +907,7 @@ public class MainFX {
                     this.playPane.setVisible(true);
                     this.playButton.setText(Language.get(14));
                     this.playButton.setDisable(true);
+                    this.profilePopupButton.setDisable(true);
                 });
 
                 if (!this.kernel.getSettings().getKeepLauncherOpen()) {
@@ -933,6 +939,7 @@ public class MainFX {
                 this.kernel.exitSafely();
             }
             this.playButton.setDisable(false);
+            this.profilePopupButton.setDisable(false);
             if (Kernel.USE_LOCAL) {
                 this.playButton.setText(Language.get(79));
             } else {
@@ -1054,7 +1061,7 @@ public class MainFX {
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");
         } else if (oldTab == this.profileEditorTab) {
             //Show play button
-            if (!this.progressPane.isVisible()) {
+            if (!this.kernel.getDownloader().isDownloading()) {
                 this.playPane.setVisible(true);
             }
             this.launchOptionsLabel.getStyleClass().remove("selectedItem");

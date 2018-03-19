@@ -345,7 +345,7 @@ public class GameLauncher {
      * Checks if the game process is running
      * @return A boolean with the current state
      */
-    private boolean isRunning() {
+    public boolean isRunning() {
         return this.process != null && this.process.isAlive();
     }
 
