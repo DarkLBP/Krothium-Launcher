@@ -30,7 +30,13 @@ public class BrowserFX {
                     this.webBrowser.getEngine().load("about:blank");
                 }
                 if (location.contains("about:blank")) {
+                    double stageW = this.stage.widthProperty().doubleValue();
+                    double stageH = this.stage.heightProperty().doubleValue();
                     this.stage.setScene(main);
+                    if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
+                        this.stage.setWidth(stageW);
+                        this.stage.setHeight(stageH);
+                    }
                 }
             }
         });
@@ -42,10 +48,14 @@ public class BrowserFX {
 
     public final void show(Scene main) {
         this.main = main;
-        this.stage.setWidth(850);
-        this.stage.setHeight(700);
-        this.stage.setResizable(true);
+        double stageW = this.stage.widthProperty().doubleValue();
+        double stageH = this.stage.heightProperty().doubleValue();
         this.stage.setScene(this.browser);
+        if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
+            this.stage.setWidth(stageW);
+            this.stage.setHeight(stageH);
+        }
+
     }
 
     public final boolean isVisible() {
