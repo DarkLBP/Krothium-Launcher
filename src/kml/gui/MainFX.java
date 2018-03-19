@@ -292,6 +292,10 @@ public class MainFX {
         this.deleteCache.setText(Language.get(94));
         this.profileName.setPromptText(Language.get(98));
         this.authenticationLabel.setText(Language.get(99));
+        if (this.slides.isEmpty()) {
+            this.newsTitle.setText(Language.get(102));
+            this.newsText.setText(Language.get(103));
+        }
     }
 
     /**
