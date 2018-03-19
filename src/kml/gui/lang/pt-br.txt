@@ -94,7 +94,7 @@ Mostrar capa na visualização
 Eliminar Cache
 Aberto
 Salvar Como
-
+Esqueceu sua senha?
 Minha configuração
 Servidor de Autenticação:
 

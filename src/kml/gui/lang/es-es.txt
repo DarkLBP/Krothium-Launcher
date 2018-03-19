@@ -94,7 +94,7 @@ Mostrar capa en la previsualización
 Eliminar Cache
 Abrir
 Guardar Como
-
+¿Has olvidado tu contraseña?
 Mi configuración
 Servidor de Autenticación:
 

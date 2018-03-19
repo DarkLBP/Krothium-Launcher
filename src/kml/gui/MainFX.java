@@ -65,40 +65,26 @@ public class MainFX {
             rotateLeft, includeCape, versionLabel, usernameLabel, passwordLabel, existingLabel, launcherSettings,
             nameLabel, profileVersionLabel, skinLabel, capeLabel, modelLabel, iconLabel, helpButton, gameVersion,
             authenticationLabel, authServer;
-
     @FXML private Button playButton, deleteButton, changeIcon, deleteSkin, deleteCape, logoutButton,
             loginButton, registerButton, loginExisting, cancelButton, saveButton, selectSkin,
             selectCape, exportLogs, downloadServer, deleteCache, profilePopupButton;
-
     @FXML private Tab loginTab, newsTab, skinsTab,
             settingsTab, launchOptionsTab, profileEditorTab;
-
     @FXML private ProgressBar progressBar;
-
     @FXML private TabPane contentPane;
-
     @FXML private ListView<Label> languagesList, profileList, profilePopupList;
-
     @FXML private ListView<ImageView> iconList;
-
     @FXML private VBox progressPane, existingPanel, playPane, skinActions;
-
     @FXML private HBox tabMenu, slideshowBox;
-
     @FXML private TextField username, profileName,javaExec, gameDir, javaArgs,
             resH, resW;
-
     @FXML private PasswordField password;
-
     @FXML private ComboBox<User> existingUsers;
-
     @FXML private ComboBox<VersionMeta> versionList;
-
     @FXML private StackPane versionBlock, javaArgsBlock, javaExecBlock, iconBlock;
-
     @FXML private ImageView profileIcon, slideshow, skinPreview;
-
     @FXML private RadioButton skinClassic, skinSlim, authKrothium, authMojang;
+    @FXML private Hyperlink forgotPasswordLink;
 
     private Kernel kernel;
     private Console console;
@@ -290,6 +276,7 @@ public class MainFX {
         this.iconLabel.setText(Language.get(92));
         this.includeCape.setText(Language.get(93));
         this.deleteCache.setText(Language.get(94));
+        this.forgotPasswordLink.setText(Language.get(97));
         this.profileName.setPromptText(Language.get(98));
         this.authenticationLabel.setText(Language.get(99));
         if (this.slides.isEmpty()) {
@@ -1641,7 +1628,7 @@ public class MainFX {
     @FXML public final void register() {
         //Open register page
         if (this.authKrothium.isSelected()) {
-            this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/register");
+            this.kernel.getHostServices().showDocument("https://krothium.com/register");
         } else {
             this.kernel.getHostServices().showDocument("https://minecraft.net/");
         }
@@ -1846,5 +1833,13 @@ public class MainFX {
             return chooser.showSaveDialog(this.stage);
         }
         return null;
+    }
+
+    @FXML private void forgotPassword() {
+        if (this.authKrothium.isSelected()) {
+            this.kernel.getHostServices().showDocument("https://krothium.com/lostpassword");
+        } else {
+            this.kernel.getHostServices().showDocument("https://account.mojang.com/password");
+        }
     }
 }

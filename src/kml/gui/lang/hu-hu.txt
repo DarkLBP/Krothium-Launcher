@@ -94,7 +94,7 @@ Köpeny előnézet engedélyezése
 Cache Törlése
 Nyisd Ki
 Mentés Másként
-
+Elfelejtette a jelszavát?
 Saját konfiguráció
 Hitelesítési Kiszolgáló:
 

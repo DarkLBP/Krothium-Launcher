@@ -94,7 +94,7 @@ Show cape in preview
 Delete Cache
 Open
 Save As
-
+Forgot your password?
 My configuration
 Authentication Server:
 

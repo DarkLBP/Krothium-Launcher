@@ -6,6 +6,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.PasswordField?>
@@ -558,12 +559,16 @@
                               <Insets left="15.0" right="15.0" />
                            </VBox.margin>
                         </PasswordField>
-                        <Label fx:id="authenticationLabel" prefWidth="700.0" text="Authentication Server:">
+                        <StackPane maxWidth="700.0" minHeight="30.0">
+                           <children>
+                              <Label fx:id="authenticationLabel" prefWidth="700.0" text="Authentication Server:" StackPane.alignment="CENTER_LEFT" />
+                              <Hyperlink fx:id="forgotPasswordLink" onMouseClicked="#forgotPassword" styleClass="text-5" text="Forgot your password?" StackPane.alignment="CENTER_RIGHT" />
+                           </children>
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" maxWidth="700.0" prefHeight="50.0" prefWidth="700.0">
+                        </StackPane>
+                        <HBox alignment="CENTER_LEFT" maxWidth="700.0" prefHeight="30.0" prefWidth="700.0">
                            <children>
                               <RadioButton fx:id="authKrothium" mnemonicParsing="false" selected="true" styleClass="text-5" text="Krothium">
                                  <toggleGroup>
@@ -604,6 +609,9 @@
                                  </styleClass>
                               </Button>
                            </children>
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding>
                         </HBox>
                      </children>
                      <padding>

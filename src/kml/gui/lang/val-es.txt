@@ -94,7 +94,7 @@ Mostrar capa a la vista prèvia
 Eliminar Cache
 Obrir
 Guardar Com
-
+Has oblidat la teua contrasenya?
 La meua configuració
 Servidor de Autenticació:
 
