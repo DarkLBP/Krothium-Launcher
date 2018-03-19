@@ -1397,9 +1397,11 @@ public class MainFX {
                 target.setJavaArgs(null);
             }
         }
-
-        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
         this.kernel.saveProfiles();
+        if (this.kernel.getProfiles().getSelectedProfile() == target) {
+            this.updateGameVersion();
+        }
+        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
         this.profileListLoaded = false;
         this.profileListPopupLoaded = false;
         this.switchTab(this.launchOptionsLabel);
@@ -1422,8 +1424,10 @@ public class MainFX {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
         if (result == 1) {
             Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
-            if (this.kernel.getProfiles().deleteProfile(this.kernel.getProfiles().getProfile(selectedElement.getId()))) {
+            Profile p = this.kernel.getProfiles().getProfile(selectedElement.getId());
+            if (this.kernel.getProfiles().deleteProfile(p)) {
                 this.kernel.saveProfiles();
+                this.updateGameVersion();
                 this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
             } else {
                 this.kernel.showAlert(AlertType.ERROR, null, Language.get(58));
@@ -1662,6 +1666,7 @@ public class MainFX {
             }
             s.setEnableSnapshots(!s.getEnableSnapshots());
             this.toggleLabel(source, s.getEnableSnapshots());
+            this.validateSelectedProfile();
             this.loadProfileList();
             this.versionListLoaded = false;
         } else if (source == this.historicalVersions) {
@@ -1673,6 +1678,7 @@ public class MainFX {
             }
             s.setEnableHistorical(!s.getEnableHistorical());
             this.toggleLabel(source, s.getEnableHistorical());
+            this.validateSelectedProfile();
             this.loadProfileList();
             this.versionListLoaded = false;
         } else if (source == this.advancedSettings) {
