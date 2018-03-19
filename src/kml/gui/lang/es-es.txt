@@ -92,8 +92,8 @@ Delgado
 Icono
 Mostrar capa en la previsualización
 Eliminar Cache
-
-
+Abrir
+Guardar Como
 
 Mi configuración
 Servidor de Autenticación:

@@ -1817,8 +1817,10 @@ public class MainFX {
             chooser.getExtensionFilters().add(filter);
         }
         if (method.equalsIgnoreCase("open")) {
+            chooser.setTitle(Language.get(95));
             return chooser.showOpenDialog(this.stage);
         } else if (method.equalsIgnoreCase("save")) {
+            chooser.setTitle(Language.get(96));
             return chooser.showSaveDialog(this.stage);
         }
         return null;

@@ -92,8 +92,8 @@ Slim
 Icon
 Show cape in preview
 Delete Cache
-
-
+Open
+Save As
 
 My configuration
 Authentication Server:
