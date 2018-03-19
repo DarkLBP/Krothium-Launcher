@@ -431,43 +431,111 @@ public class MainFX {
     }
 
     /**
-     * Changes the skin of the user
+     * Submits a texure change
+     * @param target Skin or cape
+     * @param file File to be submited. Null if it's a deletion.
      */
-    @FXML private void changeSkin() {
-        File selected = this.selectFile(Language.get(44), "*.png", "open");
-        if (selected != null) {
-            if (selected.length() > 131072) {
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(105));
-                this.console.print("Skin file exceeds 128KB file size limit.");
-            } else {
-                Map<String, String> params = new HashMap<>();
-                try {
-                    byte[] data = Files.readAllBytes(selected.toPath());
-                    params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
-                    params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
+    private void submitChange(String target, File file) {
+        String url = target.equals("skin") ? this.CHANGESKIN_URL : this.CHANGECAPE_URL;
+        Map<String, String> params = new HashMap<>();
+        params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
+        params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
+        byte[] data = null;
+        if (file != null) {
+            if (file.length() > 131072) {
+                if (target.equals("skin")) {
+                    this.console.print("Skin file exceeds 128KB file size limit.");
+                    Platform.runLater(() -> {
+                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(105));
+                    });
+                } else {
+                    this.console.print("Cape file exceeds 128KB file size limit.");
+                    Platform.runLater(() -> {
+                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(104));
+                    });
+                }
+                return;
+            }
+            try {
+                data = Files.readAllBytes(file.toPath());
+                if (target.equals("skin")) {
                     if (this.skinSlim.isSelected()) {
                         params.put("Skin-Type", "alex");
                     } else {
                         params.put("Skin-Type", "steve");
                     }
-                    params.put("Content-Type", "image/png");
-                    String r = Utils.sendPost(this.CHANGESKIN_URL, data, params);
-                    if (!"OK".equals(r)) {
-                        this.console.print("Failed to change the skin.");
-                        this.console.print(r);
-                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(42));
+                }
+                params.put("Content-Type", "image/png");
+            } catch (Exception ex) {
+                this.console.print("Failed read textures.");
+                ex.printStackTrace(this.console.getWriter());
+            }
+        }
+        try {
+            String r = Utils.sendPost(url, data, params);
+            String text = "";
+            if (!"OK".equals(r)) {
+                if (target.equals("skin")) {
+                    if (file != null) {
+                        text = Language.get(42);
+                    } else {
+                        text = Language.get(33);
                     }
-                    else {
-                        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(40));
-                        this.console.print("Skin changed successfully!");
-                        this.loadTextures();
+                } else {
+                    if (file != null) {
+                        text = Language.get(43);
+                    } else {
+                        text = Language.get(38);
                     }
-                } catch (Exception ex) {
-                    this.console.print("Failed to change the skin.");
-                    ex.printStackTrace(this.console.getWriter());
-                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(42));
+                }
+                this.console.print("Failed to " + (file != null ? "change" : "delete") + " the " + target + ".");
+                this.console.print(r);
+                String finalText = text;
+                Platform.runLater(() -> {
+                    this.kernel.showAlert(AlertType.ERROR, null, finalText);
+                });
+                return;
+            }
+            if (target.equals("skin")) {
+                if (file != null) {
+                    text = Language.get(40);
+                } else {
+                    text = Language.get(41);
+                }
+            } else {
+                if (file != null) {
+                    text = Language.get(34);
+                } else {
+                    text = Language.get(39);
                 }
             }
+            target = target.substring(0, 1).toUpperCase() + target.substring(1);
+            this.console.print(target + " " + (file != null ? "changed" : "deleted") + " successfully!");
+            String finalText = text;
+            Platform.runLater(() -> {
+                this.kernel.showAlert(AlertType.INFORMATION, null, finalText);
+            });
+            this.loadTextures();
+        } catch (IOException ex) {
+            this.console.print("Failed to perform textures post.");
+            ex.printStackTrace(this.console.getWriter());
+        }
+    }
+
+    /**
+     * Changes the skin of the user
+     */
+    @FXML private void changeSkin() {
+        File selected = this.selectFile(Language.get(44), "*.png", "open");
+        if (selected != null) {
+            this.selectSkin.setDisable(true);
+            this.deleteSkin.setDisable(true);
+            Thread t = new Thread(() -> {
+                submitChange("skin", selected);
+                this.selectSkin.setDisable(false);
+                this.deleteSkin.setDisable(false);
+            });
+            t.start();
         }
     }
 
@@ -477,34 +545,16 @@ public class MainFX {
     @FXML private void changeCape() {
         File selected = this.selectFile(Language.get(25), "*.png", "open");
         if (selected != null) {
-            if (selected.length() > 131072) {
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(104));
-                this.console.print("Cape file exceeds 128KB file size limit.");
-            } else {
-                Map<String, String> params = new HashMap<>();
-                try {
-                    byte[] data = Files.readAllBytes(selected.toPath());
-                    params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
-                    params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
-                    params.put("Content-Type", "image/png");
-                    String r = Utils.sendPost(this.CHANGECAPE_URL, data, params);
-                    if (!"OK".equals(r)) {
-                        this.console.print("Failed to change the cape.");
-                        this.console.print(r);
-                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(43));
-                    }
-                    else {
-                        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(41));
-                        this.console.print("Cape changed successfully.");
-                        this.loadTextures();
-                    }
-                } catch (Exception ex) {
-                    this.console.print("Failed to change the cape.");
-                    ex.printStackTrace(this.console.getWriter());
-                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(43));
-                }
-            }
+            this.selectCape.setDisable(true);
+            this.deleteCape.setDisable(true);
+            Thread t = new Thread(() -> {
+                submitChange("cape", selected);
+                this.selectCape.setDisable(false);
+                this.deleteCape.setDisable(false);
+            });
+            t.start();
         }
+
     }
 
     /**
@@ -513,28 +563,14 @@ public class MainFX {
     @FXML private void deleteSkin() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
         if (result == 1){
-            Map<String, String> params = new HashMap<>();
-            params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
-            params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
-            try {
-                String r = Utils.sendPost(this.CHANGESKIN_URL, null, params);
-                if (!"OK".equals(r)) {
-                    this.console.print("Failed to delete the skin.");
-                    this.console.print(r);
-                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(33));
-                }
-                else {
-                    this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(34));
-                    this.console.print("Skin deleted successfully!");
-                    this.loadTextures();
-                }
-            }
-            catch (Exception ex) {
-                this.console.print("Failed to delete the skin.");
-                ex.printStackTrace(this.console.getWriter());
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(33));
-            }
-            params.clear();
+            this.selectSkin.setDisable(true);
+            this.deleteSkin.setDisable(true);
+            Thread t = new Thread(() -> {
+                submitChange("skin", null);
+                this.selectSkin.setDisable(false);
+                this.deleteSkin.setDisable(false);
+            });
+            t.start();
         }
     }
 
@@ -544,28 +580,14 @@ public class MainFX {
     @FXML private void deleteCape() {
         int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
         if (result == 1){
-            Map<String, String> params = new HashMap<>();
-            params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
-            params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
-            try {
-                String r = Utils.sendPost(this.CHANGECAPE_URL, null, params);
-                if (!"OK".equals(r)) {
-                    this.console.print("Failed to delete the cape.");
-                    this.console.print(r);
-                    this.kernel.showAlert(AlertType.ERROR, null, Language.get(38));
-                }
-                else {
-                    this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(39));
-                    this.console.print("Cape deleted successfully!");
-                    this.loadTextures();
-                }
-            }
-            catch (Exception ex) {
-                this.console.print("Failed to delete the cape.");
-                ex.printStackTrace(this.console.getWriter());
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(38));
-            }
-            params.clear();
+            this.selectCape.setDisable(true);
+            this.deleteCape.setDisable(true);
+            Thread t = new Thread(() -> {
+                submitChange("cape", null);
+                this.selectCape.setDisable(false);
+                this.deleteCape.setDisable(false);
+            });
+            t.start();
         }
     }
 
