@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.css.Styleable;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -74,7 +75,7 @@ public class MainFX {
     @FXML private TabPane contentPane;
     @FXML private ListView<Label> languagesList, profileList, profilePopupList;
     @FXML private ListView<ImageView> iconList;
-    @FXML private VBox progressPane, existingPanel, playPane, skinActions;
+    @FXML private VBox progressPane, existingPanel, playPane, skinActions, newsContainer;
     @FXML private HBox tabMenu, slideshowBox;
     @FXML private TextField username, profileName,javaExec, gameDir, javaArgs,
             resH, resW;
@@ -166,6 +167,28 @@ public class MainFX {
 
         //Validate selected profile
         this.validateSelectedProfile();
+
+        //Hook resize bindings
+        this.newsContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() * 0.7 > this.slideshow.getImage().getHeight()) {
+                this.slideshow.setFitHeight(this.slideshow.getImage().getHeight());
+            } else {
+                this.slideshow.setFitHeight(newValue.doubleValue() * 0.7);
+            }
+        });
+        this.newsContainer.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() * 0.7 > this.slideshow.getImage().getWidth()) {
+                this.slideshow.setFitWidth(this.slideshow.getImage().getWidth());
+            } else {
+                this.slideshow.setFitWidth(newValue.doubleValue() * 0.7);
+            }
+        });
+        this.mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
+            this.checkPopups();
+        });
+        this.mainScene.widthProperty().addListener((observable, oldValue, newValue) -> {
+            this.checkPopups();
+        });
     }
 
     /**
@@ -620,6 +643,8 @@ public class MainFX {
             if (i != null) {
                 this.slideshow.setImage(s.getImage());
             }
+
+
             this.newsTitle.setText(s.getTitle());
             this.newsText.setText(s.getText());
         } else {
@@ -977,7 +1002,7 @@ public class MainFX {
         }
     }
 
-    public final void checkPopups(MouseEvent e) {
+    public final void checkPopups() {
         if (this.languagesList.isVisible()) {
             this.languagesList.setVisible(false);
         }
@@ -1016,6 +1041,9 @@ public class MainFX {
             if (!this.profileListPopupLoaded) {
                 this.loadProfileListPopup();
             }
+            Bounds b = this.playButton.localToScene(this.playButton.getBoundsInLocal());
+            this.profilePopupList.setTranslateX(b.getMinX() - 100);
+            this.profilePopupList.setTranslateY(b.getMinY() - 180);
             this.profilePopupList.setVisible(true);
             this.profilePopupList.getSelectionModel().clearSelection();
         }
@@ -1033,6 +1061,10 @@ public class MainFX {
                 this.loadIcons();
                 this.iconListLoaded = true;
             }
+            //Calculate change icon button position on scene
+            Bounds b = this.changeIcon.localToScene(this.changeIcon.getBoundsInLocal());
+            this.iconList.setTranslateX(b.getMinX());
+            this.iconList.setTranslateY(b.getMaxY());
             this.iconList.setVisible(true);
         }
     }

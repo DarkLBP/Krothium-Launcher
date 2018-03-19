@@ -31,9 +31,6 @@ public class BrowserFX {
                 }
                 if (location.contains("about:blank")) {
                     this.stage.setScene(main);
-                    this.stage.setResizable(false);
-                    this.stage.setWidth(850);
-                    this.stage.setHeight(700);
                 }
             }
         });

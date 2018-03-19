@@ -161,7 +161,7 @@
         <tabs>
           <Tab fx:id="newsTab" text="News Tab">
                <content>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox fx:id="newsContainer" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <HBox fx:id="slideshowBox" alignment="CENTER" prefHeight="260.0" prefWidth="200.0">
                            <children>
@@ -173,7 +173,7 @@
                                     <String fx:value="left-arrow" />
                                     <String fx:value="arrow" />
                                  </styleClass></Label>
-                              <ImageView fx:id="slideshow" fitHeight="260.0" fitWidth="700.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="slideshow" fitHeight="220.0" fitWidth="600.0" onMouseClicked="#performSlideAction" pickOnBounds="true" preserveRatio="true">
                                  <viewport>
                                     <Rectangle2D />
                                  </viewport>
@@ -353,14 +353,14 @@
                         <Insets top="15.0" />
                      </padding>
                      <children>
-                        <VBox alignment="CENTER_LEFT" prefWidth="950.0">
+                        <VBox alignment="CENTER_LEFT" maxWidth="600.0">
                            <children>
                               <Label fx:id="launcherSettings" alignment="CENTER" styleClass="text-2" text="LAUNCHER SETTINGS" wrapText="true">
                                  <VBox.margin>
                                     <Insets bottom="10.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="keepLauncherOpen" alignment="CENTER" onMouseClicked="#updateSettings" text="Keep the launcher open when the game is running">
+                              <Label fx:id="keepLauncherOpen" alignment="CENTER" onMouseClicked="#updateSettings" text="Keep the launcher open when the game is running" wrapText="true">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
@@ -372,7 +372,7 @@
                                     <Insets bottom="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="outputLog" alignment="CENTER" onMouseClicked="#updateSettings" text="Open output log when the game starts">
+                              <Label fx:id="outputLog" alignment="CENTER" onMouseClicked="#updateSettings" text="Open output log when the game starts" wrapText="true">
                                  <styleClass>
                                     <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
@@ -382,9 +382,6 @@
                                  </cursor>
                               </Label>
                            </children>
-                           <padding>
-                              <Insets left="180.0" />
-                           </padding>
                         </VBox>
                         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
@@ -811,7 +808,7 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></ListView>
-      <ListView fx:id="iconList" maxHeight="190.0" maxWidth="111.0" minHeight="190.0" minWidth="111.0" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" visible="false" AnchorPane.leftAnchor="398.0" AnchorPane.topAnchor="275.0">
+      <ListView fx:id="iconList" maxHeight="190.0" maxWidth="111.0" minHeight="190.0" minWidth="111.0" onMouseClicked="#updateIcon" onMouseExited="#hidePopup" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -829,7 +826,7 @@
             <String fx:value="highlight" />
          </styleClass>
       </Label>
-      <ListView fx:id="profilePopupList" maxHeight="180.0" maxWidth="430.0" minHeight="180.0" minWidth="430.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="210.0">
+      <ListView fx:id="profilePopupList" maxHeight="180.0" maxWidth="430.0" minHeight="180.0" minWidth="430.0" onMouseClicked="#hidePopup" onMouseExited="#hidePopup" onMousePressed="#selectProfile" snapToPixel="false" styleClass="text-5" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
