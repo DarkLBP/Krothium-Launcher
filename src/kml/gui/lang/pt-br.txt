@@ -14,7 +14,7 @@ Baixando
 JOGANDO
 O jogo crashou! Verifique os logs para obter mais informações.
 O jogo crashou
-You cannot leave the username field empty!
+Você não pode deixar o campo de nome de usuário vazio!
 Nome de usuário ou Email:
 Senha:
 ENTRAR
