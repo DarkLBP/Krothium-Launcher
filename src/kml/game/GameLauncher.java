@@ -318,7 +318,7 @@ public class GameLauncher {
                     }
                 }
             };
-            timer.schedule(process_status, 0, 500);
+            timer.schedule(process_status, 0, 25);
         } catch (IOException ex) {
             ex.printStackTrace(this.console.getWriter());
             throw new GameLauncherException("Game returned an error code.");

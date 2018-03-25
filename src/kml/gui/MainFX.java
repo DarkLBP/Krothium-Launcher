@@ -187,7 +187,7 @@ public class MainFX {
             }
         };
         Timer resize = new Timer();
-        resize.schedule(newsResize, 0, 10);
+        resize.schedule(newsResize, 0, 25);
 
         //Close popups on resize
         this.mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -938,7 +938,7 @@ public class MainFX {
             //Begin download and game launch task
             try {
                 Timer timer = new Timer();
-                timer.schedule(progressTask, 0, 500);
+                timer.schedule(progressTask, 0, 25);
                 d.download();
                 timer.cancel();
                 timer.purge();
