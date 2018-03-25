@@ -168,21 +168,28 @@ public class MainFX {
         //Validate selected profile
         this.validateSelectedProfile();
 
-        //Hook resize bindings
-        this.newsContainer.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() * 0.7 > this.slideshow.getImage().getHeight()) {
-                this.slideshow.setFitHeight(this.slideshow.getImage().getHeight());
-            } else {
-                this.slideshow.setFitHeight(newValue.doubleValue() * 0.7);
+        //Manual component resize binding to fix JavaFX maximize bug
+        TimerTask newsResize = new TimerTask() {
+            @Override
+            public void run() {
+                double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
+                double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
+                if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
+                    MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
+                } else {
+                    MainFX.this.slideshow.setFitHeight(computedHeight);
+                }
+                if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
+                    MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
+                } else {
+                    MainFX.this.slideshow.setFitWidth(computedWidth);
+                }
             }
-        });
-        this.newsContainer.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() * 0.7 > this.slideshow.getImage().getWidth()) {
-                this.slideshow.setFitWidth(this.slideshow.getImage().getWidth());
-            } else {
-                this.slideshow.setFitWidth(newValue.doubleValue() * 0.7);
-            }
-        });
+        };
+        Timer resize = new Timer();
+        resize.schedule(newsResize, 0, 10);
+
+        //Close popups on resize
         this.mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
             this.checkPopups();
         });
