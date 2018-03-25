@@ -1,7 +1,5 @@
 package kml.game.version;
 
-import java.net.URL;
-
 /**
  * @author DarkLBP
  *         website https://krothium.com
@@ -19,29 +17,29 @@ public class VersionMeta {
     }
 
     public final String getID() {
-        return this.id;
+        return id;
     }
 
     public final String getURL() {
-        return this.url;
+        return url;
     }
 
     public final VersionType getType() {
-        return this.type;
+        return type;
     }
 
     @Override
     public final boolean equals(Object o) {
-        return o instanceof VersionMeta && this.id.equalsIgnoreCase(((VersionMeta) o).id);
+        return o instanceof VersionMeta && id.equalsIgnoreCase(((VersionMeta) o).id);
     }
 
     @Override
     public final int hashCode() {
-        return this.id.hashCode();
+        return id.hashCode();
     }
 
     @Override
     public final String toString() {
-        return this.id;
+        return id;
     }
 }

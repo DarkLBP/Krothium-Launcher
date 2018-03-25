@@ -285,4 +285,34 @@ public class TexturePreview {
             dstx = x_origin;
         }
     }
+
+
+    /**
+     * This method receives an image scales it
+     *
+     * @param input       Input image
+     * @param scaleFactor Output scale factor
+     * @return The resampled image
+     */
+    public static Image resampleImage(Image input, int scaleFactor) {
+        int W = (int) input.getWidth();
+        int H = (int) input.getHeight();
+        WritableImage output = new WritableImage(
+                W * scaleFactor,
+                H * scaleFactor
+        );
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+                int argb = reader.getArgb(x, y);
+                for (int dy = 0; dy < scaleFactor; dy++) {
+                    for (int dx = 0; dx < scaleFactor; dx++) {
+                        writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb);
+                    }
+                }
+            }
+        }
+        return output;
+    }
 }

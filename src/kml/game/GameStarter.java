@@ -13,7 +13,6 @@ import java.net.URL;
  *         website https://krothium.com
  */
 public class GameStarter {
-    public static String PROFILE_ID, ACCESS_TOKEN, GAME_DIR;
 
     public static void main(String[] args) {
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
@@ -34,12 +33,9 @@ public class GameStarter {
             System.err.println("Invalid number of arguments.");
             System.exit(-1);
         }
-        GAME_DIR = args[0];
-        PROFILE_ID = args[1];
-        ACCESS_TOKEN = args[2];
-        String mainClass = args[3];
-        String[] gameArgs = new String[args.length - 4];
-        System.arraycopy(args, 4, gameArgs, 0, args.length - 4);
+        String mainClass = args[0];
+        String[] gameArgs = new String[args.length - 1];
+        System.arraycopy(args, 1, gameArgs, 0, args.length - 1);
         try {
             Class<?> gameClass = Class.forName(mainClass);
             Method method = gameClass.getMethod("main", String[].class);

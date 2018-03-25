@@ -24,8 +24,8 @@ public class Versions {
     private VersionMeta latestSnap, latestRel;
 
     public Versions(Kernel k) {
-        this.kernel = k;
-        this.console = k.getConsole();
+        kernel = k;
+        console = k.getConsole();
     }
 
     /**
@@ -33,8 +33,8 @@ public class Versions {
      * @param m The versions to be added
      */
     private void add(VersionMeta m) {
-        if (!this.versions.contains(m)) {
-            this.versions.add(m);
+        if (!versions.contains(m)) {
+            versions.add(m);
         }
     }
 
@@ -47,17 +47,17 @@ public class Versions {
         if (id != null) {
             switch (id) {
                 case "latest-release":
-                    return this.latestRel;
+                    return latestRel;
                 case "latest-snapshot":
-                    return this.latestSnap;
+                    return latestSnap;
             }
-            for (VersionMeta m : this.versions) {
+            for (VersionMeta m : versions) {
                 if (m.getID().equalsIgnoreCase(id)) {
                     return m;
                 }
             }
         }
-        return this.latestRel;
+        return latestRel;
     }
 
     /**
@@ -66,22 +66,22 @@ public class Versions {
      * @return The version data from the specified version meta or null if an error happened
      */
     public final Version getVersion(VersionMeta vm) {
-        if (this.versions.contains(vm)) {
-            for (Version v : this.version_cache) {
+        if (versions.contains(vm)) {
+            for (Version v : version_cache) {
                 if (v.getID().equalsIgnoreCase(vm.getID())) {
                     return v;
                 }
             }
             try {
-                Version v = new Version(vm.getURL(), this.kernel);
-                this.version_cache.add(v);
+                Version v = new Version(vm.getURL(), kernel);
+                version_cache.add(v);
                 return v;
             } catch (Exception ex) {
-                this.console.print(ex.getMessage());
+                console.print(ex.getMessage());
                 return null;
             }
         }
-        this.console.print("Version id " + vm.getID() + " not found.");
+        console.print("Version id " + vm.getID() + " not found.");
         return null;
     }
 
@@ -90,7 +90,7 @@ public class Versions {
      */
     public final void fetchVersions() {
         String lr = "", ls = "";
-        this.console.print("Fetching remote version list.");
+        console.print("Fetching remote version list.");
         try {
             String versionManifest = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
             JSONObject root = new JSONObject(Utils.readURL(versionManifest));
@@ -123,27 +123,27 @@ public class Versions {
                         type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
                     } catch (IllegalArgumentException ex) {
                         type = VersionType.RELEASE;
-                        this.console.print("Invalid type for version " + id);
+                        console.print("Invalid type for version " + id);
                     }
                 } else {
                     type = VersionType.RELEASE;
-                    this.console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                    console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
                 }
                 VersionMeta vm = new VersionMeta(id, url, type);
                 if (lr.equalsIgnoreCase(id)) {
-                    this.latestRel = vm;
+                    latestRel = vm;
                 }
                 if (ls.equalsIgnoreCase(id)) {
-                    this.latestSnap = vm;
+                    latestSnap = vm;
                 }
-                this.add(vm);
+                add(vm);
             }
-            this.console.print("Remote version list loaded.");
-        } catch (JSONException | IOException ex) {
-            this.console.print("Failed to fetch remote version list.");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Remote version list loaded.");
+        } catch (JSONException ex) {
+            console.print("Failed to fetch remote version list.");
+            ex.printStackTrace(console.getWriter());
         }
-        this.console.print("Fetching local version list versions.");
+        console.print("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
         try {
@@ -168,14 +168,14 @@ public class Versions {
                                     type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
                                 } catch (IllegalArgumentException ex) {
                                     type = VersionType.RELEASE;
-                                    this.console.print("Invalid type for version " + id);
+                                    console.print("Invalid type for version " + id);
                                 }
                             } else {
                                 type = VersionType.RELEASE;
-                                this.console.print("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
+                                console.print("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
                             }
                             VersionMeta vm = new VersionMeta(id, url, type);
-                            this.add(vm);
+                            add(vm);
                             if (ver.has("releaseTime")) {
                                 if (type == VersionType.RELEASE && ver.getString("releaseTime").compareTo(latestRelease) > 0) {
                                     lastRelease = vm;
@@ -189,16 +189,16 @@ public class Versions {
                     }
                 }
             }
-            if (this.latestRel == null && lastRelease != null) {
-                this.latestRel = lastRelease;
+            if (latestRel == null && lastRelease != null) {
+                latestRel = lastRelease;
             }
-            if (this.latestSnap == null && lastSnapshot != null) {
-                this.latestSnap = lastSnapshot;
+            if (latestSnap == null && lastSnapshot != null) {
+                latestSnap = lastSnapshot;
             }
-            this.console.print("Local version list loaded.");
+            console.print("Local version list loaded.");
         } catch (JSONException | IOException ex) {
-            this.console.print("Failed to fetch local version list.");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Failed to fetch local version list.");
+            ex.printStackTrace(console.getWriter());
         }
     }
 
@@ -207,7 +207,7 @@ public class Versions {
      * @return The version database
      */
     public final Iterable<VersionMeta> getVersions() {
-        return this.versions;
+        return versions;
     }
 
     /**
@@ -215,7 +215,7 @@ public class Versions {
      * @return The latest release
      */
     public final VersionMeta getLatestRelease() {
-        return this.latestRel;
+        return latestRel;
     }
 
     /**
@@ -223,6 +223,6 @@ public class Versions {
      * @return The latest snapshot
      */
     public final VersionMeta getLatestSnapshot() {
-        return this.latestSnap;
+        return latestSnap;
     }
 }

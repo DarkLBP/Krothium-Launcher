@@ -24,16 +24,15 @@ public final class Library {
     private final Map<OS, String> natives = new EnumMap<>(OS.class);
 
     public Library(JSONObject lib, Kernel k) throws Exception {
-        Console console = k.getConsole();
         if (lib.has("name")) {
-            this.name = lib.getString("name");
+            name = lib.getString("name");
         } else {
             throw new Exception("Invalid name for a library.");
         }
         if (lib.has("url")) {
-            this.url = lib.getString("url");
+            url = lib.getString("url");
         } else {
-            this.url = null;
+            url = null;
         }
         if (lib.has("rules")) {
             JSONArray rules = lib.getJSONArray("rules");
@@ -76,11 +75,11 @@ public final class Library {
                 this.natives.put(os, value);
             }
         }
-        this.relativePath = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar"));
-        if (this.isNative()) {
-            this.relativeNativePath = new File("libraries" + File.separator + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar"));
+        relativePath = new File("libraries" + File.separator + Utils.getArtifactPath(name, "jar"));
+        if (isNative()) {
+            relativeNativePath = new File("libraries" + File.separator + Utils.getArtifactPath(name, "jar").replace(".jar", '-' + getNativeTag() + ".jar"));
         } else {
-            this.relativeNativePath = null;
+            relativeNativePath = null;
         }
         if (lib.has("extract")) {
             JSONObject extract = lib.getJSONObject("extract");
@@ -107,12 +106,12 @@ public final class Library {
                 if (artifact.has("sha1")) {
                     sha1 = artifact.getString("sha1");
                 }
-                Downloadable d = new Downloadable(url, size, this.relativePath, sha1, null);
+                Downloadable d = new Downloadable(url, size, relativePath, sha1, null);
                 this.downloads.put("artifact", d);
             }
             if (downloads.has("classifiers")) {
                 JSONObject classif = downloads.getJSONObject("classifiers");
-                String current = this.getNativeTag();
+                String current = getNativeTag();
                 if (current != null) {
                     if (classif.has(current)) {
                         JSONObject download = classif.getJSONObject(current);
@@ -128,95 +127,91 @@ public final class Library {
                         if (download.has("sha1")) {
                             sha1 = download.getString("sha1");
                         }
-                        File relPath = new File(this.relativePath.toString().replace(".jar", '-' + current + ".jar"));
+                        File relPath = new File(relativePath.toString().replace(".jar", '-' + current + ".jar"));
                         Downloadable d = new Downloadable(url, size, relPath, sha1, null);
                         this.downloads.put("classifier", d);
                     }
                 }
             }
         } else {
-            if (this.isCompatible()) {
-                if (this.isNative() && this.natives.containsKey(Utils.getPlatform())) {
-                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar").replace(".jar", '-' + this.getNativeTag() + ".jar");
-                    Downloadable d = new Downloadable(url, 0, this.relativeNativePath, null, null);
-                    this.downloads.put("classifier", d);
-                } else if (this.hasURL()) {
-                    String url = this.url + Utils.getArtifactPath(this.name, "jar");
-                    Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
-                    this.downloads.put("artifact", d);
+            if (isCompatible()) {
+                if (isNative() && natives.containsKey(Utils.getPlatform())) {
+                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(name, "jar").replace(".jar", '-' + getNativeTag() + ".jar");
+                    Downloadable d = new Downloadable(url, 0, relativeNativePath, null, null);
+                    downloads.put("classifier", d);
+                } else if (hasURL()) {
+                    String url = this.url + Utils.getArtifactPath(name, "jar");
+                    Downloadable d = new Downloadable(url, 0, relativePath, null, null);
+                    downloads.put("artifact", d);
                 } else {
-                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(this.name, "jar");
-                    Downloadable d = new Downloadable(url, 0, this.relativePath, null, null);
-                    this.downloads.put("artifact", d);
+                    String url = "https://libraries.minecraft.net/" + Utils.getArtifactPath(name, "jar");
+                    Downloadable d = new Downloadable(url, 0, relativePath, null, null);
+                    downloads.put("artifact", d);
                 }
             }
         }
     }
 
     public List<String> getExtractExclusions() {
-        return this.exclude;
+        return exclude;
     }
 
     public File getRelativePath() {
-        return this.relativePath;
+        return relativePath;
     }
 
     public File getRelativeNativePath() {
-        return this.relativeNativePath;
+        return relativeNativePath;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     private boolean hasURL() {
-        return this.url != null;
+        return url != null;
     }
 
     public String getURL() {
-        return this.url;
+        return url;
     }
 
     private boolean hasDownloads() {
-        return !this.downloads.isEmpty();
+        return !downloads.isEmpty();
     }
 
     public boolean hasArtifactDownload() {
-        return this.hasDownloads() && this.downloads.containsKey("artifact");
+        return hasDownloads() && downloads.containsKey("artifact");
     }
 
     public Downloadable getArtifactDownload() {
-        return this.downloads.get("artifact");
+        return downloads.get("artifact");
     }
 
     public boolean hasClassifierDownload() {
-        return this.hasDownloads() && this.downloads.containsKey("classifier");
+        return hasDownloads() && downloads.containsKey("classifier");
     }
 
     public Downloadable getClassifierDownload() {
-        return this.downloads.get("classifier");
+        return downloads.get("classifier");
     }
 
     public boolean isCompatible() {
-        if (!this.rules.isEmpty()) {
-            if (this.rules.containsKey(Utils.getPlatform())) {
-                if (this.rules.get(Utils.getPlatform()) == LibraryRule.DISALLOW) {
-                    return false;
-                } else if (this.rules.get(Utils.getPlatform()) == LibraryRule.NOSET) {
-                    return false;
-                }
+        if (!rules.isEmpty()) {
+            if (rules.containsKey(Utils.getPlatform())) {
+                return rules.get(Utils.getPlatform()) != LibraryRule.DISALLOW && rules.get(Utils.getPlatform()) != LibraryRule.NOSET;
             }
         }
         return true;
     }
 
     public boolean isNative() {
-        return !this.natives.isEmpty();
+        return !natives.isEmpty();
     }
 
     private String getNativeTag() {
-        if (this.natives.containsKey(Utils.getPlatform())) {
-            return this.natives.get(Utils.getPlatform());
+        if (natives.containsKey(Utils.getPlatform())) {
+            return natives.get(Utils.getPlatform());
         }
         return null;
     }

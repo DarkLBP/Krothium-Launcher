@@ -31,25 +31,25 @@ public final class Version {
 
     public Version(String durl, Kernel k) throws Exception {
         Console console = k.getConsole();
-        this.jsonURL = durl;
+        jsonURL = durl;
         console.print("Getting version info from " + durl);
         JSONObject version = new JSONObject(Utils.readURL(durl));
         if (version.has("id")) {
-            this.id = version.getString("id");
+            id = version.getString("id");
         } else {
             throw new Exception("Invalid version id.");
         }
         if (version.has("type")) {
-            this.type = VersionType.valueOf(version.getString("type").toUpperCase(Locale.ENGLISH));
+            type = VersionType.valueOf(version.getString("type").toUpperCase(Locale.ENGLISH));
         } else {
-            this.type = VersionType.RELEASE;
-            console.print("Remote version " + this.id + " has no version type. Will be loaded as a RELEASE.");
+            type = VersionType.RELEASE;
+            console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
         }
         if (version.has("mainClass")) {
-            this.mainClass = version.getString("mainClass");
+            mainClass = version.getString("mainClass");
         }
         if (version.has("minecraftArguments")) {
-            this.minecraftArguments = version.getString("minecraftArguments");
+            minecraftArguments = version.getString("minecraftArguments");
         } else if (version.has("arguments")) {
             JSONObject arguments = version.getJSONObject("arguments");
             JSONArray game = arguments.has("game") ? arguments.getJSONArray("game") : null;
@@ -61,7 +61,7 @@ public final class Version {
                         b.append(element).append(" ");
                     }
                 }
-                this.minecraftArguments = b.toString().trim();
+                minecraftArguments = b.toString().trim();
             }
         }
         if (version.has("assetIndex")) {
@@ -86,15 +86,15 @@ public final class Version {
             if (aIndex.has("sha1")) {
                 sha1 = aIndex.getString("sha1");
             }
-            this.assetIndex = new AssetIndex(id, size, totalSize, url, sha1);
+            assetIndex = new AssetIndex(id, size, totalSize, url, sha1);
         }
-        if (this.assetIndex == null) {
+        if (assetIndex == null) {
             if (version.has("assets")) {
-                this.assetIndex = new AssetIndex(version.getString("assets"));
+                assetIndex = new AssetIndex(version.getString("assets"));
             }
         }
         if (version.has("jar")) {
-            this.jar = version.getString("jar");
+            jar = version.getString("jar");
         }
         if (version.has("downloads")) {
             JSONObject downloads = version.getJSONObject("downloads");
@@ -112,45 +112,9 @@ public final class Version {
                 if (client.has("sha1")) {
                     sha1 = client.getString("sha1");
                 }
-                File path = new File("versions" + File.separator + this.id + File.separator + this.id + ".jar");
+                File path = new File("versions" + File.separator + id + File.separator + id + ".jar");
                 Downloadable d = new Downloadable(url, size, path, sha1, null);
                 this.downloads.put("client", d);
-            }
-            if (downloads.has("server")) {
-                JSONObject server = downloads.getJSONObject("server");
-                String url = null;
-                long size = 0;
-                String sha1 = null;
-                if (server.has("url")) {
-                    url = server.getString("url");
-                }
-                if (server.has("size")) {
-                    size = server.getLong("size");
-                }
-                if (server.has("sha1")) {
-                    sha1 = server.getString("sha1");
-                }
-                File path = new File("versions" + File.separator + this.id + File.separator + this.id + "_server.jar");
-                Downloadable d = new Downloadable(url, size, path, sha1, null);
-                this.downloads.put("server", d);
-            }
-            if (downloads.has("windows_server")) {
-                JSONObject windows_server = downloads.getJSONObject("windows_server");
-                String url = null;
-                long size = 0;
-                String sha1 = null;
-                if (windows_server.has("url")) {
-                    url = windows_server.getString("url");
-                }
-                if (windows_server.has("size")) {
-                    size = windows_server.getLong("size");
-                }
-                if (windows_server.has("sha1")) {
-                    sha1 = windows_server.getString("sha1");
-                }
-                File path = new File("versions" + File.separator + this.id + File.separator + this.id + "_server.exe");
-                Downloadable d = new Downloadable(url, size, path, sha1, null);
-                this.downloads.put("server", d);
             }
         }
         if (version.has("libraries")) {
@@ -165,145 +129,125 @@ public final class Version {
             Version ver = k.getVersions().getVersion(k.getVersions().getVersionMeta(inheritsFrom));
             if (ver.hasLibraries()) {
                 for (Library lib : ver.libraries) {
-                    if (!this.libraries.contains(lib)) {
-                        this.libraries.add(lib);
+                    if (!libraries.contains(lib)) {
+                        libraries.add(lib);
                     }
                 }
             }
             if (ver.hasDownloads()) {
                 Map<String, Downloadable> downloads = ver.downloads;
-                if (!this.downloads.containsKey("client")) {
-                    this.downloads.put("client", downloads.get("client"));
-                }
-                if (!this.downloads.containsKey("server")) {
-                    this.downloads.put("server", downloads.get("server"));
-                }
-                if (!this.downloads.containsKey("windows_server")) {
-                    this.downloads.put("windows_server", downloads.get("windows_server"));
+                if (!downloads.containsKey("client")) {
+                    downloads.put("client", downloads.get("client"));
                 }
             }
-            if (ver.hasJar()) {
-                if (!this.hasJar()) {
-                    this.jar = ver.jar;
+            if (ver.jar != null) {
+                if (jar == null) {
+                    jar = ver.jar;
                 }
             }
             if (ver.assetIndex != null) {
-                if (this.assetIndex == null) {
-                    this.assetIndex = ver.assetIndex;
+                if (assetIndex == null) {
+                    assetIndex = ver.assetIndex;
                 }
             }
             if (ver.hasMainClass()) {
-                if (!this.hasMainClass()) {
-                    this.mainClass = ver.mainClass;
+                if (!hasMainClass()) {
+                    mainClass = ver.mainClass;
                 }
             }
             if (ver.hasMinecraftArguments()) {
-                if (!this.hasMinecraftArguments()) {
-                    this.minecraftArguments = ver.minecraftArguments;
+                if (!hasMinecraftArguments()) {
+                    minecraftArguments = ver.minecraftArguments;
                 }
             }
         }
         if (assetIndex == null) {
-            this.assetIndex = new AssetIndex(null);
+            assetIndex = new AssetIndex(null);
         }
-        String idToUse = this.id;
-        if (this.hasJar()) {
-            idToUse = this.jar;
+        String idToUse = id;
+        if (jar != null) {
+            idToUse = jar;
         }
-        this.relativeJar = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".jar");
-        this.relativeJSON = new File("versions" + File.separator + this.id + File.separator + this.id + ".json");
-        if (this.hasClientDownload() && this.hasJar()) {
-            Downloadable d = this.getClientDownload();
-            Downloadable dnew = new Downloadable(d.getURL(), d.getSize(), this.relativeJar, d.getHash(), null);
-            this.downloads.remove("client");
-            this.downloads.put("client", dnew);
-        }
+        relativeJar = new File("versions" + File.separator + idToUse + File.separator + idToUse + ".jar");
+        relativeJSON = new File("versions" + File.separator + id + File.separator + id + ".json");
     }
 
     public File getRelativeJar() {
-        return this.relativeJar;
+        return relativeJar;
     }
 
     public File getRelativeJSON() {
-        return this.relativeJSON;
+        return relativeJSON;
     }
 
     public String getJSONURL() {
-        return this.jsonURL;
+        return jsonURL;
     }
 
     public String getID() {
-        return this.id;
+        return id;
     }
 
     public VersionType getType() {
-        return this.type;
+        return type;
     }
 
     private boolean hasMinecraftArguments() {
-        return this.minecraftArguments != null;
+        return minecraftArguments != null;
     }
 
     private boolean hasMainClass() {
-        return this.mainClass != null;
+        return mainClass != null;
     }
 
     public String getMinecraftArguments() {
-        return this.minecraftArguments;
+        return minecraftArguments;
     }
 
     public String getMainClass() {
-        return this.mainClass;
+        return mainClass;
     }
 
     private boolean hasLibraries() {
-        return !this.libraries.isEmpty();
+        return !libraries.isEmpty();
     }
 
     public List<Library> getLibraries() {
-        return this.libraries;
+        return libraries;
     }
 
     public AssetIndex getAssetIndex() {
-        return this.assetIndex;
+        return assetIndex;
     }
 
     private boolean hasDownloads() {
-        return !this.downloads.isEmpty();
+        return !downloads.isEmpty();
     }
 
     public Map<String, Downloadable> getDownloads() {
-        return this.downloads;
+        return downloads;
     }
 
-    private boolean hasJar() {
-        return this.jar != null;
+    public boolean hasJar() {
+        return jar != null;
     }
 
     public String getJar() {
-        return this.jar;
-    }
-
-    private boolean hasClientDownload() {
-        return this.hasDownloads() && this.downloads.containsKey("client");
-    }
-
-    public Downloadable getClientDownload() {
-        return this.downloads.get("client");
+        return jar;
     }
 
     @Override
     public int hashCode() {
-        return this.id.hashCode();
+        return id.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Version && this.id.equalsIgnoreCase(((Version) obj).id);
+        return obj instanceof Version && id.equalsIgnoreCase(((Version) obj).id);
     }
 
     @Override
     public String toString() {
-        return this.id;
+        return id;
     }
 }

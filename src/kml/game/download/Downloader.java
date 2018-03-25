@@ -5,7 +5,6 @@ import kml.Kernel;
 import kml.utils.Utils;
 import kml.exceptions.DownloaderException;
 import kml.game.profile.Profile;
-import kml.game.profile.ProfileType;
 import kml.game.version.Version;
 import kml.game.version.VersionMeta;
 import kml.game.version.Versions;
@@ -36,8 +35,8 @@ public class Downloader {
     private final int DOWNLOAD_TRIES = 5;
 
     public Downloader(Kernel k) {
-        this.kernel = k;
-        this.console = k.getConsole();
+        kernel = k;
+        console = k.getConsole();
     }
 
     /**
@@ -46,38 +45,42 @@ public class Downloader {
      */
     public final void download() throws DownloaderException {
         //Initial values
-        this.downloading = true;
-        this.downloaded = 0;
-        this.validated = 0;
-        this.total = 0;
+        downloading = true;
+        downloaded = 0;
+        validated = 0;
+        total = 0;
         int tries;
 
-        this.console.print("Download work has started.");
+        console.print("Download work has started.");
         if (Kernel.USE_LOCAL) {
-            this.console.print("You are in offline mode.");
-            this.downloading = false;
+            console.print("You are in offline mode.");
+            downloading = false;
             return;
         }
 
         //Fetch version used by profile
-        Profile p = this.kernel.getProfiles().getSelectedProfile();
-        Versions versions = this.kernel.getVersions();
+        Profile p = kernel.getProfiles().getSelectedProfile();
+        Versions versions = kernel.getVersions();
         VersionMeta verID;
-        if (p.getType() == ProfileType.CUSTOM) {
-            verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
-        } else if (p.getType() == ProfileType.RELEASE) {
-            verID = versions.getLatestRelease();
-        } else {
-            verID = versions.getLatestSnapshot();
+        switch (p.getType()) {
+            case CUSTOM:
+                verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
+                break;
+            case RELEASE:
+                verID = versions.getLatestRelease();
+                break;
+            default:
+                verID = versions.getLatestSnapshot();
+                break;
         }
         if (verID == null) {
-            this.downloading = false;
+            downloading = false;
             throw new DownloaderException("Version ID is null.");
         }
-        this.console.print("Using version ID: " + verID);
+        console.print("Using version ID: " + verID);
         Version v = versions.getVersion(verID);
         if (v == null) {
-            this.downloading = false;
+            downloading = false;
             throw new DownloaderException("Version info could not be obtained.");
         }
 
@@ -85,24 +88,24 @@ public class Downloader {
         Set<Downloadable> urls = new HashSet<>();
 
         //Fetch assets
-        this.console.print("Fetching asset urls..");
+        console.print("Fetching asset urls..");
         AssetIndex index = v.getAssetIndex();
         File indexJSON = new File(Kernel.APPLICATION_WORKING_DIR, "assets" + File.separator + "indexes" + File.separator + index.getID() + ".json");
         tries = 0;
         if (!Utils.verifyChecksum(indexJSON, index.getSHA1(), "SHA-1")) {
-            while (tries < this.DOWNLOAD_TRIES) {
+            while (tries < DOWNLOAD_TRIES) {
                 try {
                     Utils.downloadFile(index.getURL(), indexJSON);
                     break;
                 } catch (IOException ex) {
-                    this.console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ')');
-                    ex.printStackTrace(this.console.getWriter());
+                    console.print("Failed to download file " + indexJSON.getName() + " (try " + tries + ')');
+                    ex.printStackTrace(console.getWriter());
                     tries++;
                 }
             }
         }
-        if (tries == this.DOWNLOAD_TRIES) {
-            this.console.print("Failed to download asset index for version " + index.getID());
+        if (tries == DOWNLOAD_TRIES) {
+            console.print("Failed to download asset index for version " + index.getID());
         } else {
             //Load assets
             try {
@@ -110,7 +113,7 @@ public class Downloader {
                 try {
                     root = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), StandardCharsets.UTF_8));
                 } catch (JSONException | IOException ex) {
-                    this.downloading = false;
+                    downloading = false;
                     throw new DownloaderException("Failed to read asset index json file.");
                 }
                 JSONObject objects = root.getJSONObject("objects");
@@ -125,59 +128,71 @@ public class Downloader {
                     File relPath = new File(objectsRoot, hash.substring(0, 2) + File.separator + hash);
                     File fullPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + relPath);
                     if (!processedHashes.contains(hash)) {
-                        this.total += size;
+                        total += size;
                         processedHashes.add(hash);
                         if (!Utils.verifyChecksum(fullPath, hash, "SHA-1")) {
                             Downloadable d = new Downloadable(downloadURL, size, relPath, hash, key);
                             urls.add(d);
                         } else {
-                            this.validated += size;
+                            validated += size;
                         }
                     }
                 }
             } catch (JSONException ex) {
-                this.console.print("Failed to parse asset index.");
+                console.print("Failed to parse asset index.");
             }
         }
 
         //Fetch version
-        this.console.print("Fetching version urls..");
-        Downloadable d = v.getClientDownload();
-        if (d != null) {
+        console.print("Fetching version urls..");
+        Map<String, Downloadable> downloads = v.getDownloads();
+        if (downloads.containsKey("client")) {
+            Downloadable d = downloads.get("client");
             if (d.hasURL()) {
                 long jarSize = d.getSize();
                 String jarSHA1 = d.getHash();
-                this.total += d.getSize();
+                total += d.getSize();
                 File destPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJar());
                 File jsonFile = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + v.getRelativeJSON());
                 tries = 0;
-                while (tries < this.DOWNLOAD_TRIES) {
+                while (tries < DOWNLOAD_TRIES) {
                     try {
                         Utils.downloadFile(v.getJSONURL(), jsonFile);
                         break;
                     } catch (IOException ex) {
-                        this.console.print("Failed to download file " + jsonFile.getName() + " (try " + tries + ')');
-                        ex.printStackTrace(this.console.getWriter());
+                        console.print("Failed to download file " + jsonFile.getName() + " (try " + tries + ')');
+                        ex.printStackTrace(console.getWriter());
                         tries++;
                     }
                 }
-                if (tries == this.DOWNLOAD_TRIES) {
-                    this.console.print("Failed to download version index " + destPath.getName());
+                if (tries == DOWNLOAD_TRIES) {
+                    console.print("Failed to download version index " + destPath.getName());
                 }
                 if (!Utils.verifyChecksum(destPath, jarSHA1, "SHA-1")) {
                     urls.add(d);
                 } else {
-                    this.validated += jarSize;
+                    validated += jarSize;
                 }
             } else {
-                this.console.print("Incompatible version downloadable.");
+                console.print("Incompatible version downloadable.");
+            }
+        } else if (v.hasJar()) {
+            String jar = v.getJar();
+            File relPath = v.getRelativeJar();
+            console.print("Found legacy version " + jar);
+            if (!relPath.exists()) {
+                Downloadable d = new Downloadable("https://s3.amazonaws.com/Minecraft.Download/versions/" + jar + "/" + jar + ".jar", -1, v.getRelativeJar(), null, null);
+                urls.add(d);
+            } else {
+                console.print("Legacy version file found. Assuming is valid.");
             }
         } else {
-            this.console.print("Version file from " + v.getID() + " has no compatible downloadable objects.");
+            console.print("Version file from " + v.getID() + " has no compatible downloadable objects.");
         }
 
+
         //Fetch libraries and natives
-        this.console.print("Fetching library and native urls..");
+        console.print("Fetching library and native urls..");
         List<Library> libs = v.getLibraries();
         for (Library lib : libs) {
             if (lib.isCompatible()) {
@@ -186,27 +201,26 @@ public class Downloader {
                     Downloadable a = lib.getArtifactDownload();
                     File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + a.getRelativePath());
                     if (completePath.isFile() && a.getHash() == null) {
-                        this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
+                        console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
                     } else {
-                        this.total += a.getSize();
+                        total += a.getSize();
                         if (Utils.verifyChecksum(completePath, a.getHash(), "SHA-1")) {
-                            this.validated += a.getSize();
+                            validated += a.getSize();
                         } else {
                             urls.add(a);
                         }
                     }
-
                 }
                 //Native download
                 if (lib.hasClassifierDownload()) {
                     Downloadable c = lib.getClassifierDownload();
                     File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + c.getRelativePath());
-                    this.total += c.getSize();
+                    total += c.getSize();
                     if (completePath.isFile() && c.getHash() == null) {
-                        this.console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
+                        console.print("File " + completePath + " has no hash. So let's assume the local one is valid.");
                     } else {
                         if (Utils.verifyChecksum(completePath, c.getHash(), "SHA-1")) {
-                            this.validated += c.getSize();
+                            validated += c.getSize();
                         } else {
                             urls.add(c);
                         }
@@ -214,14 +228,14 @@ public class Downloader {
                 }
             }
         }
-        this.console.print("Downloading required game files...");
+        console.print("Downloading required game files...");
         if (urls.isEmpty()) {
-            this.console.print("Nothing to download.");
+            console.print("Nothing to download.");
         } else {
             //Download required files
             downloadFiles(urls);
         }
-        this.downloading = false;
+        downloading = false;
     }
 
     /**
@@ -238,27 +252,27 @@ public class Downloader {
         try {
             url = new URL(dw.getURL());
         } catch (MalformedURLException e) {
-            this.console.print("Invalid URL " + dw.getURL());
-            e.printStackTrace(this.console.getWriter());
+            console.print("Invalid URL " + dw.getURL());
+            e.printStackTrace(console.getWriter());
         }
         int tries = 0;
         if (dw.hasFakePath()) {
-            this.currentFile = dw.getFakePath();
+            currentFile = dw.getFakePath();
         } else {
-            this.currentFile = path.toString();
+            currentFile = path.toString();
         }
-        this.console.print("Downloading " + this.currentFile + " from " + url);
+        console.print("Downloading " + currentFile + " from " + url);
         if (dw.getSize() == 0) {
-            this.console.print(dw.getURL() + " has no expected size.");
+            console.print(dw.getURL() + " has no expected size.");
             try {
                 URLConnection con = url.openConnection();
                 long length = con.getContentLength();
-                this.total += length;
+                total += length;
             } catch (IOException ex) {
-                this.console.print("Failed to determine size from " + dw.getURL());
+                console.print("Failed to determine size from " + dw.getURL());
             }
         }
-        while (tries < this.DOWNLOAD_TRIES) {
+        while (tries < DOWNLOAD_TRIES) {
             int totalRead = 0;
             try (InputStream in = url.openStream();
                  OutputStream out = new FileOutputStream(fullPath)){
@@ -266,19 +280,19 @@ public class Downloader {
                 int read;
                 while ((read = in.read(buffer)) != -1) {
                     out.write(buffer, 0, read);
-                    this.downloaded += read;
+                    downloaded += read;
                     totalRead += read;
                 }
                 break;
             } catch (IOException ex) {
-                this.console.print("Failed to download file " + this.currentFile + " (try " + tries + ')');
-                ex.printStackTrace(this.console.getWriter());
-                this.downloaded -= totalRead;
+                console.print("Failed to download file " + currentFile + " (try " + tries + ')');
+                ex.printStackTrace(console.getWriter());
+                downloaded -= totalRead;
                 tries++;
             }
         }
-        if (tries == this.DOWNLOAD_TRIES) {
-            this.console.print("Failed to download file " + path.getName() + " from " + url);
+        if (tries == DOWNLOAD_TRIES) {
+            console.print("Failed to download file " + path.getName() + " from " + url);
         }
     }
 
@@ -297,10 +311,10 @@ public class Downloader {
      * @return The download progress
      */
     public final double getProgress() {
-        if (!this.downloading) {
+        if (!downloading) {
             return 0;
         }
-        return (this.downloaded + this.validated) / this.total;
+        return (downloaded + validated) / total;
     }
 
     /**
@@ -308,7 +322,7 @@ public class Downloader {
      * @return A boolean with the current status
      */
     public final boolean isDownloading() {
-        return this.downloading;
+        return downloading;
     }
 
     /**
@@ -316,6 +330,6 @@ public class Downloader {
      * @return The current file name
      */
     public final String getCurrentFile() {
-        return this.currentFile;
+        return currentFile;
     }
 }

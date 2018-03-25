@@ -14,10 +14,10 @@ public class URLHandler implements URLStreamHandlerFactory {
     @Override
     public final URLStreamHandler createURLStreamHandler(String protocol) {
         if ("https".equalsIgnoreCase(protocol)) {
-            return this.HTTPS_HANDLER;
+            return HTTPS_HANDLER;
         }
         if ("http".equalsIgnoreCase(protocol)) {
-            return this.HTTP_HANDLER;
+            return HTTP_HANDLER;
         }
         return null;
     }

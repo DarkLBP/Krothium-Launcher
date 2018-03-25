@@ -14,13 +14,13 @@ public class User {
     private final ArrayList<UserProfile> profiles;
     private String selectedProfile;
 
-    public User(String ui, String at, String un, UserType type, ArrayList<UserProfile> userProfiles, String selectedProfile) {
-        this.accessToken = at;
-        this.id = ui;
-        this.username = un;
-        this.type = type;
-        this.profiles = userProfiles;
-        this.selectedProfile = selectedProfile;
+    public User(String ui, String at, String un, UserType t, ArrayList<UserProfile> userProfiles, String selProf) {
+        accessToken = at;
+        id = ui;
+        username = un;
+        type = t;
+        profiles = userProfiles;
+        selectedProfile = selProf;
     }
 
     public final String getDisplayName() {
@@ -36,19 +36,19 @@ public class User {
     }
 
     public final String getAccessToken() {
-        return this.accessToken;
+        return accessToken;
     }
 
     public final String getUserID() {
-        return this.id;
+        return id;
     }
 
     public ArrayList<UserProfile> getProfiles() {
-        return this.profiles;
+        return profiles;
     }
 
     public String getSelectedProfile() {
-        return this.selectedProfile;
+        return selectedProfile;
     }
 
     public void setAccessToken(String accessToken) {
@@ -56,11 +56,11 @@ public class User {
     }
 
     public final String getUsername() {
-        return this.username;
+        return username;
     }
 
     public final UserType getType() {
-        return this.type;
+        return type;
     }
 
     public void setSelectedProfile(String selectedProfile) {
@@ -69,16 +69,16 @@ public class User {
 
     @Override
     public final String toString() {
-        return this.getDisplayName();
+        return getDisplayName();
     }
 
     @Override
     public final boolean equals(Object o) {
-        return o instanceof User && this.id.equalsIgnoreCase(((User) o).id);
+        return o instanceof User && id.equalsIgnoreCase(((User) o).id);
     }
 
     @Override
     public final int hashCode() {
-        return this.id.hashCode();
+        return id.hashCode();
     }
 }

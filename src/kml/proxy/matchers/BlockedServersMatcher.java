@@ -6,17 +6,17 @@ package kml.proxy.matchers;
  */
 public class BlockedServersMatcher implements URLMatcher {
     private final String blockURL = "https://sessionserver.mojang.com/blockedservers";
-    private final String blockedServersURL = "https://mc.krothium.com/server/blockedservers";
 
     @Override
     public final boolean match(String url) {
-        return url.equalsIgnoreCase(this.blockURL);
+        return url.equalsIgnoreCase(blockURL);
     }
 
     @Override
     public final String handle(String url) {
-        if (url.equalsIgnoreCase(this.blockURL)) {
-            return this.blockedServersURL;
+        if (url.equalsIgnoreCase(blockURL)) {
+            String blockedServersURL = "https://mc.krothium.com/server/blockedservers";
+            return blockedServersURL;
         }
         return null;
     }

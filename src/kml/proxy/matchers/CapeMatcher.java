@@ -12,13 +12,13 @@ public class CapeMatcher implements URLMatcher {
 
     @Override
     public final boolean match(String url) {
-        Matcher m = this.capeRegex.matcher(url);
+        Matcher m = capeRegex.matcher(url);
         return m.matches();
     }
 
     @Override
     public final String handle(String url) {
-        Matcher m = this.capeRegex.matcher(url);
+        Matcher m = capeRegex.matcher(url);
         if (m.matches()) {
             String name = m.group(1);
             return "http://mc.krothium.com/capes/" + name + ".png";

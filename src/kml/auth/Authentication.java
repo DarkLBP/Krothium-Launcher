@@ -32,10 +32,10 @@ public class Authentication {
     private final String krothiumDomain = "mc.krothium.com";
 
     public Authentication(Kernel k) {
-        this.kernel = k;
-        this.console = k.getConsole();
-        this.authenticatePath = "/authenticate";
-        this.refreshPath = "/refresh";
+        kernel = k;
+        console = k.getConsole();
+        authenticatePath = "/authenticate";
+        refreshPath = "/refresh";
     }
 
     /**
@@ -43,13 +43,13 @@ public class Authentication {
      * @param u The user to be added
      */
     private void addUser(User u) {
-        if (this.userDatabase.contains(u)) {
-            this.userDatabase.remove(u);
-            this.userDatabase.add(u);
-            this.console.print("User " + u.getUserID() + " updated.");
+        if (userDatabase.contains(u)) {
+            userDatabase.remove(u);
+            userDatabase.add(u);
+            console.print("User " + u.getUserID() + " updated.");
         } else {
-            this.userDatabase.add(u);
-            this.console.print("User " + u.getUserID() + " loaded.");
+            userDatabase.add(u);
+            console.print("User " + u.getUserID() + " loaded.");
         }
 
     }
@@ -59,14 +59,14 @@ public class Authentication {
      * @param u The User to be removed
      */
     public void removeUser(User u) {
-        if (this.userDatabase.contains(u)) {
-            this.console.print("User " + u.getUserID() + " deleted.");
-            this.userDatabase.remove(u);
-            if (u.equals(this.selectedAccount)) {
-                this.setSelectedUser(null);
+        if (userDatabase.contains(u)) {
+            console.print("User " + u.getUserID() + " deleted.");
+            userDatabase.remove(u);
+            if (u.equals(selectedAccount)) {
+                setSelectedUser(null);
             }
         } else {
-            this.console.print("userID " + u.getUserID() + " is not registered.");
+            console.print("userID " + u.getUserID() + " is not registered.");
         }
     }
 
@@ -75,7 +75,7 @@ public class Authentication {
      * @return The selected user or null if no user is selected.
      */
     public final User getSelectedUser() {
-        return this.selectedAccount;
+        return selectedAccount;
     }
 
     /**
@@ -84,11 +84,11 @@ public class Authentication {
      */
     public void setSelectedUser(User user) {
         if (user != null) {
-            this.console.print("User " + user.getUserID() + " is now selected.");
-        } else if (this.selectedAccount != null) {
-            this.console.print(this.selectedAccount.getUserID() + " is not longer selected.");
+            console.print("User " + user.getUserID() + " is now selected.");
+        } else if (selectedAccount != null) {
+            console.print(selectedAccount.getUserID() + " is not longer selected.");
         }
-        this.selectedAccount = user;
+        selectedAccount = user;
     }
 
     /**
@@ -114,8 +114,8 @@ public class Authentication {
         }
         request.put("username", tmpUser);
         request.put("password", password);
-        if (this.clientToken != null) {
-            request.put("clientToken", this.clientToken);
+        if (clientToken != null) {
+            request.put("clientToken", clientToken);
         }
         request.put("requestUser", true);
         Map<String, String> postParams = new HashMap<>();
@@ -131,8 +131,8 @@ public class Authentication {
         try {
             response = Utils.sendPost(authURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
-            this.console.print("Failed to send request to authentication server");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Failed to send request to authentication server");
+            ex.printStackTrace(console.getWriter());
             throw new AuthenticationException("Failed to send request to authentication server");
         }
         if (response.isEmpty()) {
@@ -149,7 +149,7 @@ public class Authentication {
                 String accessToken = r.getString("accessToken");
                 String selectedProfile = r.getJSONObject("selectedProfile").getString("id");
                 String userID = r.getJSONObject("user").getString("id");
-                this.clientToken = r.getString("clientToken");
+                clientToken = r.getString("clientToken");
                 ArrayList<UserProfile> userProfiles = new ArrayList<>();
                 JSONArray uprofs = r.getJSONArray("availableProfiles");
                 for (int i = 0; i < uprofs.length(); i++){
@@ -158,22 +158,16 @@ public class Authentication {
                     userProfiles.add(up);
                 }
                 User u = new User(userID, accessToken, username, type, userProfiles, selectedProfile);
-                this.selectedAccount = u;
-                this.authenticated = true;
-                this.addUser(u);
+                selectedAccount = u;
+                authenticated = true;
+                addUser(u);
             } catch (JSONException ex) {
-                ex.printStackTrace(this.console.getWriter());
+                ex.printStackTrace(console.getWriter());
                 throw new AuthenticationException("Authentication server replied wrongly.");
             }
         } else {
-            this.authenticated = false;
-            if (r.has("errorMessage")) {
-                throw new AuthenticationException(r.getString("errorMessage"));
-            } else if (r.has("cause")) {
-                throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
-            } else {
-                throw new AuthenticationException(r.getString("error"));
-            }
+            authenticated = false;
+            throwError(r);
         }
     }
 
@@ -182,17 +176,17 @@ public class Authentication {
      * @throws AuthenticationException If the refresh failed
      */
     public final void refresh() throws AuthenticationException, JSONException{
-        if (this.selectedAccount == null) {
+        if (selectedAccount == null) {
             throw new AuthenticationException("No user is selected.");
         }
         JSONObject request = new JSONObject();
         JSONObject agent = new JSONObject();
-        User u = this.selectedAccount;
+        User u = selectedAccount;
         agent.put("name", "Minecraft");
         agent.put("version", 1);
         request.put("agent", agent);
         request.put("accessToken", u.getAccessToken());
-        request.put("clientToken", this.clientToken);
+        request.put("clientToken", clientToken);
         request.put("requestUser", true);
         Map<String, String> postParams = new HashMap<>();
         postParams.put("Content-Type", "application/json; charset=utf-8");
@@ -208,12 +202,12 @@ public class Authentication {
             response = Utils.sendPost(refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
             if (Kernel.USE_LOCAL) {
-                this.authenticated = true;
-                this.console.print("Authenticated locally.");
+                authenticated = true;
+                console.print("Authenticated locally.");
                 return;
             } else {
-                this.console.print("Failed to send request to authentication server");
-                ex.printStackTrace(this.console.getWriter());
+                console.print("Failed to send request to authentication server");
+                ex.printStackTrace(console.getWriter());
                 throw new AuthenticationException("Failed to send request to authentication server");
             }
         }
@@ -228,25 +222,29 @@ public class Authentication {
         }
         if (!r.has("error")) {
             try {
-                this.clientToken = r.getString("clientToken");
+                clientToken = r.getString("clientToken");
                 u.setAccessToken(r.getString("accessToken"));
                 String selectedProfile = r.getJSONObject("selectedProfile").getString("id");
                 u.setSelectedProfile(selectedProfile);
-                this.authenticated = true;
+                authenticated = true;
             } catch (JSONException ex) {
-                ex.printStackTrace(this.console.getWriter());
+                ex.printStackTrace(console.getWriter());
                 throw new AuthenticationException("Authentication server replied wrongly.");
             }
         } else {
-            this.authenticated = false;
-            this.removeUser(this.selectedAccount);
-            if (r.has("errorMessage")) {
-                throw new AuthenticationException(r.getString("errorMessage"));
-            } else if (r.has("cause")) {
-                throw new AuthenticationException(r.getString("error") + " caused by " + r.getString("cause"));
-            } else {
-                throw new AuthenticationException(r.getString("error"));
-            }
+            authenticated = false;
+            removeUser(selectedAccount);
+            throwError(r);
+        }
+    }
+
+    private void throwError(JSONObject message) throws AuthenticationException{
+        if (message.has("errorMessage")) {
+            throw new AuthenticationException(message.getString("errorMessage"));
+        } else if (message.has("cause")) {
+            throw new AuthenticationException(message.getString("error") + " caused by " + message.getString("cause"));
+        } else {
+            throw new AuthenticationException(message.getString("error"));
         }
     }
 
@@ -255,7 +253,7 @@ public class Authentication {
      * @return A boolean that indicates if is authenticated
      */
     public final boolean isAuthenticated() {
-        return this.authenticated;
+        return authenticated;
     }
 
     /**
@@ -263,20 +261,20 @@ public class Authentication {
      * @return The client token
      */
     public final String getClientToken() {
-        return this.clientToken;
+        return clientToken;
     }
 
     /**
      * Loads the users from launcher_profile.json
      */
     public final void fetchUsers() {
-        this.console.print("Loading user data.");
-        JSONObject root = this.kernel.getLauncherProfiles();
+        console.print("Loading user data.");
+        JSONObject root = kernel.getLauncherProfiles();
         if (root != null) {
             String selectedUser = null;
             String selectedProfile = null;
             if (root.has("clientToken")) {
-                this.clientToken = root.getString("clientToken");
+                clientToken = root.getString("clientToken");
             }
             if (root.has("selectedUser")) {
                 Object selected = root.get("selectedUser");
@@ -289,7 +287,7 @@ public class Authentication {
                         selectedProfile = s.getString("profile");
                     }
                 } else {
-                    this.console.print("Legacy launcher_profiles.json found");
+                    console.print("Legacy launcher_profiles.json found");
                 }
             }
             if (root.has("authenticationDatabase")) {
@@ -316,18 +314,18 @@ public class Authentication {
                             User u;
                             if (userID.equalsIgnoreCase(selectedUser)) {
                                 u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, selectedProfile);
-                                this.addUser(u);
-                                this.setSelectedUser(u);
+                                addUser(u);
+                                setSelectedUser(u);
                             } else {
                                 u = new User(userID, user.getString("accessToken"), username, userType, userProfiles, null);
-                                this.addUser(u);
+                                addUser(u);
                             }
                         }
                     }
                 }
             }
         } else {
-            this.console.print("No users to be loaded.");
+            console.print("No users to be loaded.");
         }
     }
 
@@ -336,7 +334,7 @@ public class Authentication {
      * @return The user database
      */
     public final Set<User> getUsers() {
-        return this.userDatabase;
+        return userDatabase;
     }
 
     /**
@@ -345,10 +343,10 @@ public class Authentication {
      */
     public final JSONObject toJSON() {
         JSONObject o = new JSONObject();
-        o.put("clientToken", this.clientToken);
-        if (!this.userDatabase.isEmpty()) {
+        o.put("clientToken", clientToken);
+        if (!userDatabase.isEmpty()) {
             JSONObject db = new JSONObject();
-            for (User u : this.userDatabase) {
+            for (User u : userDatabase) {
                 JSONObject user = new JSONObject();
                 user.put("accessToken", u.getAccessToken());
                 user.put("username", u.getUsername());
@@ -363,9 +361,9 @@ public class Authentication {
             }
             o.put("authenticationDatabase", db);
             JSONObject selectedUser = new JSONObject();
-            if (this.selectedAccount != null) {
-                selectedUser.put("account", this.selectedAccount.getUserID());
-                selectedUser.put("profile", this.selectedAccount.getSelectedProfile());
+            if (selectedAccount != null) {
+                selectedUser.put("account", selectedAccount.getUserID());
+                selectedUser.put("profile", selectedAccount.getSelectedProfile());
             }
             o.put("selectedUser", selectedUser);
         }

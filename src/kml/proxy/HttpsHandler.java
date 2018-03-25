@@ -17,18 +17,18 @@ class HttpsHandler extends Handler {
     private final URLMatcher[] urlMatchers;
 
     public HttpsHandler() {
-        this.urlMatchers = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
+        urlMatchers = new URLMatcher[]{new ProfileMatcher(), new JoinMatcher(), new HasJoinedMatcher(), new BlockedServersMatcher(), new RealmsMatcher()};
     }
 
     @Override
     protected final URLConnection openConnection(URL url) throws IOException {
-        return this.openConnection(url, null);
+        return openConnection(url, null);
     }
 
     @Override
     protected final URLConnection openConnection(URL url, Proxy proxy) throws IOException {
         System.out.println("URL requested: " + url);
-        for (URLMatcher m : this.urlMatchers) {
+        for (URLMatcher m : urlMatchers) {
             if (m.match(url.toString())) {
                 return new ConnectionHandler(url, m);
             }

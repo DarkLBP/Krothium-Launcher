@@ -20,12 +20,12 @@ class HttpHandler extends Handler{
     private final URLMatcher[] urlMatchers;
 
     public HttpHandler() {
-        this.urlMatchers = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher()};
+        urlMatchers = new URLMatcher[]{new SkinMatcher(), new CapeMatcher(), new JoinServerMatcher()};
     }
 
     @Override
     protected final URLConnection openConnection(URL url) throws IOException {
-        return this.openConnection(url, null);
+        return openConnection(url, null);
     }
 
     @Override

@@ -89,6 +89,7 @@ public class MainFX {
 
     private Kernel kernel;
     private Console console;
+    private Settings settings;
     private Stage stage;
     private Scene mainScene;
     private final List<Slide> slides = new ArrayList<>();
@@ -98,8 +99,6 @@ public class MainFX {
     private Image skin, cape, alex, steve;
     private boolean texturesLoaded;
     private String urlPrefix = "";
-    private final String CHANGESKIN_URL = "https://mc.krothium.com/changeskin";
-    private final String CHANGECAPE_URL = "https://mc.krothium.com/changecape";
     private boolean iconListLoaded, versionListLoaded, languageListLoaded, loadingTextures, profileListLoaded,
             profileListPopupLoaded;
 
@@ -113,88 +112,79 @@ public class MainFX {
         Platform.setImplicitExit(false);
 
         //Set kernel and stage
-        this.kernel = k;
-        this.console = k.getConsole();
-        this.stage = s;
-        this.mainScene = scene;
+        kernel = k;
+        console = k.getConsole();
+        settings = k.getSettings();
+        stage = s;
+        mainScene = scene;
 
         //Update version label
-        this.versionLabel.setText(Kernel.KERNEL_BUILD_NAME);
+        versionLabel.setText(Kernel.KERNEL_BUILD_NAME);
 
         //Load news slideshow
-        this.slideshowBox.setVisible(false);
-        this.slideshowBox.setManaged(false);
-        this.newsTitle.setText("Loading news...");
-        this.newsText.setText("Please wait a moment...");
-        this.loadSlideshow();
-
-        //Load placeholder skins
-        this.alex = new Image("/kml/gui/textures/alex.png");
-        this.steve = new Image("/kml/gui/textures/steve.png");
-
+        slideshowBox.setVisible(false);
+        slideshowBox.setManaged(false);
+        newsTitle.setText("Loading news...");
+        newsText.setText("Please wait a moment...");
+        loadSlideshow();
 
         //Refresh session
-        this.refreshSession();
+        refreshSession();
 
         //Prepare language list
-        String locale = this.kernel.getSettings().getLocale();
-        this.languageButton.setText(this.kernel.getSettings().getSupportedLocales().get(locale));
+        languageButton.setText(settings.getSupportedLocales().get(settings.getLocale()));
 
         //Update settings labels
-        Settings st = this.kernel.getSettings();
-        this.toggleLabel(this.keepLauncherOpen, st.getKeepLauncherOpen());
-        this.toggleLabel(this.outputLog, st.getShowGameLog());
-        this.toggleLabel(this.enableSnapshots, st.getEnableSnapshots());
-        this.toggleLabel(this.historicalVersions, st.getEnableHistorical());
-        this.toggleLabel(this.advancedSettings, st.getEnableAdvanced());
+        toggleLabel(keepLauncherOpen, settings.getKeepLauncherOpen());
+        toggleLabel(outputLog, settings.getShowGameLog());
+        toggleLabel(enableSnapshots, settings.getEnableSnapshots());
+        toggleLabel(historicalVersions, settings.getEnableHistorical());
+        toggleLabel(advancedSettings, settings.getEnableAdvanced());
 
         //Prepare Spinners
-        this.resW.setEditable(true);
-        this.resH.setEditable(true);
+        resW.setEditable(true);
+        resH.setEditable(true);
 
         //If offline mode make play button bigger for language support
         if (Kernel.USE_LOCAL) {
-            this.playButton.setMinWidth(290);
+            playButton.setMinWidth(290);
         }
 
         //Localize elements
-        this.localizeElements();
-
-        //Show window
-        if (!this.kernel.getBrowser().isVisible()) {
-            this.stage.show();
-        }
+        localizeElements();
 
         //Validate selected profile
-        this.validateSelectedProfile();
+        validateSelectedProfile();
 
         //Manual component resize binding to fix JavaFX maximize bug
         TimerTask newsResize = new TimerTask() {
             @Override
             public void run() {
-                double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
-                double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
-                if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
-                    MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
-                } else {
-                    MainFX.this.slideshow.setFitHeight(computedHeight);
-                }
-                if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
-                    MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
-                } else {
-                    MainFX.this.slideshow.setFitWidth(computedWidth);
-                }
+                Platform.runLater(() -> {
+                    double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
+                    double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
+                    if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
+                        MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
+                    } else {
+                        MainFX.this.slideshow.setFitHeight(computedHeight);
+                    }
+                    if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
+                        MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
+                    } else {
+                        MainFX.this.slideshow.setFitWidth(computedWidth);
+                    }
+                });
             }
         };
         Timer resize = new Timer();
         resize.schedule(newsResize, 0, 25);
 
         //Close popups on resize
-        this.mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
-            this.checkPopups();
+        mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
+            checkPopups();
         });
-        this.mainScene.widthProperty().addListener((observable, oldValue, newValue) -> {
-            this.checkPopups();
+        mainScene.widthProperty().addListener((observable, oldValue, newValue) -> {
+            checkPopups();
         });
     }
 
@@ -202,51 +192,44 @@ public class MainFX {
      * Load language list
      */
     private void loadLanguages() {
-        this.console.print("Loading languages...");
-        HashMap<String, String> supportedLocales = this.kernel.getSettings().getSupportedLocales();
+        console.print("Loading languages...");
+        HashMap<String, String> supportedLocales = settings.getSupportedLocales();
         ObservableList<Label> languageListItems = FXCollections.observableArrayList();
-        for (String key : this.kernel.getSettings().getSupportedLocales().keySet()) {
+        for (String key : supportedLocales.keySet()) {
             Image i = new Image("/kml/gui/textures/flags/flag_" + key + ".png");
             Label l = new Label(supportedLocales.get(key), new ImageView(i));
             l.setId(key);
             languageListItems.add(l);
         }
-        this.languagesList.setItems(languageListItems);
-        this.console.print("Languages loaded.");
+        languagesList.setItems(languageListItems);
+        console.print("Languages loaded.");
     }
 
     /**
      * Fetches any advertisement available for the logged user
      */
     private void fetchAds() {
-        User user = this.kernel.getAuthentication().getSelectedUser();
+        User user = kernel.getAuthentication().getSelectedUser();
         if (user.getType() != UserType.MOJANG) {
             String profileID = user.getSelectedProfile();
             String adsCheck = "https://mc.krothium.com/ads.php?profileID=" + profileID;
-            String response;
-            try {
-                response = Utils.readURL(adsCheck);
-            } catch (IOException ex) {
-                this.console.print("Failed to fetch ads data.");
-                ex.printStackTrace(this.console.getWriter());
-                return;
-            }
+            String response = Utils.readURL(adsCheck);
             if (!response.isEmpty()) {
                 String[] chunks = response.split(":");
                 String firstChunk = Utils.fromBase64(chunks[0]);
-                this.urlPrefix = firstChunk == null ? "" : firstChunk;
+                urlPrefix = firstChunk == null ? "" : firstChunk;
                 if (chunks.length == 2) {
                     String secondChunk = Utils.fromBase64(response.split(":")[1]);
                     String adsURL = secondChunk == null ? "" : secondChunk;
-                    this.kernel.getBrowser().loadWebsite(adsURL);
-                    this.kernel.getBrowser().show(this.mainScene);
+                    kernel.getBrowser().loadWebsite(adsURL);
+                    kernel.getBrowser().show(mainScene);
                 }
-                this.console.print("Ads loaded.");
+                console.print("Ads loaded.");
             } else {
-                this.console.print("Ads info not available.");
+                console.print("Ads info not available.");
             }
         } else {
-            this.console.print("Ads not available for Mojang user.");
+            console.print("Ads not available for Mojang user.");
         }
     }
 
@@ -254,97 +237,102 @@ public class MainFX {
      * Updates all components text with its localized Strings
      */
     private void localizeElements() {
-        this.helpButton.setText(Language.get(2));
-        this.logoutButton.setText(Language.get(3));
-        this.newsLabel.setText(Language.get(4));
-        this.skinsLabel.setText(Language.get(5));
-        this.settingsLabel.setText(Language.get(6));
-        this.launchOptionsLabel.setText(Language.get(7));
-        if (this.kernel.getGameLauncher().isRunning()) {
-            this.playButton.setText(Language.get(14));
+        helpButton.setText(Language.get(2));
+        logoutButton.setText(Language.get(3));
+        newsLabel.setText(Language.get(4));
+        skinsLabel.setText(Language.get(5));
+        settingsLabel.setText(Language.get(6));
+        launchOptionsLabel.setText(Language.get(7));
+        if (kernel.getGameLauncher().isRunning()) {
+            playButton.setText(Language.get(14));
         } else {
             if (Kernel.USE_LOCAL) {
-                this.playButton.setText(Language.get(79));
+                playButton.setText(Language.get(79));
             } else {
-                this.playButton.setText(Language.get(12));
+                playButton.setText(Language.get(12));
             }
         }
-        this.usernameLabel.setText(Language.get(18));
-        this.passwordLabel.setText(Language.get(19));
-        this.loginButton.setText(Language.get(20));
-        this.loginExisting.setText(Language.get(20));
-        this.registerButton.setText(Language.get(21));
-        this.changeIcon.setText(Language.get(24));
-        this.exportLogs.setText(Language.get(27));
-        this.downloadServer.setText(Language.get(28));
-        this.skinLabel.setText(Language.get(29));
-        this.capeLabel.setText(Language.get(30));
-        this.launcherSettings.setText(Language.get(45));
-        this.keepLauncherOpen.setText(Language.get(46));
-        this.outputLog.setText(Language.get(47));
-        this.enableSnapshots.setText(Language.get(48));
-        this.historicalVersions.setText(Language.get(49));
-        this.advancedSettings.setText(Language.get(50));
-        this.saveButton.setText(Language.get(52));
-        this.cancelButton.setText(Language.get(53));
-        this.deleteButton.setText(Language.get(54));
-        this.nameLabel.setText(Language.get(63));
-        this.profileVersionLabel.setText(Language.get(64));
-        this.resolutionLabel.setText(Language.get(65));
-        this.gameDirLabel.setText(Language.get(66));
-        this.javaExecLabel.setText(Language.get(67));
-        this.javaArgsLabel.setText(Language.get(68));
-        this.existingLabel.setText(Language.get(85));
-        this.switchAccountButton.setText(Language.get(86));
-        this.selectSkin.setText(Language.get(87));
-        this.selectCape.setText(Language.get(87));
-        this.deleteSkin.setText(Language.get(88));
-        this.deleteCape.setText(Language.get(88));
-        this.modelLabel.setText(Language.get(89));
-        this.skinClassic.setText(Language.get(90));
-        this.skinSlim.setText(Language.get(91));
-        this.iconLabel.setText(Language.get(92));
-        this.includeCape.setText(Language.get(93));
-        this.deleteCache.setText(Language.get(94));
-        this.forgotPasswordLink.setText(Language.get(97));
-        this.profileName.setPromptText(Language.get(98));
-        this.authenticationLabel.setText(Language.get(99));
-        if (this.slides.isEmpty()) {
-            this.newsTitle.setText(Language.get(102));
-            this.newsText.setText(Language.get(103));
+        usernameLabel.setText(Language.get(18));
+        passwordLabel.setText(Language.get(19));
+        loginButton.setText(Language.get(20));
+        loginExisting.setText(Language.get(20));
+        registerButton.setText(Language.get(21));
+        changeIcon.setText(Language.get(24));
+        exportLogs.setText(Language.get(27));
+        downloadServer.setText(Language.get(28));
+        skinLabel.setText(Language.get(29));
+        capeLabel.setText(Language.get(30));
+        launcherSettings.setText(Language.get(45));
+        keepLauncherOpen.setText(Language.get(46));
+        outputLog.setText(Language.get(47));
+        enableSnapshots.setText(Language.get(48));
+        historicalVersions.setText(Language.get(49));
+        advancedSettings.setText(Language.get(50));
+        saveButton.setText(Language.get(52));
+        cancelButton.setText(Language.get(53));
+        deleteButton.setText(Language.get(54));
+        nameLabel.setText(Language.get(63));
+        profileVersionLabel.setText(Language.get(64));
+        resolutionLabel.setText(Language.get(65));
+        gameDirLabel.setText(Language.get(66));
+        javaExecLabel.setText(Language.get(67));
+        javaArgsLabel.setText(Language.get(68));
+        existingLabel.setText(Language.get(85));
+        switchAccountButton.setText(Language.get(86));
+        selectSkin.setText(Language.get(87));
+        selectCape.setText(Language.get(87));
+        deleteSkin.setText(Language.get(88));
+        deleteCape.setText(Language.get(88));
+        modelLabel.setText(Language.get(89));
+        skinClassic.setText(Language.get(90));
+        skinSlim.setText(Language.get(91));
+        iconLabel.setText(Language.get(92));
+        includeCape.setText(Language.get(93));
+        deleteCache.setText(Language.get(94));
+        forgotPasswordLink.setText(Language.get(97));
+        profileName.setPromptText(Language.get(98));
+        authenticationLabel.setText(Language.get(99));
+        if (slides.isEmpty()) {
+            newsTitle.setText(Language.get(102));
+            newsText.setText(Language.get(103));
         }
-        this.updateGameVersion();
+        updateGameVersion();
     }
 
     /**
      * Loads the skin preview for the logged user
      */
     private void loadTextures() {
-        if (this.loadingTextures) {
+        if (loadingTextures) {
             return;
         }
-        this.selectSkin.setDisable(true);
-        this.selectCape.setDisable(true);
-        this.deleteSkin.setDisable(true);
-        this.deleteCape.setDisable(true);
-        this.includeCape.setDisable(true);
+        selectSkin.setDisable(true);
+        selectCape.setDisable(true);
+        deleteSkin.setDisable(true);
+        deleteCape.setDisable(true);
+        includeCape.setDisable(true);
         if (Kernel.USE_LOCAL) {
             return;
         }
         Thread t = new Thread(() -> {
             try {
-                this.console.print("Loading textures...");
-                this.loadingTextures = true;
-                User selected = this.kernel.getAuthentication().getSelectedUser();
+                console.print("Loading textures...");
+                loadingTextures = true;
+                if (alex == null || steve == null) {
+                    //Load placeholder skins
+                    alex = new Image("/kml/gui/textures/alex.png");
+                    steve = new Image("/kml/gui/textures/steve.png");
+                }
+                User selected = kernel.getAuthentication().getSelectedUser();
                 String domain;
                 if (selected.getType() == UserType.MOJANG) {
                     domain = "sessionserver.mojang.com/session/minecraft/profile/";
-                    this.skinActions.setVisible(false);
-                    this.skinActions.setManaged(false);
+                    skinActions.setVisible(false);
+                    skinActions.setManaged(false);
                 } else {
                     domain = "mc.krothium.com/profiles/";
-                    this.skinActions.setVisible(true);
-                    this.skinActions.setManaged(true);
+                    skinActions.setVisible(true);
+                    skinActions.setManaged(true);
                 }
                 String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
                 JSONObject root = new JSONObject(Utils.readURL(profileURL));
@@ -354,8 +342,8 @@ public class MainFX {
                     if ("textures".equalsIgnoreCase(property.getString("name"))) {
                         JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
                         JSONObject textures = data.getJSONObject("textures");
-                        this.skin = null;
-                        this.cape = null;
+                        skin = null;
+                        cape = null;
                         boolean slim = false;
                         if (textures.has("SKIN")) {
                             JSONObject skinData = textures.getJSONObject("SKIN");
@@ -365,40 +353,40 @@ public class MainFX {
                                 }
                             }
                             InputStream stream = Utils.readCachedStream(textures.getJSONObject("SKIN").getString("url"));
-                            this.skin = new Image(stream);
+                            skin = new Image(stream);
                             stream.close();
                         }
-                        if (this.skin == null || this.skin.getHeight() == 0 && !slim) {
-                            this.skin = this.steve;
-                        } else if (this.skin.getHeight() == 0) {
-                            this.skin = this.alex;
+                        if (skin == null || skin.getHeight() == 0 && !slim) {
+                            skin = steve;
+                        } else if (skin.getHeight() == 0) {
+                            skin = alex;
                         } else {
-                            this.deleteSkin.setDisable(false);
+                            deleteSkin.setDisable(false);
                         }
                         if (textures.has("CAPE")) {
                             InputStream stream = Utils.readCachedStream(textures.getJSONObject("CAPE").getString("url"));
-                            this.cape = new Image(stream);
+                            cape = new Image(stream);
                             stream.close();
-                            this.includeCape.setDisable(false);
-                            this.deleteCape.setDisable(false);
+                            includeCape.setDisable(false);
+                            deleteCape.setDisable(false);
                         }
                         if (slim) {
-                            this.skinSlim.setSelected(true);
+                            skinSlim.setSelected(true);
                         } else {
-                            this.skinClassic.setSelected(true);
+                            skinClassic.setSelected(true);
                         }
-                        this.texturesLoaded = true;
-                        this.console.print("Textures loaded.");
-                        this.updatePreview();
+                        texturesLoaded = true;
+                        console.print("Textures loaded.");
+                        updatePreview();
                     }
                 }
-                this.selectSkin.setDisable(false);
-                this.selectCape.setDisable(false);
+                selectSkin.setDisable(false);
+                selectCape.setDisable(false);
             } catch (Exception ex) {
-                this.console.print("Failed to parse remote profile textures.");
-                ex.printStackTrace(this.console.getWriter());
+                console.print("Failed to parse remote profile textures.");
+                ex.printStackTrace(console.getWriter());
             }
-            this.loadingTextures = false;
+            loadingTextures = false;
         });
         t.start();
     }
@@ -407,25 +395,25 @@ public class MainFX {
      * Toggles the label of the toggle cape button
      */
     @FXML public final void toggleCapePreview() {
-        if (this.includeCape.getStyleClass().contains("toggle-enabled")) {
-            this.toggleLabel(this.includeCape, false);
+        if (includeCape.getStyleClass().contains("toggle-enabled")) {
+            toggleLabel(includeCape, false);
         } else {
-            this.toggleLabel(this.includeCape, true);
+            toggleLabel(includeCape, true);
         }
-        this.updatePreview();
+        updatePreview();
     }
 
     /**
      * Changes the skin type
      */
     @FXML public final void toggleSkinType() {
-        if (this.deleteSkin.isDisabled()) {
-            if (this.skinClassic.isSelected()) {
-                this.skin = this.steve;
+        if (deleteSkin.isDisabled()) {
+            if (skinClassic.isSelected()) {
+                skin = steve;
             } else {
-                this.skin = this.alex;
+                skin = alex;
             }
-            this.updatePreview();
+            updatePreview();
         }
     }
 
@@ -433,19 +421,19 @@ public class MainFX {
      * Updates the skin preview
      */
     private void updatePreview() {
-        boolean slim = this.skinSlim.isSelected();
-        if (this.includeCape.getStyleClass().contains("toggle-enabled")) {
-            this.skinPreviews[0] = this.kernel.resampleImage(TexturePreview.generateFront(this.skin, this.cape, slim), 10);
-            this.skinPreviews[1] = this.kernel.resampleImage(TexturePreview.generateRight(this.skin, this.cape), 10);
-            this.skinPreviews[2] = this.kernel.resampleImage(TexturePreview.generateBack(this.skin, this.cape, slim), 10);
-            this.skinPreviews[3] = this.kernel.resampleImage(TexturePreview.generateLeft(this.skin, this.cape), 10);
+        boolean slim = skinSlim.isSelected();
+        if (includeCape.getStyleClass().contains("toggle-enabled")) {
+            skinPreviews[0] = TexturePreview.resampleImage(TexturePreview.generateFront(skin, cape, slim), 10);
+            skinPreviews[1] = TexturePreview.resampleImage(TexturePreview.generateRight(skin, cape), 10);
+            skinPreviews[2] = TexturePreview.resampleImage(TexturePreview.generateBack(skin, cape, slim), 10);
+            skinPreviews[3] = TexturePreview.resampleImage(TexturePreview.generateLeft(skin, cape), 10);
         } else {
-            this.skinPreviews[0] = this.kernel.resampleImage(TexturePreview.generateFront(this.skin, null, slim), 10);
-            this.skinPreviews[1] = this.kernel.resampleImage(TexturePreview.generateRight(this.skin, null), 10);
-            this.skinPreviews[2] = this.kernel.resampleImage(TexturePreview.generateBack(this.skin, null, slim), 10);
-            this.skinPreviews[3] = this.kernel.resampleImage(TexturePreview.generateLeft(this.skin, null), 10);
+            skinPreviews[0] = TexturePreview.resampleImage(TexturePreview.generateFront(skin, null, slim), 10);
+            skinPreviews[1] = TexturePreview.resampleImage(TexturePreview.generateRight(skin, null), 10);
+            skinPreviews[2] = TexturePreview.resampleImage(TexturePreview.generateBack(skin, null, slim), 10);
+            skinPreviews[3] = TexturePreview.resampleImage(TexturePreview.generateLeft(skin, null), 10);
         }
-        this.skinPreview.setImage(this.skinPreviews[this.currentPreview]);
+        skinPreview.setImage(skinPreviews[currentPreview]);
     }
 
     /**
@@ -454,30 +442,28 @@ public class MainFX {
      * @param file File to be submited. Null if it's a deletion.
      */
     private void submitChange(String target, File file) {
-        String url = target.equals("skin") ? this.CHANGESKIN_URL : this.CHANGECAPE_URL;
+        String CHANGESKIN_URL = "https://mc.krothium.com/changeskin";
+        String CHANGECAPE_URL = "https://mc.krothium.com/changecape";
+        String url = target.equals("skin") ? CHANGESKIN_URL : CHANGECAPE_URL;
         Map<String, String> params = new HashMap<>();
-        params.put("Access-Token", this.kernel.getAuthentication().getSelectedUser().getAccessToken());
-        params.put("Client-Token", this.kernel.getAuthentication().getClientToken());
+        params.put("Access-Token", kernel.getAuthentication().getSelectedUser().getAccessToken());
+        params.put("Client-Token", kernel.getAuthentication().getClientToken());
         byte[] data = null;
         if (file != null) {
             if (file.length() > 131072) {
                 if (target.equals("skin")) {
-                    this.console.print("Skin file exceeds 128KB file size limit.");
-                    Platform.runLater(() -> {
-                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(105));
-                    });
+                    console.print("Skin file exceeds 128KB file size limit.");
+                    Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, Language.get(105)));
                 } else {
-                    this.console.print("Cape file exceeds 128KB file size limit.");
-                    Platform.runLater(() -> {
-                        this.kernel.showAlert(AlertType.ERROR, null, Language.get(104));
-                    });
+                    console.print("Cape file exceeds 128KB file size limit.");
+                    Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, Language.get(104)));
                 }
                 return;
             }
             try {
                 data = Files.readAllBytes(file.toPath());
                 if (target.equals("skin")) {
-                    if (this.skinSlim.isSelected()) {
+                    if (skinSlim.isSelected()) {
                         params.put("Skin-Type", "alex");
                     } else {
                         params.put("Skin-Type", "steve");
@@ -485,8 +471,8 @@ public class MainFX {
                 }
                 params.put("Content-Type", "image/png");
             } catch (Exception ex) {
-                this.console.print("Failed read textures.");
-                ex.printStackTrace(this.console.getWriter());
+                console.print("Failed read textures.");
+                ex.printStackTrace(console.getWriter());
             }
         }
         try {
@@ -506,12 +492,10 @@ public class MainFX {
                         text = Language.get(38);
                     }
                 }
-                this.console.print("Failed to " + (file != null ? "change" : "delete") + " the " + target + ".");
-                this.console.print(r);
+                console.print("Failed to " + (file != null ? "change" : "delete") + " the " + target + ".");
+                console.print(r);
                 String finalText = text;
-                Platform.runLater(() -> {
-                    this.kernel.showAlert(AlertType.ERROR, null, finalText);
-                });
+                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, finalText));
                 return;
             }
             if (target.equals("skin")) {
@@ -528,15 +512,13 @@ public class MainFX {
                 }
             }
             target = target.substring(0, 1).toUpperCase() + target.substring(1);
-            this.console.print(target + " " + (file != null ? "changed" : "deleted") + " successfully!");
+            console.print(target + " " + (file != null ? "changed" : "deleted") + " successfully!");
             String finalText = text;
-            Platform.runLater(() -> {
-                this.kernel.showAlert(AlertType.INFORMATION, null, finalText);
-            });
-            this.loadTextures();
+            Platform.runLater(() -> kernel.showAlert(AlertType.INFORMATION, null, finalText));
+            loadTextures();
         } catch (IOException ex) {
-            this.console.print("Failed to perform textures post.");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Failed to perform textures post.");
+            ex.printStackTrace(console.getWriter());
         }
     }
 
@@ -544,14 +526,14 @@ public class MainFX {
      * Changes the skin of the user
      */
     @FXML private void changeSkin() {
-        File selected = this.selectFile(Language.get(44), "*.png", "open");
+        File selected = selectFile(Language.get(44), "*.png", "open");
         if (selected != null) {
-            this.selectSkin.setDisable(true);
-            this.deleteSkin.setDisable(true);
+            selectSkin.setDisable(true);
+            deleteSkin.setDisable(true);
             Thread t = new Thread(() -> {
                 submitChange("skin", selected);
-                this.selectSkin.setDisable(false);
-                this.deleteSkin.setDisable(false);
+                selectSkin.setDisable(false);
+                deleteSkin.setDisable(false);
             });
             t.start();
         }
@@ -561,14 +543,14 @@ public class MainFX {
      * Changes the cape of the user
      */
     @FXML private void changeCape() {
-        File selected = this.selectFile(Language.get(25), "*.png", "open");
+        File selected = selectFile(Language.get(25), "*.png", "open");
         if (selected != null) {
-            this.selectCape.setDisable(true);
-            this.deleteCape.setDisable(true);
+            selectCape.setDisable(true);
+            deleteCape.setDisable(true);
             Thread t = new Thread(() -> {
                 submitChange("cape", selected);
-                this.selectCape.setDisable(false);
-                this.deleteCape.setDisable(false);
+                selectCape.setDisable(false);
+                deleteCape.setDisable(false);
             });
             t.start();
         }
@@ -579,14 +561,14 @@ public class MainFX {
      * Deletes the skin of the user
      */
     @FXML private void deleteSkin() {
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
         if (result == 1){
-            this.selectSkin.setDisable(true);
-            this.deleteSkin.setDisable(true);
+            selectSkin.setDisable(true);
+            deleteSkin.setDisable(true);
             Thread t = new Thread(() -> {
                 submitChange("skin", null);
-                this.selectSkin.setDisable(false);
-                this.deleteSkin.setDisable(false);
+                selectSkin.setDisable(false);
+                deleteSkin.setDisable(false);
             });
             t.start();
         }
@@ -596,14 +578,14 @@ public class MainFX {
      * Deletes the cape of the user
      */
     @FXML private void deleteCape() {
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
         if (result == 1){
-            this.selectCape.setDisable(true);
-            this.deleteCape.setDisable(true);
+            selectCape.setDisable(true);
+            deleteCape.setDisable(true);
             Thread t = new Thread(() -> {
                 submitChange("cape", null);
-                this.selectCape.setDisable(false);
-                this.deleteCape.setDisable(false);
+                selectCape.setDisable(false);
+                deleteCape.setDisable(false);
             });
             t.start();
         }
@@ -613,7 +595,7 @@ public class MainFX {
      * Loads the news slideshow
      */
     private void loadSlideshow() {
-        this.console.print("Loading news slideshow...");
+        console.print("Loading news slideshow...");
         try {
             String newsURL = "https://launchermeta.mojang.com/mc/news.json";
             String response = Utils.readURL(newsURL);
@@ -634,32 +616,32 @@ public class MainFX {
                 }
                 JSONObject content = entry.getJSONObject("content").getJSONObject("en-us");
                 Slide s = new Slide(content.getString("action"), content.getString("image"), content.getString("title"), content.getString("text"));
-                this.slides.add(s);
+                slides.add(s);
             }
         } catch (Exception ex) {
-            this.newsTitle.setText(Language.get(80));
-            this.newsText.setText(Language.get(101));
-            this.console.print("Couldn't parse news data.");
-            ex.printStackTrace(this.console.getWriter());
+            newsTitle.setText(Language.get(80));
+            newsText.setText(Language.get(101));
+            console.print("Couldn't parse news data.");
+            ex.printStackTrace(console.getWriter());
             return;
         }
-        if (!this.slides.isEmpty()) {
-            this.slideshowBox.setVisible(true);
-            this.slideshowBox.setManaged(true);
-            Slide s = this.slides.get(0);
+        if (!slides.isEmpty()) {
+            slideshowBox.setVisible(true);
+            slideshowBox.setManaged(true);
+            Slide s = slides.get(0);
             Image i = s.getImage();
             if (i != null) {
-                this.slideshow.setImage(s.getImage());
+                slideshow.setImage(s.getImage());
             }
 
 
-            this.newsTitle.setText(s.getTitle());
-            this.newsText.setText(s.getText());
+            newsTitle.setText(s.getTitle());
+            newsText.setText(s.getText());
         } else {
-            this.newsTitle.setText(Language.get(102));
-            this.newsText.setText(Language.get(103));
+            newsTitle.setText(Language.get(102));
+            newsText.setText(Language.get(103));
         }
-        this.console.print("News slideshow loaded.");
+        console.print("News slideshow loaded.");
     }
 
     /**
@@ -667,47 +649,47 @@ public class MainFX {
      * @param e The trigger event
      */
     @FXML public final void changeSlide(MouseEvent e) {
-        if (this.slides.isEmpty()) {
+        if (slides.isEmpty()) {
             //No slides
             return;
         }
         Label source = (Label)e.getSource();
-        if (source == this.slideBack) {
-            if (this.currentSlide == 0) {
-                this.currentSlide = this.slides.size() - 1;
+        if (source == slideBack) {
+            if (currentSlide == 0) {
+                currentSlide = slides.size() - 1;
             } else {
-                this.currentSlide--;
+                currentSlide--;
             }
-        } else if (source == this.slideForward) {
-            if (this.currentSlide == this.slides.size() - 1) {
-                this.currentSlide = 0;
+        } else if (source == slideForward) {
+            if (currentSlide == slides.size() - 1) {
+                currentSlide = 0;
             } else {
-                this.currentSlide++;
+                currentSlide++;
             }
         }
-        Slide s = this.slides.get(this.currentSlide);
+        Slide s = slides.get(currentSlide);
         Thread t = new Thread(() -> {
             Image i = s.getImage();
             if (i != null) {
-                this.slideshow.setImage(i);
+                slideshow.setImage(i);
             }
         });
         t.start();
-        this.newsTitle.setText(s.getTitle());
+        newsTitle.setText(s.getTitle());
 
-        this.newsText.setText(s.getText());
+        newsText.setText(s.getText());
     }
 
     /**
      * Performs an action when a slide is clicked
      */
     @FXML public final void performSlideAction() {
-        if (this.slides.isEmpty()) {
+        if (slides.isEmpty()) {
             //No slides
             return;
         }
-        Slide s = this.slides.get(this.currentSlide);
-        this.kernel.getHostServices().showDocument(this.urlPrefix + s.getAction());
+        Slide s = slides.get(currentSlide);
+        kernel.getHostServices().showDocument(urlPrefix + s.getAction());
     }
 
     /**
@@ -716,21 +698,21 @@ public class MainFX {
      */
     @FXML public final void rotatePreview(MouseEvent e) {
         Label src = (Label)e.getSource();
-        if (src == this.rotateRight) {
-            if (this.currentPreview < 3) {
-                this.currentPreview++;
-                this.skinPreview.setImage(this.skinPreviews[this.currentPreview]);
+        if (src == rotateRight) {
+            if (currentPreview < 3) {
+                currentPreview++;
+                skinPreview.setImage(skinPreviews[currentPreview]);
             } else {
-                this.currentPreview = 0;
-                this.skinPreview.setImage(this.skinPreviews[this.currentPreview]);
+                currentPreview = 0;
+                skinPreview.setImage(skinPreviews[currentPreview]);
             }
-        } else if (src == this.rotateLeft) {
-            if (this.currentPreview > 0) {
-                this.currentPreview--;
-                this.skinPreview.setImage(this.skinPreviews[this.currentPreview]);
+        } else if (src == rotateLeft) {
+            if (currentPreview > 0) {
+                currentPreview--;
+                skinPreview.setImage(skinPreviews[currentPreview]);
             } else {
-                this.currentPreview = 3;
-                this.skinPreview.setImage(this.skinPreviews[this.currentPreview]);
+                currentPreview = 3;
+                skinPreview.setImage(skinPreviews[currentPreview]);
             }
         }
     }
@@ -739,25 +721,25 @@ public class MainFX {
      * Loads profiles list items
      */
     private void loadProfileList() {
-        this.console.print("Loading profile list...");
-        ObservableList<Label> profileListItems = this.getProfileList();
+        console.print("Loading profile list...");
+        ObservableList<Label> profileListItems = getProfileList();
 
         //Add "Add New Profile" item
         profileListItems.add(0, new Label(Language.get(51), new ImageView(new Image("/kml/gui/textures/add.png"))));
-        this.profileList.setItems(profileListItems);
-        this.profileListLoaded = true;
-        this.console.print("Profile list loaded.");
+        profileList.setItems(profileListItems);
+        profileListLoaded = true;
+        console.print("Profile list loaded.");
     }
 
     /**
      * Loads profiles popup list items
      */
     private void loadProfileListPopup() {
-        this.console.print("Loading profile list popup...");
-        ObservableList<Label> profileListItems = this.getProfileList();
-        this.profilePopupList.setItems(profileListItems);
-        this.profileListPopupLoaded = true;
-        this.console.print("Profile list popup loaded.");
+        console.print("Loading profile list popup...");
+        ObservableList<Label> profileListItems = getProfileList();
+        profilePopupList.setItems(profileListItems);
+        profileListPopupLoaded = true;
+        console.print("Profile list popup loaded.");
     }
 
     /**
@@ -766,8 +748,7 @@ public class MainFX {
      */
     private ObservableList<Label> getProfileList() {
         ObservableList<Label> profileListItems = FXCollections.observableArrayList();
-        Profiles ps = this.kernel.getProfiles();
-        Settings settings = this.kernel.getSettings();
+        Profiles ps = kernel.getProfiles();
         Label l;
         ImageView iv;
         String text;
@@ -775,37 +756,45 @@ public class MainFX {
             if (p.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
                 continue;
             }
-            if (p.getType() == ProfileType.RELEASE) {
-                iv = new ImageView(this.kernel.getProfileIcon(ProfileIcon.GRASS));
-                text = Language.get(59);
-            } else if (p.getType() == ProfileType.SNAPSHOT) {
-                iv = new ImageView(this.kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
-                text = Language.get(60);
-            } else {
-                text = p.hasName() ? p.getName() : Language.get(70);
-                ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
-                iv = new ImageView(this.kernel.getProfileIcon(pi));
+            switch (p.getType()) {
+                case RELEASE:
+                    iv = new ImageView(kernel.getProfileIcon(ProfileIcon.GRASS));
+                    text = Language.get(59);
+                    break;
+                case SNAPSHOT:
+                    iv = new ImageView(kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                    text = Language.get(60);
+                    break;
+                default:
+                    text = p.hasName() ? p.getName() : Language.get(70);
+                    ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
+                    iv = new ImageView(kernel.getProfileIcon(pi));
+                    break;
             }
             iv.setFitWidth(68);
             iv.setFitHeight(68);
             l = new Label(text, iv);
             //Fetch Minecraft version used by the profile
             VersionMeta verID;
-            if (p.getType() == ProfileType.CUSTOM) {
-                Versions versions = this.kernel.getVersions();
-                verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
-            } else if (p.getType() == ProfileType.RELEASE) {
-                verID = this.kernel.getVersions().getLatestRelease();
-            } else {
-                verID = this.kernel.getVersions().getLatestSnapshot();
+            switch (p.getType()) {
+                case CUSTOM:
+                    Versions versions = kernel.getVersions();
+                    verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
+                    break;
+                case RELEASE:
+                    verID = kernel.getVersions().getLatestRelease();
+                    break;
+                default:
+                    verID = kernel.getVersions().getLatestSnapshot();
+                    break;
             }
             l.setId(p.getID());
             if (verID != null) {
                 //If profile has any known version just show it below the profile name
-                if (verID.getType() == VersionType.SNAPSHOT && !this.kernel.getSettings().getEnableSnapshots()) {
+                if (verID.getType() == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
                     continue;
                 }
-                if ((verID.getType() == VersionType.OLD_ALPHA || verID.getType() == VersionType.OLD_BETA) && !this.kernel.getSettings().getEnableHistorical()) {
+                if ((verID.getType() == VersionType.OLD_ALPHA || verID.getType() == VersionType.OLD_BETA) && !settings.getEnableHistorical()) {
                     continue;
                 }
                 l.setText(l.getText() + '\n' + verID.getID());
@@ -822,24 +811,28 @@ public class MainFX {
      * Updates the selected minecraft version indicator
      */
     private void updateGameVersion() {
-        Profile p = this.kernel.getProfiles().getSelectedProfile();
+        Profile p = kernel.getProfiles().getSelectedProfile();
         if (p != null) {
-            if (p.getType() == ProfileType.RELEASE) {
-                this.gameVersion.setText(Language.get(26));
-            } else if (p.getType() == ProfileType.SNAPSHOT) {
-                this.gameVersion.setText(Language.get(32));
-            } else {
-                if (p.isLatestRelease()) {
-                    this.gameVersion.setText(Language.get(26));
-                } else if (p.isLatestSnapshot()) {
-                    this.gameVersion.setText(Language.get(32));
-                } else if (p.hasVersion()) {
-                    VersionMeta version = p.getVersionID();
-                    this.gameVersion.setText("Minecraft " + version.getID());
-                }
+            switch (p.getType()) {
+                case RELEASE:
+                    gameVersion.setText(Language.get(26));
+                    break;
+                case SNAPSHOT:
+                    gameVersion.setText(Language.get(32));
+                    break;
+                default:
+                    if (p.isLatestRelease()) {
+                        gameVersion.setText(Language.get(26));
+                    } else if (p.isLatestSnapshot()) {
+                        gameVersion.setText(Language.get(32));
+                    } else if (p.hasVersion()) {
+                        VersionMeta version = p.getVersionID();
+                        gameVersion.setText("Minecraft " + version.getID());
+                    }
+                    break;
             }
         }  else {
-            this.gameVersion.setText("");
+            gameVersion.setText("");
         }
     }
 
@@ -847,31 +840,30 @@ public class MainFX {
      * Loads the profile icons
      */
     private void loadIcons() {
-        this.console.print("Loading icons...");
+        console.print("Loading icons...");
         ObservableList<ImageView> icons = FXCollections.observableArrayList();
         for (ProfileIcon p : ProfileIcon.values()) {
             if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
-                ImageView imv = new ImageView(this.kernel.getProfileIcon(p));
+                ImageView imv = new ImageView(kernel.getProfileIcon(p));
                 imv.setFitHeight(68);
                 imv.setFitWidth(68);
                 imv.setId(p.name());
                 icons.add(imv);
             }
         }
-        this.iconList.setItems(icons);
-        this.console.print("Icons loaded.");
+        iconList.setItems(icons);
+        console.print("Icons loaded.");
     }
 
     /**
      * Validates the selected profile according to the constraints
      */
     private void validateSelectedProfile() {
-        Profiles ps = this.kernel.getProfiles();
+        Profiles ps = kernel.getProfiles();
 
         //Check if selected profile passes the current settings
         Profile selected = ps.getSelectedProfile();
         VersionMeta selectedVersion = selected.getVersionID();
-        Settings settings = this.kernel.getSettings();
 
         if (selected.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
             ps.setSelectedProfile(ps.getReleaseProfile());
@@ -886,42 +878,42 @@ public class MainFX {
             }
         }
 
-        this.updateGameVersion();
+        updateGameVersion();
     }
 
     /**
      * Selects the selected profile from the list
      */
     @FXML private void selectProfile() {
-        if (this.profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
+        if (profilePopupList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
         }
         //Select profile and refresh list
-        this.kernel.getProfiles().setSelectedProfile(this.kernel.getProfiles().getProfile(this.profilePopupList.getSelectionModel().getSelectedItem().getId()));
-        this.updateGameVersion();
-        SingleSelectionModel<Tab> selection = this.contentPane.getSelectionModel();
+        kernel.getProfiles().setSelectedProfile(kernel.getProfiles().getProfile(profilePopupList.getSelectionModel().getSelectedItem().getId()));
+        updateGameVersion();
+        SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
         Tab selectedTab = selection.getSelectedItem();
-        if (selectedTab == this.launchOptionsTab) {
-            this.loadProfileList();
+        if (selectedTab == launchOptionsTab) {
+            loadProfileList();
         } else {
-            this.profileListLoaded = false;
+            profileListLoaded = false;
         }
-        this.profileListPopupLoaded = false;
-        this.profilePopupList.setVisible(false);
-        this.kernel.saveProfiles();
+        profileListPopupLoaded = false;
+        profilePopupList.setVisible(false);
+        kernel.saveProfiles();
     }
 
     /**
      * Downloads and launches the game
      */
     @FXML public final void launchGame() {
-        this.progressPane.setVisible(true);
-        this.playPane.setVisible(false);
-        this.progressBar.setProgress(0);
-        this.progressText.setText("");
-        Downloader d = this.kernel.getDownloader();
-        GameLauncher gl = this.kernel.getGameLauncher();
+        progressPane.setVisible(true);
+        playPane.setVisible(false);
+        progressBar.setProgress(0);
+        progressText.setText("");
+        Downloader d = kernel.getDownloader();
+        GameLauncher gl = kernel.getGameLauncher();
 
         //Keep track of the progress
         TimerTask progressTask = new TimerTask() {
@@ -943,30 +935,30 @@ public class MainFX {
                 timer.cancel();
                 timer.purge();
                 Platform.runLater(() -> {
-                    this.progressText.setText(Language.get(78));
-                    this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                    progressText.setText(Language.get(78));
+                    progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
                 });
                 gl.launch(this);
 
                 Platform.runLater(() -> {
-                    this.progressPane.setVisible(false);
-                    this.playPane.setVisible(true);
-                    this.playButton.setText(Language.get(14));
-                    this.playButton.setDisable(true);
-                    this.profilePopupButton.setDisable(true);
+                    progressPane.setVisible(false);
+                    playPane.setVisible(true);
+                    playButton.setText(Language.get(14));
+                    playButton.setDisable(true);
+                    profilePopupButton.setDisable(true);
                 });
 
-                if (!this.kernel.getSettings().getKeepLauncherOpen()) {
+                if (!settings.getKeepLauncherOpen()) {
                     Platform.runLater(() -> MainFX.this.stage.close());
                 }
             } catch (DownloaderException e) {
-                Platform.runLater(() -> this.kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
-                this.console.print("Failed to perform game download task");
-                e.printStackTrace(this.console.getWriter());
+                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
+                console.print("Failed to perform game download task");
+                e.printStackTrace(console.getWriter());
             } catch (GameLauncherException e) {
-                Platform.runLater(() -> this.kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
-                this.console.print("Failed to perform game launch task");
-                e.printStackTrace(this.console.getWriter());
+                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
+                console.print("Failed to perform game launch task");
+                e.printStackTrace(console.getWriter());
             }
         });
         runThread.start();
@@ -979,17 +971,17 @@ public class MainFX {
     public final void gameEnded(boolean error) {
         Platform.runLater(() -> {
             if (error) {
-                this.kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
+                kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
             }
-            if (!this.kernel.getSettings().getKeepLauncherOpen()) {
-                this.kernel.exitSafely();
+            if (!settings.getKeepLauncherOpen()) {
+                kernel.exitSafely();
             }
-            this.playButton.setDisable(false);
-            this.profilePopupButton.setDisable(false);
+            playButton.setDisable(false);
+            profilePopupButton.setDisable(false);
             if (Kernel.USE_LOCAL) {
-                this.playButton.setText(Language.get(79));
+                playButton.setText(Language.get(79));
             } else {
-                this.playButton.setText(Language.get(12));
+                playButton.setText(Language.get(12));
             }
         });
     }
@@ -999,29 +991,29 @@ public class MainFX {
      */
     @FXML public final void showLanguages(Event e) {
         e.consume();
-        if (this.languagesList.isVisible()) {
-            this.languagesList.setVisible(false);
+        if (languagesList.isVisible()) {
+            languagesList.setVisible(false);
         } else {
-            if (!this.languageListLoaded) {
-                this.loadLanguages();
-                this.languageListLoaded = true;
+            if (!languageListLoaded) {
+                loadLanguages();
+                languageListLoaded = true;
             }
-            this.languagesList.setVisible(true);
+            languagesList.setVisible(true);
         }
     }
 
     public final void checkPopups() {
-        if (this.languagesList.isVisible()) {
-            this.languagesList.setVisible(false);
+        if (languagesList.isVisible()) {
+            languagesList.setVisible(false);
         }
-        if (this.switchAccountButton.isVisible()) {
-            this.switchAccountButton.setVisible(false);
+        if (switchAccountButton.isVisible()) {
+            switchAccountButton.setVisible(false);
         }
-        if (this.profilePopupList.isVisible()) {
-            this.profilePopupList.setVisible(false);
+        if (profilePopupList.isVisible()) {
+            profilePopupList.setVisible(false);
         }
-        if (this.iconList.isVisible()) {
-            this.iconList.setVisible(false);
+        if (iconList.isVisible()) {
+            iconList.setVisible(false);
         }
     }
 
@@ -1029,31 +1021,31 @@ public class MainFX {
      * Deselects the current user and allows to select another
      */
     @FXML public final void switchAccount() {
-        if (this.switchAccountButton.isVisible()) {
-            this.switchAccountButton.setVisible(false);
+        if (switchAccountButton.isVisible()) {
+            switchAccountButton.setVisible(false);
         }
-        Authentication a = this.kernel.getAuthentication();
+        Authentication a = kernel.getAuthentication();
         a.setSelectedUser(null);
-        this.kernel.saveProfiles();
-        this.showLoginPrompt(true);
-        this.updateExistingUsers();
+        kernel.saveProfiles();
+        showLoginPrompt(true);
+        updateExistingUsers();
     }
 
     /**
      * Shows the profile popup list
      */
     @FXML public final void showProfiles() {
-        if (this.profilePopupList.isVisible()) {
-            this.profilePopupList.setVisible(false);
+        if (profilePopupList.isVisible()) {
+            profilePopupList.setVisible(false);
         } else {
-            if (!this.profileListPopupLoaded) {
-                this.loadProfileListPopup();
+            if (!profileListPopupLoaded) {
+                loadProfileListPopup();
             }
-            Bounds b = this.playButton.localToScene(this.playButton.getBoundsInLocal());
-            this.profilePopupList.setTranslateX(b.getMinX() - 100);
-            this.profilePopupList.setTranslateY(b.getMinY() - 180);
-            this.profilePopupList.setVisible(true);
-            this.profilePopupList.getSelectionModel().clearSelection();
+            Bounds b = playButton.localToScene(playButton.getBoundsInLocal());
+            profilePopupList.setTranslateX(b.getMinX() - 100);
+            profilePopupList.setTranslateY(b.getMinY() - 180);
+            profilePopupList.setVisible(true);
+            profilePopupList.getSelectionModel().clearSelection();
         }
     }
 
@@ -1062,18 +1054,18 @@ public class MainFX {
      */
     @FXML public final void showIcons(Event e) {
         e.consume();
-        if (this.iconList.isVisible()) {
-            this.iconList.setVisible(false);
+        if (iconList.isVisible()) {
+            iconList.setVisible(false);
         } else {
-            if (!this.iconListLoaded) {
-                this.loadIcons();
-                this.iconListLoaded = true;
+            if (!iconListLoaded) {
+                loadIcons();
+                iconListLoaded = true;
             }
             //Calculate change icon button position on scene
-            Bounds b = this.changeIcon.localToScene(this.changeIcon.getBoundsInLocal());
-            this.iconList.setTranslateX(b.getMinX());
-            this.iconList.setTranslateY(b.getMaxY());
-            this.iconList.setVisible(true);
+            Bounds b = changeIcon.localToScene(changeIcon.getBoundsInLocal());
+            iconList.setTranslateX(b.getMinX());
+            iconList.setTranslateY(b.getMaxY());
+            iconList.setVisible(true);
         }
     }
 
@@ -1082,10 +1074,10 @@ public class MainFX {
      */
     @FXML public final void showAccountOptions(Event e) {
         e.consume();
-        if (this.switchAccountButton.isVisible()) {
-            this.switchAccountButton.setVisible(false);
+        if (switchAccountButton.isVisible()) {
+            switchAccountButton.setVisible(false);
         } else {
-            this.switchAccountButton.setVisible(true);
+            switchAccountButton.setVisible(true);
         }
     }
 
@@ -1094,7 +1086,7 @@ public class MainFX {
      * @param e The trigger event
      */
     @FXML public final void switchTab(Event e) {
-        this.switchTab(e.getSource());
+        switchTab(e.getSource());
     }
 
     /**
@@ -1102,51 +1094,51 @@ public class MainFX {
      * @param source The object that trigger the change
      */
     private void switchTab(Object source) {
-        SingleSelectionModel<Tab> selection = this.contentPane.getSelectionModel();
+        SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
         Tab oldTab = selection.getSelectedItem();
-        if (oldTab == this.newsTab) {
-            this.newsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == this.skinsTab) {
-            this.skinsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == this.settingsTab) {
-            this.settingsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == this.launchOptionsTab && source != this.profileEditorTab) {
-            this.launchOptionsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == this.profileEditorTab) {
+        if (oldTab == newsTab) {
+            newsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == skinsTab) {
+            skinsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == settingsTab) {
+            settingsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == launchOptionsTab && source != profileEditorTab) {
+            launchOptionsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == profileEditorTab) {
             //Show play button
-            if (!this.kernel.getDownloader().isDownloading()) {
-                this.playPane.setVisible(true);
+            if (!kernel.getDownloader().isDownloading()) {
+                playPane.setVisible(true);
             }
-            this.launchOptionsLabel.getStyleClass().remove("selectedItem");
-        } else if (oldTab == this.loginTab) {
-            this.newsLabel.getStyleClass().remove("selectedItem");
-            this.skinsLabel.getStyleClass().remove("selectedItem");
-            this.settingsLabel.getStyleClass().remove("selectedItem");
-            this.launchOptionsLabel.getStyleClass().remove("selectedItem");
+            launchOptionsLabel.getStyleClass().remove("selectedItem");
+        } else if (oldTab == loginTab) {
+            newsLabel.getStyleClass().remove("selectedItem");
+            skinsLabel.getStyleClass().remove("selectedItem");
+            settingsLabel.getStyleClass().remove("selectedItem");
+            launchOptionsLabel.getStyleClass().remove("selectedItem");
         }
-        if (source == this.newsLabel) {
-            this.newsLabel.getStyleClass().add("selectedItem");
-            selection.select(this.newsTab);
-        } else if (source == this.skinsLabel) {
-            this.skinsLabel.getStyleClass().add("selectedItem");
-            selection.select(this.skinsTab);
-            if (!this.texturesLoaded) {
-                this.loadTextures();
+        if (source == newsLabel) {
+            newsLabel.getStyleClass().add("selectedItem");
+            selection.select(newsTab);
+        } else if (source == skinsLabel) {
+            skinsLabel.getStyleClass().add("selectedItem");
+            selection.select(skinsTab);
+            if (!texturesLoaded) {
+                loadTextures();
             }
-        } else if (source == this.settingsLabel) {
-            this.settingsLabel.getStyleClass().add("selectedItem");
-            selection.select(this.settingsTab);
-        } else if (source == this.launchOptionsLabel) {
-            this.launchOptionsLabel.getStyleClass().add("selectedItem");
-            selection.select(this.launchOptionsTab);
-            if (!this.profileListLoaded) {
-                this.loadProfileList();
+        } else if (source == settingsLabel) {
+            settingsLabel.getStyleClass().add("selectedItem");
+            selection.select(settingsTab);
+        } else if (source == launchOptionsLabel) {
+            launchOptionsLabel.getStyleClass().add("selectedItem");
+            selection.select(launchOptionsTab);
+            if (!profileListLoaded) {
+                loadProfileList();
             }
-            this.profileList.getSelectionModel().clearSelection();
-        } else if (source == this.profileEditorTab) {
+            profileList.getSelectionModel().clearSelection();
+        } else if (source == profileEditorTab) {
             //Hide play button
-            this.playPane.setVisible(false);
-            selection.select(this.profileEditorTab);
+            playPane.setVisible(false);
+            selection.select(profileEditorTab);
         }
     }
 
@@ -1165,73 +1157,73 @@ public class MainFX {
      * Updates the selected language
      */
     @FXML public final void updateLanguage() {
-        if (this.languagesList.getSelectionModel().getSelectedIndex() == -1) {
+        if (languagesList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
         }
-        Label selected = this.languagesList.getSelectionModel().getSelectedItem();
-        this.languageButton.setText(selected.getText());
-        this.kernel.getSettings().setLocale(selected.getId());
-        this.languagesList.setVisible(false);
-        SingleSelectionModel<Tab> selection = this.contentPane.getSelectionModel();
+        Label selected = languagesList.getSelectionModel().getSelectedItem();
+        languageButton.setText(selected.getText());
+        settings.setLocale(selected.getId());
+        languagesList.setVisible(false);
+        SingleSelectionModel<Tab> selection = contentPane.getSelectionModel();
         Tab selectedTab = selection.getSelectedItem();
-        if (selectedTab == this.launchOptionsTab) {
-            this.loadProfileList();
+        if (selectedTab == launchOptionsTab) {
+            loadProfileList();
         } else {
-            this.profileListLoaded = false;
+            profileListLoaded = false;
         }
-        if (selectedTab == this.profileEditorTab) {
-            this.loadVersionList();
+        if (selectedTab == profileEditorTab) {
+            loadVersionList();
         } else {
-            this.versionListLoaded = false;
+            versionListLoaded = false;
         }
-        this.profileListPopupLoaded = false;
-        this.localizeElements();
+        profileListPopupLoaded = false;
+        localizeElements();
     }
 
     /**
      * Updates the selected icon
      */
     @FXML public final void updateIcon() {
-        if (this.iconList.getSelectionModel().getSelectedIndex() == -1) {
+        if (iconList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
         }
-        ImageView selected = this.iconList.getSelectionModel().getSelectedItem();
-        this.profileIcon.setImage(selected.getImage());
-        this.profileIcon.setId(selected.getId());
-        this.iconList.setVisible(false);
+        ImageView selected = iconList.getSelectionModel().getSelectedItem();
+        profileIcon.setImage(selected.getImage());
+        profileIcon.setId(selected.getId());
+        iconList.setVisible(false);
     }
 
     /**
      * Prepares the editor with the selected profile or with a new one
      */
     @FXML public final void loadEditor() {
-        if (this.profileList.getSelectionModel().getSelectedIndex() == -1) {
+        if (profileList.getSelectionModel().getSelectedIndex() == -1) {
             //Nothing has been selected
             return;
         }
-        if (!this.versionListLoaded) {
-            this.loadVersionList();
+        if (!versionListLoaded) {
+            loadVersionList();
         }
-        if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
-            this.profileName.setEditable(true);
-            this.profileName.setText("");
-            this.deleteButton.setVisible(false);
-            this.versionBlock.setVisible(true);
-            this.versionBlock.setManaged(true);
-            this.iconBlock.setVisible(true);
-            this.iconBlock.setManaged(true);
-            this.versionList.getSelectionModel().select(0);
-            this.profileIcon.setImage(this.kernel.getProfileIcon(ProfileIcon.FURNACE));
-            if (this.kernel.getSettings().getEnableAdvanced()) {
-                this.javaExecBlock.setVisible(true);
-                this.javaExecBlock.setManaged(true);
-                this.javaArgsBlock.setVisible(true);
-                this.javaArgsBlock.setManaged(true);
-                this.toggleEditorOption(this.javaExecLabel, false);
-                this.javaExec.setText(Utils.getJavaDir());
-                this.toggleEditorOption(this.javaArgsLabel, false);
+        if (profileList.getSelectionModel().getSelectedIndex() == 0) {
+            profileName.setEditable(true);
+            profileName.setText("");
+            deleteButton.setVisible(false);
+            versionBlock.setVisible(true);
+            versionBlock.setManaged(true);
+            iconBlock.setVisible(true);
+            iconBlock.setManaged(true);
+            versionList.getSelectionModel().select(0);
+            profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.FURNACE));
+            if (settings.getEnableAdvanced()) {
+                javaExecBlock.setVisible(true);
+                javaExecBlock.setManaged(true);
+                javaArgsBlock.setVisible(true);
+                javaArgsBlock.setManaged(true);
+                toggleEditorOption(javaExecLabel, false);
+                javaExec.setText(Utils.getJavaDir());
+                toggleEditorOption(javaArgsLabel, false);
                 StringBuilder jA = new StringBuilder(15);
                 if (Utils.getOSArch() == OSArch.OLD) {
                     jA.append("-Xmx1G");
@@ -1239,102 +1231,102 @@ public class MainFX {
                     jA.append("-Xmx2G");
                 }
                 jA.append(" -Xmn128M");
-                this.javaArgs.setText(jA.toString());
+                javaArgs.setText(jA.toString());
             } else {
-                this.javaExecBlock.setVisible(false);
-                this.javaExecBlock.setManaged(false);
-                this.javaArgsBlock.setVisible(false);
-                this.javaArgsBlock.setManaged(false);
+                javaExecBlock.setVisible(false);
+                javaExecBlock.setManaged(false);
+                javaArgsBlock.setVisible(false);
+                javaArgsBlock.setManaged(false);
             }
-            this.toggleEditorOption(this.resolutionLabel, false);
-            this.resW.setText(String.valueOf(854));
-            this.resH.setText(String.valueOf(480));
-            this.toggleEditorOption(this.gameDirLabel, false);
-            this.gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
+            toggleEditorOption(resolutionLabel, false);
+            resW.setText(String.valueOf(854));
+            resH.setText(String.valueOf(480));
+            toggleEditorOption(gameDirLabel, false);
+            gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
         } else {
-            Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
             if (selectedElement != null) {
-                Profile p = this.kernel.getProfiles().getProfile(selectedElement.getId());
+                Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
                 if (p.getType() != ProfileType.CUSTOM) {
-                    this.profileName.setEditable(false);
-                    this.deleteButton.setVisible(false);
+                    profileName.setEditable(false);
+                    deleteButton.setVisible(false);
                     if (p.getType() == ProfileType.RELEASE) {
-                        this.profileName.setText(Language.get(59));
-                        this.profileIcon.setImage(this.kernel.getProfileIcon(ProfileIcon.GRASS));
+                        profileName.setText(Language.get(59));
+                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.GRASS));
                     } else {
-                        this.profileName.setText(Language.get(60));
-                        this.profileIcon.setImage(this.kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                        profileName.setText(Language.get(60));
+                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
                     }
-                    this.versionBlock.setVisible(false);
-                    this.versionBlock.setManaged(false);
-                    this.iconBlock.setVisible(false);
-                    this.iconBlock.setManaged(false);
+                    versionBlock.setVisible(false);
+                    versionBlock.setManaged(false);
+                    iconBlock.setVisible(false);
+                    iconBlock.setManaged(false);
                 } else {
                     if (p.hasIcon()) {
-                        this.profileIcon.setImage(this.kernel.getProfileIcon(p.getIcon()));
-                        this.profileIcon.setId(p.getIcon().name());
+                        profileIcon.setImage(kernel.getProfileIcon(p.getIcon()));
+                        profileIcon.setId(p.getIcon().name());
                     } else {
-                        this.profileIcon.setImage(this.kernel.getProfileIcon(ProfileIcon.FURNACE));
+                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.FURNACE));
                     }
-                    this.profileName.setEditable(true);
-                    this.deleteButton.setVisible(true);
+                    profileName.setEditable(true);
+                    deleteButton.setVisible(true);
                     if (p.hasName()){
-                        this.profileName.setText(p.getName());
+                        profileName.setText(p.getName());
                     } else {
-                        this.profileName.setText("");
+                        profileName.setText("");
                     }
-                    this.versionBlock.setVisible(true);
-                    this.versionBlock.setManaged(true);
-                    this.iconBlock.setVisible(true);
-                    this.iconBlock.setManaged(true);
+                    versionBlock.setVisible(true);
+                    versionBlock.setManaged(true);
+                    iconBlock.setVisible(true);
+                    iconBlock.setManaged(true);
                     if (p.hasVersion()) {
                         if (p.isLatestRelease()) {
-                            this.versionList.getSelectionModel().select(0);
-                        } else if (p.isLatestSnapshot() && this.kernel.getSettings().getEnableSnapshots()) {
-                            this.versionList.getSelectionModel().select(1);
-                        } else if (this.versionList.getItems().contains(p.getVersionID())) {
-                            this.versionList.getSelectionModel().select(p.getVersionID());
+                            versionList.getSelectionModel().select(0);
+                        } else if (p.isLatestSnapshot() && settings.getEnableSnapshots()) {
+                            versionList.getSelectionModel().select(1);
+                        } else if (versionList.getItems().contains(p.getVersionID())) {
+                            versionList.getSelectionModel().select(p.getVersionID());
                         } else {
-                            this.versionList.getSelectionModel().select(0);
+                            versionList.getSelectionModel().select(0);
                         }
                     } else {
-                        this.versionList.getSelectionModel().select(0);
+                        versionList.getSelectionModel().select(0);
                     }
                 }
 
                 if (p.hasResolution()) {
-                    this.toggleEditorOption(this.resolutionLabel, true);
-                    this.resH.setText(String.valueOf(p.getResolutionHeight()));
-                    this.resW.setText(String.valueOf(p.getResolutionWidth()));
+                    toggleEditorOption(resolutionLabel, true);
+                    resH.setText(String.valueOf(p.getResolutionHeight()));
+                    resW.setText(String.valueOf(p.getResolutionWidth()));
                 } else {
-                    this.toggleEditorOption(this.resolutionLabel, false);
-                    this.resW.setText(String.valueOf(854));
-                    this.resH.setText(String.valueOf(480));
+                    toggleEditorOption(resolutionLabel, false);
+                    resW.setText(String.valueOf(854));
+                    resH.setText(String.valueOf(480));
                 }
                 if (p.hasGameDir()) {
-                    this.toggleEditorOption(this.gameDirLabel, true);
-                    this.gameDir.setText(p.getGameDir().getAbsolutePath());
+                    toggleEditorOption(gameDirLabel, true);
+                    gameDir.setText(p.getGameDir().getAbsolutePath());
                 } else {
-                    this.toggleEditorOption(this.gameDirLabel, false);
-                    this.gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
+                    toggleEditorOption(gameDirLabel, false);
+                    gameDir.setText(Utils.getWorkingDirectory().getAbsolutePath());
                 }
-                if (this.kernel.getSettings().getEnableAdvanced()) {
-                    this.javaExecBlock.setVisible(true);
-                    this.javaExecBlock.setManaged(true);
-                    this.javaArgsBlock.setVisible(true);
-                    this.javaArgsBlock.setManaged(true);
+                if (settings.getEnableAdvanced()) {
+                    javaExecBlock.setVisible(true);
+                    javaExecBlock.setManaged(true);
+                    javaArgsBlock.setVisible(true);
+                    javaArgsBlock.setManaged(true);
                     if (p.hasJavaDir()){
-                        this.toggleEditorOption(this.javaExecLabel, true);
-                        this.javaExec.setText(p.getJavaDir().getAbsolutePath());
+                        toggleEditorOption(javaExecLabel, true);
+                        javaExec.setText(p.getJavaDir().getAbsolutePath());
                     } else {
-                        this.toggleEditorOption(this.javaExecLabel, false);
-                        this.javaExec.setText(Utils.getJavaDir());
+                        toggleEditorOption(javaExecLabel, false);
+                        javaExec.setText(Utils.getJavaDir());
                     }
                     if (p.hasJavaArgs()) {
-                        this.toggleEditorOption(this.javaArgsLabel, true);
-                        this.javaArgs.setText(p.getJavaArgs());
+                        toggleEditorOption(javaArgsLabel, true);
+                        javaArgs.setText(p.getJavaArgs());
                     } else {
-                        this.toggleEditorOption(this.javaArgsLabel, false);
+                        toggleEditorOption(javaArgsLabel, false);
                         StringBuilder jA = new StringBuilder(15);
                         if (Utils.getOSArch() == OSArch.OLD) {
                             jA.append("-Xmx1G");
@@ -1342,47 +1334,47 @@ public class MainFX {
                             jA.append("-Xmx2G");
                         }
                         jA.append(" -Xmn128M");
-                        this.javaArgs.setText(jA.toString());
+                        javaArgs.setText(jA.toString());
                     }
                 } else {
-                    this.javaExecBlock.setVisible(false);
-                    this.javaExecBlock.setManaged(false);
-                    this.javaArgsBlock.setVisible(false);
-                    this.javaArgsBlock.setManaged(false);
+                    javaExecBlock.setVisible(false);
+                    javaExecBlock.setManaged(false);
+                    javaArgsBlock.setVisible(false);
+                    javaArgsBlock.setManaged(false);
                 }
             }
         }
-        this.switchTab(this.profileEditorTab);
+        switchTab(profileEditorTab);
     }
 
     /**
      * Loads the list of version for the profile editor
      */
     private void loadVersionList() {
-        this.console.print("Loading version list...");
+        console.print("Loading version list...");
         ObservableList<VersionMeta> vers = FXCollections.observableArrayList();
         VersionMeta latestVersion = new VersionMeta(Language.get(59), null, null);
         vers.add(latestVersion);
-        if (this.kernel.getSettings().getEnableSnapshots()) {
+        if (settings.getEnableSnapshots()) {
             VersionMeta latestSnapshot = new VersionMeta(Language.get(60), null, null);
             vers.add(latestSnapshot);
         }
-        for (VersionMeta v : this.kernel.getVersions().getVersions()) {
+        for (VersionMeta v : kernel.getVersions().getVersions()) {
             if (v.getType() == VersionType.RELEASE) {
                 vers.add(v);
-            } else if (v.getType() == VersionType.SNAPSHOT && this.kernel.getSettings().getEnableSnapshots()) {
+            } else if (v.getType() == VersionType.SNAPSHOT && settings.getEnableSnapshots()) {
                 vers.add(v);
-            } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && this.kernel.getSettings().getEnableHistorical()) {
+            } else if ((v.getType() == VersionType.OLD_BETA || v.getType() == VersionType.OLD_ALPHA) && settings.getEnableHistorical()) {
                 vers.add(v);
             }
         }
 
-        this.versionList.setItems(vers);
-        if (!this.versionListLoaded) {
-            this.versionList.getSelectionModel().select(0);
-            this.versionListLoaded = true;
+        versionList.setItems(vers);
+        if (!versionListLoaded) {
+            versionList.getSelectionModel().select(0);
+            versionListLoaded = true;
         }
-        this.console.print("Version list loaded.");
+        console.print("Version list loaded.");
     }
 
     /**
@@ -1390,83 +1382,83 @@ public class MainFX {
      */
     @FXML public final void saveProfile() {
         Profile target;
-        if (this.profileList.getSelectionModel().getSelectedIndex() == 0) {
+        if (profileList.getSelectionModel().getSelectedIndex() == 0) {
             target = new Profile(ProfileType.CUSTOM);
-            this.kernel.getProfiles().addProfile(target);
+            kernel.getProfiles().addProfile(target);
         } else {
-            Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
-            target = this.kernel.getProfiles().getProfile(selectedElement.getId());
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+            target = kernel.getProfiles().getProfile(selectedElement.getId());
         }
         if (target.getType() == ProfileType.CUSTOM) {
-            if (!this.profileName.getText().isEmpty()) {
-                target.setName(this.profileName.getText());
+            if (!profileName.getText().isEmpty()) {
+                target.setName(profileName.getText());
             } else {
                 target.setName(null);
             }
-            if (this.versionList.getSelectionModel().getSelectedIndex() == 0) {
-                target.setVersionID(this.kernel.getVersions().getLatestRelease());
+            if (versionList.getSelectionModel().getSelectedIndex() == 0) {
+                target.setVersionID(kernel.getVersions().getLatestRelease());
                 target.setLatestRelease(true);
                 target.setLatestSnapshot(false);
-            } else if (this.versionList.getSelectionModel().getSelectedIndex() == 1 && this.kernel.getSettings().getEnableSnapshots()) {
-                target.setVersionID(this.kernel.getVersions().getLatestSnapshot());
+            } else if (versionList.getSelectionModel().getSelectedIndex() == 1 && settings.getEnableSnapshots()) {
+                target.setVersionID(kernel.getVersions().getLatestSnapshot());
                 target.setLatestRelease(false);
                 target.setLatestSnapshot(true);
             } else {
-                target.setVersionID(this.versionList.getSelectionModel().getSelectedItem());
+                target.setVersionID(versionList.getSelectionModel().getSelectedItem());
                 target.setLatestRelease(false);
                 target.setLatestSnapshot(false);
             }
             try {
-                target.setIcon(ProfileIcon.valueOf(this.profileIcon.getId()));
+                target.setIcon(ProfileIcon.valueOf(profileIcon.getId()));
             } catch (IllegalArgumentException ex) {
                 target.setIcon(null);
             }
         }
-        if (!this.resW.isDisabled()) {
+        if (!resW.isDisabled()) {
             try {
-                int h = Integer.parseInt(this.resH.getText());
-                int w = Integer.parseInt(this.resW.getText());
+                int h = Integer.parseInt(resH.getText());
+                int w = Integer.parseInt(resW.getText());
                 target.setResolution(w, h);
             } catch (NumberFormatException ex) {
-                this.console.print("Invalid resolution given.");
+                console.print("Invalid resolution given.");
             }
         } else {
             target.setResolution(-1, -1);
         }
-        if (!this.gameDir.isDisabled() && !this.gameDir.getText().isEmpty()) {
-            target.setGameDir(new File(this.gameDir.getText()));
+        if (!gameDir.isDisabled() && !gameDir.getText().isEmpty()) {
+            target.setGameDir(new File(gameDir.getText()));
         } else {
             target.setGameDir(null);
         }
-        if (this.kernel.getSettings().getEnableAdvanced()) {
-            if (!this.javaExec.isDisabled() && !this.javaExec.getText().isEmpty()) {
-                target.setJavaDir(new File(this.javaExec.getText()));
+        if (settings.getEnableAdvanced()) {
+            if (!javaExec.isDisabled() && !javaExec.getText().isEmpty()) {
+                target.setJavaDir(new File(javaExec.getText()));
             } else {
                 target.setJavaDir(null);
             }
-            if (!this.javaArgs.isDisabled() && !this.javaArgs.getText().isEmpty()) {
-                target.setJavaArgs(this.javaArgs.getText());
+            if (!javaArgs.isDisabled() && !javaArgs.getText().isEmpty()) {
+                target.setJavaArgs(javaArgs.getText());
             } else {
                 target.setJavaArgs(null);
             }
         }
-        this.kernel.saveProfiles();
-        if (this.kernel.getProfiles().getSelectedProfile() == target) {
-            this.updateGameVersion();
+        kernel.saveProfiles();
+        if (kernel.getProfiles().getSelectedProfile() == target) {
+            updateGameVersion();
         }
-        this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
-        this.profileListLoaded = false;
-        this.profileListPopupLoaded = false;
-        this.switchTab(this.launchOptionsLabel);
+        kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
+        profileListLoaded = false;
+        profileListPopupLoaded = false;
+        switchTab(launchOptionsLabel);
     }
 
     /**
      * Discards the changes of the profile editor
      */
     @FXML public final void cancelProfile() {
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
         if (result == 1) {
-            this.switchTab(this.launchOptionsLabel);
+            switchTab(launchOptionsLabel);
         }
     }
 
@@ -1474,19 +1466,19 @@ public class MainFX {
      * Deletes the profile loaded by the profile editor
      */
     @FXML public final void deleteProfile() {
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
         if (result == 1) {
-            Label selectedElement = this.profileList.getSelectionModel().getSelectedItem();
-            Profile p = this.kernel.getProfiles().getProfile(selectedElement.getId());
-            if (this.kernel.getProfiles().deleteProfile(p)) {
-                this.kernel.saveProfiles();
-                this.updateGameVersion();
-                this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
+            Label selectedElement = profileList.getSelectionModel().getSelectedItem();
+            Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
+            if (kernel.getProfiles().deleteProfile(p)) {
+                kernel.saveProfiles();
+                updateGameVersion();
+                kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
             } else {
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(58));
+                kernel.showAlert(AlertType.ERROR, null, Language.get(58));
             }
-            this.loadProfileList();
-            this.switchTab(this.launchOptionsLabel);
+            loadProfileList();
+            switchTab(launchOptionsLabel);
         }
     }
 
@@ -1498,17 +1490,17 @@ public class MainFX {
     private void toggleEditorOption(Object src, boolean newState) {
         if (src instanceof Label) {
             Label l = (Label)src;
-            this.toggleLabel(l, newState);
+            toggleLabel(l, newState);
         }
-        if (src == this.resolutionLabel) {
-            this.resW.setDisable(!newState);
-            this.resH.setDisable(!newState);
-        } else if (src == this.gameDirLabel) {
-            this.gameDir.setDisable(!newState);
-        } else if (src == this.javaExecLabel) {
-            this.javaExec.setDisable(!newState);
-        } else if (src == this.javaArgsLabel) {
-            this.javaArgs.setDisable(!newState);
+        if (src == resolutionLabel) {
+            resW.setDisable(!newState);
+            resH.setDisable(!newState);
+        } else if (src == gameDirLabel) {
+            gameDir.setDisable(!newState);
+        } else if (src == javaExecLabel) {
+            javaExec.setDisable(!newState);
+        } else if (src == javaArgsLabel) {
+            javaArgs.setDisable(!newState);
         }
     }
 
@@ -1518,25 +1510,25 @@ public class MainFX {
      */
     @FXML public final void updateEditor(MouseEvent e) {
         Label l = (Label)e.getSource();
-        this.toggleEditorOption(l, l.getParent().getChildrenUnmodifiable().get(1).isDisable());
+        toggleEditorOption(l, l.getParent().getChildrenUnmodifiable().get(1).isDisable());
     }
 
     /**
      * Updates the existing users list
      */
     private void updateExistingUsers() {
-        Authentication a = this.kernel.getAuthentication();
+        Authentication a = kernel.getAuthentication();
         if (!a.getUsers().isEmpty() && a.getSelectedUser() == null) {
-            this.existingPanel.setVisible(true);
-            this.existingPanel.setManaged(true);
+            existingPanel.setVisible(true);
+            existingPanel.setManaged(true);
             ObservableList<User> users = FXCollections.observableArrayList();
             Set<User> us = a.getUsers();
             users.addAll(us);
-            this.existingUsers.setItems(users);
-            this.existingUsers.getSelectionModel().select(0);
+            existingUsers.setItems(users);
+            existingUsers.getSelectionModel().select(0);
         } else {
-            this.existingPanel.setVisible(false);
-            this.existingPanel.setManaged(false);
+            existingPanel.setVisible(false);
+            existingPanel.setManaged(false);
         }
     }
 
@@ -1546,20 +1538,20 @@ public class MainFX {
      */
     private void showLoginPrompt(boolean showLoginPrompt) {
         if (showLoginPrompt) {
-            this.contentPane.getSelectionModel().select(this.loginTab);
-            this.tabMenu.setVisible(false);
-            this.tabMenu.setManaged(false);
-            this.accountButton.setVisible(false);
-            this.playPane.setVisible(false);
-            this.updateExistingUsers();
+            contentPane.getSelectionModel().select(loginTab);
+            tabMenu.setVisible(false);
+            tabMenu.setManaged(false);
+            accountButton.setVisible(false);
+            playPane.setVisible(false);
+            updateExistingUsers();
         } else {
-            this.switchTab(this.newsLabel);
-            this.tabMenu.setVisible(true);
-            this.tabMenu.setManaged(true);
-            this.accountButton.setVisible(true);
-            this.playPane.setVisible(true);
+            switchTab(newsLabel);
+            tabMenu.setVisible(true);
+            tabMenu.setManaged(true);
+            accountButton.setVisible(true);
+            playPane.setVisible(true);
             //Set account name for current user
-            this.accountButton.setText(this.kernel.getAuthentication().getSelectedUser().getDisplayName());
+            accountButton.setText(kernel.getAuthentication().getSelectedUser().getDisplayName());
         }
     }
 
@@ -1567,29 +1559,29 @@ public class MainFX {
      * Performs an authenticate with the data typed in the login form
      */
     public final void authenticate() {
-        if (this.username.getText().isEmpty()) {
-            this.kernel.showAlert(AlertType.WARNING, null, Language.get(17));
-        } else if (this.password.getText().isEmpty()) {
-            this.kernel.showAlert(AlertType.WARNING, null, Language.get(23));
+        if (username.getText().isEmpty()) {
+            kernel.showAlert(AlertType.WARNING, null, Language.get(17));
+        } else if (password.getText().isEmpty()) {
+            kernel.showAlert(AlertType.WARNING, null, Language.get(23));
         } else {
             try {
-                Authentication auth = this.kernel.getAuthentication();
-                String username;
+                Authentication auth = kernel.getAuthentication();
+                String user;
                 if (authKrothium.isSelected()) {
-                    username = "krothium://" + this.username.getText();
+                    user = "krothium://" + username.getText();
                 } else {
-                    username = this.username.getText();
+                    user = username.getText();
                 }
-                auth.authenticate(username, this.password.getText());
-                this.kernel.saveProfiles();
-                this.username.setText("");
-                this.password.setText("");
-                this.showLoginPrompt(false);
-                this.fetchAds();
-                this.texturesLoaded = false;
+                auth.authenticate(user, password.getText());
+                kernel.saveProfiles();
+                username.setText("");
+                password.setText("");
+                showLoginPrompt(false);
+                fetchAds();
+                texturesLoaded = false;
             } catch (AuthenticationException ex) {
-                this.kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
-                this.password.setText("");
+                kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
+                password.setText("");
             }
         }
     }
@@ -1598,17 +1590,17 @@ public class MainFX {
      * Refreshes latest session
      */
     private void refreshSession() {
-        this.console.print("Refreshing session...");
-        Authentication a = this.kernel.getAuthentication();
+        console.print("Refreshing session...");
+        Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         try {
             if (u != null) {
                 a.refresh();
-                this.texturesLoaded = false;
-                this.kernel.saveProfiles();
-                this.console.print("Session refreshed.");
+                texturesLoaded = false;
+                kernel.saveProfiles();
+                console.print("Session refreshed.");
             } else {
-                this.console.print("No user is selected.");
+                console.print("No user is selected.");
             }
         } catch (AuthenticationException ex) {
             if (u.getType() == UserType.KROTHIUM) {
@@ -1618,13 +1610,13 @@ public class MainFX {
                 authMojang.setSelected(true);
                 username.setText(u.getUsername());
             }
-            this.console.print("Couldn't refresh your session.");
+            console.print("Couldn't refresh your session.");
         } finally {
             if (a.isAuthenticated()) {
-                this.showLoginPrompt(false);
-                this.fetchAds();
+                showLoginPrompt(false);
+                fetchAds();
             } else {
-                this.showLoginPrompt(true);
+                showLoginPrompt(true);
             }
         }
     }
@@ -1633,18 +1625,18 @@ public class MainFX {
      * Refreshes user selected from the existing user list
      */
     public final void refresh() {
-        User selected = this.existingUsers.getSelectionModel().getSelectedItem();
-        Authentication auth = this.kernel.getAuthentication();
+        User selected = existingUsers.getSelectionModel().getSelectedItem();
+        Authentication auth = kernel.getAuthentication();
         try {
             auth.setSelectedUser(selected);
             auth.refresh();
-            this.kernel.saveProfiles();
-            this.texturesLoaded = false;
-            this.showLoginPrompt(false);
-            this.fetchAds();
+            kernel.saveProfiles();
+            texturesLoaded = false;
+            showLoginPrompt(false);
+            fetchAds();
         } catch (AuthenticationException ex) {
-            this.kernel.showAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
-            this.updateExistingUsers();
+            kernel.showAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
+            updateExistingUsers();
         }
     }
 
@@ -1652,13 +1644,13 @@ public class MainFX {
      * Logs out the selected user from the existing user list
      */
     public final void logout() {
-        User selected = this.existingUsers.getSelectionModel().getSelectedItem();
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(8));
+        User selected = existingUsers.getSelectionModel().getSelectedItem();
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(8));
         if (result == 1) {
-            Authentication auth = this.kernel.getAuthentication();
+            Authentication auth = kernel.getAuthentication();
             auth.removeUser(selected);
-            this.kernel.saveProfiles();
-            this.updateExistingUsers();
+            kernel.saveProfiles();
+            updateExistingUsers();
         }
     }
 
@@ -1667,10 +1659,10 @@ public class MainFX {
      */
     @FXML public final void register() {
         //Open register page
-        if (this.authKrothium.isSelected()) {
-            this.kernel.getHostServices().showDocument("https://krothium.com/register");
+        if (authKrothium.isSelected()) {
+            kernel.getHostServices().showDocument("https://krothium.com/register");
         } else {
-            this.kernel.getHostServices().showDocument("https://minecraft.net/");
+            kernel.getHostServices().showDocument("https://minecraft.net/");
         }
     }
 
@@ -1679,7 +1671,7 @@ public class MainFX {
      */
     @FXML public final void openHelp() {
         //Open help page
-        this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/forum/12-soporte/");
+        kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/12-soporte/");
     }
 
     /**
@@ -1687,7 +1679,7 @@ public class MainFX {
      */
     @FXML public final void openNews() {
         //Open news page
-        this.kernel.getHostServices().showDocument(this.urlPrefix + "https://krothium.com/forum/3-noticias/");
+        kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/3-noticias/");
     }
 
     /**
@@ -1696,7 +1688,7 @@ public class MainFX {
      */
     @FXML public final void triggerAuthenticate(KeyEvent e) {
         if (e.getCode() == KeyCode.ENTER) {
-            this.authenticate();
+            authenticate();
         }
     }
 
@@ -1706,42 +1698,41 @@ public class MainFX {
      */
     @FXML public final void updateSettings(MouseEvent e) {
         Label source = (Label)e.getSource();
-        Settings s = this.kernel.getSettings();
-        if (source == this.keepLauncherOpen) {
-            s.setKeepLauncherOpen(!s.getKeepLauncherOpen());
-            this.toggleLabel(source, s.getKeepLauncherOpen());
-        } else if (source == this.outputLog) {
-            s.setShowGameLog(!s.getShowGameLog());
-            this.toggleLabel(source, s.getShowGameLog());
-        } else if (source == this.enableSnapshots) {
-            if (!s.getEnableSnapshots()) {
-                this.kernel.showAlert(AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
+        if (source == keepLauncherOpen) {
+            settings.setKeepLauncherOpen(!settings.getKeepLauncherOpen());
+            toggleLabel(source, settings.getKeepLauncherOpen());
+        } else if (source == outputLog) {
+            settings.setShowGameLog(!settings.getShowGameLog());
+            toggleLabel(source, settings.getShowGameLog());
+        } else if (source == enableSnapshots) {
+            if (!settings.getEnableSnapshots()) {
+                kernel.showAlert(AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
             }
-            s.setEnableSnapshots(!s.getEnableSnapshots());
-            this.toggleLabel(source, s.getEnableSnapshots());
-            this.validateSelectedProfile();
-            this.loadProfileList();
-            this.versionListLoaded = false;
-        } else if (source == this.historicalVersions) {
-            if (!s.getEnableHistorical()) {
-                this.kernel.showAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
+            settings.setEnableSnapshots(!settings.getEnableSnapshots());
+            toggleLabel(source, settings.getEnableSnapshots());
+            validateSelectedProfile();
+            loadProfileList();
+            versionListLoaded = false;
+        } else if (source == historicalVersions) {
+            if (!settings.getEnableHistorical()) {
+                kernel.showAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
                         + Language.get(74) + System.lineSeparator()
                         + Language.get(75));
 
             }
-            s.setEnableHistorical(!s.getEnableHistorical());
-            this.toggleLabel(source, s.getEnableHistorical());
-            this.validateSelectedProfile();
-            this.loadProfileList();
-            this.versionListLoaded = false;
-        } else if (source == this.advancedSettings) {
-            if (!s.getEnableAdvanced()) {
-                this.kernel.showAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
+            settings.setEnableHistorical(!settings.getEnableHistorical());
+            toggleLabel(source, settings.getEnableHistorical());
+            validateSelectedProfile();
+            loadProfileList();
+            versionListLoaded = false;
+        } else if (source == advancedSettings) {
+            if (!settings.getEnableAdvanced()) {
+                kernel.showAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
             }
-            s.setEnableAdvanced(!s.getEnableAdvanced());
-            this.toggleLabel(source, s.getEnableAdvanced());
+            settings.setEnableAdvanced(!settings.getEnableAdvanced());
+            toggleLabel(source, settings.getEnableAdvanced());
         }
-        this.kernel.saveProfiles();
+        kernel.saveProfiles();
     }
 
     /**
@@ -1762,7 +1753,7 @@ public class MainFX {
      * Exports the logs to a ZIP file
      */
     @FXML private void exportLogs() {
-        File selected = this.selectFile("ZIP", "*.zip", "save");
+        File selected = selectFile("ZIP", "*.zip", "save");
         if (selected != null) {
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(selected))) {
                 File[] files = Kernel.APPLICATION_LOGS.listFiles();
@@ -1776,9 +1767,9 @@ public class MainFX {
                         out.closeEntry();
                     }
                 }
-                this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
+                kernel.showAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
             } catch (IOException ex) {
-                this.kernel.showAlert(AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
+                kernel.showAlert(AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
             }
         }
     }
@@ -1787,7 +1778,7 @@ public class MainFX {
      * Removes the launcher cache
      */
     @FXML private void deleteCache() {
-        int result = this.kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(10));
+        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(10));
         if (result == 1) {
             File[] files = Kernel.APPLICATION_CACHE.listFiles();
             if (files != null) {
@@ -1795,7 +1786,7 @@ public class MainFX {
                     f.delete();
                 }
             }
-            this.kernel.showAlert(AlertType.INFORMATION, null, Language.get(11));
+            kernel.showAlert(AlertType.INFORMATION, null, Language.get(11));
         }
     }
 
@@ -1803,8 +1794,8 @@ public class MainFX {
      * Opens the URL of the selected version server in the default user web browser
      */
     @FXML private void downloadServer() {
-        VersionMeta selectedItem = this.versionList.getSelectionModel().getSelectedItem();
-        this.kernel.getHostServices().showDocument(this.urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
+        VersionMeta selectedItem = versionList.getSelectionModel().getSelectedItem();
+        kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
     }
 
     /**
@@ -1812,10 +1803,10 @@ public class MainFX {
      */
     @FXML private void selectGameDirectory() {
         DirectoryChooser chooser = new DirectoryChooser();
-        if (this.gameDir.getText().isEmpty()) {
+        if (gameDir.getText().isEmpty()) {
             chooser.setInitialDirectory(Kernel.APPLICATION_WORKING_DIR);
         } else {
-            File gd = new File(this.gameDir.getText());
+            File gd = new File(gameDir.getText());
             if (gd.isDirectory()) {
                 chooser.setInitialDirectory(gd);
             } else {
@@ -1824,7 +1815,7 @@ public class MainFX {
         }
         File selectedFolder = chooser.showDialog(null);
         if (selectedFolder != null) {
-            this.gameDir.setText(selectedFolder.getAbsolutePath());
+            gameDir.setText(selectedFolder.getAbsolutePath());
         }
     }
 
@@ -1832,9 +1823,9 @@ public class MainFX {
      * Selects the java executable for the profile editor
      */
     @FXML private void selectJavaExecutable() {
-        File selected = this.selectFile(null, null, "open");
+        File selected = selectFile(null, null, "open");
         if (selected != null && selected.isFile()) {
-            this.javaExec.setText(selected.getAbsolutePath());
+            javaExec.setText(selected.getAbsolutePath());
         }
     }
 
@@ -1842,12 +1833,12 @@ public class MainFX {
      * Update auth server label on existing users
      */
     @FXML public void updateAuthServer() {
-        User user = this.existingUsers.getValue();
+        User user = existingUsers.getValue();
         if (user != null) {
             if (user.getType() == UserType.KROTHIUM) {
-                this.authServer.setText("(Krothium)");
+                authServer.setText("(Krothium)");
             } else {
-                this.authServer.setText("(Mojang)");
+                authServer.setText("(Mojang)");
             }
         }
     }
@@ -1867,19 +1858,19 @@ public class MainFX {
         }
         if (method.equalsIgnoreCase("open")) {
             chooser.setTitle(Language.get(95));
-            return chooser.showOpenDialog(this.stage);
+            return chooser.showOpenDialog(stage);
         } else if (method.equalsIgnoreCase("save")) {
             chooser.setTitle(Language.get(96));
-            return chooser.showSaveDialog(this.stage);
+            return chooser.showSaveDialog(stage);
         }
         return null;
     }
 
     @FXML private void forgotPassword() {
-        if (this.authKrothium.isSelected()) {
-            this.kernel.getHostServices().showDocument("https://krothium.com/lostpassword");
+        if (authKrothium.isSelected()) {
+            kernel.getHostServices().showDocument("https://krothium.com/lostpassword");
         } else {
-            this.kernel.getHostServices().showDocument("https://account.mojang.com/password");
+            kernel.getHostServices().showDocument("https://account.mojang.com/password");
         }
     }
 }

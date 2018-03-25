@@ -5,7 +5,7 @@ import kml.utils.Utils;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Slide {
+class Slide {
     private final String action;
     private final String image;
     private final String title;
@@ -21,28 +21,28 @@ public class Slide {
     }
 
     public final String getAction() {
-        return this.action;
+        return action;
     }
 
     public final Image getImage() {
-        if (this.loadedImage == null) {
-            InputStream stream = Utils.readCachedStream(this.image);
+        if (loadedImage == null) {
+            InputStream stream = Utils.readCachedStream(image);
             if (stream == null) {
                 return null;
             }
-            this.loadedImage = new Image(stream);
+            loadedImage = new Image(stream);
             try {
                 stream.close();
             } catch (IOException ignored) {}
         }
-        return this.loadedImage;
+        return loadedImage;
     }
 
     public final String getTitle() {
-        return this.title;
+        return title;
     }
 
     public final String getText() {
-        return this.text;
+        return text;
     }
 }

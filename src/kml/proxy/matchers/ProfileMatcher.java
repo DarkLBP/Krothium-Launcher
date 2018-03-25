@@ -12,13 +12,13 @@ public class ProfileMatcher implements URLMatcher {
 
     @Override
     public final boolean match(String url) {
-        Matcher m = this.profileRegex.matcher(url);
+        Matcher m = profileRegex.matcher(url);
         return m.matches();
     }
 
     @Override
     public final String handle(String url) {
-        Matcher m = this.profileRegex.matcher(url);
+        Matcher m = profileRegex.matcher(url);
         if (m.matches()) {
             String profileID = m.group(1);
             String[] segments = url.split("\\?");

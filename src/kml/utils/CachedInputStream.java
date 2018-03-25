@@ -2,9 +2,9 @@ package kml.utils;
 
 import java.io.*;
 
-public class CachedInputStream extends InputStream {
-    private BufferedInputStream inputStream;
-    private BufferedOutputStream cachedStream;
+class CachedInputStream extends InputStream {
+    private final BufferedInputStream inputStream;
+    private final BufferedOutputStream cachedStream;
 
     public CachedInputStream(InputStream in, File output) throws IOException {
         this.inputStream = new BufferedInputStream(in);

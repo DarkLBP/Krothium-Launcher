@@ -1,7 +1,6 @@
 package kml.game.download;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * @author DarkLBP
@@ -24,31 +23,31 @@ public class Downloadable {
     }
 
     public final long getSize() {
-        return this.size;
+        return size;
     }
 
     public final boolean hasURL() {
-        return this.url != null;
+        return url != null;
     }
 
     public final String getURL() {
-        return this.url;
+        return url;
     }
 
     public final File getRelativePath() {
-        return this.relPath;
+        return relPath;
     }
 
     public final String getHash() {
-        return this.hash;
+        return hash;
     }
 
     public final boolean hasFakePath() {
-        return this.fakePath != null;
+        return fakePath != null;
     }
 
     public final String getFakePath() {
-        return this.fakePath;
+        return fakePath;
     }
 
     @Override

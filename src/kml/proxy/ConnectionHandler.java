@@ -23,7 +23,7 @@ class ConnectionHandler extends HttpURLConnection {
     public ConnectionHandler(URL url, URLMatcher m) {
         super(url);
         try {
-            this.relay = (HttpURLConnection)new URL(m.handle(url.toString())).openConnection();
+            relay = (HttpURLConnection)new URL(m.handle(url.toString())).openConnection();
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
@@ -32,271 +32,271 @@ class ConnectionHandler extends HttpURLConnection {
 
     @Override
     public final int getResponseCode() throws IOException {
-        return this.relay.getResponseCode();
+        return relay.getResponseCode();
     }
 
     @Override
     public final String getContentType() {
-        return this.relay.getContentType();
+        return relay.getContentType();
     }
 
     @Override
     public final void connect() throws IOException {
-        this.relay.connect();
+        relay.connect();
     }
 
     @Override
     public final InputStream getInputStream() throws IOException {
-        return this.relay.getInputStream();
+        return relay.getInputStream();
     }
 
     @Override
     public final String getHeaderField(String header) {
-        return this.relay.getHeaderField(header);
+        return relay.getHeaderField(header);
     }
 
     @Override
     public final void setRequestProperty(String key, String value) {
-        this.relay.setRequestProperty(key, value);
+        relay.setRequestProperty(key, value);
     }
 
     @Override
     public final String getRequestProperty(String key) {
-        return this.relay.getRequestProperty(key);
+        return relay.getRequestProperty(key);
     }
 
     @Override
     public final OutputStream getOutputStream() throws IOException {
-        return this.relay.getOutputStream();
+        return relay.getOutputStream();
     }
 
     @Override
     public final void disconnect() {
-        this.relay.disconnect();
+        relay.disconnect();
     }
 
     @Override
     public final boolean usingProxy() {
-        return this.relay.usingProxy();
+        return relay.usingProxy();
     }
 
     @Override
     public final String getHeaderFieldKey(int n) {
-        return this.relay.getHeaderFieldKey(n);
+        return relay.getHeaderFieldKey(n);
     }
 
     @Override
     public final void setFixedLengthStreamingMode(int contentLength) {
-        this.relay.setFixedLengthStreamingMode(contentLength);
+        relay.setFixedLengthStreamingMode(contentLength);
     }
 
     @Override
     public final void setFixedLengthStreamingMode(long contentLength) {
-        this.relay.setFixedLengthStreamingMode(contentLength);
+        relay.setFixedLengthStreamingMode(contentLength);
     }
 
     @Override
     public final void setChunkedStreamingMode(int chunklen) {
-        this.relay.setChunkedStreamingMode(chunklen);
+        relay.setChunkedStreamingMode(chunklen);
     }
 
     @Override
     public final String getHeaderField(int n) {
-        return this.relay.getHeaderField(n);
+        return relay.getHeaderField(n);
     }
 
     @Override
     public final boolean getInstanceFollowRedirects() {
-        return this.relay.getInstanceFollowRedirects();
+        return relay.getInstanceFollowRedirects();
     }
 
     @Override
     public final void setInstanceFollowRedirects(boolean followRedirects) {
-        this.relay.setInstanceFollowRedirects(followRedirects);
+        relay.setInstanceFollowRedirects(followRedirects);
     }
 
     @Override
     public final String getRequestMethod() {
-        return this.relay.getRequestMethod();
+        return relay.getRequestMethod();
     }
 
     @Override
     public final void setRequestMethod(String method) throws ProtocolException {
-        this.relay.setRequestMethod(method);
+        relay.setRequestMethod(method);
     }
 
     @Override
     public final String getResponseMessage() throws IOException {
-        return this.relay.getResponseMessage();
+        return relay.getResponseMessage();
     }
 
     @Override
     public final long getHeaderFieldDate(String name, long Default) {
-        return this.relay.getHeaderFieldDate(name, Default);
+        return relay.getHeaderFieldDate(name, Default);
     }
 
     @Override
     public final Permission getPermission() throws IOException {
-        return this.relay.getPermission();
+        return relay.getPermission();
     }
 
     @Override
     public final InputStream getErrorStream() {
-        return this.relay.getErrorStream();
+        return relay.getErrorStream();
     }
 
     @Override
     public final int getConnectTimeout() {
-        return this.relay.getConnectTimeout();
+        return relay.getConnectTimeout();
     }
 
     @Override
     public final void setConnectTimeout(int timeout) {
-        this.relay.setConnectTimeout(timeout);
+        relay.setConnectTimeout(timeout);
     }
 
     @Override
     public final int getReadTimeout() {
-        return this.relay.getReadTimeout();
+        return relay.getReadTimeout();
     }
 
     @Override
     public final void setReadTimeout(int timeout) {
-        this.relay.setReadTimeout(timeout);
+        relay.setReadTimeout(timeout);
     }
 
     @Override
     public final URL getURL() {
-        return this.relay.getURL();
+        return relay.getURL();
     }
 
     @Override
     public final int getContentLength() {
-        return this.relay.getContentLength();
+        return relay.getContentLength();
     }
 
     @Override
     public final long getContentLengthLong() {
-        return this.relay.getContentLengthLong();
+        return relay.getContentLengthLong();
     }
 
     @Override
     public final String getContentEncoding() {
-        return this.relay.getContentEncoding();
+        return relay.getContentEncoding();
     }
 
     @Override
     public final long getExpiration() {
-        return this.relay.getExpiration();
+        return relay.getExpiration();
     }
 
     @Override
     public final long getDate() {
-        return this.relay.getDate();
+        return relay.getDate();
     }
 
     @Override
     public final long getLastModified() {
-        return this.relay.getLastModified();
+        return relay.getLastModified();
     }
 
     @Override
     public final Map<String, List<String>> getHeaderFields() {
-        return this.relay.getHeaderFields();
+        return relay.getHeaderFields();
     }
 
     @Override
     public final int getHeaderFieldInt(String name, int Default) {
-        return this.relay.getHeaderFieldInt(name, Default);
+        return relay.getHeaderFieldInt(name, Default);
     }
 
     @Override
     public final long getHeaderFieldLong(String name, long Default) {
-        return this.relay.getHeaderFieldLong(name, Default);
+        return relay.getHeaderFieldLong(name, Default);
     }
 
     @Override
     public final Object getContent() throws IOException {
-        return this.relay.getContent();
+        return relay.getContent();
     }
 
     @Override
     public final Object getContent(Class[] classes) throws IOException {
-        return this.relay.getContent(classes);
+        return relay.getContent(classes);
     }
 
     @Override
     public final String toString() {
-        return this.relay.toString();
+        return relay.toString();
     }
 
     @Override
     public final boolean getDoInput() {
-        return this.relay.getDoInput();
+        return relay.getDoInput();
     }
 
     @Override
     public final void setDoInput(boolean doinput) {
-        this.relay.setDoInput(doinput);
+        relay.setDoInput(doinput);
     }
 
     @Override
     public final boolean getDoOutput() {
-        return this.relay.getDoOutput();
+        return relay.getDoOutput();
     }
 
     @Override
     public final void setDoOutput(boolean dooutput) {
-        this.relay.setDoOutput(dooutput);
+        relay.setDoOutput(dooutput);
     }
 
     @Override
     public final boolean getAllowUserInteraction() {
-        return this.relay.getAllowUserInteraction();
+        return relay.getAllowUserInteraction();
     }
 
     @Override
     public final void setAllowUserInteraction(boolean allowuserinteraction) {
-        this.relay.setAllowUserInteraction(allowuserinteraction);
+        relay.setAllowUserInteraction(allowuserinteraction);
     }
 
     @Override
     public final boolean getUseCaches() {
-        return this.relay.getUseCaches();
+        return relay.getUseCaches();
     }
 
     @Override
     public final void setUseCaches(boolean usecaches) {
-        this.relay.setUseCaches(usecaches);
+        relay.setUseCaches(usecaches);
     }
 
     @Override
     public final long getIfModifiedSince() {
-        return this.relay.getIfModifiedSince();
+        return relay.getIfModifiedSince();
     }
 
     @Override
     public final void setIfModifiedSince(long ifmodifiedsince) {
-        this.relay.setIfModifiedSince(ifmodifiedsince);
+        relay.setIfModifiedSince(ifmodifiedsince);
     }
 
     @Override
     public final boolean getDefaultUseCaches() {
-        return this.relay.getDefaultUseCaches();
+        return relay.getDefaultUseCaches();
     }
 
     @Override
     public final void setDefaultUseCaches(boolean defaultusecaches) {
-        this.relay.setDefaultUseCaches(defaultusecaches);
+        relay.setDefaultUseCaches(defaultusecaches);
     }
 
     @Override
     public final void addRequestProperty(String key, String value) {
-        this.relay.addRequestProperty(key, value);
+        relay.addRequestProperty(key, value);
     }
 
     @Override
     public final Map<String, List<String>> getRequestProperties() {
-        return this.relay.getRequestProperties();
+        return relay.getRequestProperties();
     }
 }

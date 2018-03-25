@@ -15,7 +15,6 @@ import kml.auth.user.User;
 import kml.auth.user.UserType;
 import kml.exceptions.GameLauncherException;
 import kml.game.profile.Profile;
-import kml.game.profile.ProfileType;
 import kml.game.version.Version;
 import kml.game.version.VersionMeta;
 import kml.game.version.Versions;
@@ -44,8 +43,8 @@ public class GameLauncher {
     private Stage outputGUI;
 
     public GameLauncher(Kernel k) {
-        this.kernel = k;
-        this.console = k.getConsole();
+        kernel = k;
+        console = k.getConsole();
     }
 
     /**
@@ -53,19 +52,23 @@ public class GameLauncher {
      * @throws GameLauncherException If an error has been thrown
      */
     public final void launch(MainFX mainFX) throws GameLauncherException {
-        this.console.print("Game launch work has started.");
-        Profile p = this.kernel.getProfiles().getSelectedProfile();
-        if (this.isRunning()) {
+        console.print("Game launch work has started.");
+        Profile p = kernel.getProfiles().getSelectedProfile();
+        if (isRunning()) {
             throw new GameLauncherException("Game is already started!");
         }
-        Versions versions = this.kernel.getVersions();
+        Versions versions = kernel.getVersions();
         VersionMeta verID;
-        if (p.getType() == ProfileType.CUSTOM) {
-            verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
-        } else if (p.getType() == ProfileType.RELEASE) {
-            verID = versions.getLatestRelease();
-        } else {
-            verID = versions.getLatestSnapshot();
+        switch (p.getType()) {
+            case CUSTOM:
+                verID = p.hasVersion() ? p.getVersionID() : versions.getLatestRelease();
+                break;
+            case RELEASE:
+                verID = versions.getLatestRelease();
+                break;
+            default:
+                verID = versions.getLatestSnapshot();
+                break;
         }
         if (verID == null) {
             throw new GameLauncherException("Version ID is null.");
@@ -75,7 +78,7 @@ public class GameLauncher {
             throw new GameLauncherException("Version info could not be obtained.");
         }
         File workingDir = Kernel.APPLICATION_WORKING_DIR;
-        this.console.print("Deleting old natives.");
+        console.print("Deleting old natives.");
         File nativesRoot = new File(workingDir + File.separator + "versions" + File.separator + ver.getID());
         if (nativesRoot.isDirectory()) {
             File[] files = nativesRoot.listFiles();
@@ -91,9 +94,9 @@ public class GameLauncher {
         if (!nativesDir.isDirectory()) {
             nativesDir.mkdirs();
         }
-        this.console.print("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
-        this.console.print("Using natives dir: " + nativesDir);
-        this.console.print("Extracting natives.");
+        console.print("Launching Minecraft " + ver.getID() + " on " + workingDir.getAbsolutePath());
+        console.print("Using natives dir: " + nativesDir);
+        console.print("Extracting natives.");
         List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
@@ -117,14 +120,14 @@ public class GameLauncher {
         StringBuilder libraries = new StringBuilder();
         List<Library> libs = ver.getLibraries();
         String separator = System.getProperty("path.separator");
-        Authentication a = this.kernel.getAuthentication();
+        Authentication a = kernel.getAuthentication();
         User u = a.getSelectedUser();
         if (u.getType() == UserType.KROTHIUM) {
             try {
                 File launchPath = new File(GameLauncher.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                 libraries.append(launchPath.getAbsolutePath()).append(separator);
             } catch (URISyntaxException ex) {
-                this.console.print("Failed to load GameStarter.");
+                console.print("Failed to load GameStarter.");
             }
         }
         for (Library lib : libs) {
@@ -137,15 +140,15 @@ public class GameLauncher {
                     FileInputStream input = new FileInputStream(completePath);
                     Utils.decompressZIP(input, nativesDir, lib.getExtractExclusions());
                 } catch (IOException ex) {
-                    this.console.print("Failed to extract native: " + lib.getName());
-                    ex.printStackTrace(this.console.getWriter());
+                    console.print("Failed to extract native: " + lib.getName());
+                    ex.printStackTrace(console.getWriter());
                 }
             } else {
                 File completePath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + lib.getRelativePath());
                 libraries.append(completePath.getAbsolutePath()).append(separator);
             }
         }
-        this.console.print("Preparing game args.");
+        console.print("Preparing game args.");
         File verPath = new File(Kernel.APPLICATION_WORKING_DIR + File.separator + ver.getRelativeJar());
         libraries.append(verPath.getAbsolutePath());
         File assetsDir;
@@ -156,7 +159,7 @@ public class GameLauncher {
             if (!assetsDir.isDirectory()) {
                 assetsDir.mkdirs();
             }
-            this.console.print("Building virtual asset folder.");
+            console.print("Building virtual asset folder.");
             File indexJSON = new File(assetsRoot, "indexes" + File.separator + index.getID() + ".json");
             try {
                 JSONObject o = new JSONObject(new String(Files.readAllBytes(indexJSON.toPath()), "ISO-8859-1"));
@@ -176,8 +179,8 @@ public class GameLauncher {
                     }
                 }
             } catch (Exception ex) {
-                this.console.print("Failed to create virtual asset folder.");
-                ex.printStackTrace(this.console.getWriter());
+                console.print("Failed to create virtual asset folder.");
+                ex.printStackTrace(console.getWriter());
             }
         } else {
             assetsDir = assetsRoot;
@@ -185,23 +188,9 @@ public class GameLauncher {
         gameArgs.add(libraries.toString());
         if (u.getType() == UserType.KROTHIUM) {
             gameArgs.add("kml.game.GameStarter");
-            if (p.hasGameDir()) {
-                File gameDir = p.getGameDir();
-                if (!gameDir.isDirectory()) {
-                    gameDir.mkdirs();
-                }
-                gameArgs.add(gameDir.getAbsolutePath());
-            } else {
-                gameArgs.add(workingDir.getAbsolutePath());
-            }
-
-            gameArgs.add(u.getSelectedProfile());
-            gameArgs.add(u.getAccessToken());
-            gameArgs.add(ver.getMainClass());
-        } else {
-            gameArgs.add(ver.getMainClass());
         }
-        this.console.print("Full game launcher parameters: ");
+        gameArgs.add(ver.getMainClass());
+        console.print("Full game launcher parameters: ");
         String[] versionArgs = ver.getMinecraftArguments().split(" ");
         for (int i = 0; i < versionArgs.length; i++) {
             if (versionArgs[i].startsWith("$")) {
@@ -261,23 +250,23 @@ public class GameLauncher {
             gameArgs.add(String.valueOf(p.getResolutionHeight()));
         }
         for (String arg : gameArgs) {
-            this.console.print(arg);
+            console.print(arg);
         }
         ProcessBuilder pb = new ProcessBuilder(gameArgs);
         pb.directory(workingDir);
         try {
-            this.process = pb.start();
-            if (this.kernel.getSettings().getShowGameLog()) {
+            process = pb.start();
+            if (kernel.getSettings().getShowGameLog()) {
                 Platform.runLater(() -> {
                     FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Output.fxml"));
+                    loader.setLocation(getClass().getResource("/kml/gui/fxml/Output.fxml"));
                     Parent parent;
                     try {
                         parent = loader.load();
                     } catch (IOException e) {
                         parent = null;
-                        this.console.print("Failed to initialize Output GUI!");
-                        e.printStackTrace(this.console.getWriter());
+                        console.print("Failed to initialize Output GUI!");
+                        e.printStackTrace(console.getWriter());
                     }
                     Stage stage = new Stage();
                     stage.getIcons().add(Kernel.APPLICATION_ICON);
@@ -286,17 +275,13 @@ public class GameLauncher {
                     stage.setResizable(true);
                     stage.setMaximized(false);
                     stage.show();
-                    this.output = loader.getController();
-                    this.outputGUI = stage;
+                    output = loader.getController();
+                    outputGUI = stage;
                 });
             }
-            Thread log_info = new Thread(() -> {
-                pipeOutput(this.process.getInputStream());
-            });
+            Thread log_info = new Thread(() -> pipeOutput(process.getInputStream()));
             log_info.start();
-            Thread log_error = new Thread(() -> {
-                pipeOutput(this.process.getErrorStream());
-            });
+            Thread log_error = new Thread(() -> pipeOutput(process.getErrorStream()));
             log_error.start();
             Timer timer = new Timer();
             TimerTask process_status = new TimerTask() {
@@ -320,7 +305,7 @@ public class GameLauncher {
             };
             timer.schedule(process_status, 0, 25);
         } catch (IOException ex) {
-            ex.printStackTrace(this.console.getWriter());
+            ex.printStackTrace(console.getWriter());
             throw new GameLauncherException("Game returned an error code.");
         }
     }
@@ -330,14 +315,14 @@ public class GameLauncher {
              BufferedReader br = new BufferedReader(isr)){
             String lineRead;
             while ((lineRead = br.readLine()) != null) {
-                if (this.kernel.getSettings().getShowGameLog() && this.outputGUI.isShowing()) {
-                    this.output.pushString(lineRead);
+                if (kernel.getSettings().getShowGameLog() && outputGUI.isShowing()) {
+                    output.pushString(lineRead);
                 }
-                this.console.print(lineRead);
+                console.print(lineRead);
             }
         } catch (IOException ignored) {
-            this.console.print("Failed to read stream.");
-            ignored.printStackTrace(this.console.getWriter());
+            console.print("Failed to read stream.");
+            ignored.printStackTrace(console.getWriter());
         }
     }
 
@@ -346,7 +331,7 @@ public class GameLauncher {
      * @return A boolean with the current state
      */
     public boolean isRunning() {
-        return this.process != null && this.process.isAlive();
+        return process != null && process.isAlive();
     }
 
 }

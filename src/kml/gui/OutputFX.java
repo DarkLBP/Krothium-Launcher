@@ -16,14 +16,14 @@ public class OutputFX {
     private ListView<String> outputList;
 
     public final void initialize() {
-        this.outputList.setItems(FXCollections.observableArrayList());
-        this.outputList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        outputList.setItems(FXCollections.observableArrayList());
+        outputList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public final void pushString(String str) {
         Platform.runLater(() -> {
-            this.outputList.getItems().add(str);
-            this.outputList.scrollTo(this.outputList.getItems().size() - 1);
+            outputList.getItems().add(str);
+            outputList.scrollTo(outputList.getItems().size() - 1);
         });
     }
 
@@ -31,17 +31,17 @@ public class OutputFX {
     public final void copyClipboard(KeyEvent e) {
         //Copy to clipboard selected rows
         if (e.getCode() == KeyCode.C && e.isControlDown()) {
-            this.copySelected();
+            copySelected();
         }
     }
 
     @FXML
     public final void copySelected() {
-        if (!this.outputList.getSelectionModel().getSelectedItems().isEmpty()) {
+        if (!outputList.getSelectionModel().getSelectedItems().isEmpty()) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();
             StringBuilder b = new StringBuilder();
-            for (String s : this.outputList.getSelectionModel().getSelectedItems()) {
+            for (String s : outputList.getSelectionModel().getSelectedItems()) {
                 b.append(s).append('\n');
             }
             content.putString(b.toString());
@@ -51,6 +51,6 @@ public class OutputFX {
 
     @FXML
     private void clearAll() {
-        this.outputList.getItems().clear();
+        outputList.getItems().clear();
     }
 }

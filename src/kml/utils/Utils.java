@@ -228,10 +228,9 @@ public final class Utils {
     /**
      * Reads a String from the source URL
      * @param url The source URL
-     * @throws IOException When data read fails
      * @return The read String or null if an error occurred
      */
-    public static String readURL(String url) throws IOException {
+    public static String readURL(String url) {
         InputStream in = readCachedStream(url);
         if (in != null) {
             return readText(in);
@@ -260,7 +259,7 @@ public final class Utils {
      * @param algorithm The hash method (md5, sha1...)
      * @return The calculated hash
      */
-    public static String calculateChecksum(File file, String algorithm) {
+    private static String calculateChecksum(File file, String algorithm) {
         try (FileInputStream fis = new FileInputStream(file)){
             MessageDigest sha1 = MessageDigest.getInstance(algorithm);
             byte[] data = new byte[8192];

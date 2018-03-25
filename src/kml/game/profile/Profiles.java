@@ -23,8 +23,8 @@ public class Profiles {
     private Profile selected, releaseProfile, snapshotProfile;
 
     public Profiles(Kernel k) {
-        this.kernel = k;
-        this.console = k.getConsole();
+        kernel = k;
+        console = k.getConsole();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Profiles {
      * @return The profile database
      */
     public final Iterable<Profile> getProfiles() {
-        return this.profiles;
+        return profiles;
     }
 
     /**
@@ -40,12 +40,12 @@ public class Profiles {
      * @param p The profile to be added
      */
     public void addProfile(Profile p) {
-        if (!this.profiles.contains(p)) {
-            this.profiles.add(p);
-            this.console.print("Profile " + p + " added");
+        if (!profiles.contains(p)) {
+            profiles.add(p);
+            console.print("Profile " + p + " added");
             return;
         }
-        this.console.print("Profile " + p + " already exists!");
+        console.print("Profile " + p + " already exists!");
     }
 
     /**
@@ -54,23 +54,23 @@ public class Profiles {
      * @return A boolean that indicates if the profile has been deleted
      */
     public final boolean deleteProfile(Profile p) {
-        if (this.profiles.contains(p)) {
-            if (this.selected != null && this.selected.equals(p)) {
-                this.console.print("Profile " + p + " is selected and is going to be removed.");
-                this.profiles.remove(p);
-                this.console.print("Profile " + p + " deleted.");
-                if (!this.profiles.isEmpty()) {
-                    this.setSelectedProfile(this.profiles.first());
+        if (profiles.contains(p)) {
+            if (selected != null && selected.equals(p)) {
+                console.print("Profile " + p + " is selected and is going to be removed.");
+                profiles.remove(p);
+                console.print("Profile " + p + " deleted.");
+                if (!profiles.isEmpty()) {
+                    setSelectedProfile(profiles.first());
                 } else {
-                    this.selected = null;
+                    selected = null;
                 }
             } else {
-                this.profiles.remove(p);
-                this.console.print("Profile " + p + " deleted.");
+                profiles.remove(p);
+                console.print("Profile " + p + " deleted.");
             }
             return true;
         }
-        this.console.print("Profile " + p + " doesn't exist.");
+        console.print("Profile " + p + " doesn't exist.");
         return false;
     }
 
@@ -78,9 +78,9 @@ public class Profiles {
      * Loads the profiles from the launcher_profiles.json
      */
     public final void fetchProfiles() {
-        this.console.print("Fetching profiles.");
+        console.print("Fetching profiles.");
         Timestamp latestUsedMillis = new Timestamp(-1);
-        JSONObject root = this.kernel.getLauncherProfiles();
+        JSONObject root = kernel.getLauncherProfiles();
         if (root != null) {
             try {
                 JSONObject ples = root.getJSONObject("profiles");
@@ -133,12 +133,12 @@ public class Profiles {
                                     break;
                             }
                         }
-                        version = this.kernel.getVersions().getVersionMeta(ver);
+                        version = kernel.getVersions().getVersionMeta(ver);
                         try {
                             icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase(Locale.ENGLISH)) : null;
                         } catch (IllegalArgumentException ex) {
                             icon = null;
-                            this.console.print("Invalid profile icon for profile " + key);
+                            console.print("Invalid profile icon for profile " + key);
                         }
                     } else {
                         name = null;
@@ -157,76 +157,76 @@ public class Profiles {
                             resolution.put("width", res.getInt("width"));
                             resolution.put("height", res.getInt("height"));
                         } else {
-                            this.console.print("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
+                            console.print("Profile " + name != null ? name : "UNKNOWN" + " has an invalid resolution.");
                         }
                     }
                     Profile p = new Profile(key, name, type, created, lastUsed, version, gameDir, javaDir, javaArgs, resolution, icon, latestRelease, latestSnapshot);
                     if (first == null) {
                         first = p;
                     }
-                    if (!this.profiles.contains(p)) {
-                        this.addProfile(p);
+                    if (!profiles.contains(p)) {
+                        addProfile(p);
                         if (p.getLastUsed().compareTo(latestUsedMillis) > 0) {
                             latestUsedMillis = p.getLastUsed();
                             latestUsedID = p;
                         }
-                        if (type == ProfileType.RELEASE && this.releaseProfile == null) {
-                            this.releaseProfile = p;
-                        } else if (type == ProfileType.SNAPSHOT && this.snapshotProfile == null) {
-                            this.snapshotProfile = p;
+                        if (type == ProfileType.RELEASE && releaseProfile == null) {
+                            releaseProfile = p;
+                        } else if (type == ProfileType.SNAPSHOT && snapshotProfile == null) {
+                            snapshotProfile = p;
                         }
                     }
                 }
-                if (this.releaseProfile == null) {
-                    this.releaseProfile = new Profile(ProfileType.RELEASE);
+                if (releaseProfile == null) {
+                    releaseProfile = new Profile(ProfileType.RELEASE);
                     if (first == null) {
-                        first = this.releaseProfile;
+                        first = releaseProfile;
                     }
-                    this.addProfile(this.releaseProfile);
+                    addProfile(releaseProfile);
                 }
-                if (this.snapshotProfile == null) {
-                    this.snapshotProfile = new Profile(ProfileType.SNAPSHOT);
-                    this.addProfile(this.snapshotProfile);
+                if (snapshotProfile == null) {
+                    snapshotProfile = new Profile(ProfileType.SNAPSHOT);
+                    addProfile(snapshotProfile);
                 }
                 if (latestUsedID != null) {
-                    Settings settings = this.kernel.getSettings();
+                    Settings settings = kernel.getSettings();
                     if (latestUsedID.getType() == ProfileType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                        this.setSelectedProfile(this.releaseProfile);
+                        setSelectedProfile(releaseProfile);
                     } else if (latestUsedID.getType() == ProfileType.CUSTOM) {
                         VersionType type = latestUsedID.getVersionID().getType();
                         if (type == VersionType.SNAPSHOT && !settings.getEnableSnapshots()) {
-                            this.setSelectedProfile(this.releaseProfile);
+                            setSelectedProfile(releaseProfile);
                         } else if (type == VersionType.OLD_ALPHA && !settings.getEnableHistorical()) {
-                            this.setSelectedProfile(this.releaseProfile);
+                            setSelectedProfile(releaseProfile);
                         } else if (type == VersionType.OLD_BETA && !settings.getEnableHistorical()) {
-                            this.setSelectedProfile(this.releaseProfile);
+                            setSelectedProfile(releaseProfile);
                         } else {
-                            this.setSelectedProfile(latestUsedID);
+                            setSelectedProfile(latestUsedID);
                         }
                     } else {
-                        this.setSelectedProfile(latestUsedID);
+                        setSelectedProfile(latestUsedID);
                     }
                 } else {
-                    this.console.print("No profile is selected! Using first loaded (" + first + ')');
-                    this.setSelectedProfile(first);
+                    console.print("No profile is selected! Using first loaded (" + first + ')');
+                    setSelectedProfile(first);
                 }
             } catch (JSONException ex) {
-                this.console.print("Failed to fetch profiles.");
-                ex.printStackTrace(this.console.getWriter());
+                console.print("Failed to fetch profiles.");
+                ex.printStackTrace(console.getWriter());
             }
         } else {
-            this.console.print("No profiles to be loaded. Generating defaults.");
-            if (this.releaseProfile == null) {
-                this.releaseProfile = new Profile(ProfileType.RELEASE);
-                this.addProfile(this.releaseProfile);
+            console.print("No profiles to be loaded. Generating defaults.");
+            if (releaseProfile == null) {
+                releaseProfile = new Profile(ProfileType.RELEASE);
+                addProfile(releaseProfile);
             }
-            if (this.snapshotProfile == null) {
-                this.snapshotProfile = new Profile(ProfileType.SNAPSHOT);
-                this.addProfile(this.snapshotProfile);
+            if (snapshotProfile == null) {
+                snapshotProfile = new Profile(ProfileType.SNAPSHOT);
+                addProfile(snapshotProfile);
             }
         }
-        if (this.selected == null) {
-            this.setSelectedProfile(this.releaseProfile);
+        if (selected == null) {
+            setSelectedProfile(releaseProfile);
         }
     }
 
@@ -236,7 +236,7 @@ public class Profiles {
      * @return The profile that matches the id or null
      */
     public final Profile getProfile(String id) {
-        for (Profile p : this.profiles) {
+        for (Profile p : profiles) {
             if (p.getID().equalsIgnoreCase(id)) {
                 return p;
             }
@@ -249,7 +249,7 @@ public class Profiles {
      * @return The selected profile
      */
     public final Profile getSelectedProfile() {
-        return this.selected;
+        return selected;
     }
 
     /**
@@ -257,18 +257,17 @@ public class Profiles {
      * @return The release profile
      */
     public final Profile getReleaseProfile() {
-        return this.releaseProfile;
+        return releaseProfile;
     }
 
     /**
      * Sets the current selected profile
      * @param p Profile to be selected
-     * @return A boolean that indicates if the profile has been selected
      */
     public void setSelectedProfile(Profile p) {
         p.setLastUsed(new Timestamp(System.currentTimeMillis()));
-        this.selected = p;
-        this.console.print("Profile " + p + " has been selected.");
+        selected = p;
+        console.print("Profile " + p + " has been selected.");
     }
 
     /**
@@ -277,8 +276,8 @@ public class Profiles {
      */
     public final JSONObject toJSON() {
         JSONObject o = new JSONObject();
-        JSONObject profiles = new JSONObject();
-        for (Profile p : this.profiles) {
+        JSONObject profilesJSON = new JSONObject();
+        for (Profile p : profiles) {
             JSONObject prof = new JSONObject();
             switch (p.getType()) {
                 case RELEASE:
@@ -326,9 +325,9 @@ public class Profiles {
                 res.put("height", p.getResolutionHeight());
                 prof.put("resolution", res);
             }
-            profiles.put(p.getID(), prof);
+            profilesJSON.put(p.getID(), prof);
         }
-        o.put("profiles", profiles);
+        o.put("profiles", profilesJSON);
         return o;
     }
 }

@@ -47,13 +47,13 @@ import java.util.Set;
 
 public final class Kernel {
     private final Console console;
-    private Profiles profiles;
-    private Versions versions;
-    private Settings settings;
-    private Downloader downloader;
-    private Authentication authentication;
-    private GameLauncher gameLauncher;
-    private HostServices hostServices;
+    private final Profiles profiles;
+    private final Versions versions;
+    private final Settings settings;
+    private final Downloader downloader;
+    private final Authentication authentication;
+    private final GameLauncher gameLauncher;
+    private final HostServices hostServices;
     private BrowserFX webBrowser;
     private JSONObject launcherProfiles;
 
@@ -75,121 +75,131 @@ public final class Kernel {
         }
         APPLICATION_CACHE.mkdir();
         APPLICATION_LOGS.mkdir();
-        this.console = new Console();
+        console = new Console();
         try {
             int response = Utils.testNetwork();
             USE_LOCAL = response != 204;
         } catch (IOException ex) {
             USE_LOCAL = true;
-            this.console.print("Running offline mode.");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Running offline mode.");
+            ex.printStackTrace(console.getWriter());
         }
-        this.console.print("KML v" + KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
-        this.console.print("OS: " + System.getProperty("os.name"));
-        this.console.print("OS Version: " + System.getProperty("os.version"));
-        this.console.print("OS Architecture: " + System.getProperty("os.arch"));
-        this.console.print("Java Version: " + System.getProperty("java.version"));
-        this.console.print("Java Vendor: " + System.getProperty("java.vendor"));
-        this.console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        console.print("KML v" + KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
+        console.print("OS: " + System.getProperty("os.name"));
+        console.print("OS Version: " + System.getProperty("os.version"));
+        console.print("OS Architecture: " + System.getProperty("os.arch"));
+        console.print("Java Version: " + System.getProperty("java.version"));
+        console.print("Java Vendor: " + System.getProperty("java.vendor"));
+        console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
         try {
             Class.forName("javafx.fxml.FXMLLoader");
-            this.console.print("JavaFX loaded.");
+            console.print("JavaFX loaded.");
         } catch (ClassNotFoundException e) {
             File jfxrt = new File(System.getProperty("java.home"), "lib/jfxrt.jar");
             if (jfxrt.isFile()) {
-                this.console.print("Attempting to load JavaFX manually...");
+                console.print("Attempting to load JavaFX manually...");
                 try {
                     if (addToSystemClassLoader(jfxrt)) {
-                        this.console.print("JavaFX loaded manually.");
+                        console.print("JavaFX loaded manually.");
                     } else {
-                        this.console.print("Found JavaFX but it couldn't be loaded!");
-                        this.warnJavaFX();
+                        console.print("Found JavaFX but it couldn't be loaded!");
+                        warnJavaFX();
                     }
                 } catch (Throwable e2) {
-                    this.console.print("Found JavaFX but it couldn't be loaded!");
-                    e2.printStackTrace(this.console.getWriter());
-                    this.warnJavaFX();
+                    console.print("Found JavaFX but it couldn't be loaded!");
+                    e2.printStackTrace(console.getWriter());
+                    warnJavaFX();
                 }
             } else {
-                this.console.print("JavaFX library not found. Please update Java!");
-                this.warnJavaFX();
+                console.print("JavaFX library not found. Please update Java!");
+                warnJavaFX();
             }
         }
-        this.console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
-        this.console.print("Reading launcher profiles...");
+        console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
+        console.print("Reading launcher profiles...");
         try {
             if (APPLICATION_CONFIG.isFile()) {
                 String data = new String(Files.readAllBytes(APPLICATION_CONFIG.toPath()), StandardCharsets.UTF_8);
-                this.launcherProfiles = new JSONObject(data);
+                launcherProfiles = new JSONObject(data);
             } else {
-                this.console.print("Launcher profiles file does not exists.");
+                console.print("Launcher profiles file does not exists.");
             }
         } catch (MalformedURLException | JSONException e) {
-            this.console.print("Malformed launcher profiles file.");
-            e.printStackTrace(this.console.getWriter());
+            console.print("Malformed launcher profiles file.");
+            e.printStackTrace(console.getWriter());
         } catch (IOException ex) {
-            this.console.print("Failed to read launcher profiles file.");
-            ex.printStackTrace(this.console.getWriter());
+            console.print("Failed to read launcher profiles file.");
+            ex.printStackTrace(console.getWriter());
         }
 
         //Initialize constants
         APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
-        this.profileIcons = new Image("/kml/gui/textures/profile_icons.png");
-        this.iconCache = new EnumMap<>(ProfileIcon.class);
+        profileIcons = new Image("/kml/gui/textures/profile_icons.png");
+        iconCache = new EnumMap<>(ProfileIcon.class);
 
         //Prepare loader
         FXMLLoader loader = new FXMLLoader();
 
         //Load launcher data
-        this.profiles = new Profiles(this);
-        this.versions = new Versions(this);
-        this.settings = new Settings(this);
-        this.downloader = new Downloader(this);
-        this.authentication = new Authentication(this);
-        this.gameLauncher = new GameLauncher(this);
-        this.hostServices = hs;
-        this.loadSettings();
-        this.loadVersions();
-        this.loadProfiles();
-        this.loadUsers();
+        profiles = new Profiles(this);
+        versions = new Versions(this);
+        settings = new Settings(this);
+        downloader = new Downloader(this);
+        authentication = new Authentication(this);
+        gameLauncher = new GameLauncher(this);
+        hostServices = hs;
+        settings.loadSettings();
+        versions.fetchVersions();
+        profiles.fetchProfiles();
+        authentication.fetchUsers();
 
         //Load web browser
         try {
-            loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Browser.fxml"));
+            loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
             Parent p = loader.load();
             Scene browser = new Scene(p);
-            this.webBrowser = loader.getController();
-            this.webBrowser.initialize(stage, browser);
+            webBrowser = loader.getController();
+            webBrowser.initialize(stage, browser);
+
         } catch (IOException e) {
-            this.console.print("Failed to initialize web browser.");
-            e.printStackTrace(this.console.getWriter());
-            this.exitSafely();
+            console.print("Failed to initialize web browser.");
+            e.printStackTrace(console.getWriter());
+            exitSafely();
         }
 
         //Load main form
         try {
-            loader.setLocation(this.getClass().getResource("/kml/gui/fxml/Main.fxml"));
+            loader.setLocation(getClass().getResource("/kml/gui/fxml/Main.fxml"));
             loader.setRoot(null);
             loader.setController(null);
             Parent p = loader.load();
             Scene main = new Scene(p);
             stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
-            stage.setOnCloseRequest(e -> this.exitSafely());
+            stage.setOnCloseRequest((e) -> {
+                settings.setLauncherHeight(main.getWindow().getHeight());
+                settings.setLauncherWidth(main.getWindow().getWidth());
+                exitSafely();
+            });
             stage.setScene(main);
+            System.out.println(settings.getLauncherHeight());
+            System.out.println(settings.getLauncherWidth());
+            stage.setHeight(settings.getLauncherHeight());
+            stage.setWidth(settings.getLauncherWidth());
             MainFX mainForm = loader.getController();
             mainForm.initialize(this, stage, main);
+            stage.show();
         } catch (IOException e) {
-            this.console.print("Failed to initialize main interface.");
-            e.printStackTrace(this.console.getWriter());
-            this.exitSafely();
+            console.print("Failed to initialize main interface.");
+            e.printStackTrace(console.getWriter());
+            exitSafely();
         }
     }
 
     /**
      * Loads a JAR file dynamically
      *
-     * @param file The JAR file to be laoded
+     * @param file The JAR file to be loaded
      * @return A boolean indicating if the file has been loaded
      */
     private static boolean addToSystemClassLoader(File file) {
@@ -208,94 +218,79 @@ public final class Kernel {
     }
 
     public Console getConsole() {
-        return this.console;
+        return console;
     }
 
     public HostServices getHostServices() {
-        return this.hostServices;
+        return hostServices;
     }
 
     /**
      * Saves the profiles
      */
     public void saveProfiles() {
-        this.console.print("Saving profiles...");
+        console.print("Saving profiles...");
         JSONObject output = new JSONObject();
-        JSONObject profiles = this.profiles.toJSON();
-        JSONObject authdata = this.authentication.toJSON();
-        Set pset = profiles.keySet();
+        JSONObject profilesJSON = profiles.toJSON();
+        JSONObject authdata = authentication.toJSON();
+        Set pset = profilesJSON.keySet();
         for (Object aPset : pset) {
             String name = aPset.toString();
-            output.put(name, profiles.get(name));
+            output.put(name, profilesJSON.get(name));
         }
         Set aset = authdata.keySet();
         for (Object anAset : aset) {
             String name = anAset.toString();
             output.put(name, authdata.get(name));
         }
-        output.put("settings", this.settings.toJSON());
+        output.put("settings", settings.toJSON());
         JSONObject launcherVersion = new JSONObject();
         launcherVersion.put("name", KERNEL_BUILD_NAME);
         launcherVersion.put("format", KERNEL_FORMAT);
         launcherVersion.put("profilesFormat", KERNEL_PROFILES_FORMAT);
         output.put("launcherVersion", launcherVersion);
-        if (!Utils.writeToFile(output.toString(4), APPLICATION_CONFIG)) {
-            this.console.print("Failed to save the profiles file!");
+        if (!Utils.writeToFile(output.toString(2), APPLICATION_CONFIG)) {
+            console.print("Failed to save the profiles file!");
         } else {
-            this.console.print("Profiles saved.");
+            console.print("Profiles saved.");
         }
     }
 
-    private void loadProfiles() {
-        this.profiles.fetchProfiles();
-    }
-
-    private void loadVersions() {
-        this.versions.fetchVersions();
-    }
-
-    private void loadUsers() {
-        this.authentication.fetchUsers();
-    }
-
-    private void loadSettings() {
-        this.settings.loadSettings();
-    }
-
     public Versions getVersions() {
-        return this.versions;
+        return versions;
     }
 
     public Profiles getProfiles() {
-        return this.profiles;
+        return profiles;
     }
 
     public Settings getSettings() {
-        return this.settings;
+        return settings;
     }
 
     public Downloader getDownloader() {
-        return this.downloader;
+        return downloader;
     }
 
     public Authentication getAuthentication() {
-        return this.authentication;
+        return authentication;
     }
 
     public JSONObject getLauncherProfiles() {
-        return this.launcherProfiles;
+        return launcherProfiles;
     }
 
     public GameLauncher getGameLauncher() {
-        return this.gameLauncher;
+        return gameLauncher;
     }
 
     /**
      * Saves the profiles and shuts down the launcher
      */
     public void exitSafely() {
-        this.console.print("Shutting down launcher...");
-        this.console.close();
+        console.print("Shutting down launcher...");
+        console.close();
+        saveProfiles();
         System.exit(0);
     }
 
@@ -304,11 +299,11 @@ public final class Kernel {
      */
     private void warnJavaFX() {
         JOptionPane.showMessageDialog(null, Language.get(9), "Error", JOptionPane.ERROR_MESSAGE);
-        this.exitSafely();
+        exitSafely();
     }
 
     public BrowserFX getBrowser() {
-        return this.webBrowser;
+        return webBrowser;
     }
 
     /**
@@ -318,14 +313,14 @@ public final class Kernel {
      * @return The image with the profile icon
      */
     public Image getProfileIcon(ProfileIcon p) {
-        if (this.iconCache.containsKey(p)) {
-            return this.iconCache.get(p);
+        if (iconCache.containsKey(p)) {
+            return iconCache.get(p);
         }
         WritableImage wi = new WritableImage(68, 68);
         PixelWriter pw = wi.getPixelWriter();
         int blockX = 0;
         int blockY = 0;
-        PixelReader pr = this.profileIcons.getPixelReader();
+        PixelReader pr = profileIcons.getPixelReader();
         switch (p) {
             case LEAVES_OAK:
                 blockX = 0;
@@ -593,37 +588,8 @@ public final class Kernel {
                 break;
         }
         pw.setPixels(0, 0, 68, 68, pr, blockX * 68, blockY * 68);
-        this.iconCache.put(p, wi);
+        iconCache.put(p, wi);
         return wi;
-    }
-
-    /**
-     * This method receives an image scales it
-     *
-     * @param input       Input image
-     * @param scaleFactor Output scale factor
-     * @return The resampled image
-     */
-    public Image resampleImage(Image input, int scaleFactor) {
-        int W = (int) input.getWidth();
-        int H = (int) input.getHeight();
-        WritableImage output = new WritableImage(
-                W * scaleFactor,
-                H * scaleFactor
-        );
-        PixelReader reader = input.getPixelReader();
-        PixelWriter writer = output.getPixelWriter();
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-                int argb = reader.getArgb(x, y);
-                for (int dy = 0; dy < scaleFactor; dy++) {
-                    for (int dx = 0; dx < scaleFactor; dx++) {
-                        writer.setArgb(x * scaleFactor + dx, y * scaleFactor + dy, argb);
-                    }
-                }
-            }
-        }
-        return output;
     }
 
     /**

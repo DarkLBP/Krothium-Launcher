@@ -12,13 +12,13 @@ public class SkinMatcher implements URLMatcher {
 
     @Override
     public final boolean match(String url) {
-        Matcher m = this.skinRegex.matcher(url);
+        Matcher m = skinRegex.matcher(url);
         return m.matches();
     }
 
     @Override
     public final String handle(String url) {
-        Matcher m = this.skinRegex.matcher(url);
+        Matcher m = skinRegex.matcher(url);
         if (m.matches()) {
             String name = m.group(1);
             return "http://mc.krothium.com/skins/" + name + ".png";

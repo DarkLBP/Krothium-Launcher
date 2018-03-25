@@ -16,9 +16,9 @@ public class BrowserFX {
     private Scene main;
 
     public final void initialize(Stage s, Scene browser) {
-        this.stage = s;
+        stage = s;
         this.browser = browser;
-        WebEngine engine = this.webBrowser.getEngine();
+        WebEngine engine = webBrowser.getEngine();
         String userAgent = engine.getUserAgent();
         engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:59.0) Gecko/20100101 Firefox/59.0");
         engine.setJavaScriptEnabled(true);
@@ -27,15 +27,15 @@ public class BrowserFX {
                 String location = engine.getLocation();
                 if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com")
                         && !location.contains("about:blank") && !location.contains("872429")) {
-                    this.webBrowser.getEngine().load("about:blank");
+                    webBrowser.getEngine().load("about:blank");
                 }
                 if (location.contains("about:blank")) {
-                    double stageW = this.stage.widthProperty().doubleValue();
-                    double stageH = this.stage.heightProperty().doubleValue();
-                    this.stage.setScene(main);
+                    double stageW = stage.widthProperty().doubleValue();
+                    double stageH = stage.heightProperty().doubleValue();
+                    stage.setScene(main);
                     if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
-                        this.stage.setWidth(stageW);
-                        this.stage.setHeight(stageH);
+                        stage.setWidth(stageW);
+                        stage.setHeight(stageH);
                     }
                 }
             }
@@ -43,22 +43,18 @@ public class BrowserFX {
     }
 
     public final void loadWebsite(String url) {
-        this.webBrowser.getEngine().load(url);
+        webBrowser.getEngine().load(url);
     }
 
     public final void show(Scene main) {
         this.main = main;
-        double stageW = this.stage.widthProperty().doubleValue();
-        double stageH = this.stage.heightProperty().doubleValue();
-        this.stage.setScene(this.browser);
+        double stageW = stage.widthProperty().doubleValue();
+        double stageH = stage.heightProperty().doubleValue();
+        stage.setScene(browser);
         if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
-            this.stage.setWidth(stageW);
-            this.stage.setHeight(stageH);
+            stage.setWidth(stageW);
+            stage.setHeight(stageH);
         }
 
-    }
-
-    public final boolean isVisible() {
-        return this.stage.isShowing();
     }
 }
