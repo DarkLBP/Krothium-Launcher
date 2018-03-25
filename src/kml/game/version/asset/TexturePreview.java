@@ -286,7 +286,6 @@ public class TexturePreview {
         }
     }
 
-
     /**
      * This method receives an image scales it
      *

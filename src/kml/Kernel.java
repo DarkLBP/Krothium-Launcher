@@ -182,8 +182,6 @@ public final class Kernel {
                 exitSafely();
             });
             stage.setScene(main);
-            System.out.println(settings.getLauncherHeight());
-            System.out.println(settings.getLauncherWidth());
             stage.setHeight(settings.getLauncherHeight());
             stage.setWidth(settings.getLauncherWidth());
             MainFX mainForm = loader.getController();
