@@ -306,6 +306,7 @@ public class MainFX {
             this.newsTitle.setText(Language.get(102));
             this.newsText.setText(Language.get(103));
         }
+        this.updateGameVersion();
     }
 
     /**
