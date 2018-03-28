@@ -66,6 +66,7 @@ public final class Kernel {
     private static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
+    public static File JAVA_PATH;
     public static Image APPLICATION_ICON;
     public static boolean USE_LOCAL;
 
@@ -91,6 +92,12 @@ public final class Kernel {
         console.print("Java Version: " + System.getProperty("java.version"));
         console.print("Java Vendor: " + System.getProperty("java.vendor"));
         console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
+        if (Utils.getPlatform().equals(OS.WINDOWS)) {
+            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "javaw.exe");
+        } else {
+            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "java");
+        }
+        console.print("Custom Java: " + JAVA_PATH.isFile());
         try {
             Class.forName("javafx.fxml.FXMLLoader");
             console.print("JavaFX loaded.");

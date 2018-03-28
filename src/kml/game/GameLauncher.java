@@ -100,6 +100,8 @@ public class GameLauncher {
         List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
+        } else if (Kernel.JAVA_PATH.isFile()) {
+            gameArgs.add(Kernel.JAVA_PATH.getAbsolutePath());
         } else {
             gameArgs.add(Utils.getJavaDir());
         }

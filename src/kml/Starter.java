@@ -22,6 +22,6 @@ public class Starter extends Application {
     @Override
     public final void start(Stage primaryStage) {
         Utils.ignoreHTTPSCert();
-        new Kernel(primaryStage, this.getHostServices());
+        new Kernel(primaryStage, getHostServices());
     }
 }
