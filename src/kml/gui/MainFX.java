@@ -163,15 +163,17 @@ public class MainFX {
                 Platform.runLater(() -> {
                     double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
                     double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
-                    if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
-                        MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
-                    } else {
-                        MainFX.this.slideshow.setFitHeight(computedHeight);
-                    }
-                    if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
-                        MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
-                    } else {
-                        MainFX.this.slideshow.setFitWidth(computedWidth);
+                    if (MainFX.this.slideshow.getImage() != null) {
+                        if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
+                            MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
+                        } else {
+                            MainFX.this.slideshow.setFitHeight(computedHeight);
+                        }
+                        if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
+                            MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
+                        } else {
+                            MainFX.this.slideshow.setFitWidth(computedWidth);
+                        }
                     }
                 });
             }
@@ -633,8 +635,6 @@ public class MainFX {
             if (i != null) {
                 slideshow.setImage(s.getImage());
             }
-
-
             newsTitle.setText(s.getTitle());
             newsText.setText(s.getText());
         } else {

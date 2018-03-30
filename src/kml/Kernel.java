@@ -184,8 +184,10 @@ public final class Kernel {
             stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
             stage.setOnCloseRequest((e) -> {
-                settings.setLauncherHeight(main.getWindow().getHeight());
-                settings.setLauncherWidth(main.getWindow().getWidth());
+                if (main.getWindow() != null) {
+                    settings.setLauncherHeight(main.getWindow().getHeight());
+                    settings.setLauncherWidth(main.getWindow().getWidth());
+                }
                 exitSafely();
             });
             stage.setScene(main);
