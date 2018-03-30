@@ -93,9 +93,9 @@ public final class Kernel {
         console.print("Java Vendor: " + System.getProperty("java.vendor"));
         console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
         if (Utils.getPlatform().equals(OS.WINDOWS)) {
-            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "javaw.exe");
+            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "bin" + File.separator + "javaw.exe");
         } else {
-            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "java");
+            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "bin" + File.separator + "java");
         }
         console.print("Custom Java: " + JAVA_PATH.isFile());
         try {
