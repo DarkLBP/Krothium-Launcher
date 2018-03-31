@@ -5,18 +5,14 @@ import kml.OS;
 import kml.OSArch;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
@@ -30,36 +26,6 @@ import java.util.zip.ZipInputStream;
  */
 
 public final class Utils {
-
-    /**
-     * Ignores HTTPS certificate issuer
-     * @return A boolean that indicates if the custom certificate validator has been installed
-     */
-    public static boolean ignoreHTTPSCert() {
-        try {
-            SSLContext t = SSLContext.getInstance("SSL");
-            t.init(null, new X509TrustManager[]{new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                }
-
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-            }}, null);
-            HttpsURLConnection.setDefaultSSLSocketFactory(t.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
-            return true;
-        } catch (KeyManagementException | NoSuchAlgorithmException ex) {
-            return false;
-        }
-    }
-
     /**
      * Tests if there is connectivity to the server
      * @throws IOException When connection fails
@@ -221,6 +187,7 @@ public final class Utils {
             }
             return con.getInputStream();
         } catch (IOException ex) {
+            ex.printStackTrace();
             return null;
         }
     }

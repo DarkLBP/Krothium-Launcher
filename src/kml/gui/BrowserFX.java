@@ -1,5 +1,7 @@
 package kml.gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -18,24 +20,27 @@ public class BrowserFX {
     public final void initialize(Stage s, Scene browser) {
         stage = s;
         this.browser = browser;
-        WebEngine engine = webBrowser.getEngine();
+        final WebEngine engine = webBrowser.getEngine();
         String userAgent = engine.getUserAgent();
         engine.setUserAgent(userAgent.substring(0, userAgent.indexOf(')')) + "; rv:59.0) Gecko/20100101 Firefox/59.0");
         engine.setJavaScriptEnabled(true);
-        engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals(State.SUCCEEDED)) {
-                String location = engine.getLocation();
-                if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com")
-                        && !location.contains("about:blank") && !location.contains("872429")) {
-                    webBrowser.getEngine().load("about:blank");
-                }
-                if (location.contains("about:blank")) {
-                    double stageW = stage.widthProperty().doubleValue();
-                    double stageH = stage.heightProperty().doubleValue();
-                    stage.setScene(main);
-                    if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
-                        stage.setWidth(stageW);
-                        stage.setHeight(stageH);
+        engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+            @Override
+            public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+                if (newValue.equals(State.SUCCEEDED)) {
+                    String location = engine.getLocation();
+                    if (!location.contains("sh.st") && !location.contains("adf.ly") && !location.contains("krothium.com")
+                            && !location.contains("about:blank") && !location.contains("872429")) {
+                        webBrowser.getEngine().load("about:blank");
+                    }
+                    if (location.contains("about:blank")) {
+                        double stageW = stage.widthProperty().doubleValue();
+                        double stageH = stage.heightProperty().doubleValue();
+                        stage.setScene(main);
+                        if (!Double.isNaN(stageH) && !Double.isNaN(stageW)) {
+                            stage.setWidth(stageW);
+                            stage.setHeight(stageH);
+                        }
                     }
                 }
             }

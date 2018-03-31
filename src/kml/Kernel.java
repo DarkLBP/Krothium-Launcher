@@ -1,6 +1,7 @@
 package kml;
 
 import javafx.application.HostServices;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import kml.auth.Authentication;
 import kml.game.GameLauncher;
 import kml.game.download.Downloader;
@@ -66,7 +68,6 @@ public final class Kernel {
     private static final File APPLICATION_CONFIG = new File(APPLICATION_WORKING_DIR, "launcher_profiles.json");
     public static final File APPLICATION_LOGS = new File(APPLICATION_WORKING_DIR, "logs");
     public static final File APPLICATION_CACHE = new File(APPLICATION_WORKING_DIR, "cache");
-    public static File JAVA_PATH;
     public static Image APPLICATION_ICON;
     public static boolean USE_LOCAL;
 
@@ -92,12 +93,6 @@ public final class Kernel {
         console.print("Java Version: " + System.getProperty("java.version"));
         console.print("Java Vendor: " + System.getProperty("java.vendor"));
         console.print("Java Architecture: " + System.getProperty("sun.arch.data.model"));
-        if (Utils.getPlatform().equals(OS.WINDOWS)) {
-            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "bin" + File.separator + "javaw.exe");
-        } else {
-            JAVA_PATH = new File(APPLICATION_WORKING_DIR, "jre" + File.separator + "bin" + File.separator + "java");
-        }
-        console.print("Custom Java: " + JAVA_PATH.isFile());
         try {
             Class.forName("javafx.fxml.FXMLLoader");
             console.print("JavaFX loaded.");
@@ -122,7 +117,6 @@ public final class Kernel {
                 warnJavaFX();
             }
         }
-        console.print("Using custom HTTPS certificate checker? | " + Utils.ignoreHTTPSCert());
         console.print("Reading launcher profiles...");
         try {
             if (APPLICATION_CONFIG.isFile()) {
@@ -180,15 +174,18 @@ public final class Kernel {
             loader.setRoot(null);
             loader.setController(null);
             Parent p = loader.load();
-            Scene main = new Scene(p);
+            final Scene main = new Scene(p);
             stage.getIcons().add(APPLICATION_ICON);
             stage.setTitle("Krothium Minecraft Launcher");
-            stage.setOnCloseRequest((e) -> {
-                if (main.getWindow() != null) {
-                    settings.setLauncherHeight(main.getWindow().getHeight());
-                    settings.setLauncherWidth(main.getWindow().getWidth());
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (main.getWindow() != null) {
+                        settings.setLauncherHeight(main.getWindow().getHeight());
+                        settings.setLauncherWidth(main.getWindow().getWidth());
+                    }
+                    exitSafely();
                 }
-                exitSafely();
             });
             stage.setScene(main);
             stage.setHeight(settings.getLauncherHeight());

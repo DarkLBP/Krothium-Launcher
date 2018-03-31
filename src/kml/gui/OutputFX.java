@@ -16,14 +16,17 @@ public class OutputFX {
     private ListView<String> outputList;
 
     public final void initialize() {
-        outputList.setItems(FXCollections.observableArrayList());
+        outputList.setItems(FXCollections.<String>observableArrayList());
         outputList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    public final void pushString(String str) {
-        Platform.runLater(() -> {
-            outputList.getItems().add(str);
-            outputList.scrollTo(outputList.getItems().size() - 1);
+    public final void pushString(final String str) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                outputList.getItems().add(str);
+                outputList.scrollTo(outputList.getItems().size() - 1);
+            }
         });
     }
 

@@ -51,7 +51,7 @@ public class GameLauncher {
      * Prepares and launcher the game
      * @throws GameLauncherException If an error has been thrown
      */
-    public final void launch(MainFX mainFX) throws GameLauncherException {
+    public final void launch(final MainFX mainFX) throws GameLauncherException {
         console.print("Game launch work has started.");
         Profile p = kernel.getProfiles().getSelectedProfile();
         if (isRunning()) {
@@ -90,7 +90,7 @@ public class GameLauncher {
                 }
             }
         }
-        File nativesDir = new File(workingDir, "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
+        final File nativesDir = new File(workingDir, "versions" + File.separator + ver.getID() + File.separator + ver.getID() + "-natives-" + System.nanoTime());
         if (!nativesDir.isDirectory()) {
             nativesDir.mkdirs();
         }
@@ -100,8 +100,6 @@ public class GameLauncher {
         List<String> gameArgs = new ArrayList<>();
         if (p.hasJavaDir()) {
             gameArgs.add(p.getJavaDir().getAbsolutePath());
-        } else if (Kernel.JAVA_PATH.isFile()) {
-            gameArgs.add(Kernel.JAVA_PATH.getAbsolutePath());
         } else {
             gameArgs.add(Utils.getJavaDir());
         }
@@ -259,33 +257,46 @@ public class GameLauncher {
         try {
             process = pb.start();
             if (kernel.getSettings().getShowGameLog()) {
-                Platform.runLater(() -> {
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(getClass().getResource("/kml/gui/fxml/Output.fxml"));
-                    Parent parent;
-                    try {
-                        parent = loader.load();
-                    } catch (IOException e) {
-                        parent = null;
-                        console.print("Failed to initialize Output GUI!");
-                        e.printStackTrace(console.getWriter());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(GameLauncher.this.getClass().getResource("/kml/gui/fxml/Output.fxml"));
+                        Parent parent;
+                        try {
+                            parent = loader.load();
+                        } catch (IOException e) {
+                            parent = null;
+                            console.print("Failed to initialize Output GUI!");
+                            e.printStackTrace(console.getWriter());
+                        }
+                        Stage stage = new Stage();
+                        stage.getIcons().add(Kernel.APPLICATION_ICON);
+                        stage.setTitle("Krothium Minecraft Launcher - " + Language.get(69));
+                        stage.setScene(new Scene(parent));
+                        stage.setResizable(true);
+                        stage.setMaximized(false);
+                        stage.show();
+                        output = loader.getController();
+                        outputGUI = stage;
                     }
-                    Stage stage = new Stage();
-                    stage.getIcons().add(Kernel.APPLICATION_ICON);
-                    stage.setTitle("Krothium Minecraft Launcher - " + Language.get(69));
-                    stage.setScene(new Scene(parent));
-                    stage.setResizable(true);
-                    stage.setMaximized(false);
-                    stage.show();
-                    output = loader.getController();
-                    outputGUI = stage;
                 });
             }
-            Thread log_info = new Thread(() -> pipeOutput(process.getInputStream()));
+            Thread log_info = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    GameLauncher.this.pipeOutput(process.getInputStream());
+                }
+            });
             log_info.start();
-            Thread log_error = new Thread(() -> pipeOutput(process.getErrorStream()));
+            Thread log_error = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    GameLauncher.this.pipeOutput(process.getErrorStream());
+                }
+            });
             log_error.start();
-            Timer timer = new Timer();
+            final Timer timer = new Timer();
             TimerTask process_status = new TimerTask() {
                 @Override
                 public void run() {

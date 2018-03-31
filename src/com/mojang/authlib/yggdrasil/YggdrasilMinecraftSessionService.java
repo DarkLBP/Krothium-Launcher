@@ -154,7 +154,7 @@ public class YggdrasilMinecraftSessionService extends HttpMinecraftSessionServic
                 users.put(profile.getName());
                 byte[] data = users.toString().getBytes();
                 String profileID = null;
-                String response = Utils.sendPost(GET_PROFILESID, data, new HashMap<>());
+                String response = Utils.sendPost(GET_PROFILESID, data, new HashMap<String, String>());
                 JSONArray rdata = new JSONArray(response);
                 if (rdata.length() == 1) {
                     JSONObject user = rdata.getJSONObject(0);

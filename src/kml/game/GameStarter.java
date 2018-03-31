@@ -1,10 +1,7 @@
 package kml.game;
 
-import kml.Kernel;
-import kml.utils.Utils;
 import kml.proxy.URLHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
@@ -16,17 +13,6 @@ public class GameStarter {
 
     public static void main(String[] args) {
         System.out.println("GameStarter launcher with " + args.length + " arguments.");
-        if (!Utils.ignoreHTTPSCert()) {
-            System.err.println("Failed load custom HTTPS certificate checker.");
-        }
-        try {
-            int response = Utils.testNetwork();
-            Kernel.USE_LOCAL = response != 204;
-        } catch (IOException ex) {
-            System.out.println("Running offline mode.");
-            Kernel.USE_LOCAL = true;
-            ex.printStackTrace();
-        }
         URL.setURLStreamHandlerFactory(new URLHandler());
         System.out.println("Loaded URL Handler.");
         if (args.length == 0) {

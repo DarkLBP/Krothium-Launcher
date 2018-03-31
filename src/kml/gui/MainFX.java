@@ -1,6 +1,8 @@
 package kml.gui;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.css.Styleable;
@@ -160,19 +162,22 @@ public class MainFX {
         TimerTask newsResize = new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> {
-                    double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
-                    double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
-                    if (MainFX.this.slideshow.getImage() != null) {
-                        if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
-                            MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
-                        } else {
-                            MainFX.this.slideshow.setFitHeight(computedHeight);
-                        }
-                        if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
-                            MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
-                        } else {
-                            MainFX.this.slideshow.setFitWidth(computedWidth);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
+                        double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
+                        if (MainFX.this.slideshow.getImage() != null) {
+                            if (computedHeight > MainFX.this.slideshow.getImage().getHeight()) {
+                                MainFX.this.slideshow.setFitHeight(MainFX.this.slideshow.getImage().getHeight());
+                            } else {
+                                MainFX.this.slideshow.setFitHeight(computedHeight);
+                            }
+                            if (computedWidth > MainFX.this.slideshow.getImage().getWidth()) {
+                                MainFX.this.slideshow.setFitWidth(MainFX.this.slideshow.getImage().getWidth());
+                            } else {
+                                MainFX.this.slideshow.setFitWidth(computedWidth);
+                            }
                         }
                     }
                 });
@@ -182,11 +187,17 @@ public class MainFX {
         resize.schedule(newsResize, 0, 25);
 
         //Close popups on resize
-        mainScene.heightProperty().addListener((observable, oldValue, newValue) -> {
-            checkPopups();
+        mainScene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                MainFX.this.checkPopups();
+            }
         });
-        mainScene.widthProperty().addListener((observable, oldValue, newValue) -> {
-            checkPopups();
+        mainScene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                MainFX.this.checkPopups();
+            }
         });
     }
 
@@ -316,79 +327,82 @@ public class MainFX {
         if (Kernel.USE_LOCAL) {
             return;
         }
-        Thread t = new Thread(() -> {
-            try {
-                console.print("Loading textures...");
-                loadingTextures = true;
-                if (alex == null || steve == null) {
-                    //Load placeholder skins
-                    alex = new Image("/kml/gui/textures/alex.png");
-                    steve = new Image("/kml/gui/textures/steve.png");
-                }
-                User selected = kernel.getAuthentication().getSelectedUser();
-                String domain;
-                if (selected.getType() == UserType.MOJANG) {
-                    domain = "sessionserver.mojang.com/session/minecraft/profile/";
-                    skinActions.setVisible(false);
-                    skinActions.setManaged(false);
-                } else {
-                    domain = "mc.krothium.com/profiles/";
-                    skinActions.setVisible(true);
-                    skinActions.setManaged(true);
-                }
-                String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
-                JSONObject root = new JSONObject(Utils.readURL(profileURL));
-                JSONArray properties = root.getJSONArray("properties");
-                for (int i = 0; i < properties.length(); i++) {
-                    JSONObject property = properties.getJSONObject(i);
-                    if ("textures".equalsIgnoreCase(property.getString("name"))) {
-                        JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
-                        JSONObject textures = data.getJSONObject("textures");
-                        skin = null;
-                        cape = null;
-                        boolean slim = false;
-                        if (textures.has("SKIN")) {
-                            JSONObject skinData = textures.getJSONObject("SKIN");
-                            if (skinData.has("metadata")) {
-                                if ("slim".equalsIgnoreCase(skinData.getJSONObject("metadata").getString("model"))) {
-                                    slim = true;
-                                }
-                            }
-                            InputStream stream = Utils.readCachedStream(textures.getJSONObject("SKIN").getString("url"));
-                            skin = new Image(stream);
-                            stream.close();
-                        }
-                        if (skin == null || skin.getHeight() == 0 && !slim) {
-                            skin = steve;
-                        } else if (skin.getHeight() == 0) {
-                            skin = alex;
-                        } else {
-                            deleteSkin.setDisable(false);
-                        }
-                        if (textures.has("CAPE")) {
-                            InputStream stream = Utils.readCachedStream(textures.getJSONObject("CAPE").getString("url"));
-                            cape = new Image(stream);
-                            stream.close();
-                            includeCape.setDisable(false);
-                            deleteCape.setDisable(false);
-                        }
-                        if (slim) {
-                            skinSlim.setSelected(true);
-                        } else {
-                            skinClassic.setSelected(true);
-                        }
-                        texturesLoaded = true;
-                        console.print("Textures loaded.");
-                        updatePreview();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    console.print("Loading textures...");
+                    loadingTextures = true;
+                    if (alex == null || steve == null) {
+                        //Load placeholder skins
+                        alex = new Image("/kml/gui/textures/alex.png");
+                        steve = new Image("/kml/gui/textures/steve.png");
                     }
+                    User selected = kernel.getAuthentication().getSelectedUser();
+                    String domain;
+                    if (selected.getType() == UserType.MOJANG) {
+                        domain = "sessionserver.mojang.com/session/minecraft/profile/";
+                        skinActions.setVisible(false);
+                        skinActions.setManaged(false);
+                    } else {
+                        domain = "mc.krothium.com/profiles/";
+                        skinActions.setVisible(true);
+                        skinActions.setManaged(true);
+                    }
+                    String profileURL = "https://" + domain + selected.getSelectedProfile() + "?unsigned=true";
+                    JSONObject root = new JSONObject(Utils.readURL(profileURL));
+                    JSONArray properties = root.getJSONArray("properties");
+                    for (int i = 0; i < properties.length(); i++) {
+                        JSONObject property = properties.getJSONObject(i);
+                        if ("textures".equalsIgnoreCase(property.getString("name"))) {
+                            JSONObject data = new JSONObject(Utils.fromBase64(property.getString("value")));
+                            JSONObject textures = data.getJSONObject("textures");
+                            skin = null;
+                            cape = null;
+                            boolean slim = false;
+                            if (textures.has("SKIN")) {
+                                JSONObject skinData = textures.getJSONObject("SKIN");
+                                if (skinData.has("metadata")) {
+                                    if ("slim".equalsIgnoreCase(skinData.getJSONObject("metadata").getString("model"))) {
+                                        slim = true;
+                                    }
+                                }
+                                InputStream stream = Utils.readCachedStream(textures.getJSONObject("SKIN").getString("url"));
+                                skin = new Image(stream);
+                                stream.close();
+                            }
+                            if (skin == null || skin.getHeight() == 0 && !slim) {
+                                skin = steve;
+                            } else if (skin.getHeight() == 0) {
+                                skin = alex;
+                            } else {
+                                deleteSkin.setDisable(false);
+                            }
+                            if (textures.has("CAPE")) {
+                                InputStream stream = Utils.readCachedStream(textures.getJSONObject("CAPE").getString("url"));
+                                cape = new Image(stream);
+                                stream.close();
+                                includeCape.setDisable(false);
+                                deleteCape.setDisable(false);
+                            }
+                            if (slim) {
+                                skinSlim.setSelected(true);
+                            } else {
+                                skinClassic.setSelected(true);
+                            }
+                            texturesLoaded = true;
+                            console.print("Textures loaded.");
+                            MainFX.this.updatePreview();
+                        }
+                    }
+                    selectSkin.setDisable(false);
+                    selectCape.setDisable(false);
+                } catch (Exception ex) {
+                    console.print("Failed to parse remote profile textures.");
+                    ex.printStackTrace(console.getWriter());
                 }
-                selectSkin.setDisable(false);
-                selectCape.setDisable(false);
-            } catch (Exception ex) {
-                console.print("Failed to parse remote profile textures.");
-                ex.printStackTrace(console.getWriter());
+                loadingTextures = false;
             }
-            loadingTextures = false;
         });
         t.start();
     }
@@ -455,10 +469,20 @@ public class MainFX {
             if (file.length() > 131072) {
                 if (target.equals("skin")) {
                     console.print("Skin file exceeds 128KB file size limit.");
-                    Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, Language.get(105)));
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            kernel.showAlert(AlertType.ERROR, null, Language.get(105));
+                        }
+                    });
                 } else {
                     console.print("Cape file exceeds 128KB file size limit.");
-                    Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, Language.get(104)));
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            kernel.showAlert(AlertType.ERROR, null, Language.get(104));
+                        }
+                    });
                 }
                 return;
             }
@@ -496,8 +520,13 @@ public class MainFX {
                 }
                 console.print("Failed to " + (file != null ? "change" : "delete") + " the " + target + ".");
                 console.print(r);
-                String finalText = text;
-                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, null, finalText));
+                final String finalText = text;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        kernel.showAlert(AlertType.ERROR, null, finalText);
+                    }
+                });
                 return;
             }
             if (target.equals("skin")) {
@@ -515,8 +544,13 @@ public class MainFX {
             }
             target = target.substring(0, 1).toUpperCase() + target.substring(1);
             console.print(target + " " + (file != null ? "changed" : "deleted") + " successfully!");
-            String finalText = text;
-            Platform.runLater(() -> kernel.showAlert(AlertType.INFORMATION, null, finalText));
+            final String finalText = text;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    kernel.showAlert(AlertType.INFORMATION, null, finalText);
+                }
+            });
             loadTextures();
         } catch (IOException ex) {
             console.print("Failed to perform textures post.");
@@ -528,14 +562,17 @@ public class MainFX {
      * Changes the skin of the user
      */
     @FXML private void changeSkin() {
-        File selected = selectFile(Language.get(44), "*.png", "open");
+        final File selected = selectFile(Language.get(44), "*.png", "open");
         if (selected != null) {
             selectSkin.setDisable(true);
             deleteSkin.setDisable(true);
-            Thread t = new Thread(() -> {
-                submitChange("skin", selected);
-                selectSkin.setDisable(false);
-                deleteSkin.setDisable(false);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MainFX.this.submitChange("skin", selected);
+                    selectSkin.setDisable(false);
+                    deleteSkin.setDisable(false);
+                }
             });
             t.start();
         }
@@ -545,14 +582,17 @@ public class MainFX {
      * Changes the cape of the user
      */
     @FXML private void changeCape() {
-        File selected = selectFile(Language.get(25), "*.png", "open");
+        final File selected = selectFile(Language.get(25), "*.png", "open");
         if (selected != null) {
             selectCape.setDisable(true);
             deleteCape.setDisable(true);
-            Thread t = new Thread(() -> {
-                submitChange("cape", selected);
-                selectCape.setDisable(false);
-                deleteCape.setDisable(false);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MainFX.this.submitChange("cape", selected);
+                    selectCape.setDisable(false);
+                    deleteCape.setDisable(false);
+                }
             });
             t.start();
         }
@@ -567,10 +607,13 @@ public class MainFX {
         if (result == 1){
             selectSkin.setDisable(true);
             deleteSkin.setDisable(true);
-            Thread t = new Thread(() -> {
-                submitChange("skin", null);
-                selectSkin.setDisable(false);
-                deleteSkin.setDisable(false);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MainFX.this.submitChange("skin", null);
+                    selectSkin.setDisable(false);
+                    deleteSkin.setDisable(false);
+                }
             });
             t.start();
         }
@@ -584,10 +627,13 @@ public class MainFX {
         if (result == 1){
             selectCape.setDisable(true);
             deleteCape.setDisable(true);
-            Thread t = new Thread(() -> {
-                submitChange("cape", null);
-                selectCape.setDisable(false);
-                deleteCape.setDisable(false);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MainFX.this.submitChange("cape", null);
+                    selectCape.setDisable(false);
+                    deleteCape.setDisable(false);
+                }
             });
             t.start();
         }
@@ -667,11 +713,14 @@ public class MainFX {
                 currentSlide++;
             }
         }
-        Slide s = slides.get(currentSlide);
-        Thread t = new Thread(() -> {
-            Image i = s.getImage();
-            if (i != null) {
-                slideshow.setImage(i);
+        final Slide s = slides.get(currentSlide);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Image i = s.getImage();
+                if (i != null) {
+                    slideshow.setImage(i);
+                }
             }
         });
         t.start();
@@ -912,53 +961,80 @@ public class MainFX {
         playPane.setVisible(false);
         progressBar.setProgress(0);
         progressText.setText("");
-        Downloader d = kernel.getDownloader();
-        GameLauncher gl = kernel.getGameLauncher();
+        final Downloader d = kernel.getDownloader();
+        final GameLauncher gl = kernel.getGameLauncher();
 
         //Keep track of the progress
-        TimerTask progressTask = new TimerTask() {
+        final TimerTask progressTask = new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> {
-                    MainFX.this.progressBar.setProgress(d.getProgress());
-                    MainFX.this.progressText.setText(Language.get(13) + ' ' + d.getCurrentFile() + "...");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainFX.this.progressBar.setProgress(d.getProgress());
+                        MainFX.this.progressText.setText(Language.get(13) + ' ' + d.getCurrentFile() + "...");
+                    }
                 });
             }
         };
 
-        Thread runThread = new Thread(() -> {
-            //Begin download and game launch task
-            try {
-                Timer timer = new Timer();
-                timer.schedule(progressTask, 0, 25);
-                d.download();
-                timer.cancel();
-                timer.purge();
-                Platform.runLater(() -> {
-                    progressText.setText(Language.get(78));
-                    progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-                });
-                gl.launch(this);
+        Thread runThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Begin download and game launch task
+                try {
+                    Timer timer = new Timer();
+                    timer.schedule(progressTask, 0, 25);
+                    d.download();
+                    timer.cancel();
+                    timer.purge();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressText.setText(Language.get(78));
+                            progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                        }
+                    });
+                    gl.launch(MainFX.this);
 
-                Platform.runLater(() -> {
-                    progressPane.setVisible(false);
-                    playPane.setVisible(true);
-                    playButton.setText(Language.get(14));
-                    playButton.setDisable(true);
-                    profilePopupButton.setDisable(true);
-                });
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressPane.setVisible(false);
+                            playPane.setVisible(true);
+                            playButton.setText(Language.get(14));
+                            playButton.setDisable(true);
+                            profilePopupButton.setDisable(true);
+                        }
+                    });
 
-                if (!settings.getKeepLauncherOpen()) {
-                    Platform.runLater(() -> MainFX.this.stage.close());
+                    if (!settings.getKeepLauncherOpen()) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainFX.this.stage.close();
+                            }
+                        });
+                    }
+                } catch (DownloaderException e) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84));
+                        }
+                    });
+                    console.print("Failed to perform game download task");
+                    e.printStackTrace(console.getWriter());
+                } catch (GameLauncherException e) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82));
+                        }
+                    });
+                    console.print("Failed to perform game launch task");
+                    e.printStackTrace(console.getWriter());
                 }
-            } catch (DownloaderException e) {
-                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84)));
-                console.print("Failed to perform game download task");
-                e.printStackTrace(console.getWriter());
-            } catch (GameLauncherException e) {
-                Platform.runLater(() -> kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82)));
-                console.print("Failed to perform game launch task");
-                e.printStackTrace(console.getWriter());
             }
         });
         runThread.start();
@@ -968,20 +1044,23 @@ public class MainFX {
      * Callback from Game Launcher
      * @param error True if an error happened during launch
      */
-    public final void gameEnded(boolean error) {
-        Platform.runLater(() -> {
-            if (error) {
-                kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
-            }
-            if (!settings.getKeepLauncherOpen()) {
-                kernel.exitSafely();
-            }
-            playButton.setDisable(false);
-            profilePopupButton.setDisable(false);
-            if (Kernel.USE_LOCAL) {
-                playButton.setText(Language.get(79));
-            } else {
-                playButton.setText(Language.get(12));
+    public final void gameEnded(final boolean error) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (error) {
+                    kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
+                }
+                if (!settings.getKeepLauncherOpen()) {
+                    kernel.exitSafely();
+                }
+                playButton.setDisable(false);
+                profilePopupButton.setDisable(false);
+                if (Kernel.USE_LOCAL) {
+                    playButton.setText(Language.get(79));
+                } else {
+                    playButton.setText(Language.get(12));
+                }
             }
         });
     }

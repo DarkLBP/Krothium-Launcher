@@ -2,7 +2,6 @@ package kml;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import kml.utils.Utils;
 
 /**
  * @author DarkLBP
@@ -21,7 +20,6 @@ public class Starter extends Application {
      */
     @Override
     public final void start(Stage primaryStage) {
-        Utils.ignoreHTTPSCert();
         new Kernel(primaryStage, getHostServices());
     }
 }
