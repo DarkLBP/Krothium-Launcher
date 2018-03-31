@@ -647,6 +647,10 @@ public class MainFX {
         try {
             String newsURL = "https://launchermeta.mojang.com/mc/news.json";
             String response = Utils.readURL(newsURL);
+            if (response.isEmpty()) {
+                console.print("News data returned empty response.");
+                return;
+            }
             JSONObject root = new JSONObject(response);
             JSONArray entries = root.getJSONArray("entries");
             for (int i = 0; i < entries.length(); i++) {

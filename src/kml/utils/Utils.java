@@ -4,7 +4,7 @@ import kml.Kernel;
 import kml.OS;
 import kml.OSArch;
 
-import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -13,7 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -26,17 +25,6 @@ import java.util.zip.ZipInputStream;
  */
 
 public final class Utils {
-    /**
-     * Tests if there is connectivity to the server
-     * @throws IOException When connection fails
-     * @return Server response code
-     */
-    public static int testNetwork() throws IOException {
-        URL handshakeURL = new URL("https://mc.krothium.com/hello");
-        HttpsURLConnection con = (HttpsURLConnection)handshakeURL.openConnection();
-        return con.getResponseCode();
-    }
-
     /**
      * Gets the current operating system
      * @return An OS enum with the detected OS
@@ -187,7 +175,6 @@ public final class Utils {
             }
             return con.getInputStream();
         } catch (IOException ex) {
-            ex.printStackTrace();
             return null;
         }
     }
@@ -339,7 +326,7 @@ public final class Utils {
         }
         String conversion;
         try {
-            conversion = new String(Base64.getDecoder().decode(st), StandardCharsets.UTF_8);
+            conversion = new String(DatatypeConverter.parseBase64Binary(st), StandardCharsets.UTF_8);
         } catch (IllegalArgumentException ex) {
             conversion = "";
         }

@@ -78,14 +78,6 @@ public final class Kernel {
         APPLICATION_CACHE.mkdir();
         APPLICATION_LOGS.mkdir();
         console = new Console();
-        try {
-            int response = Utils.testNetwork();
-            USE_LOCAL = response != 204;
-        } catch (IOException ex) {
-            USE_LOCAL = true;
-            console.print("Running offline mode.");
-            ex.printStackTrace(console.getWriter());
-        }
         console.print("KML v" + KERNEL_BUILD_NAME + " by DarkLBP (https://krothium.com)");
         console.print("OS: " + System.getProperty("os.name"));
         console.print("OS Version: " + System.getProperty("os.version"));

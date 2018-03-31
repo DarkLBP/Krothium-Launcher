@@ -93,52 +93,57 @@ public class Versions {
         console.print("Fetching remote version list.");
         try {
             String versionManifest = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-            JSONObject root = new JSONObject(Utils.readURL(versionManifest));
-            if (root.has("latest")) {
-                JSONObject latest = root.getJSONObject("latest");
-                if (latest.has("snapshot")) {
-                    ls = latest.getString("snapshot");
-                }
-                if (latest.has("release")) {
-                    lr = latest.getString("release");
-                }
-            }
-            JSONArray vers = root.getJSONArray("versions");
-            for (int i = 0; i < vers.length(); i++) {
-                JSONObject ver = vers.getJSONObject(i);
-                String id = null;
-                VersionType type;
-                String url = null;
-                if (ver.has("id")) {
-                    id = ver.getString("id");
-                }
-                if (ver.has("url")) {
-                    url = ver.getString("url");
-                }
-                if (id == null || url == null) {
-                    continue;
-                }
-                if (ver.has("type")) {
-                    try {
-                        type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
-                    } catch (IllegalArgumentException ex) {
-                        type = VersionType.RELEASE;
-                        console.print("Invalid type for version " + id);
+            String response = Utils.readURL(versionManifest);
+            if (!response.isEmpty()) {
+                JSONObject root = new JSONObject(response);
+                if (root.has("latest")) {
+                    JSONObject latest = root.getJSONObject("latest");
+                    if (latest.has("snapshot")) {
+                        ls = latest.getString("snapshot");
                     }
-                } else {
-                    type = VersionType.RELEASE;
-                    console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                    if (latest.has("release")) {
+                        lr = latest.getString("release");
+                    }
                 }
-                VersionMeta vm = new VersionMeta(id, url, type);
-                if (lr.equalsIgnoreCase(id)) {
-                    latestRel = vm;
+                JSONArray vers = root.getJSONArray("versions");
+                for (int i = 0; i < vers.length(); i++) {
+                    JSONObject ver = vers.getJSONObject(i);
+                    String id = null;
+                    VersionType type;
+                    String url = null;
+                    if (ver.has("id")) {
+                        id = ver.getString("id");
+                    }
+                    if (ver.has("url")) {
+                        url = ver.getString("url");
+                    }
+                    if (id == null || url == null) {
+                        continue;
+                    }
+                    if (ver.has("type")) {
+                        try {
+                            type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
+                        } catch (IllegalArgumentException ex) {
+                            type = VersionType.RELEASE;
+                            console.print("Invalid type for version " + id);
+                        }
+                    } else {
+                        type = VersionType.RELEASE;
+                        console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
+                    }
+                    VersionMeta vm = new VersionMeta(id, url, type);
+                    if (lr.equalsIgnoreCase(id)) {
+                        latestRel = vm;
+                    }
+                    if (ls.equalsIgnoreCase(id)) {
+                        latestSnap = vm;
+                    }
+                    add(vm);
                 }
-                if (ls.equalsIgnoreCase(id)) {
-                    latestSnap = vm;
-                }
-                add(vm);
+                console.print("Remote version list loaded.");
+            } else {
+                console.print("Remote version list returned empty response.");
             }
-            console.print("Remote version list loaded.");
         } catch (JSONException ex) {
             console.print("Failed to fetch remote version list.");
             ex.printStackTrace(console.getWriter());

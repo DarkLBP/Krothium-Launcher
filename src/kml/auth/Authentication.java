@@ -201,15 +201,10 @@ public class Authentication {
         try {
             response = Utils.sendPost(refreshURL, request.toString().getBytes(Charset.forName("UTF-8")), postParams);
         } catch (IOException ex) {
-            if (Kernel.USE_LOCAL) {
-                authenticated = true;
-                console.print("Authenticated locally.");
-                return;
-            } else {
-                console.print("Failed to send request to authentication server");
-                ex.printStackTrace(console.getWriter());
-                throw new AuthenticationException("Failed to send request to authentication server");
-            }
+            Kernel.USE_LOCAL = true;
+            authenticated = true;
+            console.print("Authenticated locally.");
+            return;
         }
         if (response.isEmpty()) {
             throw new AuthenticationException("Authentication server does not respond.");
