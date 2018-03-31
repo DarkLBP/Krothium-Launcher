@@ -19,7 +19,6 @@ import kml.game.download.Downloader;
 import kml.game.profile.ProfileIcon;
 import kml.game.profile.Profiles;
 import kml.game.version.Versions;
-import kml.gui.AlertType;
 import kml.gui.BrowserFX;
 import kml.gui.MainFX;
 import kml.gui.lang.Language;
@@ -596,49 +595,18 @@ public final class Kernel {
      * @param content The content text
      * @return The built alert
      */
-    public int showAlert(AlertType type, String title, String content) {
-        try {
-            Class.forName("javafx.scene.control.Alert");
-            Alert a = new Alert(Alert.AlertType.valueOf(type.name()));
-            ((Stage) a.getDialogPane().getScene().getWindow()).getIcons().add(APPLICATION_ICON);
-            a.setTitle(title);
-            a.setHeaderText(title);
-            a.setContentText(content);
-            a.showAndWait();
-            if (type == AlertType.CONFIRMATION) {
-                if (a.getResult() == ButtonType.OK) {
-                    return 1;
-                }
-                return 0;
+    public int showAlert(Alert.AlertType type, String title, String content) {
+        Alert a = new Alert(type);
+        ((Stage) a.getDialogPane().getScene().getWindow()).getIcons().add(APPLICATION_ICON);
+        a.setTitle(title);
+        a.setHeaderText(title);
+        a.setContentText(content);
+        a.showAndWait();
+        if (type == Alert.AlertType.CONFIRMATION) {
+            if (a.getResult() == ButtonType.OK) {
+                return 1;
             }
-        } catch (ClassNotFoundException e) {
-            //Using legacy
-            int messageType;
-            switch (type) {
-                case CONFIRMATION:
-                    messageType = JOptionPane.QUESTION_MESSAGE;
-                    break;
-                case WARNING:
-                    messageType = JOptionPane.WARNING_MESSAGE;
-                    break;
-                case INFORMATION:
-                    messageType = JOptionPane.INFORMATION_MESSAGE;
-                    break;
-                case ERROR:
-                    messageType = JOptionPane.ERROR_MESSAGE;
-                    break;
-                default:
-                    messageType = JOptionPane.INFORMATION_MESSAGE;
-
-            }
-            if (type != AlertType.CONFIRMATION) {
-                JOptionPane.showMessageDialog(null, content, title, messageType);
-            } else {
-                if (JOptionPane.showConfirmDialog(null, content, title, JOptionPane.YES_NO_OPTION, messageType) == JOptionPane.YES_OPTION) {
-                    return 1;
-                }
-                return 0;
-            }
+            return 0;
         }
         return -1;
     }

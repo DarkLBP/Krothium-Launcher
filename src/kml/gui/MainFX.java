@@ -472,7 +472,7 @@ public class MainFX {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            kernel.showAlert(AlertType.ERROR, null, Language.get(105));
+                            kernel.showAlert(Alert.AlertType.ERROR, null, Language.get(105));
                         }
                     });
                 } else {
@@ -480,7 +480,7 @@ public class MainFX {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            kernel.showAlert(AlertType.ERROR, null, Language.get(104));
+                            kernel.showAlert(Alert.AlertType.ERROR, null, Language.get(104));
                         }
                     });
                 }
@@ -524,7 +524,7 @@ public class MainFX {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        kernel.showAlert(AlertType.ERROR, null, finalText);
+                        kernel.showAlert(Alert.AlertType.ERROR, null, finalText);
                     }
                 });
                 return;
@@ -548,7 +548,7 @@ public class MainFX {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    kernel.showAlert(AlertType.INFORMATION, null, finalText);
+                    kernel.showAlert(Alert.AlertType.INFORMATION, null, finalText);
                 }
             });
             loadTextures();
@@ -603,7 +603,7 @@ public class MainFX {
      * Deletes the skin of the user
      */
     @FXML private void deleteSkin() {
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(31));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(31));
         if (result == 1){
             selectSkin.setDisable(true);
             deleteSkin.setDisable(true);
@@ -623,7 +623,7 @@ public class MainFX {
      * Deletes the cape of the user
      */
     @FXML private void deleteCape() {
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(36));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(36));
         if (result == 1){
             selectCape.setDisable(true);
             deleteCape.setDisable(true);
@@ -1024,7 +1024,7 @@ public class MainFX {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            kernel.showAlert(AlertType.ERROR, Language.get(83), Language.get(84));
+                            kernel.showAlert(Alert.AlertType.ERROR, Language.get(83), Language.get(84));
                         }
                     });
                     console.print("Failed to perform game download task");
@@ -1033,7 +1033,7 @@ public class MainFX {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            kernel.showAlert(AlertType.ERROR, Language.get(81), Language.get(82));
+                            kernel.showAlert(Alert.AlertType.ERROR, Language.get(81), Language.get(82));
                         }
                     });
                     console.print("Failed to perform game launch task");
@@ -1053,7 +1053,7 @@ public class MainFX {
             @Override
             public void run() {
                 if (error) {
-                    kernel.showAlert(AlertType.ERROR, Language.get(16), Language.get(15));
+                    kernel.showAlert(Alert.AlertType.ERROR, Language.get(16), Language.get(15));
                 }
                 if (!settings.getKeepLauncherOpen()) {
                     kernel.exitSafely();
@@ -1529,7 +1529,7 @@ public class MainFX {
         if (kernel.getProfiles().getSelectedProfile() == target) {
             updateGameVersion();
         }
-        kernel.showAlert(AlertType.INFORMATION, null, Language.get(57));
+        kernel.showAlert(Alert.AlertType.INFORMATION, null, Language.get(57));
         profileListLoaded = false;
         profileListPopupLoaded = false;
         switchTab(launchOptionsLabel);
@@ -1539,7 +1539,7 @@ public class MainFX {
      * Discards the changes of the profile editor
      */
     @FXML public final void cancelProfile() {
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(55));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(55));
         if (result == 1) {
             switchTab(launchOptionsLabel);
         }
@@ -1549,16 +1549,16 @@ public class MainFX {
      * Deletes the profile loaded by the profile editor
      */
     @FXML public final void deleteProfile() {
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(61));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(61));
         if (result == 1) {
             Label selectedElement = profileList.getSelectionModel().getSelectedItem();
             Profile p = kernel.getProfiles().getProfile(selectedElement.getId());
             if (kernel.getProfiles().deleteProfile(p)) {
                 kernel.saveProfiles();
                 updateGameVersion();
-                kernel.showAlert(AlertType.INFORMATION, null, Language.get(56));
+                kernel.showAlert(Alert.AlertType.INFORMATION, null, Language.get(56));
             } else {
-                kernel.showAlert(AlertType.ERROR, null, Language.get(58));
+                kernel.showAlert(Alert.AlertType.ERROR, null, Language.get(58));
             }
             loadProfileList();
             switchTab(launchOptionsLabel);
@@ -1643,9 +1643,9 @@ public class MainFX {
      */
     public final void authenticate() {
         if (username.getText().isEmpty()) {
-            kernel.showAlert(AlertType.WARNING, null, Language.get(17));
+            kernel.showAlert(Alert.AlertType.WARNING, null, Language.get(17));
         } else if (password.getText().isEmpty()) {
-            kernel.showAlert(AlertType.WARNING, null, Language.get(23));
+            kernel.showAlert(Alert.AlertType.WARNING, null, Language.get(23));
         } else {
             try {
                 Authentication auth = kernel.getAuthentication();
@@ -1663,7 +1663,7 @@ public class MainFX {
                 fetchAds();
                 texturesLoaded = false;
             } catch (AuthenticationException ex) {
-                kernel.showAlert(AlertType.ERROR, Language.get(22), ex.getMessage());
+                kernel.showAlert(Alert.AlertType.ERROR, Language.get(22), ex.getMessage());
                 password.setText("");
             }
         }
@@ -1718,7 +1718,7 @@ public class MainFX {
             showLoginPrompt(false);
             fetchAds();
         } catch (AuthenticationException ex) {
-            kernel.showAlert(AlertType.ERROR, Language.get(62), ex.getMessage());
+            kernel.showAlert(Alert.AlertType.ERROR, Language.get(62), ex.getMessage());
             updateExistingUsers();
         }
     }
@@ -1728,7 +1728,7 @@ public class MainFX {
      */
     public final void logout() {
         User selected = existingUsers.getSelectionModel().getSelectedItem();
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(8));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(8));
         if (result == 1) {
             Authentication auth = kernel.getAuthentication();
             auth.removeUser(selected);
@@ -1789,7 +1789,7 @@ public class MainFX {
             toggleLabel(source, settings.getShowGameLog());
         } else if (source == enableSnapshots) {
             if (!settings.getEnableSnapshots()) {
-                kernel.showAlert(AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
+                kernel.showAlert(Alert.AlertType.WARNING, null, Language.get(71) + System.lineSeparator() + Language.get(72));
             }
             settings.setEnableSnapshots(!settings.getEnableSnapshots());
             toggleLabel(source, settings.getEnableSnapshots());
@@ -1798,7 +1798,7 @@ public class MainFX {
             versionListLoaded = false;
         } else if (source == historicalVersions) {
             if (!settings.getEnableHistorical()) {
-                kernel.showAlert(AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
+                kernel.showAlert(Alert.AlertType.WARNING, null, Language.get(73) + System.lineSeparator()
                         + Language.get(74) + System.lineSeparator()
                         + Language.get(75));
 
@@ -1810,7 +1810,7 @@ public class MainFX {
             versionListLoaded = false;
         } else if (source == advancedSettings) {
             if (!settings.getEnableAdvanced()) {
-                kernel.showAlert(AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
+                kernel.showAlert(Alert.AlertType.WARNING, null, Language.get(76) + System.lineSeparator() + Language.get(77));
             }
             settings.setEnableAdvanced(!settings.getEnableAdvanced());
             toggleLabel(source, settings.getEnableAdvanced());
@@ -1850,9 +1850,9 @@ public class MainFX {
                         out.closeEntry();
                     }
                 }
-                kernel.showAlert(AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
+                kernel.showAlert(Alert.AlertType.INFORMATION, null, Language.get(35) + System.lineSeparator() + selected.getAbsolutePath());
             } catch (IOException ex) {
-                kernel.showAlert(AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
+                kernel.showAlert(Alert.AlertType.ERROR, null, Language.get(35) + '\n' + selected.getAbsolutePath());
             }
         }
     }
@@ -1861,7 +1861,7 @@ public class MainFX {
      * Removes the launcher cache
      */
     @FXML private void deleteCache() {
-        int result = kernel.showAlert(AlertType.CONFIRMATION, null, Language.get(10));
+        int result = kernel.showAlert(Alert.AlertType.CONFIRMATION, null, Language.get(10));
         if (result == 1) {
             File[] files = Kernel.APPLICATION_CACHE.listFiles();
             if (files != null) {
@@ -1869,7 +1869,7 @@ public class MainFX {
                     f.delete();
                 }
             }
-            kernel.showAlert(AlertType.INFORMATION, null, Language.get(11));
+            kernel.showAlert(Alert.AlertType.INFORMATION, null, Language.get(11));
         }
     }
 
