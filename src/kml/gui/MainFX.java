@@ -34,7 +34,6 @@ import kml.exceptions.GameLauncherException;
 import kml.game.GameLauncher;
 import kml.game.download.Downloader;
 import kml.game.profile.Profile;
-import kml.game.profile.ProfileIcon;
 import kml.game.profile.ProfileType;
 import kml.game.profile.Profiles;
 import kml.game.version.VersionMeta;
@@ -803,16 +802,16 @@ public class MainFX {
             }
             switch (p.getType()) {
                 case RELEASE:
-                    iv = new ImageView(kernel.getProfileIcon(ProfileIcon.GRASS));
+                    iv = new ImageView(kernel.getProfileIcon("Grass"));
                     text = Language.get(59);
                     break;
                 case SNAPSHOT:
-                    iv = new ImageView(kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                    iv = new ImageView(kernel.getProfileIcon("Crafting_Table"));
                     text = Language.get(60);
                     break;
                 default:
                     text = p.hasName() ? p.getName() : Language.get(70);
-                    ProfileIcon pi = p.hasIcon() ? p.getIcon() : ProfileIcon.FURNACE;
+                    String pi = p.hasIcon() ? p.getIcon() : "Furnace";
                     iv = new ImageView(kernel.getProfileIcon(pi));
                     break;
             }
@@ -887,12 +886,13 @@ public class MainFX {
     private void loadIcons() {
         console.print("Loading icons...");
         ObservableList<ImageView> icons = FXCollections.observableArrayList();
-        for (ProfileIcon p : ProfileIcon.values()) {
-            if (p != ProfileIcon.CRAFTING_TABLE && p != ProfileIcon.GRASS) {
-                ImageView imv = new ImageView(kernel.getProfileIcon(p));
+        Set<String> keys = kernel.getIcons().keySet();
+        for (String key : keys) {
+            if (!key.equals("Crafting_Table") && !key.equals("Grass")) {
+                ImageView imv = new ImageView(kernel.getProfileIcon(key));
                 imv.setFitHeight(68);
                 imv.setFitWidth(68);
-                imv.setId(p.name());
+                imv.setId(key);
                 icons.add(imv);
             }
         }
@@ -1290,7 +1290,7 @@ public class MainFX {
             iconBlock.setVisible(true);
             iconBlock.setManaged(true);
             versionList.getSelectionModel().select(0);
-            profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.FURNACE));
+            profileIcon.setImage(kernel.getProfileIcon("Furnace"));
             if (settings.getEnableAdvanced()) {
                 javaExecBlock.setVisible(true);
                 javaExecBlock.setManaged(true);
@@ -1327,10 +1327,10 @@ public class MainFX {
                     deleteButton.setVisible(false);
                     if (p.getType() == ProfileType.RELEASE) {
                         profileName.setText(Language.get(59));
-                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.GRASS));
+                        profileIcon.setImage(kernel.getProfileIcon("Grass"));
                     } else {
                         profileName.setText(Language.get(60));
-                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.CRAFTING_TABLE));
+                        profileIcon.setImage(kernel.getProfileIcon("Crafting_Table"));
                     }
                     versionBlock.setVisible(false);
                     versionBlock.setManaged(false);
@@ -1339,9 +1339,9 @@ public class MainFX {
                 } else {
                     if (p.hasIcon()) {
                         profileIcon.setImage(kernel.getProfileIcon(p.getIcon()));
-                        profileIcon.setId(p.getIcon().name());
+                        profileIcon.setId(p.getIcon());
                     } else {
-                        profileIcon.setImage(kernel.getProfileIcon(ProfileIcon.FURNACE));
+                        profileIcon.setImage(kernel.getProfileIcon("Furnace"));
                     }
                     profileName.setEditable(true);
                     deleteButton.setVisible(true);
@@ -1484,7 +1484,7 @@ public class MainFX {
                 target.setLatestSnapshot(false);
             }
             try {
-                target.setIcon(ProfileIcon.valueOf(profileIcon.getId()));
+                target.setIcon(profileIcon.getId());
             } catch (IllegalArgumentException ex) {
                 target.setIcon(null);
             }
@@ -1733,7 +1733,6 @@ public class MainFX {
      * Opens the register page
      */
     @FXML public final void register() {
-        //Open register page
         if (authKrothium.isSelected()) {
             kernel.getHostServices().showDocument("https://krothium.com/register");
         } else {
@@ -1745,7 +1744,6 @@ public class MainFX {
      * Opens the help page
      */
     @FXML public final void openHelp() {
-        //Open help page
         kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/12-soporte/");
     }
 
@@ -1753,7 +1751,6 @@ public class MainFX {
      * Opens the news page
      */
     @FXML public final void openNews() {
-        //Open news page
         kernel.getHostServices().showDocument(urlPrefix + "https://krothium.com/forum/3-noticias/");
     }
 
@@ -1941,6 +1938,9 @@ public class MainFX {
         return null;
     }
 
+    /**
+     * Opens the password recovery webpage
+     */
     @FXML private void forgotPassword() {
         if (authKrothium.isSelected()) {
             kernel.getHostServices().showDocument("https://krothium.com/lostpassword");

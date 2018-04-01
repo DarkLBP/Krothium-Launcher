@@ -118,7 +118,7 @@ public class Profiles {
                     }
                     String name;
                     VersionMeta version;
-                    ProfileIcon icon;
+                    String icon;
                     boolean latestRelease = false, latestSnapshot = false;
                     if (type == ProfileType.CUSTOM) {
                         name = o.has("name") ? o.getString("name") : null;
@@ -135,7 +135,7 @@ public class Profiles {
                         }
                         version = kernel.getVersions().getVersionMeta(ver);
                         try {
-                            icon = o.has("icon") ? ProfileIcon.valueOf(o.getString("icon").toUpperCase(Locale.ENGLISH)) : null;
+                            icon = o.has("icon") ? o.getString("icon") : null;
                         } catch (IllegalArgumentException ex) {
                             icon = null;
                             console.print("Invalid profile icon for profile " + key);
@@ -303,7 +303,7 @@ public class Profiles {
                     }
                 }
                 if (p.hasIcon()) {
-                    prof.put("icon", p.getIcon().name().toLowerCase(Locale.ENGLISH));
+                    prof.put("icon", p.getIcon());
                 }
             }
             if (p.hasCreated()) {

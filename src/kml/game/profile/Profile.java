@@ -20,7 +20,7 @@ public class Profile implements Comparable<Profile>{
     private File gameDir, javaDir;
     private Timestamp created, lastUsed;
     private Map<String, Integer> resolution = new HashMap<>();
-    private ProfileIcon icon;
+    private String icon;
     private VersionMeta lastVersionId;
     private boolean latestRelease, latestSnapshot;
 
@@ -34,7 +34,7 @@ public class Profile implements Comparable<Profile>{
     }
 
     public Profile(String id, String name, ProfileType type, String created, String lastUsed, VersionMeta lastVersionId,
-                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, ProfileIcon icon, boolean latestRelease, boolean latestSnapshot) {
+                   String gameDir, String javaDir, String javaArgs, Map<String, Integer> resolution, String icon, boolean latestRelease, boolean latestSnapshot) {
 
         this.id = id;
         this.name = name;
@@ -208,11 +208,11 @@ public class Profile implements Comparable<Profile>{
         return icon != null;
     }
 
-    public final ProfileIcon getIcon() {
+    public final String getIcon() {
         return icon;
     }
 
-    public final void setIcon(ProfileIcon icon) {
+    public final void setIcon(String icon) {
         this.icon = icon;
     }
 

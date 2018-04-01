@@ -16,7 +16,6 @@ import javafx.stage.WindowEvent;
 import kml.auth.Authentication;
 import kml.game.GameLauncher;
 import kml.game.download.Downloader;
-import kml.game.profile.ProfileIcon;
 import kml.game.profile.Profiles;
 import kml.game.version.Versions;
 import kml.gui.BrowserFX;
@@ -37,6 +36,7 @@ import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,9 +57,10 @@ public final class Kernel {
     private final HostServices hostServices;
     private BrowserFX webBrowser;
     private JSONObject launcherProfiles;
+    private final Map<String, int[]> icons = new HashMap<>();
+    private final Map<String, Image> iconCache = new HashMap<>();
 
     private final Image profileIcons;
-    private final Map<ProfileIcon, Image> iconCache;
     public static final String KERNEL_BUILD_NAME = "3.1.5";
     private static final int KERNEL_FORMAT = 21;
     private static final int KERNEL_PROFILES_FORMAT = 2;
@@ -127,7 +128,6 @@ public final class Kernel {
         //Initialize constants
         APPLICATION_ICON = new Image("/kml/gui/textures/icon.png");
         profileIcons = new Image("/kml/gui/textures/profile_icons.png");
-        iconCache = new EnumMap<>(ProfileIcon.class);
 
         //Prepare loader
         FXMLLoader loader = new FXMLLoader();
@@ -301,289 +301,102 @@ public final class Kernel {
         return webBrowser;
     }
 
+    private void loadIcons() {
+        icons.put("Leaves_Oak", new int[]{0, 0});
+        icons.put("Bedrock", new int[]{1, 0});
+        icons.put("Clay", new int[]{2, 0});
+        icons.put("Diamond_Block", new int[]{3, 0});
+        icons.put("End_Stone", new int[]{4, 0});
+        icons.put("Gravel", new int[]{5, 0});
+        icons.put("Log_Birch", new int[]{6, 0});
+        icons.put("Planks_Oak", new int[]{7, 0});
+        icons.put("TNT", new int[]{8, 0});
+        icons.put("Brick", new int[]{0, 1});
+        icons.put("Chest", new int[]{1, 1});
+        icons.put("Coal_Block", new int[]{2, 1});
+        icons.put("Diamond_Ore", new int[]{3, 1});
+        icons.put("Farmland", new int[]{4, 1});
+        icons.put("Hardened_Clay", new int[]{5, 1});
+        icons.put("Log_DarkOak", new int[]{6, 1});
+        icons.put("Planks_Spruce", new int[]{7, 1});
+        icons.put("Wool", new int[]{8, 1});
+        icons.put("Coal_Ore", new int[]{0, 1});
+        icons.put("Cobblestone", new int[]{1, 2});
+        icons.put("Crafting_Table", new int[]{2, 2}); //Default for Latest Snapshot
+        icons.put("Dirt", new int[]{3, 2});
+        icons.put("Furnace", new int[]{4, 2}); //Default for custom profiles
+        icons.put("Ice_Packed", new int[]{5, 2});
+        icons.put("Log_Jungle", new int[]{6, 2});
+        icons.put("Quartz_Ore", new int[]{7, 2});
+        icons.put("Dirt_Podzol", new int[]{0, 3});
+        icons.put("Dirt_Snow", new int[]{1, 3});
+        icons.put("Emerald_Block", new int[]{2, 3});
+        icons.put("Emerald_Ore", new int[]{3, 3});
+        icons.put("Furnace_On", new int[]{4, 3});
+        icons.put("Iron_Block", new int[]{5, 3});
+        icons.put("Log_Oak", new int[]{6, 3});
+        icons.put("Red_Sand", new int[]{7, 3});
+        icons.put("Glass", new int[]{0, 4});
+        icons.put("Glowstone", new int[]{1, 4});
+        icons.put("Gold_Block", new int[]{2, 4});
+        icons.put("Gold_Ore", new int[]{3, 4});
+        icons.put("Grass", new int[]{4, 4}); //Default for Latest Release
+        icons.put("Iron_Ore", new int[]{5, 4});
+        icons.put("Log_Spruce", new int[]{6, 4});
+        icons.put("Red_Sandstone", new int[]{7, 4});
+        icons.put("Lapis_Ore", new int[]{0, 5});
+        icons.put("Leaves_Birch", new int[]{1, 5});
+        icons.put("Leaves_Jungle", new int[]{2, 5});
+        icons.put("Bookshelf", new int[]{3, 5});
+        icons.put("Leaves_Spruce", new int[]{4, 5});
+        icons.put("Log_Acacia", new int[]{5, 5});
+        icons.put("Mycelium", new int[]{6, 5});
+        icons.put("Redstone_Block", new int[]{7, 5});
+        icons.put("Nether_Brick", new int[]{0, 6});
+        icons.put("Netherrack", new int[]{1, 6});
+        icons.put("Obsidian", new int[]{2, 6});
+        icons.put("Planks_Acacia", new int[]{3, 6});
+        icons.put("Planks_Birch", new int[]{4, 6});
+        icons.put("Planks_DarkOak", new int[]{5, 6});
+        icons.put("Planks_Jungle", new int[]{6, 6});
+        icons.put("Redstone_Ore", new int[]{7, 6});
+        icons.put("Sand", new int[]{0, 7});
+        icons.put("Sandstone", new int[]{1, 7});
+        icons.put("Snow", new int[]{2, 7});
+        icons.put("Soul_Sand", new int[]{3, 7});
+        icons.put("Stone", new int[]{4, 7});
+        icons.put("Stone_Andesite", new int[]{5, 7});
+        icons.put("Stone_Diorite", new int[]{6, 7});
+        icons.put("Stone_Granite", new int[]{7, 7});
+    }
+
+    public Map<String, int[]> getIcons() {
+        return icons;
+    }
     /**
      * Gets a profile icon from the icons map
      *
-     * @param p The desired profile icon
+     * @param profileIcon The desired profile icon
      * @return The image with the profile icon
      */
-    public Image getProfileIcon(ProfileIcon p) {
-        if (iconCache.containsKey(p)) {
-            return iconCache.get(p);
+    public Image getProfileIcon(String profileIcon) {
+        if (iconCache.containsKey(profileIcon)) {
+            return iconCache.get(profileIcon);
+        } else if (icons.isEmpty()) {
+            loadIcons();
+        }
+        int[] coords = icons.get(profileIcon);
+        if (coords == null) {
+            if (iconCache.containsKey("Furnace")) {
+                return iconCache.get("Furnace");
+            }
+            coords = icons.get("Furnace");
         }
         WritableImage wi = new WritableImage(68, 68);
         PixelWriter pw = wi.getPixelWriter();
-        int blockX = 0;
-        int blockY = 0;
         PixelReader pr = profileIcons.getPixelReader();
-        switch (p) {
-            case LEAVES_OAK:
-                blockX = 0;
-                blockY = 0;
-                break;
-            case BEDROCK:
-                blockX = 1;
-                blockY = 0;
-                break;
-            case CLAY:
-                blockX = 2;
-                blockY = 0;
-                break;
-            case DIAMOND_BLOCK:
-                blockX = 3;
-                blockY = 0;
-                break;
-            case END_STONE:
-                blockX = 4;
-                blockY = 0;
-                break;
-            case GRAVEL:
-                blockX = 5;
-                blockY = 0;
-                break;
-            case LOG_BIRCH:
-                blockX = 6;
-                blockY = 0;
-                break;
-            case PLANKS_OAK:
-                blockX = 7;
-                blockY = 0;
-                break;
-            case TNT:
-                blockX = 8;
-                blockY = 0;
-                break;
-            case BRICK:
-                blockX = 0;
-                blockY = 1;
-                break;
-            case CHEST:
-                blockX = 1;
-                blockY = 1;
-                break;
-            case COAL_BLOCK:
-                blockX = 2;
-                blockY = 1;
-                break;
-            case DIAMOND_ORE:
-                blockX = 3;
-                blockY = 1;
-                break;
-            case FARMLAND:
-                blockX = 4;
-                blockY = 1;
-                break;
-            case HARDENED_CLAY:
-                blockX = 5;
-                blockY = 1;
-                break;
-            case LOG_DARKOAK:
-                blockX = 6;
-                blockY = 1;
-                break;
-            case PLANKS_SPRUCE:
-                blockX = 7;
-                blockY = 1;
-                break;
-            case WOOL:
-                blockX = 8;
-                blockY = 1;
-                break;
-            case COAL_ORE:
-                blockX = 0;
-                blockY = 2;
-                break;
-            case COBBLESTONE:
-                blockX = 1;
-                blockY = 2;
-                break;
-            case CRAFTING_TABLE: //Default for Latest Snapshot
-                blockX = 2;
-                blockY = 2;
-                break;
-            case DIRT:
-                blockX = 3;
-                blockY = 2;
-                break;
-            case FURNACE: //Default for custom profiles
-                blockX = 4;
-                blockY = 2;
-                break;
-            case ICE_PACKED:
-                blockX = 5;
-                blockY = 2;
-                break;
-            case LOG_JUNGLE:
-                blockX = 6;
-                blockY = 2;
-                break;
-            case QUARTZ_ORE:
-                blockX = 7;
-                blockY = 2;
-                break;
-            case DIRT_PODZOL:
-                blockX = 0;
-                blockY = 3;
-                break;
-            case DIRT_SNOW:
-                blockX = 1;
-                blockY = 3;
-                break;
-            case EMERALD_BLOCK:
-                blockX = 2;
-                blockY = 3;
-                break;
-            case EMERALD_ORE:
-                blockX = 3;
-                blockY = 3;
-                break;
-            case FURNACE_ON:
-                blockX = 4;
-                blockY = 3;
-                break;
-            case IRON_BLOCK:
-                blockX = 5;
-                blockY = 3;
-                break;
-            case LOG_OAK:
-                blockX = 6;
-                blockY = 3;
-                break;
-            case RED_SAND:
-                blockX = 7;
-                blockY = 3;
-                break;
-            case GLASS:
-                blockX = 0;
-                blockY = 4;
-                break;
-            case GLOWSTONE:
-                blockX = 1;
-                blockY = 4;
-                break;
-            case GOLD_BLOCK:
-                blockX = 2;
-                blockY = 4;
-                break;
-            case GOLD_ORE:
-                blockX = 3;
-                blockY = 4;
-                break;
-            case GRASS: //Default for Latest Release
-                blockX = 4;
-                blockY = 4;
-                break;
-            case IRON_ORE:
-                blockX = 5;
-                blockY = 4;
-                break;
-            case LOG_SPRUCE:
-                blockX = 6;
-                blockY = 4;
-                break;
-            case RED_SANDSTONE:
-                blockX = 7;
-                blockY = 4;
-                break;
-            case LAPIS_ORE:
-                blockX = 0;
-                blockY = 5;
-                break;
-            case LEAVES_BIRCH:
-                blockX = 1;
-                blockY = 5;
-                break;
-            case LEAVES_JUNGLE:
-                blockX = 2;
-                blockY = 5;
-                break;
-            case BOOKSHELF:
-                blockX = 3;
-                blockY = 5;
-                break;
-            case LEAVES_SPRUCE:
-                blockX = 4;
-                blockY = 5;
-                break;
-            case LOG_ACACIA:
-                blockX = 5;
-                blockY = 5;
-                break;
-            case MYCELIUM:
-                blockX = 6;
-                blockY = 5;
-                break;
-            case REDSTONE_BLOCK:
-                blockX = 7;
-                blockY = 5;
-                break;
-            case NETHER_BRICK:
-                blockX = 0;
-                blockY = 6;
-                break;
-            case NETHERRACK:
-                blockX = 1;
-                blockY = 6;
-                break;
-            case OBSIDIAN:
-                blockX = 2;
-                blockY = 6;
-                break;
-            case PLANKS_ACACIA:
-                blockX = 3;
-                blockY = 6;
-                break;
-            case PLANKS_BIRCH:
-                blockX = 4;
-                blockY = 6;
-                break;
-            case PLANKS_DARKOAK:
-                blockX = 5;
-                blockY = 6;
-                break;
-            case PLANKS_JUNGLE:
-                blockX = 6;
-                blockY = 6;
-                break;
-            case REDSTONE_ORE:
-                blockX = 7;
-                blockY = 6;
-                break;
-            case SAND:
-                blockX = 0;
-                blockY = 7;
-                break;
-            case SANDSTONE:
-                blockX = 1;
-                blockY = 7;
-                break;
-            case SNOW:
-                blockX = 2;
-                blockY = 7;
-                break;
-            case SOUL_SAND:
-                blockX = 3;
-                blockY = 7;
-                break;
-            case STONE:
-                blockX = 4;
-                blockY = 7;
-                break;
-            case STONE_ANDESITE:
-                blockX = 5;
-                blockY = 7;
-                break;
-            case STONE_DIORITE:
-                blockX = 6;
-                blockY = 7;
-                break;
-            case STONE_GRANITE:
-                blockX = 7;
-                blockY = 7;
-                break;
-        }
-        pw.setPixels(0, 0, 68, 68, pr, blockX * 68, blockY * 68);
-        iconCache.put(p, wi);
+        pw.setPixels(0, 0, 68, 68, pr, coords[0] * 68, coords[1] * 68);
+        iconCache.put(profileIcon, wi);
         return wi;
     }
 

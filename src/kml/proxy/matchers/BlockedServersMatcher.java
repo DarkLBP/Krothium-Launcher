@@ -15,8 +15,7 @@ public class BlockedServersMatcher implements URLMatcher {
     @Override
     public final String handle(String url) {
         if (url.equalsIgnoreCase(blockURL)) {
-            String blockedServersURL = "https://mc.krothium.com/server/blockedservers";
-            return blockedServersURL;
+            return "https://mc.krothium.com/server/blockedservers";
         }
         return null;
     }

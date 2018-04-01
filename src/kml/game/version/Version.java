@@ -127,37 +127,39 @@ public final class Version {
         if (version.has("inheritsFrom")) {
             String inheritsFrom = version.getString("inheritsFrom");
             Version ver = k.getVersions().getVersion(k.getVersions().getVersionMeta(inheritsFrom));
-            if (ver.hasLibraries()) {
-                for (Library lib : ver.libraries) {
-                    if (!libraries.contains(lib)) {
-                        libraries.add(lib);
+            if (ver != null) {
+                if (ver.hasLibraries()) {
+                    for (Library lib : ver.libraries) {
+                        if (!libraries.contains(lib)) {
+                            libraries.add(lib);
+                        }
                     }
                 }
-            }
-            if (ver.hasDownloads()) {
-                Map<String, Downloadable> downloads = ver.downloads;
-                if (!downloads.containsKey("client")) {
-                    downloads.put("client", downloads.get("client"));
+                if (ver.hasDownloads()) {
+                    Map<String, Downloadable> downloads = ver.downloads;
+                    if (!downloads.containsKey("client")) {
+                        downloads.put("client", downloads.get("client"));
+                    }
                 }
-            }
-            if (ver.jar != null) {
-                if (jar == null) {
-                    jar = ver.jar;
+                if (ver.jar != null) {
+                    if (jar == null) {
+                        jar = ver.jar;
+                    }
                 }
-            }
-            if (ver.assetIndex != null) {
-                if (assetIndex == null) {
-                    assetIndex = ver.assetIndex;
+                if (ver.assetIndex != null) {
+                    if (assetIndex == null) {
+                        assetIndex = ver.assetIndex;
+                    }
                 }
-            }
-            if (ver.hasMainClass()) {
-                if (!hasMainClass()) {
-                    mainClass = ver.mainClass;
+                if (ver.hasMainClass()) {
+                    if (!hasMainClass()) {
+                        mainClass = ver.mainClass;
+                    }
                 }
-            }
-            if (ver.hasMinecraftArguments()) {
-                if (!hasMinecraftArguments()) {
-                    minecraftArguments = ver.minecraftArguments;
+                if (ver.hasMinecraftArguments()) {
+                    if (!hasMinecraftArguments()) {
+                        minecraftArguments = ver.minecraftArguments;
+                    }
                 }
             }
         }

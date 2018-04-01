@@ -248,51 +248,52 @@ public class Downloader {
         if (fullPath.getParentFile() != null) {
             fullPath.getParentFile().mkdirs();
         }
-        URL url = null;
-        try {
-            url = new URL(dw.getURL());
-        } catch (MalformedURLException e) {
-            console.print("Invalid URL " + dw.getURL());
-            e.printStackTrace(console.getWriter());
-        }
-        int tries = 0;
-        if (dw.hasFakePath()) {
-            currentFile = dw.getFakePath();
-        } else {
-            currentFile = path.toString();
-        }
-        console.print("Downloading " + currentFile + " from " + url);
-        if (dw.getSize() == 0) {
-            console.print(dw.getURL() + " has no expected size.");
+        if (dw.hasURL()) {
             try {
-                URLConnection con = url.openConnection();
-                long length = con.getContentLength();
-                total += length;
-            } catch (IOException ex) {
-                console.print("Failed to determine size from " + dw.getURL());
-            }
-        }
-        while (tries < DOWNLOAD_TRIES) {
-            int totalRead = 0;
-            try (InputStream in = url.openStream();
-                 OutputStream out = new FileOutputStream(fullPath)){
-                byte[] buffer = new byte[8192];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
-                    downloaded += read;
-                    totalRead += read;
+                URL url = new URL(dw.getURL());
+                int tries = 0;
+                if (dw.hasFakePath()) {
+                    currentFile = dw.getFakePath();
+                } else {
+                    currentFile = path.toString();
                 }
-                break;
-            } catch (IOException ex) {
-                console.print("Failed to download file " + currentFile + " (try " + tries + ')');
-                ex.printStackTrace(console.getWriter());
-                downloaded -= totalRead;
-                tries++;
+                console.print("Downloading " + currentFile + " from " + url);
+                if (dw.getSize() == 0) {
+                    console.print(dw.getURL() + " has no expected size.");
+                    try {
+                        URLConnection con = url.openConnection();
+                        long length = con.getContentLength();
+                        total += length;
+                    } catch (IOException ex) {
+                        console.print("Failed to determine size from " + dw.getURL());
+                    }
+                }
+                while (tries < DOWNLOAD_TRIES) {
+                    int totalRead = 0;
+                    try (InputStream in = url.openStream();
+                         OutputStream out = new FileOutputStream(fullPath)){
+                        byte[] buffer = new byte[8192];
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, read);
+                            downloaded += read;
+                            totalRead += read;
+                        }
+                        break;
+                    } catch (IOException ex) {
+                        console.print("Failed to download file " + currentFile + " (try " + tries + ')');
+                        ex.printStackTrace(console.getWriter());
+                        downloaded -= totalRead;
+                        tries++;
+                    }
+                }
+                if (tries == DOWNLOAD_TRIES) {
+                    console.print("Failed to download file " + path.getName() + " from " + url);
+                }
+            } catch (MalformedURLException e) {
+                console.print("Invalid URL " + dw.getURL());
+                e.printStackTrace(console.getWriter());
             }
-        }
-        if (tries == DOWNLOAD_TRIES) {
-            console.print("Failed to download file " + path.getName() + " from " + url);
         }
     }
 

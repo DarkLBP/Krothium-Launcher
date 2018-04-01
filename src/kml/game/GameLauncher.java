@@ -333,9 +333,9 @@ public class GameLauncher {
                 }
                 console.print(lineRead);
             }
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
             console.print("Failed to read stream.");
-            ignored.printStackTrace(console.getWriter());
+            ex.printStackTrace(console.getWriter());
         }
     }
 

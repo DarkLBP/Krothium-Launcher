@@ -29,16 +29,6 @@ public class Versions {
     }
 
     /**
-     * Add a version to the database
-     * @param m The versions to be added
-     */
-    private void add(VersionMeta m) {
-        if (!versions.contains(m)) {
-            versions.add(m);
-        }
-    }
-
-    /**
      * Gets the version meta by id
      * @param id The id to fetch the version meta
      * @return The version meta from the specified id or from the latest release
@@ -138,7 +128,7 @@ public class Versions {
                     if (ls.equalsIgnoreCase(id)) {
                         latestSnap = vm;
                     }
-                    add(vm);
+                    versions.add(vm);
                 }
                 console.print("Remote version list loaded.");
             } else {
@@ -151,43 +141,45 @@ public class Versions {
         console.print("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";
+        File versionsDir = new File(Kernel.APPLICATION_WORKING_DIR, "versions");
         try {
-            File versionsDir = new File(Kernel.APPLICATION_WORKING_DIR, "versions");
             if (versionsDir.isDirectory()) {
                 File[] files = versionsDir.listFiles();
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        File jsonFile = new File(file.getAbsolutePath(), file.getName() + ".json");
-                        if (jsonFile.isFile()) {
-                            String id;
-                            String url = jsonFile.toURI().toURL().toString();
-                            VersionType type;
-                            JSONObject ver = new JSONObject(Utils.readURL(url));
-                            if (ver.has("id")) {
-                                id = ver.getString("id");
-                            } else {
-                                continue;
-                            }
-                            if (ver.has("type")) {
-                                try {
-                                    type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
-                                } catch (IllegalArgumentException ex) {
-                                    type = VersionType.RELEASE;
-                                    console.print("Invalid type for version " + id);
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            File jsonFile = new File(file.getAbsolutePath(), file.getName() + ".json");
+                            if (jsonFile.isFile()) {
+                                String id;
+                                String url = jsonFile.toURI().toURL().toString();
+                                VersionType type;
+                                JSONObject ver = new JSONObject(Utils.readURL(url));
+                                if (ver.has("id")) {
+                                    id = ver.getString("id");
+                                } else {
+                                    continue;
                                 }
-                            } else {
-                                type = VersionType.RELEASE;
-                                console.print("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
-                            }
-                            VersionMeta vm = new VersionMeta(id, url, type);
-                            add(vm);
-                            if (ver.has("releaseTime")) {
-                                if (type == VersionType.RELEASE && ver.getString("releaseTime").compareTo(latestRelease) > 0) {
-                                    lastRelease = vm;
-                                    latestRelease = ver.getString("releaseTime");
-                                } else if (type == VersionType.SNAPSHOT && ver.getString("releaseTime").compareTo(latestSnapshot) > 0) {
-                                    lastSnapshot = vm;
-                                    latestSnapshot = ver.getString("releaseTime");
+                                if (ver.has("type")) {
+                                    try {
+                                        type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
+                                    } catch (IllegalArgumentException ex) {
+                                        type = VersionType.RELEASE;
+                                        console.print("Invalid type for version " + id);
+                                    }
+                                } else {
+                                    type = VersionType.RELEASE;
+                                    console.print("Local version " + id + " has no version type. Will be loaded as a RELEASE.");
+                                }
+                                VersionMeta vm = new VersionMeta(id, url, type);
+                                versions.add(vm);
+                                if (ver.has("releaseTime")) {
+                                    if (type == VersionType.RELEASE && ver.getString("releaseTime").compareTo(latestRelease) > 0) {
+                                        lastRelease = vm;
+                                        latestRelease = ver.getString("releaseTime");
+                                    } else if (type == VersionType.SNAPSHOT && ver.getString("releaseTime").compareTo(latestSnapshot) > 0) {
+                                        lastSnapshot = vm;
+                                        latestSnapshot = ver.getString("releaseTime");
+                                    }
                                 }
                             }
                         }
