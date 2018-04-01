@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Profile implements Comparable<Profile>{
     private final String id;
     private String name, javaArgs;
-    private ProfileType type;
+    private final ProfileType type;
     private File gameDir, javaDir;
     private Timestamp created, lastUsed;
     private Map<String, Integer> resolution = new HashMap<>();
@@ -104,10 +104,6 @@ public class Profile implements Comparable<Profile>{
 
     public final ProfileType getType() {
         return type;
-    }
-
-    public final void setType(ProfileType type) {
-        this.type = type;
     }
 
     public final VersionMeta getVersionID() {

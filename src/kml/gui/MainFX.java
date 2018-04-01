@@ -1765,7 +1765,7 @@ public class MainFX {
     }
 
     /**
-     * Updates the settings according to the label cicked
+     * Updates the settings according to the label clicked
      * @param e The trigger event
      */
     @FXML public final void updateSettings(MouseEvent e) {

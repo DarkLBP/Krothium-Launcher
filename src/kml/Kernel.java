@@ -35,7 +35,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +60,7 @@ public final class Kernel {
     private final Map<String, Image> iconCache = new HashMap<>();
 
     private final Image profileIcons;
-    public static final String KERNEL_BUILD_NAME = "3.1.5";
+    public static final String KERNEL_BUILD_NAME = "3.2.0";
     private static final int KERNEL_FORMAT = 21;
     private static final int KERNEL_PROFILES_FORMAT = 2;
     public static final File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();

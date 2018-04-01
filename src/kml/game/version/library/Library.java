@@ -23,7 +23,7 @@ public final class Library {
     private final List<String> exclude = new ArrayList<>();
     private final Map<OS, String> natives = new EnumMap<>(OS.class);
 
-    public Library(JSONObject lib, Kernel k) throws Exception {
+    public Library(JSONObject lib) throws Exception {
         if (lib.has("name")) {
             name = lib.getString("name");
         } else {
@@ -170,10 +170,6 @@ public final class Library {
 
     private boolean hasURL() {
         return url != null;
-    }
-
-    public String getURL() {
-        return url;
     }
 
     private boolean hasDownloads() {

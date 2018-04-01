@@ -67,18 +67,10 @@ public final class Version {
         if (version.has("assetIndex")) {
             JSONObject aIndex = version.getJSONObject("assetIndex");
             String id = null;
-            long totalSize = -1;
-            long size = -1;
             String url = null;
             String sha1 = null;
             if (aIndex.has("id")) {
                 id = aIndex.getString("id");
-            }
-            if (aIndex.has("totalSize")) {
-                totalSize = aIndex.getLong("totalSize");
-            }
-            if (aIndex.has("size")) {
-                size = aIndex.getLong("size");
             }
             if (aIndex.has("url")) {
                 url = aIndex.getString("url");
@@ -86,7 +78,7 @@ public final class Version {
             if (aIndex.has("sha1")) {
                 sha1 = aIndex.getString("sha1");
             }
-            assetIndex = new AssetIndex(id, size, totalSize, url, sha1);
+            assetIndex = new AssetIndex(id, url, sha1);
         }
         if (assetIndex == null) {
             if (version.has("assets")) {
@@ -120,7 +112,7 @@ public final class Version {
         if (version.has("libraries")) {
             JSONArray libraries = version.getJSONArray("libraries");
             for (int i = 0; i < libraries.length(); i++) {
-                Library lib = new Library(libraries.getJSONObject(i), k);
+                Library lib = new Library(libraries.getJSONObject(i));
                 this.libraries.add(lib);
             }
         }
