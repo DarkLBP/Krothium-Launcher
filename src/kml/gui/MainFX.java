@@ -503,7 +503,7 @@ public class MainFX {
         }
         try {
             String r = Utils.sendPost(url, data, params);
-            String text = "";
+            String text;
             if (!"OK".equals(r)) {
                 if (target.equals("skin")) {
                     if (file != null) {
@@ -533,11 +533,11 @@ public class MainFX {
                 if (file != null) {
                     text = Language.get(40);
                 } else {
-                    text = Language.get(41);
+                    text = Language.get(34);
                 }
             } else {
                 if (file != null) {
-                    text = Language.get(34);
+                    text = Language.get(41);
                 } else {
                     text = Language.get(39);
                 }
@@ -570,8 +570,6 @@ public class MainFX {
                 @Override
                 public void run() {
                     MainFX.this.submitChange("skin", selected);
-                    selectSkin.setDisable(false);
-                    deleteSkin.setDisable(false);
                 }
             });
             t.start();
@@ -590,8 +588,6 @@ public class MainFX {
                 @Override
                 public void run() {
                     MainFX.this.submitChange("cape", selected);
-                    selectCape.setDisable(false);
-                    deleteCape.setDisable(false);
                 }
             });
             t.start();
@@ -611,8 +607,6 @@ public class MainFX {
                 @Override
                 public void run() {
                     MainFX.this.submitChange("skin", null);
-                    selectSkin.setDisable(false);
-                    deleteSkin.setDisable(false);
                 }
             });
             t.start();
@@ -631,8 +625,6 @@ public class MainFX {
                 @Override
                 public void run() {
                     MainFX.this.submitChange("cape", null);
-                    selectCape.setDisable(false);
-                    deleteCape.setDisable(false);
                 }
             });
             t.start();
