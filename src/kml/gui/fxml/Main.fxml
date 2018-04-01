@@ -669,13 +669,13 @@
                         <StackPane layoutX="160.0" layoutY="55.0" maxHeight="45.0" maxWidth="750.0" prefHeight="45.0" prefWidth="950.0">
                            <children>
                               <Label fx:id="resolutionLabel" onMouseClicked="#updateEditor" text="Resolution" StackPane.alignment="CENTER_LEFT">
-                                 <styleClass>
-                                    <String fx:value="text-5" />
-                                    <String fx:value="toggle-disabled" />
-                                 </styleClass>
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
+                                 <styleClass>
+                                    <String fx:value="toggle-disabled" />
+                                    <String fx:value="text-5" />
+                                 </styleClass>
                               </Label>
                               <TextField fx:id="resW" maxWidth="135.0" prefHeight="33.0" styleClass="text-6" StackPane.alignment="CENTER_RIGHT">
                                  <StackPane.margin>
@@ -698,8 +698,8 @@
                            <children>
                               <Label fx:id="gameDirLabel" onMouseClicked="#updateEditor" text="Game directory" StackPane.alignment="CENTER_LEFT">
                                  <styleClass>
-                                    <String fx:value="text-5" />
                                     <String fx:value="toggle-disabled" />
+                                    <String fx:value="text-5" />
                                  </styleClass>
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
@@ -776,7 +776,7 @@
                               </Button>
                            </children>
                            <VBox.margin>
-                              <Insets top="10.0" />
+                              <Insets top="5.0" />
                            </VBox.margin>
                         </StackPane>
                      </children>
