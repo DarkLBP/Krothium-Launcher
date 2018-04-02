@@ -1624,7 +1624,10 @@ public class MainFX {
             tabMenu.setVisible(true);
             tabMenu.setManaged(true);
             accountButton.setVisible(true);
-            playPane.setVisible(true);
+            //Show play button
+            if (!kernel.getDownloader().isDownloading()) {
+                playPane.setVisible(true);
+            }
             //Set account name for current user
             accountButton.setText(kernel.getAuthentication().getSelectedUser().getDisplayName());
         }
