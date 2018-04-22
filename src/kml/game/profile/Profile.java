@@ -28,9 +28,7 @@ public class Profile implements Comparable<Profile>{
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
         this.type = type;
         this.lastUsed = new Timestamp(0);
-        if (type != ProfileType.CUSTOM) {
-            this.created = new Timestamp(System.currentTimeMillis());
-        }
+        this.created = new Timestamp(System.currentTimeMillis());
     }
 
     public Profile(String id, String name, ProfileType type, String created, String lastUsed, VersionMeta lastVersionId,
