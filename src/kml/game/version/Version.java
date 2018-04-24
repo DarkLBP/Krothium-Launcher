@@ -128,9 +128,8 @@ public final class Version {
                     }
                 }
                 if (ver.hasDownloads()) {
-                    Map<String, Downloadable> downloads = ver.downloads;
                     if (!downloads.containsKey("client")) {
-                        downloads.put("client", downloads.get("client"));
+                        downloads.put("client", ver.downloads.get("client"));
                     }
                 }
                 if (ver.jar != null) {
