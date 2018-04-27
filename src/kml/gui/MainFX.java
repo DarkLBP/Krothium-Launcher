@@ -1817,11 +1817,15 @@ public class MainFX {
      * @param state The new state
      */
     private void toggleLabel(Styleable label, boolean state) {
+        Object[] classes = label.getStyleClass().toArray();
+        for (Object ckl : classes) {
+            if (ckl.toString().startsWith("toggle")) {
+                label.getStyleClass().remove(ckl.toString());
+            }
+        }
         if (state) {
-            label.getStyleClass().remove("toggle-disabled");
             label.getStyleClass().add("toggle-enabled");
         } else {
-            label.getStyleClass().remove("toggle-enabled");
             label.getStyleClass().add("toggle-disabled");
         }
     }
