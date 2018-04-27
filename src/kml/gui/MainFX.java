@@ -1291,6 +1291,7 @@ public class MainFX {
             iconBlock.setManaged(true);
             versionList.getSelectionModel().select(0);
             profileIcon.setImage(kernel.getProfileIcon("Furnace"));
+            profileIcon.setId("Furnace");
             if (settings.getEnableAdvanced()) {
                 javaExecBlock.setVisible(true);
                 javaExecBlock.setManaged(true);
