@@ -24,6 +24,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import kml.*;
 import kml.auth.Authentication;
 import kml.auth.user.User;
@@ -164,6 +165,13 @@ public class MainFX {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        if (!MainFX.this.stage.isMaximized()) {
+                            Window w = MainFX.this.mainScene.getWindow();
+                            if (w != null) {
+                                settings.setLauncherHeight(w.getHeight());
+                                settings.setLauncherWidth(w.getWidth());
+                            }
+                        }
                         double computedHeight = MainFX.this.newsContainer.heightProperty().doubleValue()  * 0.7;
                         double computedWidth = MainFX.this.newsContainer.widthProperty().doubleValue()  * 0.7;
                         if (MainFX.this.slideshow.getImage() != null) {

@@ -170,10 +170,6 @@ public final class Kernel {
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
-                    if (main.getWindow() != null) {
-                        settings.setLauncherHeight(main.getWindow().getHeight());
-                        settings.setLauncherWidth(main.getWindow().getWidth());
-                    }
                     exitSafely();
                 }
             });
