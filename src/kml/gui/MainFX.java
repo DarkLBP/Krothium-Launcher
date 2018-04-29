@@ -109,7 +109,7 @@ public class MainFX {
      * @param k The Kernel instance
      * @param s The Stage instance
      */
-    public final void initialize(Kernel k, Stage s, Scene scene) {
+    public final void initialize(Kernel k, Stage s, Scene scene, final Scene browser) {
         //Require to exit using Platform.exit()
         Platform.setImplicitExit(false);
 
@@ -167,6 +167,9 @@ public class MainFX {
                     public void run() {
                         if (!MainFX.this.stage.isMaximized()) {
                             Window w = MainFX.this.mainScene.getWindow();
+                            if (w == null) {
+                                w = browser.getWindow();
+                            }
                             if (w != null) {
                                 settings.setLauncherHeight(w.getHeight());
                                 settings.setLauncherWidth(w.getWidth());

@@ -145,10 +145,11 @@ public final class Kernel {
         authentication.fetchUsers();
 
         //Load web browser
+        Scene browser = null;
         try {
             loader.setLocation(getClass().getResource("/kml/gui/fxml/Browser.fxml"));
             Parent p = loader.load();
-            Scene browser = new Scene(p);
+            browser = new Scene(p);
             webBrowser = loader.getController();
             webBrowser.initialize(stage, browser);
 
@@ -177,7 +178,7 @@ public final class Kernel {
             stage.setHeight(settings.getLauncherHeight());
             stage.setWidth(settings.getLauncherWidth());
             MainFX mainForm = loader.getController();
-            mainForm.initialize(this, stage, main);
+            mainForm.initialize(this, stage, main, browser);
             stage.show();
         } catch (IOException e) {
             console.print("Failed to initialize main interface.");
