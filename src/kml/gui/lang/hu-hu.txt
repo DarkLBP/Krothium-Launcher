@@ -1,8 +1,8 @@
-//hu-HU language file by TryHardDood (https://github.com/TryHardDood)
+//hu-HU language file by TryHardDood (https://github.com/TryHardDood) //fixed by speter2
 Segítség
 KIJELENTKEZÉS
 Hírek
-Skinek
+Kinézetek
 Beállítások
 Indítási opciók
 Biztosan kiszeretnél jelentkezni?
@@ -13,7 +13,7 @@ INDÍTÁS
 Letöltés
 JÁTÉKBAN
 A játék összeomlott! Nézd meg a log fájlokat további információkért.
-Játék összeomlott
+A játék összeomlott
 A felhasználónév mezőt nem lehet üresen hagyni!
 Felhasználónév vagy Email:
 Jelszó:
@@ -23,29 +23,29 @@ Sikertelen bejelentkezés
 A jelszó mezőt nem lehet üresen hagyni!
 Változtatása
 Köpeny PNG fájl (128KB MAX)
-Legfrissebb Minecraft Release
+Legfrissebb Minecraft kiadás
 Logfájlok exportálása
 Szerver letöltése
-SKIN
+KINÉZET
 KÖPENY
-Biztosan törölni szeretnéd a skined?
-Legfrissebb Minecraft Snapshot
-Nem sikerült törölni a skinedet!
-Skin sikeresen törölve!
+Biztosan törölni szeretnéd a kinézeted?
+Legfrissebb Minecraft gyorskiadás
+Nem sikerült törölni a kinézetedet!
+A kinézeted sikeresen törölve!
 Logfájlok exportálva:
 Biztosan törölni szeretnéd a köpenyed?
 Nem sikerült exportálni a naplókat
 Nem sikerült törölni a köpenyed!
 Köpeny sikeresen törölve!
-Skin sikeresen megváltoztatva!
+A kinézeted sikeresen megváltoztatva!
 Köpeny sikeresen megváltoztatva!
-Nem sikerült a skin megváltoztatása!
-Nem sikerült a köpeny megváltoztatása!
-Skin PNG fájl (128KB MAX)
+Nem sikerült a kinézeted megváltoztatása!
+Nem sikerült a köpenyed megváltoztatása!
+Kinézet PNG fájl (128KB MAX)
 INDÍTÓ BEÁLLÍTÁSOK
-Indító nyitvatartása mikor a játék fut
-Kimeneti log fájl menyitása játék indításakor
-Fejleszői kiadások engedélyezése
+Indító nyitvatartása a játék futása közben
+Kimeneti log fájl megnyitása játék indításakor
+Fejlesztői kiadások engedélyezése
 Régi verziók engedélyezése
 Haladó beállítások
 Új Profil Hozzáadása
@@ -59,7 +59,7 @@ Nem sikerült törölni a profilt.
 Legújabb verzió
 Legújabb fejlesztői kiadás
 Biztosan törölni szeretnéd ezt a profilt?
-Nem tudtuk bejelentkezni a felhasználóval!
+Nem sikerült bejelentkezni ezzel a felhasználónévvel!
 Név:
 Verzió
 Felbontás
@@ -68,7 +68,7 @@ Java executable
 JVM argumentumok
 Játék kimenet
 Névtelen profil
-A fejlesztői kiatások nem biztos, hogy stabil kiadások így tönkretehetik a világodat.
+A fejlesztői kiadások nem biztos, hogy stabilak, emiatt előfordulhat, hogy kárt okoznak a világaidban.
 Ajánlott, hogy külön mappába futtasd ezeket, hogy elkerüld a világaid korruptálását.
 Ez engedélyezi a régi alfa és béta verziókat.
 Ezek nagyon régiek és nem támogatottak. Hibák, összeomlások nem lesznek javítva.
@@ -77,21 +77,21 @@ Ez engedélyezi a haladó JAVA beállításokat.
 Ezek a beállítások a játék elindíthatalanságát is okozhatják.
 Javakörnyezet előkészítése...
 OFFLINE JÁTÉK
-Hírek betöltése sikertelen
+A hírek betöltése sikertelen
 Nem sikerült elindítani
 Nem sikerült elindítani az indítási folyamatot! Nézd meg a log fájlokat bővebb információkért.
-Letöltés nem sikerült
+A letöltés sikertelen volt
 Nem sikerült elindítani a letöltési folyamatot! Nézd meg a log fájlokat bővebb információkért.
 Felhasználók:
-Account váltása
-VÁLASZT
+Fiók váltása
+KIVÁLASZT
 TÖRÖL
-MODELL JÁTÉKOS
+JÁTÉKOS MODELLJE
 Klasszikus
 Vékony
 Ikon
 Köpeny előnézet engedélyezése
-Cache Törlése
+Gyorsítótár Törlése
 Nyisd Ki
 Mentés Másként
 Elfelejtette a jelszavát?
@@ -102,4 +102,4 @@ Nem sikerült lekérni a legfrissebb híreket
 Nincs elérhető hír
 Nincs megjeleníthető hír
 A Köpeny fájl meghaladja a 128KB méretű fájlméretet.
-A Skin fájl meghaladja a 128KB méretű fájlméretet.
+A Kinézet fájl meghaladja a 128KB méretű fájlméretet.
