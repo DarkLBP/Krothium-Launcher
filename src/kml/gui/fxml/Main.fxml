@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onMouseClicked="#checkPopups" prefHeight="665.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onMouseClicked="#checkPopups" prefHeight="665.0" prefWidth="850.0" stylesheets="@../Main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kml.gui.MainFX">
    <children>
       <StackPane id="topBar" maxHeight="35.0" minHeight="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="NEVER">
          <children>
@@ -835,7 +835,7 @@
          <children>
             <HBox alignment="TOP_CENTER" maxHeight="65.0" minHeight="65.0">
                <children>
-                  <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="65.0" maxWidth="210.0" minHeight="65.0" minWidth="210.0" mnemonicParsing="false" onMouseClicked="#launchGame" text="PLAY" HBox.hgrow="NEVER">
+                  <Button id="playButton" fx:id="playButton" alignment="CENTER" maxHeight="70.0" maxWidth="260.0" minHeight="70.0" minWidth="260.0" mnemonicParsing="false" onMouseClicked="#launchGame" text="PLAY" HBox.hgrow="NEVER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -844,7 +844,7 @@
                         <String fx:value="text-1" />
                      </styleClass>
                   </Button>
-                  <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="65.0" maxWidth="34.0" minHeight="65.0" minWidth="34.0" mnemonicParsing="false" onMouseClicked="#showProfiles" HBox.hgrow="NEVER">
+                  <Button id="profilesButton" fx:id="profilePopupButton" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="38.0" minHeight="70.0" minWidth="38.0" mnemonicParsing="false" onMouseClicked="#showProfiles" HBox.hgrow="NEVER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -853,7 +853,7 @@
             </HBox>
             <Label fx:id="gameVersion" styleClass="color-alt" text="Minecraft X.X.XX">
                <VBox.margin>
-                  <Insets top="5.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </Label>
          </children>

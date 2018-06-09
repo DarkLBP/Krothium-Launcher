@@ -151,7 +151,6 @@ public class MainFX {
         if (Kernel.USE_LOCAL) {
             skinsLabel.setVisible(false);
             skinsLabel.setManaged(false);
-            playButton.setMinWidth(290);
         }
 
         //Localize elements
@@ -1130,7 +1129,7 @@ public class MainFX {
                 loadProfileListPopup();
             }
             Bounds b = playButton.localToScene(playButton.getBoundsInLocal());
-            profilePopupList.setTranslateX(b.getMinX() - 100);
+            profilePopupList.setTranslateX(b.getMinX() - 70);
             profilePopupList.setTranslateY(b.getMinY() - 180);
             profilePopupList.setVisible(true);
             profilePopupList.getSelectionModel().clearSelection();
