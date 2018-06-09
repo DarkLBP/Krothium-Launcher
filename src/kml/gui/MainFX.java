@@ -147,8 +147,10 @@ public class MainFX {
         resW.setEditable(true);
         resH.setEditable(true);
 
-        //If offline mode make play button bigger for language support
+        //If offline mode make play button bigger for language support and hide skins tab
         if (Kernel.USE_LOCAL) {
+            skinsLabel.setVisible(false);
+            skinsLabel.setManaged(false);
             playButton.setMinWidth(290);
         }
 
@@ -334,9 +336,6 @@ public class MainFX {
         deleteSkin.setDisable(true);
         deleteCape.setDisable(true);
         includeCape.setDisable(true);
-        if (Kernel.USE_LOCAL) {
-            return;
-        }
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -447,6 +446,9 @@ public class MainFX {
      * Updates the skin preview
      */
     private void updatePreview() {
+        if (skin == null) {
+            return;
+        }
         boolean slim = skinSlim.isSelected();
         if (includeCape.getStyleClass().contains("toggle-enabled")) {
             skinPreviews[0] = TexturePreview.resampleImage(TexturePreview.generateFront(skin, cape, slim), 10);
