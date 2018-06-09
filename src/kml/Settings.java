@@ -71,6 +71,10 @@ public class Settings {
                     } else {
                         launcherHeight = 700;
                     }
+                    if (launcherWidth < 450 || launcherHeight < 400) {
+                        launcherWidth = 850;
+                        launcherHeight = 700;
+                    }
                 } catch (JSONException ex) {
                     console.print("Failed to load settings.");
                     ex.printStackTrace(console.getWriter());
