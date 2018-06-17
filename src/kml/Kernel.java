@@ -60,7 +60,7 @@ public final class Kernel {
     private final Map<String, Image> iconCache = new HashMap<>();
 
     private final Image profileIcons;
-    public static final String KERNEL_BUILD_NAME = "3.2.4";
+    public static final String KERNEL_BUILD_NAME = "3.2.5";
     private static final int KERNEL_FORMAT = 21;
     private static final int KERNEL_PROFILES_FORMAT = 2;
     public static final File APPLICATION_WORKING_DIR = Utils.getWorkingDirectory();
