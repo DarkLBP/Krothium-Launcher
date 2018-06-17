@@ -21,7 +21,7 @@ public class SkinMatcher implements URLMatcher {
         Matcher m = skinRegex.matcher(url);
         if (m.matches()) {
             String name = m.group(1);
-            return "http://mc.krothium.com/skins/" + name + ".png";
+            return "https://mc.krothium.com/skins/" + name + ".png";
         }
         return null;
     }

@@ -21,7 +21,7 @@ public class CapeMatcher implements URLMatcher {
         Matcher m = capeRegex.matcher(url);
         if (m.matches()) {
             String name = m.group(1);
-            return "http://mc.krothium.com/capes/" + name + ".png";
+            return "https://mc.krothium.com/capes/" + name + ".png";
         }
         return null;
     }

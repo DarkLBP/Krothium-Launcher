@@ -16,7 +16,7 @@ public class JoinServerMatcher implements URLMatcher {
     public final String handle(String url) {
         String[] segments = url.split("\\?");
         if (url.contains(JOIN_URL) && segments.length == 2) {
-            return "http://mc.krothium.com/server/joinserver?" + segments[1];
+            return "https://mc.krothium.com/server/joinserver?" + segments[1];
         }
         return null;
     }
