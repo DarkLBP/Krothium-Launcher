@@ -1315,6 +1315,7 @@ public class MainFX {
                 StringBuilder jA = new StringBuilder(15);
                 if (Utils.getOSArch() == OSArch.OLD) {
                     jA.append("-Xmx1G");
+                    jA.append("-Xss1M");
                 } else {
                     jA.append("-Xmx2G");
                 }
@@ -1800,6 +1801,7 @@ public class MainFX {
             toggleLabel(source, settings.getEnableSnapshots());
             validateSelectedProfile();
             loadProfileList();
+            profileListPopupLoaded = false;
             versionListLoaded = false;
         } else if (source == historicalVersions) {
             if (!settings.getEnableHistorical()) {
@@ -1812,6 +1814,7 @@ public class MainFX {
             toggleLabel(source, settings.getEnableHistorical());
             validateSelectedProfile();
             loadProfileList();
+            profileListPopupLoaded = false;
             versionListLoaded = false;
         } else if (source == advancedSettings) {
             if (!settings.getEnableAdvanced()) {
