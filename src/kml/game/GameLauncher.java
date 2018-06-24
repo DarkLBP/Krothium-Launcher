@@ -106,6 +106,7 @@ public class GameLauncher {
         if (!p.hasJavaArgs()) {
             if (Utils.getOSArch() == OSArch.OLD) {
                 gameArgs.add("-Xmx1G");
+                gameArgs.add("-Xss1M");
             } else {
                 gameArgs.add("-Xmx2G");
             }
