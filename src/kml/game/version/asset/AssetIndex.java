@@ -2,34 +2,33 @@ package kml.game.version.asset;
 
 /**
  * @author DarkLBP
- *         website https://krothium.com
+ * website https://krothium.com
  */
 
 public class AssetIndex {
-    private final String id;
+    private String id;
     private String sha1;
-    private final String url;
+    private long size;
+    private String url;
+    private long totalSize;
 
-    public AssetIndex(String id) {
-        this.id = id == null ? "legacy" : id;
-        url = "https://s3.amazonaws.com/Minecraft.Download/indexes/" + this.id + ".json";
-    }
-
-    public AssetIndex(String id, String url, String sha1) {
-        this.id = id;
-        this.url = url;
-        this.sha1 = sha1;
-    }
-
-    public final String getID() {
+    public final String getId() {
         return id;
     }
 
-    public final String getURL() {
+    public final String getSha1() {
+        return sha1;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public final String getUrl() {
         return url;
     }
 
-    public final String getSHA1() {
-        return sha1;
+    public long getTotalSize() {
+        return totalSize;
     }
 }
