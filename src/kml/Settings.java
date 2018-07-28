@@ -1,16 +1,25 @@
 package kml;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * @author DarkLBP
  * website https://krothium.com
  */
 public class Settings {
+    @Expose
     private int launcherWidth = 850;
+    @Expose
     private int launcherHeight = 700;
+    @Expose
     private boolean keepLauncherOpen;
+    @Expose
     private boolean enableSnapshots;
+    @Expose
     private boolean enableHistorical;
+    @Expose
     private boolean enableAdvanced;
+    @Expose
     private String locale = "en-us";
 
     public int getLauncherWidth() {

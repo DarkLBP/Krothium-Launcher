@@ -1,9 +1,13 @@
 package kml.game.profile;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author DarkLBP
- *         website https://krothium.com
+ * website https://krothium.com
  */
 public enum ProfileType {
-    RELEASE, SNAPSHOT, CUSTOM
+    @SerializedName("latest-release") RELEASE,
+    @SerializedName("latest-snapshot") SNAPSHOT,
+    @SerializedName("custom") CUSTOM
 }
