@@ -7,10 +7,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="gson-2.8.0" level="project" />
     <orderEntry type="library" name="guava-21.0" level="project" />
     <orderEntry type="library" name="log4j-api-2.8.1" level="project" />
     <orderEntry type="library" name="authlib-1.5.25" level="project" />
-    <orderEntry type="library" name="commons-codec-1.10" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.8.5" level="project" />
+    <orderEntry type="library" name="commons-io:commons-io:2.6" level="project" />
+    <orderEntry type="library" name="commons-codec:commons-codec:1.11" level="project" />
   </component>
 </module>

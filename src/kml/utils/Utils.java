@@ -3,13 +3,13 @@ package kml.utils;
 import kml.Kernel;
 import kml.OS;
 import kml.OSArch;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -114,50 +114,18 @@ public final class Utils {
     }
 
     private static String readText(InputStream is) {
-        if (is == null) {
-            return "";
-        }
-        StringBuilder content = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) {
-            String line;
-            boolean first = true;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (!first) {
-                    content.append(System.lineSeparator());
-                } else {
-                    first = false;
-                }
-                content.append(line);
-            }
-            return content.toString();
-        } catch (IOException ex) {
+        try  {
+            return IOUtils.toString(is, StandardCharsets.UTF_8);
+        } catch (IOException | NullPointerException ex) {
             return "";
         }
     }
 
     private static void pipeStreams(InputStream in, OutputStream out) {
-        if (in == null || out == null) {
-            return;
-        }
         try {
-            byte[] buffer = new byte[8192];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
+            IOUtils.copy(in, out);
         } catch (IOException ignored) {
             //No problem
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ignored) {
-                //Nothing we can do
-            }
-            try {
-                out.close();
-            } catch (IOException ignored) {
-                //Nothing we can do
-            }
         }
     }
 
@@ -321,16 +289,12 @@ public final class Utils {
      * @return The decoded text
      */
     public static String fromBase64(String st) {
-        if (st == null || st.isEmpty()) {
-            return null;
-        }
-        String conversion;
         try {
-            conversion = new String(DatatypeConverter.parseBase64Binary(st), StandardCharsets.UTF_8);
+            byte[] decoded = Base64.decodeBase64(st);
+            return new String(decoded, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException ex) {
-            conversion = "";
+            return "";
         }
-        return conversion;
     }
 
 
