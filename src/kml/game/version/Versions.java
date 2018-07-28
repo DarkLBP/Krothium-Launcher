@@ -1,14 +1,18 @@
 package kml.game.version;
 
 import kml.Console;
+import kml.Constants;
 import kml.Kernel;
 import kml.utils.Utils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -17,6 +21,9 @@ import java.util.*;
  */
 
 public class Versions {
+    private VersionManifest versionManifest;
+
+
     private final Set<VersionMeta> versions = new LinkedHashSet<>();
     private final Collection<Version> version_cache = new HashSet<>();
     private final Console console;
@@ -42,7 +49,7 @@ public class Versions {
                     return latestSnap;
             }
             for (VersionMeta m : versions) {
-                if (m.getID().equalsIgnoreCase(id)) {
+                if (m.getId().equalsIgnoreCase(id)) {
                     return m;
                 }
             }
@@ -58,12 +65,12 @@ public class Versions {
     public final Version getVersion(VersionMeta vm) {
         if (versions.contains(vm)) {
             for (Version v : version_cache) {
-                if (v.getID().equalsIgnoreCase(vm.getID())) {
+                if (v.getID().equalsIgnoreCase(vm.getId())) {
                     return v;
                 }
             }
             try {
-                Version v = new Version(vm.getURL(), kernel);
+                Version v = new Version(vm.getUrl(), kernel);
                 version_cache.add(v);
                 return v;
             } catch (Exception ex) {
@@ -71,7 +78,7 @@ public class Versions {
                 return null;
             }
         }
-        console.print("Version id " + vm.getID() + " not found.");
+        console.print("Version id " + vm.getId() + " not found.");
         return null;
     }
 
@@ -79,65 +86,14 @@ public class Versions {
      * Loads versions from Mojang servers or from local versions
      */
     public final void fetchVersions() {
-        String lr = "", ls = "";
-        console.print("Fetching remote version list.");
         try {
-            String versionManifest = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-            String response = Utils.readURL(versionManifest);
-            if (!response.isEmpty()) {
-                JSONObject root = new JSONObject(response);
-                if (root.has("latest")) {
-                    JSONObject latest = root.getJSONObject("latest");
-                    if (latest.has("snapshot")) {
-                        ls = latest.getString("snapshot");
-                    }
-                    if (latest.has("release")) {
-                        lr = latest.getString("release");
-                    }
-                }
-                JSONArray vers = root.getJSONArray("versions");
-                for (int i = 0; i < vers.length(); i++) {
-                    JSONObject ver = vers.getJSONObject(i);
-                    String id = null;
-                    VersionType type;
-                    String url = null;
-                    if (ver.has("id")) {
-                        id = ver.getString("id");
-                    }
-                    if (ver.has("url")) {
-                        url = ver.getString("url");
-                    }
-                    if (id == null || url == null) {
-                        continue;
-                    }
-                    if (ver.has("type")) {
-                        try {
-                            type = VersionType.valueOf(ver.getString("type").toUpperCase(Locale.ENGLISH));
-                        } catch (IllegalArgumentException ex) {
-                            type = VersionType.RELEASE;
-                            console.print("Invalid type for version " + id);
-                        }
-                    } else {
-                        type = VersionType.RELEASE;
-                        console.print("Remote version " + id + " has no version type. Will be loaded as a RELEASE.");
-                    }
-                    VersionMeta vm = new VersionMeta(id, url, type);
-                    if (lr.equalsIgnoreCase(id)) {
-                        latestRel = vm;
-                    }
-                    if (ls.equalsIgnoreCase(id)) {
-                        latestSnap = vm;
-                    }
-                    versions.add(vm);
-                }
-                console.print("Remote version list loaded.");
-            } else {
-                console.print("Remote version list returned empty response.");
-            }
-        } catch (JSONException ex) {
-            console.print("Failed to fetch remote version list.");
+            String versionJson = IOUtils.toString(Constants.VERSION_MANIFEST, StandardCharsets.UTF_8);
+            this.versionManifest = Constants.GSON.fromJson(versionJson, VersionManifest.class);
+        } catch (IOException ex) {
+            console.print("Failed to remote version list.");
             ex.printStackTrace(console.getWriter());
         }
+
         console.print("Fetching local version list versions.");
         VersionMeta lastRelease = null, lastSnapshot = null;
         String latestRelease = "", latestSnapshot = "";

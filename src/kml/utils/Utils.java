@@ -345,4 +345,12 @@ public final class Utils {
             new File(output, "OK").createNewFile();
         }
     }
+
+    public static URL makeUrl(String urlString) {
+        try {
+            return new URL(urlString);
+        } catch (java.net.MalformedURLException e) {
+            return null;
+        }
+    }
 }

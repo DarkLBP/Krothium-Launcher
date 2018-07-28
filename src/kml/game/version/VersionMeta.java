@@ -1,31 +1,43 @@
 package kml.game.version;
 
+import java.sql.Timestamp;
+
 /**
  * @author DarkLBP
- *         website https://krothium.com
+ * website https://krothium.com
  */
 
 public class VersionMeta {
-    private final String id;
-    private final String url;
-    private final VersionType type;
+    private String id;
+    private VersionType type;
+    private Timestamp time;
+    private Timestamp releaseTime;
+    private String url;
 
     public VersionMeta(String id, String url, VersionType type) {
-        this.id = id;
-        this.url = url;
-        this.type = type;
+//        this.id = id;
+//        this.url = url;
+//        this.type = type;
     }
 
-    public final String getID() {
+    public String getId() {
         return id;
     }
 
-    public final String getURL() {
-        return url;
+    public Timestamp getTime() {
+        return time;
     }
 
-    public final VersionType getType() {
+    public Timestamp getReleaseTime() {
+        return releaseTime;
+    }
+
+    public VersionType getType() {
         return type;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override

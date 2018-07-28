@@ -853,7 +853,7 @@ public class MainFX {
                 if ((verID.getType() == VersionType.OLD_ALPHA || verID.getType() == VersionType.OLD_BETA) && !settings.getEnableHistorical()) {
                     continue;
                 }
-                l.setText(l.getText() + '\n' + verID.getID());
+                l.setText(l.getText() + '\n' + verID.getId());
             }
             if (ps.getSelectedProfile().equals(p)) {
                 l.getStyleClass().add("selectedProfile");
@@ -883,7 +883,7 @@ public class MainFX {
                         gameVersion.setText(Language.get(32));
                     } else if (p.hasVersion()) {
                         VersionMeta version = p.getVersionID();
-                        gameVersion.setText("Minecraft " + version.getID());
+                        gameVersion.setText("Minecraft " + version.getId());
                     }
                     break;
             }
@@ -1891,7 +1891,7 @@ public class MainFX {
      */
     @FXML private void downloadServer() {
         VersionMeta selectedItem = versionList.getSelectionModel().getSelectedItem();
-        kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getID() + "/minecraft_server." + selectedItem.getID() + ".jar");
+        kernel.getHostServices().showDocument(urlPrefix + "https://s3.amazonaws.com/Minecraft.Download/versions/" + selectedItem.getId() + "/minecraft_server." + selectedItem.getId() + ".jar");
     }
 
     /**
