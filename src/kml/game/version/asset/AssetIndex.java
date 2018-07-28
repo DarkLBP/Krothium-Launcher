@@ -1,34 +1,14 @@
 package kml.game.version.asset;
 
-/**
- * @author DarkLBP
- * website https://krothium.com
- */
+import com.google.gson.annotations.Expose;
+
+import java.util.HashMap;
 
 public class AssetIndex {
-    private String id;
-    private String sha1;
-    private long size;
-    private String url;
-    private long totalSize;
+    @Expose
+    private HashMap<String, AssetObject> objects;
 
-    public final String getId() {
-        return id;
-    }
-
-    public final String getSha1() {
-        return sha1;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public final String getUrl() {
-        return url;
-    }
-
-    public long getTotalSize() {
-        return totalSize;
+    public HashMap<String, AssetObject> getObjects() {
+        return objects;
     }
 }
