@@ -2,7 +2,6 @@ package kml.auth.user;
 
 import com.google.gson.annotations.Expose;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
